@@ -1,0 +1,597 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Settings | ScamShield AI</title>
+
+    <meta
+      name="description"
+      content="Manage your ScamShield AI account, security, privacy and application preferences."
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+
+    <!-- Settings CSS -->
+    <link rel="stylesheet" href="../css/setting.css" />
+  </head>
+
+  <body>
+    <!-- Background Effects -->
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <!-- ======================================================
+     NAVBAR
+     Authenticated navigation: Dashboard is the main page.
+======================================================= -->
+
+<header class="navbar">
+  <div class="container nav-content">
+
+    <!-- LOGO: Redirects to Dashboard -->
+    <a href="dashboard.html" class="logo">
+      <span class="logo-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </span>
+
+      <span class="logo-text">
+        ScamShield <span>AI</span>
+      </span>
+    </a>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="nav-links" id="navLinks">
+      <a href="dashboard.html" >Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="agents.html">AI Agents</a>
+      <a href="intelligence.html">Intelligence</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+
+    <!-- NAVIGATION ACTIONS -->
+    <div class="nav-actions">
+      <a href="settings.html" class="btn btn-secondary">
+        <i class="fa-solid fa-gear"></i>
+        Settings
+      </a>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+  </div>
+</header>
+
+
+
+    <!-- Main Content -->
+    <main class="settings-page">
+      <!-- Settings Hero -->
+      <section class="settings-hero">
+        <div class="container">
+          <div class="settings-hero-content">
+            <div class="settings-heading">
+              <span class="section-tag"> ACCOUNT CONFIGURATION </span>
+
+              <h1>Application <span>Settings</span></h1>
+
+              <p>
+                Manage your account preferences, security controls,
+                notifications and ScamShield AI experience.
+              </p>
+            </div>
+
+            <div class="settings-status">
+              <span class="settings-status-dot"></span>
+              System Preferences
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Content -->
+      <section class="settings-content">
+        <div class="container">
+          <div class="settings-layout">
+            <!-- Settings Sidebar -->
+            <aside class="settings-sidebar">
+              <div class="settings-sidebar-heading">
+                <i class="fa-solid fa-sliders"></i>
+                <h3>Preferences</h3>
+              </div>
+
+              <a href="#accountSettings" class="settings-nav-link active">
+                <i class="fa-solid fa-user"></i>
+                <span>Account</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#notificationSettings" class="settings-nav-link">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifications</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#securitySettings" class="settings-nav-link">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Security</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#privacySettings" class="settings-nav-link">
+                <i class="fa-solid fa-lock"></i>
+                <span>Privacy</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#appearanceSettings" class="settings-nav-link">
+                <i class="fa-solid fa-palette"></i>
+                <span>Appearance</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#systemSettings" class="settings-nav-link">
+                <i class="fa-solid fa-gear"></i>
+                <span>System</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <div class="settings-sidebar-note">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                  Your security and privacy are important. Never share OTPs,
+                  PINs, passwords or CVVs.
+                </p>
+              </div>
+            </aside>
+
+            <!-- Settings Main Content -->
+            <div class="settings-main">
+              <!-- Account Settings -->
+              <section class="settings-card" id="accountSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+
+                  <div>
+                    <h2>Account Settings</h2>
+                    <p>Manage your personal account information.</p>
+                  </div>
+                </div>
+
+                <div class="settings-profile">
+                  <div class="settings-avatar">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+
+                  <div class="settings-profile-info">
+                    <h3 id="settingsUserName">User Profile</h3>
+                    <p id="settingsUserEmail">Account information</p>
+
+                    <span class="account-status">
+                      <i class="fa-solid fa-circle-check"></i>
+                      Account
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="settings-outline-btn"
+                    id="editProfileBtn"
+                  >
+                    <i class="fa-solid fa-pen"></i>
+                    Edit Profile
+                  </button>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-field-grid">
+                  <div class="settings-field">
+                    <label for="displayName"> Display Name </label>
+
+                    <input
+                      type="text"
+                      id="displayName"
+                      placeholder="Enter your name"
+                      autocomplete="name"
+                    />
+                  </div>
+
+                  <div class="settings-field">
+                    <label for="accountEmail"> Email Address </label>
+
+                    <input
+                      type="email"
+                      id="accountEmail"
+                      placeholder="Enter your email"
+                      autocomplete="email"
+                    />
+                  </div>
+                </div>
+
+                <div class="settings-card-footer">
+                  <span id="accountSaveMessage" aria-live="polite"></span>
+
+                  <button
+                    type="button"
+                    class="settings-save-btn"
+                    id="saveAccountBtn"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Changes
+                  </button>
+                </div>
+              </section>
+
+              <!-- Notification Settings -->
+              <section class="settings-card" id="notificationSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-bell"></i>
+                  </div>
+
+                  <div>
+                    <h2>Notification Preferences</h2>
+                    <p>Choose which updates you want to receive.</p>
+                  </div>
+                </div>
+
+                <div class="settings-option-list">
+                  <div class="settings-option">
+                    <div>
+                      <h3>Security Alerts</h3>
+                      <p>
+                        Receive notifications about important security events.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="securityAlerts" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Threat Detection Updates</h3>
+                      <p>Get updates when suspicious activity is detected.</p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="threatAlerts" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Analysis Reports</h3>
+                      <p>
+                        Receive notifications when an analysis is completed.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="reportNotifications" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Product Updates</h3>
+                      <p>
+                        Receive information about new features and improvements.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="productUpdates" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Security Settings -->
+              <section class="settings-card" id="securitySettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                  </div>
+
+                  <div>
+                    <h2>Security Settings</h2>
+                    <p>Review your account protection preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-option-list">
+                  <div class="settings-option">
+                    <div>
+                      <h3>Login Verification</h3>
+                      <p>
+                        Use additional verification when supported by the
+                        authentication system.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="loginVerification" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Login Activity Monitoring</h3>
+                      <p>
+                        Review account access and suspicious login activity.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="loginMonitoring" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="settings-security-info">
+                  <i class="fa-solid fa-circle-info"></i>
+
+                  <p>
+                    Never share your password, OTP, PIN or CVV. ScamShield AI
+                    will never ask you for these credentials.
+                  </p>
+                </div>
+
+                <div class="settings-action-row">
+                  <div>
+                    <h3>Password Management</h3>
+                    <p>
+                      Update your account password through the supported
+                      authentication process.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="settings-outline-btn"
+                    id="changePasswordBtn"
+                  >
+                    Change Password
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+              </section>
+
+              <!-- Privacy Settings -->
+              <section class="settings-card" id="privacySettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-lock"></i>
+                  </div>
+
+                  <div>
+                    <h2>Privacy Settings</h2>
+                    <p>Manage your data and privacy preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-option-list">
+                  <div class="settings-option">
+                    <div>
+                      <h3>Save Analysis History</h3>
+                      <p>
+                        Allow analysis records to appear in your report history.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="saveAnalysisHistory" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Usage Analytics</h3>
+                      <p>
+                        Allow anonymous usage statistics for product
+                        improvement.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="usageAnalytics" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="settings-security-info">
+                  <i class="fa-solid fa-shield-halved"></i>
+
+                  <p>
+                    Avoid uploading unnecessary personal information. Never
+                    submit passwords, OTPs, PINs or complete card details as
+                    evidence.
+                  </p>
+                </div>
+              </section>
+
+              <!-- Appearance Settings -->
+              <section class="settings-card" id="appearanceSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-palette"></i>
+                  </div>
+
+                  <div>
+                    <h2>Appearance</h2>
+                    <p>Customize your application display preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-field-grid">
+                  <div class="settings-field">
+                    <label for="themePreference"> Theme </label>
+
+                    <select id="themePreference">
+                      <option value="dark">Dark Theme</option>
+                      <option value="light">Light Theme</option>
+                      <option value="system">System Default</option>
+                    </select>
+                  </div>
+
+                  <div class="settings-field">
+                    <label for="languagePreference"> Language </label>
+
+                    <select id="languagePreference">
+                      <option value="en">English</option>
+                      <option value="hi">Hindi</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="settings-option">
+                  <div>
+                    <h3>Reduce Animations</h3>
+                    <p>Reduce motion effects throughout the interface.</p>
+                  </div>
+
+                  <label class="settings-toggle">
+                    <input type="checkbox" id="reduceAnimations" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </section>
+
+              <!-- System Settings -->
+              <section class="settings-card" id="systemSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-gear"></i>
+                  </div>
+
+                  <div>
+                    <h2>System Preferences</h2>
+                    <p>Manage application-level preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-system-grid">
+                  <div class="system-info-item">
+                    <span>Application</span>
+                    <strong>ScamShield AI</strong>
+                  </div>
+
+                  <div class="system-info-item">
+                    <span>Environment</span>
+                    <strong>Development</strong>
+                  </div>
+
+                  <div class="system-info-item">
+                    <span>Simulation Mode</span>
+                    <strong>Safe & Isolated</strong>
+                  </div>
+
+                  <div class="system-info-item">
+                    <span>Version</span>
+                    <strong>1.0.0</strong>
+                  </div>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-action-row">
+                  <div>
+                    <h3>Reset Preferences</h3>
+                    <p>Restore the default application preferences.</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="settings-danger-btn"
+                    id="resetSettingsBtn"
+                  >
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Reset Settings
+                  </button>
+                </div>
+              </section>
+
+              <!-- Save All Settings -->
+              <div class="settings-bottom-actions">
+                <p id="settingsSaveMessage" aria-live="polite">
+                  Manage your preferences and save your changes.
+                </p>
+
+                <button
+                  type="button"
+                  class="settings-save-btn"
+                  id="saveAllSettings"
+                >
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  Save All Preferences
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>
+            © <span id="currentYear"></span>
+            ScamShield AI. All rights reserved.
+          </p>
+
+          <p>Intelligent Fraud Detection & Victim Protection</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Shared JavaScript -->
+    <script src="../js/main.js" defer></script>
+
+    <!-- Settings JavaScript -->
+    <script src="../js/settings.js" defer></script>
+  </body>
+</html>

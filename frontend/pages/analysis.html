@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#07111f">
+    <meta name="description" content="Analyze suspicious messages, links, calls and transactions with ScamShield AI.">
+
+    <title>Evidence Analysis | ScamShield AI</title>
+
+    <!-- SHARED CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <!-- PAGE CSS -->
+    <link rel="stylesheet" href="../css/analysis.css">
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- FONT AWESOME -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- SHARED JAVASCRIPT -->
+    <script defer src="../js/services/api.js"></script>
+    <script defer src="../js/helpers.js"></script>
+    <script defer src="../js/components/navigation.js"></script>
+    <script defer src="../js/components/sidebar.js"></script>
+    <script defer src="../js/components/notifications.js"></script>
+    <script defer src="../js/main.js"></script>
+
+    <!-- PAGE JAVASCRIPT -->
+    <script defer src="../js/analysis.js"></script>
+</head>
+
+<body>
+
+    <!-- ACCESSIBILITY -->
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header class="navbar">
+        <div class="container nav-content">
+
+            <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                </span>
+
+                <span class="logo-text">
+                    ScamShield <span>AI</span>
+                </span>
+            </a>
+
+            <nav
+                class="nav-links"
+                id="navLinks"
+                aria-label="Main navigation"
+            >
+                <a href="dashboard.html">Dashboard</a>
+                <a href="detection.html">Detection</a>
+                <a href="analysis.html" aria-current="page">Analysis</a>
+                <a href="agents.html">AI Agents</a>
+                <a href="intelligence.html">Intelligence</a>
+                <a href="analytics.html">Analytics</a>
+                <a href="reports.html">Reports</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="settings.html" class="btn btn-secondary">
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+
+            <button
+                type="button"
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="navLinks"
+            >
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="analysis-page" id="main-content">
+
+        <div class="container">
+
+            <!-- PAGE HEADING -->
+
+            <section class="page-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        AI SECURITY INTELLIGENCE
+                    </div>
+
+                    <h1>
+                        Evidence <span>Analysis</span>
+                    </h1>
+
+                    <p>
+                        Investigate suspicious digital activity with
+                        ScamShield AI's multi-agent analysis system.
+                    </p>
+
+                </div>
+
+                <div class="analysis-badge">
+                    <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+                    Multi-Agent Engine
+                </div>
+
+            </section>
+
+            <!-- QUICK INFORMATION -->
+
+            <section class="info-grid" aria-label="Analysis capabilities">
+
+                <div class="info-card">
+
+                    <div class="info-icon purple">
+                        <i class="fa-solid fa-brain" aria-hidden="true"></i>
+                    </div>
+
+                    <div>
+                        <h3>4 AI Agents</h3>
+                        <p>Coordinated analysis</p>
+                    </div>
+
+                </div>
+
+                <div class="info-card">
+
+                    <div class="info-icon blue">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    </div>
+
+                    <div>
+                        <h3>Evidence Detection</h3>
+                        <p>Suspicious patterns</p>
+                    </div>
+
+                </div>
+
+                <div class="info-card">
+
+                    <div class="info-icon green">
+                        <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                    </div>
+
+                    <div>
+                        <h3>Victim Safety</h3>
+                        <p>Actionable guidance</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =================================================
+                 ANALYSIS FORM AND INFORMATION
+            ================================================== -->
+
+            <section class="content-grid">
+
+                <!-- EVIDENCE FORM -->
+
+                <section class="panel evidence-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+                            <div class="section-label">INVESTIGATION</div>
+
+                            <h2>Submit Evidence</h2>
+
+                            <p>
+                                Provide suspicious content for analysis.
+                            </p>
+                        </div>
+
+                        <div class="heading-icon">
+                            <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
+                        </div>
+
+                    </div>
+
+                    <form id="analysisForm">
+
+                        <!-- EVIDENCE TYPE -->
+
+                        <div class="form-group">
+
+                            <label for="evidenceType">
+                                Evidence Type
+                                <span aria-hidden="true">*</span>
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+
+                                <select
+                                    id="evidenceType"
+                                    name="evidenceType"
+                                    required
+                                >
+                                    <option value="message">
+                                        Suspicious Message
+                                    </option>
+
+                                    <option value="url">
+                                        Website / URL
+                                    </option>
+
+                                    <option value="call">
+                                        Phone Call
+                                    </option>
+
+                                    <option value="transaction">
+                                        Financial Transaction
+                                    </option>
+
+                                    <option value="screenshot">
+                                        Screenshot Details
+                                    </option>
+
+                                    <option value="email">
+                                        Suspicious Email
+                                    </option>
+                                </select>
+
+                                <i
+                                    class="fa-solid fa-chevron-down select-arrow"
+                                    aria-hidden="true"
+                                ></i>
+
+                            </div>
+
+                        </div>
+
+                        <!-- EVIDENCE CONTENT -->
+
+                        <div class="form-group">
+
+                            <div class="label-row">
+
+                                <label for="evidenceInput">
+                                    Evidence Content
+                                    <span aria-hidden="true">*</span>
+                                </label>
+
+                                <span class="character-limit">
+                                    Maximum 20,000 characters
+                                </span>
+
+                            </div>
+
+                            <textarea
+                                id="evidenceInput"
+                                name="evidence"
+                                maxlength="20000"
+                                rows="9"
+                                placeholder="Paste suspicious message, URL, email content, transaction details or other evidence here..."
+                                aria-describedby="evidenceHelp characterCount"
+                                required
+                            ></textarea>
+
+                            <div class="textarea-footer">
+
+                                <span id="evidenceHelp">
+                                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                                    Your evidence is processed securely.
+                                </span>
+
+                                <span
+                                    id="characterCount"
+                                    aria-live="off"
+                                >
+                                    0 / 20000
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- SECURITY NOTICE -->
+
+                        <div class="notice-box" role="note">
+
+                            <i
+                                class="fa-solid fa-circle-info"
+                                aria-hidden="true"
+                            ></i>
+
+                            <p>
+                                Never share passwords, OTPs, UPI PINs,
+                                CVV numbers or complete card details.
+                                Remove unnecessary personal information
+                                before submitting evidence.
+                            </p>
+
+                        </div>
+
+                        <!-- SUBMIT BUTTON -->
+
+                        <button
+                            type="submit"
+                            id="analyzeButton"
+                            class="analyze-button"
+                        >
+
+                            <i
+                                class="fa-solid fa-magnifying-glass-chart"
+                                aria-hidden="true"
+                            ></i>
+
+                            <span>Analyze Evidence</span>
+
+                            <i
+                                class="fa-solid fa-arrow-right button-arrow"
+                                aria-hidden="true"
+                            ></i>
+
+                        </button>
+
+                    </form>
+
+                    <!-- ANALYSIS STATUS -->
+
+                    <div
+                        id="analysisStatus"
+                        class="status-message"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                    ></div>
+
+                </section>
+
+                <!-- RIGHT INFORMATION -->
+
+                <aside class="right-column">
+
+                    <!-- ANALYSIS PIPELINE -->
+
+                    <section class="panel process-panel">
+
+                        <div class="panel-heading compact">
+
+                            <div>
+                                <div class="section-label">HOW IT WORKS</div>
+                                <h2>Analysis Pipeline</h2>
+                            </div>
+
+                        </div>
+
+                        <div class="pipeline">
+
+                            <div class="pipeline-item">
+
+                                <div class="pipeline-number">01</div>
+
+                                <div>
+                                    <h4>Evidence Collection</h4>
+                                    <p>Submit suspicious digital evidence.</p>
+                                </div>
+
+                            </div>
+
+                            <div class="pipeline-line"></div>
+
+                            <div class="pipeline-item">
+
+                                <div class="pipeline-number">02</div>
+
+                                <div>
+                                    <h4>AI Investigation</h4>
+                                    <p>Analyze patterns and suspicious indicators.</p>
+                                </div>
+
+                            </div>
+
+                            <div class="pipeline-line"></div>
+
+                            <div class="pipeline-item">
+
+                                <div class="pipeline-number">03</div>
+
+                                <div>
+                                    <h4>Risk Assessment</h4>
+                                    <p>Evaluate the potential threat level.</p>
+                                </div>
+
+                            </div>
+
+                            <div class="pipeline-line"></div>
+
+                            <div class="pipeline-item">
+
+                                <div class="pipeline-number">04</div>
+
+                                <div>
+                                    <h4>Safety Recommendations</h4>
+                                    <p>Receive guidance based on analysis.</p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- AGENT OVERVIEW -->
+
+                    <section class="panel agents-overview">
+
+                        <div class="section-label">
+                            INTELLIGENCE NETWORK
+                        </div>
+
+                        <h2>Four Specialized Agents</h2>
+
+                        <div class="mini-agent">
+
+                            <span class="mini-agent-icon guardian">
+                                <i class="fa-solid fa-shield" aria-hidden="true"></i>
+                            </span>
+
+                            <div>
+                                <strong>Guardian</strong>
+                                <small>Threat assessment</small>
+                            </div>
+
+                        </div>
+
+                        <div class="mini-agent">
+
+                            <span class="mini-agent-icon intelligence">
+                                <i class="fa-solid fa-brain" aria-hidden="true"></i>
+                            </span>
+
+                            <div>
+                                <strong>Intelligence</strong>
+                                <small>Indicator investigation</small>
+                            </div>
+
+                        </div>
+
+                        <div class="mini-agent">
+
+                            <span class="mini-agent-icon safety">
+                                <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                            </span>
+
+                            <div>
+                                <strong>Victim Safety</strong>
+                                <small>Protection recommendations</small>
+                            </div>
+
+                        </div>
+
+                        <div class="mini-agent">
+
+                            <span class="mini-agent-icon decoy">
+                                <i class="fa-solid fa-mask" aria-hidden="true"></i>
+                            </span>
+
+                            <div>
+                                <strong>Decoy</strong>
+                                <small>Controlled simulation status</small>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </section>
+
+            <!-- =================================================
+                 ANALYSIS RESULTS
+            ================================================== -->
+
+            <section
+                id="analysisResults"
+                class="results-section"
+                aria-labelledby="resultsTitle"
+                aria-live="polite"
+                hidden
+            >
+
+                <!-- RESULTS HEADING -->
+
+                <div class="results-heading">
+
+                    <div>
+                        <div class="section-label">INVESTIGATION REPORT</div>
+
+                        <h2 id="resultsTitle">Analysis Results</h2>
+
+                        <p>
+                            Review the findings generated by ScamShield AI.
+                        </p>
+                    </div>
+
+                    <div class="report-badge">
+                        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                        Analysis Completed
+                    </div>
+
+                </div>
+
+                <!-- RESULT CARDS -->
+
+                <div class="result-grid">
+
+                    <div class="result-card score-card">
+
+                        <div class="result-card-heading">
+                            <span>Risk Score</span>
+                            <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                        </div>
+
+                        <div
+                            class="score-value"
+                            id="riskScore"
+                        >
+                            --
+                        </div>
+
+                        <div class="score-caption">
+                            Risk assessment score
+                        </div>
+
+                    </div>
+
+                    <div class="result-card">
+
+                        <div class="result-card-heading">
+                            <span>Risk Level</span>
+                            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                        </div>
+
+                        <div
+                            id="riskLevel"
+                            class="risk-level-value"
+                        >
+                            --
+                        </div>
+
+                        <div class="score-caption">
+                            Potential threat severity
+                        </div>
+
+                    </div>
+
+                    <div class="result-card">
+
+                        <div class="result-card-heading">
+                            <span>Fraud Category</span>
+                            <i class="fa-solid fa-tags" aria-hidden="true"></i>
+                        </div>
+
+                        <div
+                            id="fraudCategory"
+                            class="category-value"
+                        >
+                            --
+                        </div>
+
+                        <div class="score-caption">
+                            Detected fraud classification
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ANALYSIS SUMMARY -->
+
+                <div class="panel summary-panel">
+
+                    <div class="section-label">AI FINDINGS</div>
+
+                    <h3>
+                        <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                        Analysis Summary
+                    </h3>
+
+                    <p id="analysisSummary">
+                        No summary available.
+                    </p>
+
+                    <div class="analysis-id">
+                        Analysis ID:
+                        <strong id="analysisId">--</strong>
+                    </div>
+
+                </div>
+
+                <!-- EXPLANATION AND INDICATORS -->
+
+                <div class="details-grid">
+
+                    <section class="panel">
+
+                        <div class="section-label">DETECTION DETAILS</div>
+
+                        <h3>
+                            <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                            Analysis Explanation
+                        </h3>
+
+                        <div
+                            id="analysisExplanation"
+                            class="details-content"
+                        >
+                            <p>No explanation available.</p>
+                        </div>
+
+                    </section>
+
+                    <section class="panel">
+
+                        <div class="section-label">THREAT INTELLIGENCE</div>
+
+                        <h3>
+                            <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
+                            Detected Indicators
+                        </h3>
+
+                        <div
+                            id="analysisIndicators"
+                            class="details-content"
+                        >
+                            <p>No indicators detected.</p>
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- FOUR AGENT REPORTS -->
+
+                <section class="agents-results-section">
+
+                    <div class="section-label">
+                        MULTI-AGENT INVESTIGATION
+                    </div>
+
+                    <h2>Agent Intelligence Reports</h2>
+
+                    <p class="section-description">
+                        Individual findings from the four specialized agents.
+                    </p>
+
+                    <div class="agent-results-grid">
+
+                        <!-- GUARDIAN -->
+
+                        <article class="panel agent-panel guardian-panel">
+
+                            <div class="agent-panel-heading">
+
+                                <div class="agent-icon guardian">
+                                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                                </div>
+
+                                <div>
+                                    <h3>Guardian Agent</h3>
+                                    <p>Threat Detection</p>
+                                </div>
+
+                            </div>
+
+                            <div
+                                id="guardianResults"
+                                class="agent-output"
+                            >
+                                <p>Awaiting analysis...</p>
+                            </div>
+
+                        </article>
+
+                        <!-- INTELLIGENCE -->
+
+                        <article class="panel agent-panel intelligence-panel">
+
+                            <div class="agent-panel-heading">
+
+                                <div class="agent-icon intelligence">
+                                    <i class="fa-solid fa-brain" aria-hidden="true"></i>
+                                </div>
+
+                                <div>
+                                    <h3>Intelligence Agent</h3>
+                                    <p>Indicator Investigation</p>
+                                </div>
+
+                            </div>
+
+                            <div
+                                id="intelligenceResults"
+                                class="agent-output"
+                            >
+                                <p>Awaiting analysis...</p>
+                            </div>
+
+                        </article>
+
+                        <!-- VICTIM SAFETY -->
+
+                        <article class="panel agent-panel safety-panel">
+
+                            <div class="agent-panel-heading">
+
+                                <div class="agent-icon safety">
+                                    <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                                </div>
+
+                                <div>
+                                    <h3>Victim Safety Agent</h3>
+                                    <p>Protection Guidance</p>
+                                </div>
+
+                            </div>
+
+                            <div
+                                id="victimSafetyResults"
+                                class="agent-output"
+                            >
+                                <p>Awaiting analysis...</p>
+                            </div>
+
+                        </article>
+
+                        <!-- DECOY -->
+
+                        <article class="panel agent-panel decoy-panel">
+
+                            <div class="agent-panel-heading">
+
+                                <div class="agent-icon decoy">
+                                    <i class="fa-solid fa-mask" aria-hidden="true"></i>
+                                </div>
+
+                                <div>
+                                    <h3>Decoy Agent</h3>
+                                    <p>Simulation Status</p>
+                                </div>
+
+                            </div>
+
+                            <div
+                                id="decoyResults"
+                                class="agent-output"
+                            >
+                                <p>Awaiting analysis...</p>
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+                <!-- DISCLAIMER -->
+
+                <div class="disclaimer-box" role="note">
+
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+
+                    <div>
+                        <strong>Important Disclaimer</strong>
+
+                        <p id="analysisDisclaimer">
+                            Automated analysis provides indicative findings.
+                            Results are not proof of fraud and should not replace
+                            official verification or professional advice.
+                        </p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =================================================
+                 EMERGENCY HELP
+            ================================================== -->
+
+            <section class="analysis-emergency">
+
+                <div>
+                    <h2>
+                        <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
+                        Need Help with Financial Cyber Fraud?
+                    </h2>
+
+                    <p>
+                        If you have lost money due to cyber fraud,
+                        contact the official cybercrime helpline immediately.
+                    </p>
+                </div>
+
+                <a href="tel:1930" class="emergency-call-button">
+                    <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                    Call 1930
+                </a>
+
+            </section>
+
+            <!-- FOOTER -->
+
+            <footer class="page-footer">
+
+                <span>
+                    © <span id="currentYear"></span> ScamShield AI
+                </span>
+
+                <span>
+                    Built for safer digital experiences.
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+    <!-- CURRENT YEAR -->
+    <script>
+        const currentYearElement = document.getElementById("currentYear");
+
+        if (currentYearElement) {
+            currentYearElement.textContent = new Date().getFullYear();
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,4699 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#080e1c"><meta name="description" content="ScamShield AI — fraud detection, threat intelligence and victim safety in one platform."><title>ScamShield AI | Cyber Fraud Protection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"><link id="screenStyles" rel="stylesheet" disabled>
+<style>.app-screen{display:none}.app-screen.active{display:block}body.auth-screen .app-navbar{display:none}body.auth-screen .app-screen.active{min-height:100vh}.app-navbar [hidden]{display:none!important}</style></head><body>
+<div class="background-glow glow-one"></div><div class="background-glow glow-two"></div>
+<header class="navbar app-navbar" id="appNavbar"><div class="container nav-content">
+  <a href="#screen-home" class="logo" data-route="home"><div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div><div class="logo-text">ScamShield<span> AI</span></div></a>
+  <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+    <a href="#screen-home" data-route="home">Home</a><a href="#screen-dashboard" data-route="dashboard">Dashboard</a><a href="#screen-detection" data-route="detection">Detection</a><a href="#screen-agents" data-route="agents">AI Agents</a><a href="#screen-intelligence" data-route="intelligence">Intelligence</a><a href="#screen-analytics" data-route="analytics">Analytics</a><a href="#screen-reports" data-route="reports">Reports</a>
+  </nav>
+  <div class="nav-actions"><a href="#screen-login" class="btn btn-outline" data-route="login" data-auth-link>Sign in</a><a href="#screen-register" class="btn btn-primary" data-route="register" data-auth-link>Get started</a><button class="btn btn-outline" type="button" data-logout hidden>Sign out</button></div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+</div></header><main id="appScreens"><section id="screen-home" class="app-screen active" data-screen="home" aria-hidden="false"><div>
+      <!-- ================= HERO ================= -->
+
+      <section class="hero" id="home">
+        <div class="container hero-grid">
+          <div class="hero-content">
+            <div class="eyebrow">
+              <span class="live-dot"></span>
+
+              Intelligent Cyber Protection
+            </div>
+
+            <h1>
+              Stay Ahead of
+
+              <span>Digital Scams.</span>
+
+              Stay Protected.
+            </h1>
+
+            <p class="hero-description">
+              Meet a smarter approach to cyber safety. ScamShield AI brings
+              intelligent fraud analysis, multi-agent intelligence and
+              victim-focused protection into one unified platform.
+            </p>
+
+            <div class="hero-buttons">
+              <a href="#screen-detection" data-route="detection" class="btn btn-primary">
+                Start Fraud Analysis
+
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+
+              <a href="#how-it-works" class="btn btn-outline">
+                <i class="fa-solid fa-play"></i>
+
+                Explore How It Works
+              </a>
+            </div>
+
+            <div class="hero-note">
+              <i class="fa-solid fa-circle-check"></i>
+
+              Designed for safer digital interactions.
+            </div>
+          </div>
+
+          <!-- DASHBOARD PREVIEW -->
+
+          <div class="hero-visual">
+            <div class="dashboard-preview">
+              <div class="preview-header">
+                <div>
+                  <span class="preview-label"> SECURITY OVERVIEW </span>
+
+                  <h3>Threat Intelligence</h3>
+                </div>
+
+                <div class="preview-status">
+                  <span class="live-dot"></span>
+
+                  UI PREVIEW
+                </div>
+              </div>
+
+              <div class="preview-score">
+                <div class="score-circle">
+                  <div class="score-inner">
+                    <strong>72</strong>
+
+                    <span>RISK SCORE</span>
+                  </div>
+                </div>
+
+                <div class="score-info">
+                  <h3>Suspicious Activity</h3>
+
+                  <p>
+                    Illustrative assessment based on a sample suspicious
+                    message.
+                  </p>
+
+                  <span class="risk-badge"> HIGH RISK · SAMPLE </span>
+                </div>
+              </div>
+
+              <div class="preview-divider"></div>
+
+              <div class="preview-section-title">MULTI-AGENT INTELLIGENCE</div>
+
+              <div class="preview-agent">
+                <div class="agent-icon agent-green">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div class="agent-details">
+                  <h4>Guardian Agent</h4>
+
+                  <p>Fraud pattern analysis</p>
+                </div>
+
+                <span class="agent-indicator">
+                  <i class="fa-solid fa-circle"></i>
+                </span>
+              </div>
+
+              <div class="preview-agent">
+                <div class="agent-icon agent-blue">
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+
+                <div class="agent-details">
+                  <h4>Intelligence Agent</h4>
+
+                  <p>Evidence extraction</p>
+                </div>
+
+                <span class="agent-indicator">
+                  <i class="fa-solid fa-circle"></i>
+                </span>
+              </div>
+
+              <div class="preview-agent">
+                <div class="agent-icon agent-purple">
+                  <i class="fa-solid fa-user-shield"></i>
+                </div>
+
+                <div class="agent-details">
+                  <h4>Victim Safety Agent</h4>
+
+                  <p>Safety recommendations</p>
+                </div>
+
+                <span class="agent-indicator">
+                  <i class="fa-solid fa-circle"></i>
+                </span>
+              </div>
+
+              <div class="preview-agent">
+                <div class="agent-icon agent-orange">
+                  <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <div class="agent-details">
+                  <h4>Decoy Agent</h4>
+
+                  <p>Controlled simulations</p>
+                </div>
+
+                <span class="agent-indicator">
+                  <i class="fa-solid fa-circle"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="floating-label floating-one">
+              <i class="fa-solid fa-bolt"></i>
+
+              AI-Powered Analysis
+            </div>
+
+            <div class="floating-label floating-two">
+              <i class="fa-solid fa-network-wired"></i>
+
+              Multi-Agent Architecture
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TRUST STRIP ================= -->
+
+      <section class="trust-strip">
+        <div class="container trust-content">
+          <div class="trust-item">
+            <i class="fa-solid fa-brain"></i>
+            Intelligent Analysis
+          </div>
+
+          <div class="trust-item">
+            <i class="fa-solid fa-network-wired"></i>
+            Multi-Agent System
+          </div>
+
+          <div class="trust-item">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Evidence Intelligence
+          </div>
+
+          <div class="trust-item">
+            <i class="fa-solid fa-user-shield"></i>
+            Victim-First Safety
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PROTECTION ================= -->
+
+      <section class="section" id="protection">
+        <div class="container">
+          <div class="section-heading">
+            <div class="section-tag">
+              <span></span>
+              THREAT COVERAGE
+            </div>
+
+            <h2>
+              Protection Against Modern
+              <span>Digital Threats</span>
+            </h2>
+
+            <p>
+              Understand suspicious activities across common digital fraud
+              categories through structured evidence analysis.
+            </p>
+          </div>
+
+          <div class="fraud-grid">
+            <div class="fraud-card">
+              <div class="fraud-icon agent-green">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+
+              <h3>Investment Scams</h3>
+
+              <p>
+                Identify suspicious investment claims, unrealistic returns and
+                pressure tactics.
+              </p>
+
+              <a href="#screen-detection" data-route="detection" class="card-link">
+                Explore Detection
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+
+            <div class="fraud-card">
+              <div class="fraud-icon agent-blue">
+                <i class="fa-solid fa-scale-balanced"></i>
+              </div>
+
+              <h3>Digital Arrest</h3>
+
+              <p>
+                Recognize impersonation, intimidation and fraudulent legal
+                threats.
+              </p>
+
+              <a href="#screen-detection" data-route="detection" class="card-link">
+                Explore Detection
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+
+            <div class="fraud-card">
+              <div class="fraud-icon agent-purple">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+
+              <h3>Credit Card Fraud</h3>
+
+              <p>
+                Analyze suspicious payment requests, credential theft attempts
+                and messages.
+              </p>
+
+              <a href="#screen-detection" data-route="detection" class="card-link">
+                Explore Detection
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+
+            <div class="fraud-card">
+              <div class="fraud-icon agent-orange">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+
+              <h3>Sextortion</h3>
+
+              <p>
+                Identify coercive threats, blackmail patterns and suspicious
+                demands.
+              </p>
+
+              <a href="#screen-detection" data-route="detection" class="card-link">
+                Explore Detection
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+
+            <div class="fraud-card">
+              <div class="fraud-icon agent-green">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+
+              <h3>E-commerce Fraud</h3>
+
+              <p>
+                Examine suspicious sellers, fake offers and potentially
+                fraudulent transactions.
+              </p>
+
+              <a href="#screen-detection" data-route="detection" class="card-link">
+                Explore Detection
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= AI AGENTS ================= -->
+
+      <section class="section agents-section" id="agents">
+        <div class="container">
+          <div class="section-heading">
+            <div class="section-tag">
+              <span></span>
+              MULTI-AGENT INTELLIGENCE
+            </div>
+
+            <h2>
+              Four Specialized Agents.
+              <span>One Unified Mission.</span>
+            </h2>
+
+            <p>
+              Specialized AI agents designed to work across different stages of
+              cyber safety and fraud analysis.
+            </p>
+          </div>
+
+          <div class="agents-grid">
+            <div class="ai-card">
+              <div class="ai-number">AGENT 01</div>
+
+              <div class="ai-card-icon agent-green">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+
+              <h3>Guardian Agent</h3>
+
+              <p>
+                Analyzes suspicious evidence, identifies potential fraud
+                patterns and provides explainable risk assessments.
+              </p>
+
+              <span class="ai-label"> FRAUD DETECTION </span>
+            </div>
+
+            <div class="ai-card">
+              <div class="ai-number">AGENT 02</div>
+
+              <div class="ai-card-icon agent-blue">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </div>
+
+              <h3>Intelligence Agent</h3>
+
+              <p>
+                Extracts useful indicators such as URLs, phone numbers and UPI
+                IDs from submitted evidence for further investigation.
+              </p>
+
+              <span class="ai-label"> THREAT INTELLIGENCE </span>
+            </div>
+
+            <div class="ai-card">
+              <div class="ai-number">AGENT 03</div>
+
+              <div class="ai-card-icon agent-purple">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+
+              <h3>Victim Safety Agent</h3>
+
+              <p>
+                Provides practical safety guidance, evidence-preservation steps
+                and recommended reporting actions.
+              </p>
+
+              <span class="ai-label"> VICTIM PROTECTION </span>
+            </div>
+
+            <div class="ai-card">
+              <div class="ai-number">AGENT 04</div>
+
+              <div class="ai-card-icon agent-orange">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+
+              <h3>Decoy Agent</h3>
+
+              <p>
+                Supports controlled, synthetic scam-baiting simulations for
+                awareness and research.
+              </p>
+
+              <span class="ai-label"> SAFE SIMULATION </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= WORKFLOW ================= -->
+
+      <section class="section" id="how-it-works">
+        <div class="container">
+          <div class="section-heading">
+            <div class="section-tag">
+              <span></span>
+              HOW IT WORKS
+            </div>
+
+            <h2>
+              From Suspicion to
+              <span>Smarter Decisions</span>
+            </h2>
+
+            <p>
+              A structured approach to reviewing suspicious digital evidence.
+            </p>
+          </div>
+
+          <div class="workflow">
+            <div class="workflow-card">
+              <div class="workflow-number">01</div>
+
+              <div class="workflow-icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+
+              <h3>Submit Evidence</h3>
+
+              <p>
+                Provide suspicious messages, URLs, screenshots, transcripts or
+                relevant transaction details.
+              </p>
+            </div>
+
+            <div class="workflow-card">
+              <div class="workflow-number">02</div>
+
+              <div class="workflow-icon">
+                <i class="fa-solid fa-microchip"></i>
+              </div>
+
+              <h3>Analyze Threats</h3>
+
+              <p>
+                Examine evidence for suspicious patterns, indicators and
+                possible fraud signals.
+              </p>
+            </div>
+
+            <div class="workflow-card">
+              <div class="workflow-number">03</div>
+
+              <div class="workflow-icon">
+                <i class="fa-solid fa-chart-pie"></i>
+              </div>
+
+              <h3>Understand Risk</h3>
+
+              <p>
+                Review risk indicators, explanations and extracted evidence in a
+                structured assessment.
+              </p>
+            </div>
+
+            <div class="workflow-card">
+              <div class="workflow-number">04</div>
+
+              <div class="workflow-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+              </div>
+
+              <h3>Take Action</h3>
+
+              <p>
+                Follow safety recommendations, preserve evidence and contact
+                appropriate authorities.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CTA ================= -->
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-box">
+            <div class="cta-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="section-tag">YOUR DIGITAL SAFETY MATTERS</div>
+
+            <h2>
+              Think Before You Trust.
+              <span>Analyze Before You Act.</span>
+            </h2>
+
+            <p>
+              Explore ScamShield AI and discover an intelligent approach to
+              understanding digital fraud risks.
+            </p>
+
+            <a href="#screen-detection" data-route="detection" class="btn btn-primary">
+              Explore ScamShield AI
+
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-agents" class="app-screen" data-screen="agents" aria-hidden="true"><div>
+      <!-- Hero Section -->
+      <section class="agents-hero">
+        <div class="container">
+          <div class="agents-hero-content">
+            <div class="section-tag">
+              <span></span>
+              MULTI-AGENT AI ARCHITECTURE
+            </div>
+
+            <h1>
+              Meet Your Digital
+              <span>Security Team.</span>
+            </h1>
+
+            <p>
+              Four specialized AI agents working across different stages of
+              cybersecurity, fraud analysis, threat intelligence and victim
+              protection.
+            </p>
+
+            <a href="#agent-directory" class="btn btn-primary">
+              Explore AI Agents
+              <i class="fa-solid fa-arrow-down"></i>
+            </a>
+          </div>
+
+          <!-- Agent Overview -->
+          <div class="agent-overview">
+            <div class="overview-item">
+              <div class="overview-icon overview-green">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <h3>Guardian</h3>
+                <p>Analyze & Detect</p>
+              </div>
+            </div>
+
+            <div class="overview-item">
+              <div class="overview-icon overview-blue">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </div>
+              <div>
+                <h3>Intelligence</h3>
+                <p>Extract & Correlate</p>
+              </div>
+            </div>
+
+            <div class="overview-item">
+              <div class="overview-icon overview-purple">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+              <div>
+                <h3>Victim Safety</h3>
+                <p>Guide & Protect</p>
+              </div>
+            </div>
+
+            <div class="overview-item">
+              <div class="overview-icon overview-orange">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div>
+                <h3>Decoy</h3>
+                <p>Simulate Safely</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section agent-demo-section" aria-labelledby="agentDemoTitle">
+        <div class="container">
+          <div class="agent-demo-panel">
+            <div class="section-heading agent-demo-heading">
+              <div class="section-tag"><span></span> LIVE BACKEND DEMO</div>
+              <h2 id="agentDemoTitle">Run the <span>Agent Workflow</span></h2>
+              <p>Send synthetic text to the local backend and inspect its rule-based assessment, extracted clues and safety guidance.</p>
+            </div>
+            <form id="agentsDemoForm" class="agent-demo-form">
+              <label for="agentsDemoType">Evidence type</label>
+              <select id="agentsDemoType" name="evidenceType">
+                <option value="message">Message / chat</option>
+                <option value="url">Website / URL text</option>
+                <option value="call">Call transcript</option>
+                <option value="email">Email</option>
+                <option value="transaction">Transaction note</option>
+              </select>
+              <label for="agentsDemoEvidence">Synthetic sample evidence</label>
+              <textarea id="agentsDemoEvidence" name="evidence" maxlength="20000" required>A person claiming to be a CBI officer says I am under digital arrest. They demand that I share my OTP and visit https://verify-account.example immediately.</textarea>
+              <div class="agent-demo-actions">
+                <button class="btn btn-primary" id="agentsDemoRun" type="submit"><i class="fa-solid fa-play"></i> Run agents</button>
+                <span class="agent-demo-local-note"><i class="fa-solid fa-lock"></i> Sent only to your configured backend; this demo run is not saved as a case.</span>
+              </div>
+            </form>
+            <p id="agentsDemoStatus" class="agent-demo-status" role="status" aria-live="polite">Sign in to run the demo. This prototype uses rules, not a trained AI model.</p>
+            <div id="agentsDemoResults" class="agent-demo-results" hidden aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Agent Directory -->
+      <section class="section agent-directory" id="agent-directory">
+        <div class="container">
+          <div class="section-heading">
+            <div class="section-tag">
+              <span></span>
+              AGENT DIRECTORY
+            </div>
+
+            <h2>
+              Specialized Intelligence.
+              <span>Unified Protection.</span>
+            </h2>
+
+            <p>
+              Each agent has a dedicated responsibility within the ScamShield AI
+              ecosystem.
+            </p>
+          </div>
+
+          <div class="agent-directory-grid">
+            <!-- Guardian Agent -->
+            <article class="agent-detail-card guardian-card">
+              <div class="agent-detail-top">
+                <div class="agent-detail-icon agent-green">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <span class="agent-number">AGENT 01</span>
+              </div>
+
+              <div class="agent-category">FRAUD DETECTION</div>
+
+              <h2>Guardian Agent</h2>
+
+              <p class="agent-description">
+                The primary fraud analysis agent. Guardian examines submitted
+                evidence, identifies suspicious patterns and generates
+                explainable risk assessments.
+              </p>
+
+              <h4>Core Responsibilities</h4>
+
+              <ul class="agent-responsibilities">
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Analyze suspicious messages and evidence.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Identify potential fraud indicators.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Classify potential fraud categories.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Explain risk scores and warning signals.
+                </li>
+              </ul>
+
+              <div class="agent-output">
+                <span>EXPECTED OUTPUT</span>
+                <p>Fraud category, risk assessment and explainable findings.</p>
+              </div>
+
+              <a href="#screen-detection" data-route="detection" class="agent-action">
+                Explore Fraud Detection
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </article>
+
+            <!-- Intelligence Agent -->
+            <article class="agent-detail-card intelligence-card">
+              <div class="agent-detail-top">
+                <div class="agent-detail-icon agent-blue">
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+
+                <span class="agent-number">AGENT 02</span>
+              </div>
+
+              <div class="agent-category">THREAT INTELLIGENCE</div>
+
+              <h2>Intelligence Agent</h2>
+
+              <p class="agent-description">
+                The evidence intelligence agent extracts useful indicators from
+                submitted evidence and organizes them for further investigation.
+              </p>
+
+              <h4>Core Responsibilities</h4>
+
+              <ul class="agent-responsibilities">
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Extract phone numbers and URLs.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Identify UPI IDs and related indicators.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Organize extracted evidence.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Identify possible relationships between indicators.
+                </li>
+              </ul>
+
+              <div class="agent-output">
+                <span>EXPECTED OUTPUT</span>
+                <p>
+                  Structured indicators and evidence intelligence for review.
+                </p>
+              </div>
+
+              <a href="#screen-intelligence" data-route="intelligence" class="agent-action">
+                Explore Intelligence
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </article>
+
+            <!-- Victim Safety Agent -->
+            <article class="agent-detail-card safety-card">
+              <div class="agent-detail-top">
+                <div class="agent-detail-icon agent-purple">
+                  <i class="fa-solid fa-user-shield"></i>
+                </div>
+
+                <span class="agent-number">AGENT 03</span>
+              </div>
+
+              <div class="agent-category">VICTIM PROTECTION</div>
+
+              <h2>Victim Safety Agent</h2>
+
+              <p class="agent-description">
+                A victim-first assistance agent that provides practical guidance
+                to people facing suspected cyber fraud or financial scams.
+              </p>
+
+              <h4>Core Responsibilities</h4>
+
+              <ul class="agent-responsibilities">
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Provide immediate safety recommendations.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Guide users to preserve digital evidence.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Recommend contacting the bank when relevant.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Explain official cybercrime reporting options.
+                </li>
+              </ul>
+
+              <div class="agent-output">
+                <span>EXPECTED OUTPUT</span>
+                <p>Actionable safety steps and reporting guidance.</p>
+              </div>
+
+              <a href="#screen-detection" data-route="detection" class="agent-action">
+                Explore Safety Support
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </article>
+
+            <!-- Decoy Agent -->
+            <article class="agent-detail-card decoy-card">
+              <div class="agent-detail-top">
+                <div class="agent-detail-icon agent-orange">
+                  <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <span class="agent-number">AGENT 04</span>
+              </div>
+
+              <div class="agent-category">SAFE SIMULATION</div>
+
+              <h2>Decoy Agent</h2>
+
+              <p class="agent-description">
+                A controlled simulation agent designed for cybersecurity
+                awareness and research using synthetic scam scenarios.
+              </p>
+
+              <h4>Core Responsibilities</h4>
+
+              <ul class="agent-responsibilities">
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Generate controlled scam scenarios.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Demonstrate common scam techniques.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Support awareness and research activities.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check"></i>
+                  Keep simulations isolated and safe.
+                </li>
+              </ul>
+
+              <div class="agent-output">
+                <span>EXPECTED OUTPUT</span>
+                <p>Synthetic scenarios and educational simulation results.</p>
+              </div>
+
+              <a href="#screen-decoy-lab" data-route="decoy-lab" class="agent-action">
+                Explore Decoy Lab
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collaboration Section -->
+      <section class="section agent-collaboration">
+        <div class="container">
+          <div class="section-heading">
+            <div class="section-tag">
+              <span></span>
+              COLLABORATIVE INTELLIGENCE
+            </div>
+
+            <h2>
+              One Platform.
+              <span>Four Areas of Expertise.</span>
+            </h2>
+
+            <p>
+              The agents represent different responsibilities in a structured
+              cyber safety workflow.
+            </p>
+          </div>
+
+          <div class="collaboration-flow">
+            <div class="flow-card">
+              <div class="flow-icon agent-green">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <h3>Guardian</h3>
+              <p>Analyzes evidence</p>
+            </div>
+
+            <div class="flow-connector">
+              <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-card">
+              <div class="flow-icon agent-blue">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </div>
+              <h3>Intelligence</h3>
+              <p>Extracts indicators</p>
+            </div>
+
+            <div class="flow-connector">
+              <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-card">
+              <div class="flow-icon agent-purple">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+              <h3>Victim Safety</h3>
+              <p>Provides guidance</p>
+            </div>
+
+            <div class="flow-connector">
+              <i class="fa-solid fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-card">
+              <div class="flow-icon agent-orange">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <h3>Decoy</h3>
+              <p>Safe simulations</p>
+            </div>
+          </div>
+
+          <div class="collaboration-note">
+            <i class="fa-solid fa-circle-info"></i>
+
+            Agent responsibilities describe the intended platform architecture.
+            Actual execution depends on the connected backend and AI services.
+          </div>
+        </div>
+      </section>
+
+      <!-- Security Notice -->
+      <section class="section agent-safety-section">
+        <div class="container">
+          <div class="agent-safety-box">
+            <div class="safety-notice-icon">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+
+            <div class="safety-notice-content">
+              <h3>Security and Responsible AI</h3>
+
+              <p>
+                ScamShield AI is designed to support safer digital interactions.
+                Risk assessments are indicators, not proof of fraud. Never share
+                OTPs, PINs, passwords, CVVs or complete payment credentials.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-analytics" class="app-screen" data-screen="analytics" aria-hidden="true"><div class="analytics-page">
+      <!-- Page Heading -->
+      <section class="analytics-hero">
+        <div class="container">
+          <div class="analytics-heading">
+            <div>
+              <div class="section-tag">
+                <i class="fa-solid fa-chart-line"></i>
+                THREAT INTELLIGENCE
+              </div>
+
+              <h1>Security <span>Analytics</span></h1>
+
+              <p>
+                Understand fraud patterns, monitor threat trends and explore
+                security insights through data-driven analytics.
+              </p>
+            </div>
+
+            <div class="analytics-header-actions">
+              <div class="analytics-live-status">
+                <span class="status-dot"></span>
+                Analytics Overview
+              </div>
+
+              <button
+                class="analytics-refresh-btn"
+                id="refreshAnalytics"
+                type="button"
+              >
+                <i class="fa-solid fa-rotate"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Content -->
+      <section class="analytics-content">
+        <div class="container">
+          <!-- Notice -->
+          <div class="analytics-notice" id="analyticsNotice">
+            <div class="notice-icon">
+              <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+              <strong>Analytics data status</strong>
+
+              <p id="analyticsStatusMessage">
+                Waiting for analytics data from the backend. Charts and reports
+                will appear when the analytics API is available.
+              </p>
+            </div>
+          </div>
+
+          <!-- Overview Cards -->
+          <div class="analytics-section-heading">
+            <div>
+              <h2>Analytics Overview</h2>
+              <p>Key security metrics and detection statistics.</p>
+            </div>
+          </div>
+
+          <div class="analytics-stats-grid">
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+                <span class="stat-icon blue">
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </span>
+
+                <span class="stat-label">Total Analyses</span>
+              </div>
+
+              <h3 id="analyticsTotalAnalyses">--</h3>
+
+              <p>
+                <i class="fa-solid fa-chart-simple"></i>
+                All evidence analyses
+              </p>
+            </article>
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+                <span class="stat-icon red">
+                  <i class="fa-solid fa-shield-virus"></i>
+                </span>
+
+                <span class="stat-label">Threats Identified</span>
+              </div>
+
+              <h3 id="analyticsThreats">--</h3>
+
+              <p>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Potential fraud detections
+              </p>
+            </article>
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+                <span class="stat-icon green">
+                  <i class="fa-solid fa-shield-check"></i>
+                </span>
+
+                <span class="stat-label">Low Risk Cases</span>
+              </div>
+
+              <h3 id="analyticsLowRisk">--</h3>
+
+              <p>
+                <i class="fa-solid fa-circle-check"></i>
+                Classified as low risk
+              </p>
+            </article>
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+                <span class="stat-icon orange">
+                  <i class="fa-solid fa-bolt"></i>
+                </span>
+
+                <span class="stat-label">Critical Cases</span>
+              </div>
+
+              <h3 id="analyticsCritical">--</h3>
+
+              <p>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Require urgent attention
+              </p>
+            </article>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="analytics-section-heading">
+            <div>
+              <h2>Threat Intelligence Insights</h2>
+              <p>Visual overview of risk levels and fraud patterns.</p>
+            </div>
+          </div>
+
+          <div class="analytics-charts-grid">
+            <!-- Risk Distribution -->
+            <article class="analytics-panel">
+              <div class="analytics-panel-header">
+                <div>
+                  <h3>Risk Distribution</h3>
+                  <p>Cases grouped by assessed risk level.</p>
+                </div>
+
+                <span class="panel-icon">
+                  <i class="fa-solid fa-chart-pie"></i>
+                </span>
+              </div>
+
+              <div class="chart-container" id="riskDistributionChart">
+                <div class="chart-empty-state">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <h4>No risk data available</h4>
+                  <p>Risk distribution will appear when data is received.</p>
+                </div>
+              </div>
+
+              <div class="chart-legend">
+                <span>
+                  <i class="legend-dot low"></i>
+                  Low
+                </span>
+
+                <span>
+                  <i class="legend-dot medium"></i>
+                  Medium
+                </span>
+
+                <span>
+                  <i class="legend-dot high"></i>
+                  High
+                </span>
+
+                <span>
+                  <i class="legend-dot critical"></i>
+                  Critical
+                </span>
+              </div>
+            </article>
+
+            <!-- Fraud Categories -->
+            <article class="analytics-panel">
+              <div class="analytics-panel-header">
+                <div>
+                  <h3>Fraud Categories</h3>
+                  <p>Distribution across monitored fraud types.</p>
+                </div>
+
+                <span class="panel-icon">
+                  <i class="fa-solid fa-layer-group"></i>
+                </span>
+              </div>
+
+              <div class="category-chart" id="fraudCategoryChart">
+                <div class="chart-empty-state">
+                  <i class="fa-solid fa-chart-column"></i>
+                  <h4>No category data available</h4>
+                  <p>Fraud category statistics will appear here.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Trend Analysis -->
+          <div class="analytics-section-heading">
+            <div>
+              <h2>Threat Activity Trends</h2>
+              <p>Monitor changes in detected threats over time.</p>
+            </div>
+          </div>
+
+          <article class="analytics-panel trend-panel">
+            <div class="analytics-panel-header">
+              <div>
+                <h3>Detection Activity</h3>
+                <p>Historical analysis activity and threat patterns.</p>
+              </div>
+
+              <span class="panel-icon">
+                <i class="fa-solid fa-chart-area"></i>
+              </span>
+            </div>
+
+            <div class="trend-chart-container" id="threatTrendChart">
+              <div class="chart-empty-state">
+                <i class="fa-solid fa-chart-line"></i>
+                <h4>Trend data unavailable</h4>
+                <p>
+                  Historical detection trends will be displayed after analytics
+                  data is connected.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Fraud Category Breakdown -->
+          <div class="analytics-section-heading">
+            <div>
+              <h2>Fraud Intelligence Breakdown</h2>
+              <p>Insights across the five monitored fraud categories.</p>
+            </div>
+          </div>
+
+          <div class="fraud-breakdown-grid">
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+
+              <div>
+                <h3>Investment Scams</h3>
+                <p>Fraudulent investment schemes and unrealistic returns.</p>
+              </div>
+
+              <strong id="investmentAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest">
+                <i class="fa-solid fa-user-lock"></i>
+              </div>
+
+              <div>
+                <h3>Digital Arrest</h3>
+                <p>Threats, impersonation and coercive payment demands.</p>
+              </div>
+
+              <strong id="arrestAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+
+              <div>
+                <h3>Credit Card Fraud</h3>
+                <p>Suspicious card-related activity and payment scams.</p>
+              </div>
+
+              <strong id="cardAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon sextortion">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+
+              <div>
+                <h3>Sextortion</h3>
+                <p>Online blackmail and threats involving private material.</p>
+              </div>
+
+              <strong id="sextortionAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon ecommerce">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+
+              <div>
+                <h3>E-commerce Fraud</h3>
+                <p>Fake listings, payment deception and shopping scams.</p>
+              </div>
+
+              <strong id="ecommerceAnalyticsCount">--</strong>
+            </article>
+          </div>
+
+          <!-- Recent Analytics Activity -->
+          <div class="analytics-section-heading">
+            <div>
+              <h2>Recent Analysis Activity</h2>
+              <p>Latest evidence analysis records.</p>
+            </div>
+
+            <a href="#screen-reports" data-route="reports" class="analytics-view-all">
+              View Reports
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <article class="analytics-panel activity-panel">
+            <div class="activity-table-wrapper">
+              <table class="analytics-table">
+                <thead>
+                  <tr>
+                    <th>Analysis ID</th>
+                    <th>Evidence Type</th>
+                    <th>Fraud Category</th>
+                    <th>Risk Score</th>
+                    <th>Risk Level</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+
+                <tbody id="analyticsActivityBody">
+                  <tr>
+                    <td colspan="6">
+                      <div class="table-empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <strong>No analysis records found</strong>
+                        <span>
+                          Recent activity will appear here when records are
+                          available.
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <!-- Disclaimer -->
+          <div class="analytics-disclaimer">
+            <div class="disclaimer-icon">
+              <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+              <h4>Important Information</h4>
+
+              <p>
+                Analytics represent recorded platform activity and automated
+                risk assessments. A risk score is an indicator for
+                investigation, not proof of fraud. Always verify suspicious
+                activity through official channels.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-dashboard" class="app-screen" data-screen="dashboard" aria-hidden="true"><div class="dashboard-page">
+
+  <!-- ==================================================
+       DASHBOARD HERO
+  =================================================== -->
+
+  <section class="dashboard-hero">
+    <div class="container">
+
+      <div class="dashboard-heading">
+        <div>
+          <span class="section-tag">
+            <i class="fa-solid fa-chart-line"></i>
+            SECURITY COMMAND CENTER
+          </span>
+
+          <h1>Security <span>Dashboard</span></h1>
+
+          <p>
+            Monitor potential threats, review analysis activity and access
+            your protection tools.
+          </p>
+        </div>
+
+        <div class="dashboard-heading-actions">
+          <span class="dashboard-date" id="dashboardDate">
+            <i class="fa-regular fa-calendar"></i>
+            Loading date...
+          </span>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="refreshDashboard"
+          >
+            <i class="fa-solid fa-rotate"></i>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- SYSTEM STATUS -->
+      <div class="system-status-bar">
+        <div class="system-status-left">
+          <span class="system-status-indicator"></span>
+
+          <div>
+            <strong>Platform Status</strong>
+            <span id="platformStatus">Checking connection...</span>
+          </div>
+        </div>
+
+        <div class="system-status-right">
+          <span>
+            <i class="fa-solid fa-shield-halved"></i>
+            ScamShield AI
+          </span>
+
+          <span class="system-version">Prototype v1.0</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================================================
+       SECURITY STATISTICS
+  =================================================== -->
+
+  <section class="section dashboard-overview">
+    <div class="container">
+
+      <div class="dashboard-section-heading">
+        <div>
+          <span class="section-tag">OVERVIEW</span>
+          <h2>Security <span>Insights</span></h2>
+        </div>
+
+        <span class="data-label">
+          <i class="fa-solid fa-database"></i>
+          <span id="statisticsStatus">Awaiting data</span>
+        </span>
+      </div>
+
+      <div class="dashboard-stats-grid">
+
+        <!-- TOTAL ANALYSES -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon blue">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="totalAnalyses">--</h3>
+            <p>Total Analyses</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-chart-simple"></i>
+            Evidence analysis records
+          </div>
+        </article>
+
+        <!-- POTENTIAL THREATS -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon red">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="threatsDetected">--</h3>
+            <p>Potential Threats</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-shield-virus"></i>
+            High and critical risk results
+          </div>
+        </article>
+
+        <!-- LOW RISK RESULTS -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon green">
+              <i class="fa-solid fa-shield-check"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="lowRiskResults">--</h3>
+            <p>Low Risk Results</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-circle-check"></i>
+            Low risk assessments
+          </div>
+        </article>
+
+        <!-- HIGH PRIORITY CASES -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon orange">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="highRiskResults">--</h3>
+            <p>High Priority Cases</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            High and critical assessments
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       RISK DISTRIBUTION AND FRAUD CATEGORIES
+  =================================================== -->
+
+  <section class="section dashboard-main-section">
+    <div class="container">
+
+      <div class="dashboard-main-grid">
+
+        <!-- RISK DISTRIBUTION -->
+        <div class="dashboard-panel risk-distribution-panel">
+
+          <div class="panel-heading">
+            <div>
+              <span class="panel-label">RISK MONITORING</span>
+              <h3>Risk Distribution</h3>
+            </div>
+
+            <span class="panel-icon">
+              <i class="fa-solid fa-chart-pie"></i>
+            </span>
+          </div>
+
+          <div class="risk-chart-container">
+
+            <div class="risk-chart" id="riskChart">
+              <div class="risk-chart-inner">
+                <strong id="totalRiskCases">--</strong>
+                <span>Total Cases</span>
+              </div>
+            </div>
+
+            <div class="risk-legend">
+
+              <div class="legend-item">
+                <span class="legend-color low"></span>
+                <span>Low</span>
+                <strong id="lowRiskCount">--</strong>
+              </div>
+
+              <div class="legend-item">
+                <span class="legend-color medium"></span>
+                <span>Medium</span>
+                <strong id="mediumRiskCount">--</strong>
+              </div>
+
+              <div class="legend-item">
+                <span class="legend-color high"></span>
+                <span>High</span>
+                <strong id="highRiskCount">--</strong>
+              </div>
+
+              <div class="legend-item">
+                <span class="legend-color critical"></span>
+                <span>Critical</span>
+                <strong id="criticalRiskCount">--</strong>
+              </div>
+
+            </div>
+          </div>
+
+          <p class="panel-note">
+            Risk distribution will appear when analysis data becomes
+            available.
+          </p>
+
+        </div>
+
+        <!-- FRAUD CATEGORIES -->
+        <div class="dashboard-panel fraud-category-panel">
+
+          <div class="panel-heading">
+            <div>
+              <span class="panel-label">THREAT CATEGORIES</span>
+              <h3>Fraud Breakdown</h3>
+            </div>
+
+            <span class="panel-icon">
+              <i class="fa-solid fa-layer-group"></i>
+            </span>
+          </div>
+
+          <div class="fraud-category-list">
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon investment">
+                  <i class="fa-solid fa-chart-line"></i>
+                </span>
+
+                <span>Investment Scams</span>
+              </div>
+
+              <strong id="investmentCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon arrest">
+                  <i class="fa-solid fa-user-lock"></i>
+                </span>
+
+                <span>Digital Arrest</span>
+              </div>
+
+              <strong id="digitalArrestCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon card">
+                  <i class="fa-solid fa-credit-card"></i>
+                </span>
+
+                <span>Credit Card Fraud</span>
+              </div>
+
+              <strong id="creditCardCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon sextortion">
+                  <i class="fa-solid fa-user-shield"></i>
+                </span>
+
+                <span>Sextortion</span>
+              </div>
+
+              <strong id="sextortionCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon ecommerce">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </span>
+
+                <span>E-commerce Fraud</span>
+              </div>
+
+              <strong id="ecommerceCount">--</strong>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       RECENT ANALYSIS ACTIVITY
+  =================================================== -->
+
+  <section class="section dashboard-activity-section">
+    <div class="container">
+
+      <div class="dashboard-panel activity-panel">
+
+        <div class="panel-heading">
+          <div>
+            <span class="panel-label">MONITORING HISTORY</span>
+            <h3>Recent Analysis Activity</h3>
+          </div>
+
+          <a href="#screen-reports" data-route="reports" class="panel-link">
+            View Reports
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="activity-table-wrapper">
+          <table class="activity-table">
+
+            <thead>
+              <tr>
+                <th>Evidence ID</th>
+                <th>Evidence Type</th>
+                <th>Fraud Category</th>
+                <th>Risk Score</th>
+                <th>Risk Level</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody id="activityTableBody">
+              <tr>
+                <td colspan="6" class="empty-activity">
+                  <i class="fa-solid fa-folder-open"></i>
+
+                  <strong>No analysis records yet</strong>
+
+                  <span>
+                    Submitted evidence will appear here after backend
+                    integration.
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       AI AGENT OVERVIEW
+  =================================================== -->
+
+  <section class="section dashboard-agents-section">
+    <div class="container">
+
+      <div class="dashboard-section-heading">
+        <div>
+          <span class="section-tag">MULTI-AGENT SYSTEM</span>
+          <h2>AI Agent <span>Overview</span></h2>
+        </div>
+
+        <a href="#screen-agents" data-route="agents" class="panel-link">
+          Explore Agents
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="dashboard-agents-grid">
+
+        <!-- GUARDIAN AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon guardian">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Guardian Agent</h3>
+            <p>Fraud detection and risk assessment.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+        <!-- INTELLIGENCE AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon intelligence">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Intelligence Agent</h3>
+            <p>Indicator extraction and correlation.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+        <!-- VICTIM SAFETY AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon safety">
+            <i class="fa-solid fa-heart-circle-check"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Victim Safety Agent</h3>
+            <p>Victim guidance and safety recommendations.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+        <!-- DECOY AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon decoy">
+            <i class="fa-solid fa-user-secret"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Decoy Agent</h3>
+            <p>Controlled scam-baiting simulations.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       QUICK ACCESS PROTECTION TOOLS
+  =================================================== -->
+
+  <section class="section dashboard-actions-section">
+    <div class="container">
+
+      <div class="dashboard-section-heading">
+        <div>
+          <span class="section-tag">QUICK ACCESS</span>
+          <h2>Protection <span>Tools</span></h2>
+        </div>
+      </div>
+
+      <div class="dashboard-actions-grid">
+
+        <!-- DETECTION -->
+        <a href="#screen-detection" data-route="detection" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </span>
+
+          <div>
+            <h3>Analyze Evidence</h3>
+            <p>Examine suspicious messages, URLs and calls.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- INTELLIGENCE -->
+        <a href="#screen-intelligence" data-route="intelligence" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-brain"></i>
+          </span>
+
+          <div>
+            <h3>Threat Intelligence</h3>
+            <p>Explore potential fraud indicators.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- DECOY LAB -->
+        <a href="#screen-decoy-lab" data-route="decoy-lab" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-user-secret"></i>
+          </span>
+
+          <div>
+            <h3>Decoy Laboratory</h3>
+            <p>Explore safe and controlled simulations.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- REPORTS -->
+        <a href="#screen-reports" data-route="reports" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-file-shield"></i>
+          </span>
+
+          <div>
+            <h3>Analysis Reports</h3>
+            <p>Review available analysis records.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       EMERGENCY CYBER FRAUD SUPPORT
+  =================================================== -->
+
+  <section class="section emergency-support-section">
+    <div class="container">
+
+      <div class="emergency-support-card">
+
+        <div class="emergency-support-icon">
+          <i class="fa-solid fa-phone-volume"></i>
+        </div>
+
+        <div class="emergency-support-content">
+          <span>IMMEDIATE CYBER FRAUD SUPPORT</span>
+
+          <h2>Already Lost Money to Cyber Fraud?</h2>
+
+          <p>
+            Contact India's cyber financial fraud helpline immediately and
+            report the incident through the official government portal.
+          </p>
+        </div>
+
+        <div class="emergency-support-actions">
+
+          <a href="tel:1930" class="btn btn-emergency">
+            <i class="fa-solid fa-phone"></i>
+            Call 1930
+          </a>
+
+          <a
+            href="https://cybercrime.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-secondary"
+          >
+            Report Online
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div></section>
+<section id="screen-decoy-lab" class="app-screen" data-screen="decoy-lab" aria-hidden="true"><div class="decoy-page">
+      <!-- Hero Section -->
+      <section class="decoy-hero">
+        <div class="container">
+          <div class="decoy-hero-content">
+            <div class="decoy-hero-text">
+              <div class="decoy-eyebrow">
+                <span class="decoy-live-dot"></span>
+                SAFE SIMULATION ENVIRONMENT
+              </div>
+
+              <h1>
+                Welcome to the
+                <span>Decoy Lab</span>
+              </h1>
+
+              <p>
+                Explore controlled fraud simulations, understand scammer tactics
+                and learn how to identify suspicious communication without
+                interacting with real scammers.
+              </p>
+
+              <div class="decoy-hero-actions">
+                <a href="#simulation" class="btn btn-primary">
+                  <i class="fa-solid fa-flask"></i>
+                  Start Simulation
+                </a>
+
+                <a href="#safety" class="btn btn-secondary">
+                  <i class="fa-solid fa-shield-halved"></i>
+                  Safety Guidelines
+                </a>
+              </div>
+
+              <div class="decoy-hero-note">
+                <i class="fa-solid fa-lock"></i>
+                100% controlled demonstration environment
+              </div>
+            </div>
+
+            <div class="decoy-hero-visual">
+              <div class="decoy-visual-card">
+                <div class="decoy-visual-header">
+                  <div>
+                    <span class="decoy-visual-label">SIMULATION STATUS</span>
+                    <h3>Decoy Environment</h3>
+                  </div>
+
+                  <span class="decoy-status">
+                    <span></span>
+                    Protected
+                  </span>
+                </div>
+
+                <div class="decoy-visual-icon">
+                  <i class="fa-solid fa-user-secret"></i>
+                </div>
+
+                <div class="decoy-visual-info">
+                  <div>
+                    <span>Environment</span>
+                    <strong>Isolated Simulation</strong>
+                  </div>
+
+                  <div>
+                    <span>External Interaction</span>
+                    <strong>Disabled</strong>
+                  </div>
+
+                  <div>
+                    <span>Data Mode</span>
+                    <strong>Synthetic Examples</strong>
+                  </div>
+                </div>
+
+                <div class="decoy-visual-footer">
+                  <i class="fa-solid fa-shield-check"></i>
+                  No real-world contact enabled
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Simulation Overview -->
+      <section class="decoy-overview">
+        <div class="container">
+          <div class="decoy-section-heading">
+            <span class="section-tag">LEARN THROUGH SIMULATION</span>
+
+            <h2>Understand the <span>Scammer's Playbook</span></h2>
+
+            <p>
+              Study common fraud patterns through fictional scenarios designed
+              for awareness and prevention.
+            </p>
+          </div>
+
+          <div class="decoy-scenario-grid">
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon red">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+
+              <span class="scenario-tag">FINANCIAL FRAUD</span>
+
+              <h3>Investment Scam</h3>
+
+              <p>
+                Understand fake investment opportunities, unrealistic returns
+                and pressure-based financial manipulation.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="investment"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon orange">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+
+              <span class="scenario-tag">IMPERSONATION</span>
+
+              <h3>Digital Arrest Scam</h3>
+
+              <p>
+                Learn how fraudsters use fake authority, threats and
+                psychological pressure to manipulate victims.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="digital-arrest"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon blue">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+
+              <span class="scenario-tag">PAYMENT FRAUD</span>
+
+              <h3>Credit Card Fraud</h3>
+
+              <p>
+                Identify suspicious payment requests, fake verification messages
+                and credential theft attempts.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="credit-card"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon purple">
+                <i class="fa-solid fa-message"></i>
+              </div>
+
+              <span class="scenario-tag">ONLINE EXTORTION</span>
+
+              <h3>Sextortion Scam</h3>
+
+              <p>
+                Recognize blackmail patterns, intimidation tactics and
+                suspicious demands involving private information.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="sextortion"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon green">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+
+              <span class="scenario-tag">ONLINE SHOPPING</span>
+
+              <h3>E-commerce Fraud</h3>
+
+              <p>
+                Study fake shopping websites, fraudulent offers and suspicious
+                payment or delivery requests.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="ecommerce"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Simulation Workspace -->
+      <section class="decoy-simulation-section" id="simulation">
+        <div class="container">
+          <div class="decoy-section-heading">
+            <span class="section-tag">INTERACTIVE LEARNING</span>
+
+            <h2>Simulation <span>Workspace</span></h2>
+
+            <p>
+              Select a fictional scenario and examine its suspicious
+              communication patterns.
+            </p>
+          </div>
+
+          <div class="decoy-workspace">
+            <!-- Scenario Selector -->
+            <div class="decoy-workspace-sidebar">
+              <div class="workspace-sidebar-heading">
+                <i class="fa-solid fa-layer-group"></i>
+                <h3>Scenarios</h3>
+              </div>
+
+              <button
+                class="workspace-scenario active"
+                type="button"
+                data-scenario="investment"
+              >
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Investment Scam</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="digital-arrest"
+              >
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Digital Arrest</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="credit-card"
+              >
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Credit Card Fraud</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="sextortion"
+              >
+                <i class="fa-solid fa-envelope"></i>
+                <span>Sextortion</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="ecommerce"
+              >
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>E-commerce Fraud</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <div class="workspace-sidebar-note">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                  All scenarios use fictional data and are isolated from real
+                  communication systems.
+                </p>
+              </div>
+            </div>
+
+            <!-- Simulation Main Area -->
+            <div class="decoy-workspace-main">
+              <div class="simulation-header">
+                <div>
+                  <span class="simulation-label">CURRENT SCENARIO</span>
+                  <h3 id="scenarioTitle">Investment Scam</h3>
+                </div>
+
+                <span class="simulation-badge">
+                  <i class="fa-solid fa-flask"></i>
+                  SIMULATED
+                </span>
+              </div>
+
+              <!-- Message Preview -->
+              <div class="simulation-message-area">
+                <div class="simulation-message-header">
+                  <div class="simulation-avatar">
+                    <i class="fa-solid fa-user-secret"></i>
+                  </div>
+
+                  <div>
+                    <strong id="scenarioSender"
+                      >Unknown Investment Group</strong
+                    >
+                    <span>Fictional scenario</span>
+                  </div>
+
+                  <i class="fa-solid fa-ellipsis"></i>
+                </div>
+
+                <div class="simulation-message-body">
+                  <span class="message-time">SIMULATED MESSAGE</span>
+
+                  <p id="scenarioMessage">
+                    Congratulations! You have been selected for an exclusive
+                    investment opportunity promising unusually high returns in a
+                    very short period. Contact our fictional representative to
+                    learn more.
+                  </p>
+
+                  <div class="simulation-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Fictional example — not a real message.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Consent-gated fictional multi-turn chat preview -->
+              <section class="decoy-chat-panel" aria-labelledby="decoyChatTitle">
+                <div class="decoy-chat-heading">
+                  <div>
+                    <span class="simulation-label">SCRIPTED DEMO · NO REAL CONTACT</span>
+                    <h4 id="decoyChatTitle">Controlled conversation preview</h4>
+                  </div>
+                  <span class="simulation-badge"><i class="fa-solid fa-shield-halved"></i> LOCAL SIMULATION</span>
+                </div>
+                <label class="decoy-consent-row">
+                  <input type="checkbox" id="decoyConsent" />
+                  <span>I understand this is a fictional practice chat. Nothing will be sent to a real person.</span>
+                </label>
+                <div class="decoy-chat-log" id="decoyChatLog" aria-live="polite" aria-label="Simulation conversation">
+                  <p class="decoy-chat-empty">Give consent and start the simulation to begin.</p>
+                </div>
+                <div class="decoy-chat-controls">
+                  <textarea id="decoyScammerInput" rows="2" maxlength="1000" placeholder="Enter a simulated scammer message…" aria-label="Simulated scammer message" disabled></textarea>
+                  <div class="decoy-chat-buttons">
+                    <button class="btn btn-primary" type="button" id="decoyStartButton" disabled>Start simulation</button>
+                    <button class="btn btn-primary" type="button" id="decoySendButton" disabled>Send simulated message</button>
+                    <button class="btn btn-secondary" type="button" id="decoyEndButton" disabled>End simulation</button>
+                  </div>
+                </div>
+                <div class="decoy-extracted" id="decoyExtracted" hidden>
+                  <b>Clues in this fictional chat</b>
+                  <div id="decoyIndicatorList"></div>
+                  <small>All extracted identifiers are unverified demo data.</small>
+                </div>
+                <p class="decoy-chat-status" id="decoyChatStatus" role="status">Simulation is stopped.</p>
+              </section>
+
+              <!-- Analysis Controls -->
+              <div class="simulation-analysis">
+                <div class="simulation-analysis-heading">
+                  <div>
+                    <h4>Identify Suspicious Indicators</h4>
+
+                    <p>
+                      Review the fictional message and identify warning signs.
+                    </p>
+                  </div>
+
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+
+                <div class="simulation-options" id="simulationOptions">
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="urgency"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Unusual urgency</strong>
+                      <small>Pressure to act immediately.</small>
+                    </span>
+                  </label>
+
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="guaranteed-returns"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Unrealistic promises</strong>
+                      <small>Guaranteed or unusually high returns.</small>
+                    </span>
+                  </label>
+
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="suspicious-contact"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Suspicious contact</strong>
+                      <small>Unverified representatives or identities.</small>
+                    </span>
+                  </label>
+
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="payment-pressure"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Payment pressure</strong>
+                      <small>Requests to transfer money or credentials.</small>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="simulation-actions">
+                  <button
+                    type="button"
+                    class="simulation-submit-btn"
+                    id="checkSimulation"
+                  >
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Check My Analysis
+                  </button>
+
+                  <button
+                    type="button"
+                    class="simulation-reset-btn"
+                    id="resetSimulation"
+                  >
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Reset
+                  </button>
+                </div>
+
+                <!-- Simulation Result -->
+                <div
+                  class="simulation-result"
+                  id="simulationResult"
+                  aria-live="polite"
+                  hidden
+                >
+                  <div class="simulation-result-icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                  </div>
+
+                  <div>
+                    <h4 id="simulationResultTitle">Simulation Results</h4>
+
+                    <p id="simulationResultMessage">
+                      Your analysis results will appear here.
+                    </p>
+
+                    <div class="simulation-score">
+                      <span>Detection Score</span>
+                      <strong id="simulationScore">0%</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Learning Outcomes -->
+      <section class="decoy-learning">
+        <div class="container">
+          <div class="decoy-section-heading">
+            <span class="section-tag">BUILD CYBER AWARENESS</span>
+
+            <h2>What You Will <span>Learn</span></h2>
+          </div>
+
+          <div class="decoy-learning-grid">
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-eye"></i>
+              <h3>Recognize Red Flags</h3>
+              <p>
+                Understand suspicious language, fake promises and manipulation
+                techniques.
+              </p>
+            </article>
+
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-brain"></i>
+              <h3>Understand Tactics</h3>
+              <p>
+                Learn how social engineering techniques influence victims into
+                making unsafe decisions.
+              </p>
+            </article>
+
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-user-shield"></i>
+              <h3>Practice Safe Responses</h3>
+              <p>
+                Learn how to avoid suspicious links, protect credentials and
+                preserve evidence.
+              </p>
+            </article>
+
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <h3>Improve Awareness</h3>
+              <p>
+                Build practical knowledge to recognize and prevent common
+                digital fraud attempts.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Safety Guidelines -->
+      <section class="decoy-safety-section" id="safety">
+        <div class="container">
+          <div class="decoy-safety-card">
+            <div class="decoy-safety-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="decoy-safety-content">
+              <span class="section-tag">RESPONSIBLE SIMULATION</span>
+
+              <h2>Safety Comes <span>First</span></h2>
+
+              <p>
+                ScamShield AI Decoy Lab is designed exclusively for
+                cybersecurity awareness and controlled educational
+                demonstrations.
+              </p>
+
+              <ul>
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Uses fictional scenarios and synthetic data.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Does not contact real scammers or suspicious accounts.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Does not perform unauthorized access or surveillance.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Never requests OTPs, PINs, passwords or CVVs.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Encourages lawful reporting and victim protection.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Emergency CTA -->
+      <section class="decoy-emergency">
+        <div class="container">
+          <div class="decoy-emergency-card">
+            <div>
+              <span class="section-tag">NEED REAL-WORLD HELP?</span>
+
+              <h2>Report Cyber Fraud. <span>Act Quickly.</span></h2>
+
+              <p>
+                If you have experienced financial cyber fraud in India, contact
+                the national cybercrime helpline immediately.
+              </p>
+            </div>
+
+            <div class="decoy-emergency-actions">
+              <a href="tel:1930" class="btn btn-primary">
+                <i class="fa-solid fa-phone"></i>
+                Call 1930
+              </a>
+
+              <a
+                href="https://cybercrime.gov.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-secondary"
+              >
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                Report Online
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-detection" class="app-screen" data-screen="detection" aria-hidden="true"><div>
+      <!-- DETECTION HERO -->
+      <section class="detection-hero">
+        <div class="container">
+          <div class="detection-hero-content">
+            <div class="section-tag">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+              AI-POWERED FRAUD ANALYSIS
+            </div>
+
+            <h1>
+              Detect Threats.
+              <span>Stay Protected.</span>
+            </h1>
+
+            <p>
+              Analyze suspicious messages, URLs, call transcripts and other
+              evidence using the ScamShield AI detection platform.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DETECTION WORKSPACE -->
+      <section class="detection-workspace section">
+        <div class="container">
+          <div class="detection-layout">
+            <!-- LEFT PANEL -->
+            <div class="detection-main">
+              <div class="detection-panel">
+                <div class="panel-heading">
+                  <div>
+                    <span class="panel-label">ANALYSIS WORKSPACE</span>
+                    <h2>Submit Evidence</h2>
+                    <p>
+                      Select an evidence type and provide the information you
+                      want to analyze.
+                    </p>
+                  </div>
+
+                  <div class="panel-status">
+                    <span class="status-dot"></span>
+                    Ready
+                  </div>
+                </div>
+
+                <!-- EVIDENCE TYPE -->
+                <div class="evidence-types">
+                  <button
+                    class="evidence-type active"
+                    type="button"
+                    data-evidence="message"
+                    aria-pressed="true"
+                  >
+                    <i class="fa-solid fa-comment-sms"></i>
+                    <span>Message</span>
+                  </button>
+
+                  <button
+                    class="evidence-type"
+                    type="button"
+                    data-evidence="url"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-link"></i>
+                    <span>URL</span>
+                  </button>
+
+                  <button
+                    class="evidence-type"
+                    type="button"
+                    data-evidence="call"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-phone"></i>
+                    <span>Call Transcript</span>
+                  </button>
+
+                  <button
+                    class="evidence-type"
+                    type="button"
+                    data-evidence="transaction"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Transaction</span>
+                  </button>
+                </div>
+
+                <!-- MESSAGE INPUT -->
+                <div
+                  class="evidence-form active"
+                  id="messageForm"
+                  data-form="message"
+                >
+                  <label for="messageInput"> Suspicious Message </label>
+
+                  <textarea
+                    id="messageInput"
+                    placeholder="Paste the suspicious SMS, WhatsApp message or email content here..."
+                    rows="8"
+                    maxlength="10000"
+                  ></textarea>
+
+                  <div class="input-footer">
+                    <span>
+                      <i class="fa-solid fa-shield-halved"></i>
+                      Your sensitive credentials are not required.
+                    </span>
+
+                    <span id="messageCount">0 / 10000</span>
+                  </div>
+                </div>
+
+                <!-- URL INPUT -->
+                <div class="evidence-form" id="urlForm" data-form="url" hidden>
+                  <label for="urlInput"> Suspicious Website URL </label>
+
+                  <div class="input-with-icon">
+                    <i class="fa-solid fa-globe"></i>
+
+                    <input
+                      type="url"
+                      id="urlInput"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+
+                  <div class="input-footer">
+                    <span>
+                      <i class="fa-solid fa-circle-info"></i>
+                      Do not open suspicious links.
+                    </span>
+                  </div>
+                </div>
+
+                <!-- CALL TRANSCRIPT INPUT -->
+                <div
+                  class="evidence-form"
+                  id="callForm"
+                  data-form="call"
+                  hidden
+                >
+                  <label for="callInput"> Call Transcript </label>
+
+                  <textarea
+                    id="callInput"
+                    placeholder="Paste the call transcript here. Example: The caller claimed to be from a government department and demanded an immediate payment..."
+                    rows="8"
+                    maxlength="15000"
+                  ></textarea>
+
+                  <div class="input-footer">
+                    <span>
+                      <i class="fa-solid fa-microphone"></i>
+                      Transcript-based scam intent analysis.
+                    </span>
+
+                    <span id="callCount">0 / 15000</span>
+                  </div>
+                </div>
+
+                <!-- TRANSACTION INPUT -->
+                <div
+                  class="evidence-form"
+                  id="transactionForm"
+                  data-form="transaction"
+                  hidden
+                >
+                  <label for="transactionInput"> Transaction Details </label>
+
+                  <textarea
+                    id="transactionInput"
+                    placeholder="Describe the suspicious transaction. Include only non-sensitive details such as transaction amount, date and payment method. Do not enter PIN, OTP, CVV or passwords."
+                    rows="8"
+                    maxlength="10000"
+                  ></textarea>
+
+                  <div class="input-footer">
+                    <span>
+                      <i class="fa-solid fa-lock"></i>
+                      Never enter banking credentials.
+                    </span>
+
+                    <span id="transactionCount">0 / 10000</span>
+                  </div>
+                </div>
+
+                <!-- ANALYSIS OPTIONS -->
+                <div class="analysis-options">
+                  <div class="analysis-option">
+                    <div class="option-icon">
+                      <i class="fa-solid fa-brain"></i>
+                    </div>
+
+                    <div>
+                      <h4>Guardian Analysis</h4>
+                      <p>Scam classification and risk assessment</p>
+                    </div>
+
+                    <span class="option-indicator">
+                      <i class="fa-solid fa-check"></i>
+                    </span>
+                  </div>
+
+                  <div class="analysis-option">
+                    <div class="option-icon">
+                      <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <div>
+                      <h4>Intelligence Analysis</h4>
+                      <p>Extract potential fraud indicators</p>
+                    </div>
+
+                    <span class="option-indicator">
+                      <i class="fa-solid fa-check"></i>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="detection-actions">
+                  <button type="button" class="btn btn-primary" id="analyzeBtn">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Analyze Evidence
+                  </button>
+
+                  <button type="button" class="btn btn-secondary" id="clearBtn">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Clear
+                  </button>
+                </div>
+
+                <div
+                  class="analysis-message"
+                  id="analysisMessage"
+                  role="status"
+                  aria-live="polite"
+                  hidden
+                ></div>
+              </div>
+
+              <!-- RESULTS PANEL -->
+              <div class="detection-results" id="detectionResults" hidden>
+                <div class="results-heading">
+                  <div>
+                    <span class="panel-label"> ANALYSIS REPORT </span>
+
+                    <h2>Detection Results</h2>
+                  </div>
+
+                  <span class="result-status" id="resultStatus"> Pending </span>
+                </div>
+
+                <!-- RISK SCORE -->
+                <div class="risk-result-card">
+                  <div class="risk-score-circle" id="riskScoreCircle">
+                    <div class="risk-score-inner">
+                      <strong id="riskScore">--</strong>
+                      <span>RISK SCORE</span>
+                    </div>
+                  </div>
+
+                  <div class="risk-result-info">
+                    <span>Overall Risk Level</span>
+
+                    <h3 id="riskLevel">Awaiting Analysis</h3>
+
+                    <p id="riskDescription">
+                      Submit evidence to receive an explainable risk assessment.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- FRAUD CATEGORY -->
+                <div class="result-section">
+                  <h3>
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Fraud Classification
+                  </h3>
+
+                  <p id="fraudCategory">Not classified yet.</p>
+                </div>
+
+                <!-- EXPLANATION -->
+                <div class="result-section">
+                  <h3>
+                    <i class="fa-solid fa-lightbulb"></i>
+                    Analysis Explanation
+                  </h3>
+
+                  <p id="riskExplanation">
+                    Analysis explanation will appear here.
+                  </p>
+                </div>
+
+                <!-- INDICATORS -->
+                <div class="result-section">
+                  <h3>
+                    <i class="fa-solid fa-fingerprint"></i>
+                    Potential Indicators
+                  </h3>
+
+                  <div class="indicator-list" id="indicatorList">
+                    <p>No indicators extracted yet.</p>
+                  </div>
+                </div>
+
+                <div class="result-section">
+                  <h3><i class="fa-solid fa-heart-circle-check"></i> Safety guidance</h3>
+                  <ul id="safetyGuidance" class="safety-guidance-list">
+                    <li>Pause before replying, clicking, or transferring money.</li>
+                    <li>Never share OTPs, PINs, passwords, or full card details.</li>
+                    <li>Verify through an official contact you find independently.</li>
+                  </ul>
+                </div>
+
+                <div class="classification-feedback" id="classificationFeedbackPanel" hidden>
+                  <label for="classificationFeedbackSelect">Was this assessment useful?</label>
+                  <select id="classificationFeedbackSelect">
+                    <option value="needs_review">I want a human review</option>
+                    <option value="possible_false_positive">This may be a false positive</option>
+                    <option value="category_correction_requested">The category seems wrong</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary" id="submitClassificationFeedback">Save feedback</button>
+                  <span id="classificationFeedbackStatus" role="status"></span>
+                </div>
+
+                <!-- SAFETY -->
+                <div class="result-safety-note">
+                  <i class="fa-solid fa-circle-info"></i>
+
+                  <p>
+                    This is a rule-based risk assessment, not proof of fraud.
+                    Extracted identifiers are unverified clues; verify through
+                    official channels before acting.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT SIDEBAR -->
+            <aside class="detection-sidebar">
+              <!-- SUPPORTED INPUTS -->
+              <div class="sidebar-card">
+                <div class="sidebar-card-heading">
+                  <i class="fa-solid fa-file-shield"></i>
+                  <h3>Supported Evidence</h3>
+                </div>
+
+                <div class="supported-item">
+                  <i class="fa-solid fa-comment-sms"></i>
+                  <span>SMS & Chat Messages</span>
+                </div>
+
+                <div class="supported-item">
+                  <i class="fa-solid fa-link"></i>
+                  <span>Suspicious URLs</span>
+                </div>
+
+                <div class="supported-item">
+                  <i class="fa-solid fa-phone"></i>
+                  <span>Call Transcripts</span>
+                </div>
+
+                <div class="supported-item">
+                  <i class="fa-solid fa-money-bill-transfer"></i>
+                  <span>Transaction Details</span>
+                </div>
+              </div>
+
+              <!-- RISK LEVELS -->
+              <div class="sidebar-card">
+                <div class="sidebar-card-heading">
+                  <i class="fa-solid fa-gauge-high"></i>
+                  <h3>Risk Classification</h3>
+                </div>
+
+                <div class="risk-level-item">
+                  <span class="risk-color low"></span>
+
+                  <div>
+                    <h4>Low Risk</h4>
+                    <p>0 – 24</p>
+                  </div>
+                </div>
+
+                <div class="risk-level-item">
+                  <span class="risk-color medium"></span>
+
+                  <div>
+                    <h4>Medium Risk</h4>
+                    <p>25 – 49</p>
+                  </div>
+                </div>
+
+                <div class="risk-level-item">
+                  <span class="risk-color high"></span>
+
+                  <div>
+                    <h4>High Risk</h4>
+                    <p>50 – 74</p>
+                  </div>
+                </div>
+
+                <div class="risk-level-item">
+                  <span class="risk-color critical"></span>
+
+                  <div>
+                    <h4>Critical Risk</h4>
+                    <p>75 – 100</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- EMERGENCY HELP -->
+              <div class="sidebar-card emergency-card">
+                <div class="emergency-icon">
+                  <i class="fa-solid fa-phone-volume"></i>
+                </div>
+
+                <h3>Need Immediate Help?</h3>
+
+                <p>
+                  If you have lost money due to cyber fraud, contact the
+                  official cybercrime helpline.
+                </p>
+
+                <a href="tel:1930" class="emergency-number">
+                  <i class="fa-solid fa-phone"></i>
+                  1930
+                </a>
+
+                <a
+                  href="https://cybercrime.gov.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="emergency-link"
+                >
+                  Report Cybercrime
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+              </div>
+
+              <!-- SAFETY REMINDER -->
+              <div class="sidebar-card safety-card">
+                <div class="sidebar-card-heading">
+                  <i class="fa-solid fa-lock"></i>
+                  <h3>Safety Reminder</h3>
+                </div>
+
+                <p>
+                  Never share your OTP, UPI PIN, ATM PIN, CVV, password or full
+                  card credentials with anyone.
+                </p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-intelligence" class="app-screen" data-screen="intelligence" aria-hidden="true"><div>
+      <!-- HERO -->
+      <section class="intelligence-hero">
+        <div class="container">
+          <div class="intelligence-hero-content">
+            <span class="section-tag">
+              <i class="fa-solid fa-brain"></i>
+              AI-POWERED THREAT INTELLIGENCE
+            </span>
+
+            <h1>
+              Identify the Clues.
+              <span>Understand the Threat.</span>
+            </h1>
+
+            <p>
+              Examine potential fraud indicators, organize suspicious evidence
+              and understand how different clues may be connected.
+            </p>
+
+            <div class="intelligence-hero-actions">
+              <a href="#indicator-workspace" class="btn btn-primary">
+                Explore Indicators
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+
+              <a href="#screen-detection" data-route="detection" class="btn btn-secondary">
+                Analyze Evidence
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OVERVIEW -->
+      <section class="section intelligence-overview">
+        <div class="container">
+          <div class="section-heading">
+            <span class="section-tag">INTELLIGENCE OVERVIEW</span>
+
+            <h2>
+              Understand Different
+              <span>Threat Indicators</span>
+            </h2>
+
+            <p>
+              Review the types of information that can help identify suspicious
+              activity.
+            </p>
+          </div>
+
+          <div class="intelligence-stats-grid">
+            <article class="intelligence-stat-card">
+              <div class="stat-icon phone-icon">
+                <i class="fa-solid fa-phone"></i>
+              </div>
+
+              <div>
+                <h3>Phone Numbers</h3>
+                <p>Potentially suspicious contact numbers.</p>
+              </div>
+
+              <span class="indicator-type">PHONE</span>
+            </article>
+
+            <article class="intelligence-stat-card">
+              <div class="stat-icon url-icon">
+                <i class="fa-solid fa-link"></i>
+              </div>
+
+              <div>
+                <h3>Suspicious URLs</h3>
+                <p>Potential phishing and fraudulent links.</p>
+              </div>
+
+              <span class="indicator-type">URL</span>
+            </article>
+
+            <article class="intelligence-stat-card">
+              <div class="stat-icon upi-icon">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+              </div>
+
+              <div>
+                <h3>UPI Identifiers</h3>
+                <p>UPI IDs appearing in submitted evidence.</p>
+              </div>
+
+              <span class="indicator-type">UPI</span>
+            </article>
+
+            <article class="intelligence-stat-card">
+              <div class="stat-icon keyword-icon">
+                <i class="fa-solid fa-file-lines"></i>
+              </div>
+
+              <div>
+                <h3>Fraud Keywords</h3>
+                <p>Suspicious phrases and communication patterns.</p>
+              </div>
+
+              <span class="indicator-type">TEXT</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- INDICATOR WORKSPACE -->
+      <section class="section indicator-workspace" id="indicator-workspace">
+        <div class="container">
+          <div class="section-heading">
+            <span class="section-tag">INDICATOR EXPLORER</span>
+
+            <h2>
+              Explore Potential
+              <span>Fraud Indicators</span>
+            </h2>
+
+            <p>
+              Enter an indicator to organize and examine suspicious information.
+            </p>
+          </div>
+
+          <div class="indicator-workspace-card">
+            <div class="indicator-search-header">
+              <div>
+                <h3>Indicator Analysis</h3>
+                <p>Choose an indicator type and enter its value.</p>
+              </div>
+
+              <span class="workspace-status">
+                <span class="status-dot"></span>
+                Analysis Workspace
+              </span>
+            </div>
+
+            <!-- INDICATOR TABS -->
+            <div
+              class="indicator-tabs"
+              role="group"
+              aria-label="Indicator type"
+            >
+              <button
+                type="button"
+                class="indicator-tab active"
+                data-indicator="phone"
+                aria-pressed="true"
+              >
+                <i class="fa-solid fa-phone"></i>
+                Phone
+              </button>
+
+              <button
+                type="button"
+                class="indicator-tab"
+                data-indicator="url"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-link"></i>
+                URL
+              </button>
+
+              <button
+                type="button"
+                class="indicator-tab"
+                data-indicator="upi"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-wallet"></i>
+                UPI ID
+              </button>
+
+              <button
+                type="button"
+                class="indicator-tab"
+                data-indicator="keyword"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-file-lines"></i>
+                Keyword
+              </button>
+            </div>
+
+            <!-- SEARCH FORM -->
+            <form id="indicatorForm" class="indicator-form">
+              <label for="indicatorInput" id="indicatorLabel">
+                Enter Phone Number
+              </label>
+
+              <div class="indicator-input-wrapper">
+                <i class="fa-solid fa-phone" id="indicatorInputIcon"></i>
+
+                <input
+                  type="text"
+                  id="indicatorInput"
+                  placeholder="Enter phone number"
+                  autocomplete="off"
+                  maxlength="250"
+                  required
+                />
+
+                <button type="submit" id="indicatorAnalyzeBtn">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  Examine
+                </button>
+              </div>
+
+              <p class="input-hint" id="indicatorHint">
+                Enter a phone number with country code if available.
+              </p>
+            </form>
+
+            <div
+              class="indicator-message"
+              id="indicatorMessage"
+              role="status"
+              aria-live="polite"
+              hidden
+            ></div>
+
+            <!-- RESULTS -->
+            <div class="indicator-results" id="indicatorResults" hidden>
+              <div class="results-heading">
+                <div>
+                  <span class="results-label">ANALYSIS OUTPUT</span>
+                  <h3>Indicator Examination</h3>
+                </div>
+
+                <span class="unverified-badge">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  Unverified Indicator
+                </span>
+              </div>
+
+              <div class="indicator-result-value">
+                <span>Submitted Indicator</span>
+                <strong id="resultIndicator">-</strong>
+              </div>
+
+              <div class="indicator-result-grid">
+                <div class="indicator-result-item">
+                  <span>Indicator Type</span>
+                  <strong id="resultType">-</strong>
+                </div>
+
+                <div class="indicator-result-item">
+                  <span>Assessment Status</span>
+                  <strong id="intelligenceResultStatus">-</strong>
+                </div>
+
+                <div class="indicator-result-item">
+                  <span>Related Evidence</span>
+                  <strong id="resultEvidence">-</strong>
+                </div>
+              </div>
+
+              <div class="indicator-explanation">
+                <h4>
+                  <i class="fa-solid fa-lightbulb"></i>
+                  Intelligence Notes
+                </h4>
+
+                <p id="resultExplanation">No analysis available.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORRELATION -->
+      <section class="section correlation-section">
+        <div class="container">
+          <div class="section-heading">
+            <span class="section-tag">INTELLIGENCE CORRELATION</span>
+
+            <h2>
+              Connect the
+              <span>Evidence</span>
+            </h2>
+
+            <p>
+              Multiple indicators may appear across different messages, calls
+              and transactions.
+            </p>
+          </div>
+
+          <div class="correlation-grid">
+            <article class="correlation-card">
+              <div class="correlation-icon">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+
+              <h3>Communication Evidence</h3>
+
+              <p>
+                Identify phone numbers, suspicious phrases and links appearing
+                in submitted messages or call transcripts.
+              </p>
+            </article>
+
+            <article class="correlation-card">
+              <div class="correlation-icon">
+                <i class="fa-solid fa-diagram-project"></i>
+              </div>
+
+              <h3>Indicator Relationships</h3>
+
+              <p>
+                Organize multiple indicators and examine possible connections
+                between submitted evidence.
+              </p>
+            </article>
+
+            <article class="correlation-card">
+              <div class="correlation-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+
+              <h3>Contextual Assessment</h3>
+
+              <p>
+                Use evidence context to understand why an indicator may require
+                further investigation.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- SAFETY NOTICE -->
+      <section class="section intelligence-safety">
+        <div class="container">
+          <div class="intelligence-safety-card">
+            <div class="safety-icon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="safety-content">
+              <h3>Important Intelligence Disclaimer</h3>
+
+              <p>
+                An extracted phone number, URL or UPI ID is only a potential
+                indicator. Its appearance in submitted evidence does not
+                establish criminal activity or prove that its owner is involved
+                in fraud. Independent verification and appropriate context are
+                essential.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section">
+        <div class="container">
+          <div class="cta-box">
+            <span class="section-tag">STAY PROTECTED</span>
+
+            <h2>Have Suspicious Evidence?</h2>
+
+            <p>
+              Submit a message, URL, call transcript or transaction information
+              for an explainable risk assessment.
+            </p>
+
+            <a href="#screen-detection" data-route="detection" class="btn btn-primary">
+              Start Detection
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-login" class="app-screen" data-screen="login" aria-hidden="true"><div class="auth-layout">
+      <section class="auth-visual">
+        <a href="#screen-home" data-route="home" class="auth-brand">
+          <span class="brand-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </span>
+          <span>ScamShield<span class="brand-highlight">AI</span></span>
+        </a>
+
+        <div class="auth-visual-content">
+          <span class="eyebrow">
+            <span class="status-dot"></span>
+            INTELLIGENT CYBER PROTECTION
+          </span>
+
+          <h1>
+            Stay ahead of
+            <span>digital threats.</span>
+          </h1>
+
+          <p>
+            One intelligent platform to detect suspicious activity, understand
+            cyber threats and take safer decisions online.
+          </p>
+
+          <div class="auth-feature-list">
+            <div class="auth-feature">
+              <span><i class="fa-solid fa-shield-virus"></i></span>
+              <div>
+                <h3>Advanced Threat Analysis</h3>
+                <p>Analyse suspicious messages and digital evidence.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature">
+              <span><i class="fa-solid fa-brain"></i></span>
+              <div>
+                <h3>Multi-Agent Intelligence</h3>
+                <p>Organised analysis through specialised AI agents.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature">
+              <span><i class="fa-solid fa-user-shield"></i></span>
+              <div>
+                <h3>Victim Safety Guidance</h3>
+                <p>Get practical steps when suspicious activity occurs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-visual-footer">
+          <span>SCAMSHIELD AI</span>
+          <span>SECURITY STARTS WITH AWARENESS</span>
+        </div>
+      </section>
+
+      <section class="auth-form-section">
+        <div class="auth-form-container">
+          <a href="#screen-home" data-route="home" class="mobile-auth-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            ScamShield<span>AI</span>
+          </a>
+
+          <div class="auth-heading">
+            <span class="form-label">WELCOME BACK</span>
+            <h2>Sign in to your account</h2>
+            <p>Enter your credentials to access your security dashboard.</p>
+          </div>
+
+          <form id="loginForm" class="auth-form">
+            <div class="form-group">
+              <label for="email">Email address</label>
+
+              <div class="input-wrapper">
+                <i class="fa-regular fa-envelope"></i>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="label-row">
+                <label for="password">Password</label>
+                <a href="#" id="forgotPassword">Forgot password?</a>
+              </div>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  id="togglePassword"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-options">
+              <label class="remember-option">
+                <input type="checkbox" id="rememberMe" />
+                <span>Remember me</span>
+              </label>
+            </div>
+
+            <div
+              id="authMessage"
+              class="auth-message"
+              role="alert"
+              aria-live="polite"
+            ></div>
+
+            <button type="submit" class="auth-submit-btn" id="loginButton">
+              <span>Sign In</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+
+          <div class="auth-divider">
+            <span>SECURE ACCESS</span>
+          </div>
+
+          <div class="security-note">
+            <i class="fa-solid fa-lock"></i>
+            <span>Your account access is protected.</span>
+          </div>
+
+          <p class="auth-switch">
+            Don't have an account?
+            <a href="#screen-register" data-route="register">Create an account</a>
+          </p>
+
+          <a href="#screen-home" data-route="home" class="back-home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to homepage
+          </a>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-register" class="app-screen" data-screen="register" aria-hidden="true"><div class="auth-layout">
+      <!-- LEFT VISUAL SECTION -->
+      <section class="auth-visual">
+        <a href="#screen-home" data-route="home" class="auth-brand">
+          <span class="brand-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </span>
+
+          <span>ScamShield<span class="brand-highlight">AI</span></span>
+        </a>
+
+        <div class="auth-visual-content">
+          <span class="eyebrow">
+            <span class="status-dot"></span>
+            YOUR DIGITAL SAFETY STARTS HERE
+          </span>
+
+          <h1>
+            Build a safer
+            <span>digital future.</span>
+          </h1>
+
+          <p>
+            Create your account and access a central platform designed to help
+            identify suspicious activity, understand threats and improve digital
+            awareness.
+          </p>
+
+          <div class="auth-feature-list">
+            <div class="auth-feature">
+              <span>
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </span>
+
+              <div>
+                <h3>Intelligent Detection</h3>
+                <p>Analyse suspicious digital evidence.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature">
+              <span>
+                <i class="fa-solid fa-network-wired"></i>
+              </span>
+
+              <div>
+                <h3>Connected Intelligence</h3>
+                <p>Organise fraud indicators and insights.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature">
+              <span>
+                <i class="fa-solid fa-hand-holding-shield"></i>
+              </span>
+
+              <div>
+                <h3>Safety First</h3>
+                <p>Access practical cyber safety guidance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-visual-footer">
+          <span>SCAMSHIELD AI</span>
+          <span>SECURITY STARTS WITH AWARENESS</span>
+        </div>
+      </section>
+
+      <!-- RIGHT REGISTRATION SECTION -->
+      <section class="auth-form-section">
+        <div class="auth-form-container">
+          <a href="#screen-home" data-route="home" class="mobile-auth-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            ScamShield<span>AI</span>
+          </a>
+
+          <div class="auth-heading">
+            <span class="form-label">GET STARTED</span>
+
+            <h2>Create your account</h2>
+
+            <p>
+              Join ScamShield AI and take a smarter approach to digital
+              security.
+            </p>
+          </div>
+
+          <form id="registerForm" class="auth-form">
+            <!-- FULL NAME -->
+            <div class="form-group">
+              <label for="name">Full name</label>
+
+              <div class="input-wrapper">
+                <i class="fa-regular fa-user"></i>
+
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Enter your full name"
+                  autocomplete="name"
+                  minlength="2"
+                  maxlength="60"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+              <label for="email">Email address</label>
+
+              <div class="input-wrapper">
+                <i class="fa-regular fa-envelope"></i>
+
+                <input
+                  type="email"
+                  id="registerEmail"
+                  name="email"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+              <label for="password">Create password</label>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                  type="password"
+                  id="registerPassword"
+                  name="password"
+                  placeholder="Minimum 8 characters"
+                  autocomplete="new-password"
+                  minlength="8"
+                  required
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-password-target="password"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="form-group">
+              <label for="confirmPassword">Confirm password</label>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Re-enter your password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  required
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-password-target="confirmPassword"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- TERMS -->
+            <div class="form-options">
+              <label class="remember-option">
+                <input type="checkbox" id="terms" required />
+
+                <span>
+                  I agree to the
+                  <a href="#" id="termsLink">Terms of Service</a>
+                  and
+                  <a href="#" id="privacyLink">Privacy Policy</a>.
+                </span>
+              </label>
+            </div>
+
+            <!-- MESSAGE -->
+            <div
+              id="registerAuthMessage"
+              class="auth-message"
+              role="alert"
+              aria-live="polite"
+            ></div>
+
+            <!-- SUBMIT -->
+            <button type="submit" class="auth-submit-btn" id="registerButton">
+              <span>Create Account</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+
+          <div class="auth-divider">
+            <span>SECURE REGISTRATION</span>
+          </div>
+
+          <div class="security-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Your credentials should always remain private.</span>
+          </div>
+
+          <p class="auth-switch">
+            Already have an account?
+            <a href="#screen-login" data-route="login">Sign in</a>
+          </p>
+
+          <a href="#screen-home" data-route="home" class="back-home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to homepage
+          </a>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-reports" class="app-screen" data-screen="reports" aria-hidden="true"><div class="reports-page">
+      <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+      <section class="reports-hero">
+        <div class="container">
+          <div class="reports-heading">
+            <div>
+              <div class="section-tag">
+                <i class="fa-solid fa-file-shield"></i>
+                SECURITY DOCUMENTATION
+              </div>
+
+              <h1>Investigation <span>Reports</span></h1>
+
+              <p>
+                Access your fraud analysis records, review risk assessments and
+                monitor investigation progress from one centralized workspace.
+              </p>
+            </div>
+
+            <div class="reports-header-actions">
+              <div class="reports-record-status">
+                <span class="record-status-dot"></span>
+                Report Records
+              </div>
+
+              <button
+                class="reports-refresh-btn"
+                id="refreshReports"
+                type="button"
+              >
+                <i class="fa-solid fa-rotate"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+             MAIN CONTENT
+        ================================================== -->
+
+      <section class="reports-content">
+        <div class="container">
+          <!-- API Status -->
+          <div class="reports-notice" id="reportsNotice">
+            <div class="reports-notice-icon">
+              <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+              <strong>Report service status</strong>
+
+              <p id="reportsStatusMessage">
+                Waiting for report records from the backend.
+              </p>
+            </div>
+          </div>
+
+          <!-- =================================================
+                     REPORT STATISTICS
+                ================================================== -->
+
+          <div class="reports-section-heading">
+            <div>
+              <h2>Report Overview</h2>
+
+              <p>Summary of available investigation records.</p>
+            </div>
+          </div>
+
+          <div class="reports-stats-grid">
+            <article class="report-stat-card">
+              <div class="report-stat-top">
+                <span class="report-stat-icon blue">
+                  <i class="fa-solid fa-file-lines"></i>
+                </span>
+
+                <span>Total Reports</span>
+              </div>
+
+              <h3 id="totalReports">--</h3>
+
+              <p>All recorded analyses</p>
+            </article>
+
+            <article class="report-stat-card">
+              <div class="report-stat-top">
+                <span class="report-stat-icon red">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </span>
+
+                <span>High Risk</span>
+              </div>
+
+              <h3 id="highRiskReports">--</h3>
+
+              <p>High-risk assessments</p>
+            </article>
+
+            <article class="report-stat-card">
+              <div class="report-stat-top">
+                <span class="report-stat-icon orange">
+                  <i class="fa-solid fa-hourglass-half"></i>
+                </span>
+
+                <span>Under Review</span>
+              </div>
+
+              <h3 id="reviewReports">--</h3>
+
+              <p>Records requiring review</p>
+            </article>
+
+            <article class="report-stat-card">
+              <div class="report-stat-top">
+                <span class="report-stat-icon green">
+                  <i class="fa-solid fa-circle-check"></i>
+                </span>
+
+                <span>Completed</span>
+              </div>
+
+              <h3 id="completedReports">--</h3>
+
+              <p>Completed assessments</p>
+            </article>
+          </div>
+
+          <!-- =================================================
+                     REPORT FILTERS
+                ================================================== -->
+
+          <div class="reports-section-heading">
+            <div>
+              <h2>All Reports</h2>
+
+              <p>Search and filter your security analysis records.</p>
+            </div>
+          </div>
+
+          <div class="reports-filter-panel">
+            <div class="reports-search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+
+              <input
+                type="search"
+                id="reportSearch"
+                placeholder="Search by report ID or category..."
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="reports-filter-controls">
+              <div class="report-filter-group">
+                <label for="riskFilter"> Risk Level </label>
+
+                <select id="riskFilter">
+                  <option value="all">All Risk Levels</option>
+
+                  <option value="low">Low</option>
+
+                  <option value="medium">Medium</option>
+
+                  <option value="high">High</option>
+
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+
+              <div class="report-filter-group">
+                <label for="categoryFilter"> Fraud Category </label>
+
+                <select id="categoryFilter">
+                  <option value="all">All Categories</option>
+
+                  <option value="investment">Investment Scam</option>
+
+                  <option value="digital-arrest">Digital Arrest</option>
+
+                  <option value="credit-card">Credit Card Fraud</option>
+
+                  <option value="sextortion">Sextortion</option>
+
+                  <option value="ecommerce">E-commerce Fraud</option>
+                </select>
+              </div>
+
+              <div class="report-filter-group">
+                <label for="dateFilter"> Date Range </label>
+
+                <select id="dateFilter">
+                  <option value="all">All Time</option>
+
+                  <option value="today">Today</option>
+
+                  <option value="7days">Last 7 Days</option>
+
+                  <option value="30days">Last 30 Days</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              class="reports-clear-btn"
+              id="clearReportFilters"
+              type="button"
+            >
+              <i class="fa-solid fa-filter-circle-xmark"></i>
+              Clear Filters
+            </button>
+          </div>
+
+          <!-- =================================================
+                     REPORT TABLE
+                ================================================== -->
+
+          <article class="reports-table-panel">
+            <div class="reports-table-header">
+              <div>
+                <h3>Analysis Records</h3>
+
+                <p id="reportResultCount">Waiting for report records...</p>
+              </div>
+
+              <button
+                class="reports-export-btn"
+                id="exportReports"
+                type="button"
+                disabled
+              >
+                <i class="fa-solid fa-download"></i>
+                Export Reports
+              </button>
+            </div>
+
+            <div class="reports-table-wrapper">
+              <table class="reports-table">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+
+                    <th>Evidence Type</th>
+
+                    <th>Fraud Category</th>
+
+                    <th>Risk Score</th>
+
+                    <th>Risk Level</th>
+
+                    <th>Status</th>
+
+                    <th>Date</th>
+
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody id="reportsTableBody">
+                  <tr>
+                    <td colspan="8">
+                      <div class="reports-empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
+
+                        <h4>No reports available</h4>
+
+                        <p>
+                          Your investigation records will appear here when
+                          available.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+
+            <div class="reports-pagination" id="reportsPagination">
+              <span id="paginationInfo"> No records </span>
+
+              <div class="pagination-controls">
+                <button
+                  id="previousPage"
+                  type="button"
+                  disabled
+                  aria-label="Previous page"
+                >
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <span id="currentPage">1</span>
+
+                <button
+                  id="nextPage"
+                  type="button"
+                  disabled
+                  aria-label="Next page"
+                >
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- =================================================
+                     REPORT DETAILS MODAL
+                ================================================== -->
+
+          <div class="report-modal" id="reportDetailsModal" aria-hidden="true">
+            <div class="report-modal-overlay" id="closeModalOverlay"></div>
+
+            <div
+              class="report-modal-content"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="reportModalTitle"
+            >
+              <div class="report-modal-header">
+                <div>
+                  <span class="modal-eyebrow"> SECURITY INVESTIGATION </span>
+
+                  <h2 id="reportModalTitle">Report Details</h2>
+                </div>
+
+                <button
+                  type="button"
+                  class="report-modal-close"
+                  id="closeReportModal"
+                  aria-label="Close report details"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <div class="report-modal-body" id="reportDetailsContent">
+                <div class="report-modal-empty">
+                  <i class="fa-solid fa-file-shield"></i>
+
+                  <p>Select a report to view its details.</p>
+                </div>
+              </div>
+
+              <div class="report-modal-footer">
+                <button
+                  type="button"
+                  class="report-modal-secondary"
+                  id="closeReportDetails"
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  class="report-modal-primary"
+                  id="downloadSingleReport"
+                  disabled
+                >
+                  <i class="fa-solid fa-download"></i>
+                  Print / Save as PDF
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================================
+                     SECURITY INFORMATION
+                ================================================== -->
+
+          <div class="reports-security-note">
+            <div class="security-note-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+              <h4>Report Security & Privacy</h4>
+
+              <p>
+                Investigation reports may contain sensitive evidence and
+                security-related information. Never share OTPs, PINs, passwords,
+                CVVs or complete card credentials. Risk assessments are
+                indicators for further investigation, not definitive proof of
+                fraud.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div></section>
+<section id="screen-settings" class="app-screen" data-screen="settings" aria-hidden="true"><div class="settings-page">
+      <!-- Settings Hero -->
+      <section class="settings-hero">
+        <div class="container">
+          <div class="settings-hero-content">
+            <div class="settings-heading">
+              <span class="section-tag"> ACCOUNT CONFIGURATION </span>
+
+              <h1>Application <span>Settings</span></h1>
+
+              <p>
+                Manage your account preferences, security controls,
+                notifications and ScamShield AI experience.
+              </p>
+            </div>
+
+            <div class="settings-status">
+              <span class="settings-status-dot"></span>
+              System Preferences
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Content -->
+      <section class="settings-content">
+        <div class="container">
+          <div class="settings-layout">
+            <!-- Settings Sidebar -->
+            <aside class="settings-sidebar">
+              <div class="settings-sidebar-heading">
+                <i class="fa-solid fa-sliders"></i>
+                <h3>Preferences</h3>
+              </div>
+
+              <a href="#accountSettings" class="settings-nav-link active">
+                <i class="fa-solid fa-user"></i>
+                <span>Account</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#notificationSettings" class="settings-nav-link">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifications</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#securitySettings" class="settings-nav-link">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Security</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#privacySettings" class="settings-nav-link">
+                <i class="fa-solid fa-lock"></i>
+                <span>Privacy</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#appearanceSettings" class="settings-nav-link">
+                <i class="fa-solid fa-palette"></i>
+                <span>Appearance</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <a href="#systemSettings" class="settings-nav-link">
+                <i class="fa-solid fa-gear"></i>
+                <span>System</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </a>
+
+              <div class="settings-sidebar-note">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                  Your security and privacy are important. Never share OTPs,
+                  PINs, passwords or CVVs.
+                </p>
+              </div>
+            </aside>
+
+            <!-- Settings Main Content -->
+            <div class="settings-main">
+              <!-- Account Settings -->
+              <section class="settings-card" id="accountSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+
+                  <div>
+                    <h2>Account Settings</h2>
+                    <p>Manage your personal account information.</p>
+                  </div>
+                </div>
+
+                <div class="settings-profile">
+                  <div class="settings-avatar">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+
+                  <div class="settings-profile-info">
+                    <h3 id="settingsUserName">User Profile</h3>
+                    <p id="settingsUserEmail">Account information</p>
+
+                    <span class="account-status">
+                      <i class="fa-solid fa-circle-check"></i>
+                      Account
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="settings-outline-btn"
+                    id="editProfileBtn"
+                  >
+                    <i class="fa-solid fa-pen"></i>
+                    Edit Profile
+                  </button>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-field-grid">
+                  <div class="settings-field">
+                    <label for="displayName"> Display Name </label>
+
+                    <input
+                      type="text"
+                      id="displayName"
+                      placeholder="Enter your name"
+                      autocomplete="name"
+                    />
+                  </div>
+
+                  <div class="settings-field">
+                    <label for="accountEmail"> Email Address </label>
+
+                    <input
+                      type="email"
+                      id="accountEmail"
+                      placeholder="Enter your email"
+                      autocomplete="email"
+                    />
+                  </div>
+                </div>
+
+                <div class="settings-card-footer">
+                  <span id="accountSaveMessage" aria-live="polite"></span>
+
+                  <button
+                    type="button"
+                    class="settings-save-btn"
+                    id="saveAccountBtn"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Changes
+                  </button>
+                </div>
+              </section>
+
+              <!-- Notification Settings -->
+              <section class="settings-card" id="notificationSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-bell"></i>
+                  </div>
+
+                  <div>
+                    <h2>Notification Preferences</h2>
+                    <p>Choose which updates you want to receive.</p>
+                  </div>
+                </div>
+
+                <div class="settings-option-list">
+                  <div class="settings-option">
+                    <div>
+                      <h3>Security Alerts</h3>
+                      <p>
+                        Receive notifications about important security events.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="securityAlerts" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Threat Detection Updates</h3>
+                      <p>Get updates when suspicious activity is detected.</p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="threatAlerts" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Analysis Reports</h3>
+                      <p>
+                        Receive notifications when an analysis is completed.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="reportNotifications" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Product Updates</h3>
+                      <p>
+                        Receive information about new features and improvements.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="productUpdates" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Security Settings -->
+              <section class="settings-card" id="securitySettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                  </div>
+
+                  <div>
+                    <h2>Security Settings</h2>
+                    <p>Review your account protection preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-option-list">
+                  <div class="settings-option">
+                    <div>
+                      <h3>Login Verification</h3>
+                      <p>
+                        Use additional verification when supported by the
+                        authentication system.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="loginVerification" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Login Activity Monitoring</h3>
+                      <p>
+                        Review account access and suspicious login activity.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="loginMonitoring" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="settings-security-info">
+                  <i class="fa-solid fa-circle-info"></i>
+
+                  <p>
+                    Never share your password, OTP, PIN or CVV. ScamShield AI
+                    will never ask you for these credentials.
+                  </p>
+                </div>
+
+                <div class="settings-action-row">
+                  <div>
+                    <h3>Password Management</h3>
+                    <p>
+                      Update your account password through the supported
+                      authentication process.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="settings-outline-btn"
+                    id="changePasswordBtn"
+                  >
+                    Change Password
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+              </section>
+
+              <!-- Privacy Settings -->
+              <section class="settings-card" id="privacySettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-lock"></i>
+                  </div>
+
+                  <div>
+                    <h2>Privacy Settings</h2>
+                    <p>Manage your data and privacy preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-option-list">
+                  <div class="settings-option">
+                    <div>
+                      <h3>Save Analysis History</h3>
+                      <p>
+                        Allow analysis records to appear in your report history.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="saveAnalysisHistory" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-option">
+                    <div>
+                      <h3>Usage Analytics</h3>
+                      <p>
+                        Allow anonymous usage statistics for product
+                        improvement.
+                      </p>
+                    </div>
+
+                    <label class="settings-toggle">
+                      <input type="checkbox" id="usageAnalytics" />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="settings-security-info">
+                  <i class="fa-solid fa-shield-halved"></i>
+
+                  <p>
+                    Avoid uploading unnecessary personal information. Never
+                    submit passwords, OTPs, PINs or complete card details as
+                    evidence.
+                  </p>
+                </div>
+              </section>
+
+              <!-- Appearance Settings -->
+              <section class="settings-card" id="appearanceSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-palette"></i>
+                  </div>
+
+                  <div>
+                    <h2>Appearance</h2>
+                    <p>Customize your application display preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-field-grid">
+                  <div class="settings-field">
+                    <label for="themePreference"> Theme </label>
+
+                    <select id="themePreference">
+                      <option value="dark">Dark Theme</option>
+                      <option value="light">Light Theme</option>
+                      <option value="system">System Default</option>
+                    </select>
+                  </div>
+
+                  <div class="settings-field">
+                    <label for="languagePreference"> Language </label>
+
+                    <select id="languagePreference">
+                      <option value="en">English</option>
+                      <option value="hi">Hindi</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="settings-option">
+                  <div>
+                    <h3>Reduce Animations</h3>
+                    <p>Reduce motion effects throughout the interface.</p>
+                  </div>
+
+                  <label class="settings-toggle">
+                    <input type="checkbox" id="reduceAnimations" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </section>
+
+              <!-- System Settings -->
+              <section class="settings-card" id="systemSettings">
+                <div class="settings-card-header">
+                  <div class="settings-card-icon">
+                    <i class="fa-solid fa-gear"></i>
+                  </div>
+
+                  <div>
+                    <h2>System Preferences</h2>
+                    <p>Manage application-level preferences.</p>
+                  </div>
+                </div>
+
+                <div class="settings-system-grid">
+                  <div class="system-info-item">
+                    <span>Application</span>
+                    <strong>ScamShield AI</strong>
+                  </div>
+
+                  <div class="system-info-item">
+                    <span>Environment</span>
+                    <strong>Development</strong>
+                  </div>
+
+                  <div class="system-info-item">
+                    <span>Simulation Mode</span>
+                    <strong>Safe & Isolated</strong>
+                  </div>
+
+                  <div class="system-info-item">
+                    <span>Version</span>
+                    <strong>1.0.0</strong>
+                  </div>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-action-row">
+                  <div>
+                    <h3>Reset Preferences</h3>
+                    <p>Restore the default application preferences.</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="settings-danger-btn"
+                    id="resetSettingsBtn"
+                  >
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Reset Settings
+                  </button>
+                </div>
+              </section>
+
+              <!-- Save All Settings -->
+              <div class="settings-bottom-actions">
+                <p id="settingsSaveMessage" aria-live="polite">
+                  Manage your preferences and save your changes.
+                </p>
+
+                <button
+                  type="button"
+                  class="settings-save-btn"
+                  id="saveAllSettings"
+                >
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  Save All Preferences
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div></section></main><script src="js/main.js" defer></script>
+  <script src="js/services/api.js" defer></script>
+  <script src="js/utils/helpers.js" defer></script>
+  <script src="js/dashboard.js" defer></script>
+  <script src="js/detection.js" defer></script>
+  <script src="js/agents.js" defer></script>
+  <script src="js/decoy-lab.js" defer></script>
+  <script src="js/decoy-chat.js" defer></script>
+  <script src="js/intelligence.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/reports.js" defer></script>
+  <script src="js/settings.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/register.js" defer></script>
+  <script src="js/app-shell.js" defer></script></body></html>

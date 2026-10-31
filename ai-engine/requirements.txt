@@ -1,0 +1,22 @@
+# ==========================================
+# SCAMSHIELD AI - HYBRID AI ENGINE
+# ==========================================
+
+# Backend API
+fastapi
+uvicorn[standard]
+pydantic
+python-multipart
+
+# Machine Learning
+scikit-learn
+numpy
+pandas
+joblib
+
+# Environment Configuration
+python-dotenv
+
+# Testing
+pytest
+httpx

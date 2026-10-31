@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="description"
+content="ScamShield AI - Analyze suspicious messages, URLs, call transcripts and fraud evidence."
+
+>
+
+  <meta name="theme-color" content="#0b1720">
+
+  <title>Scam Detection | ScamShield AI</title>
+
+  <!-- Google Fonts -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Font Awesome -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+  <!-- Stylesheets -->
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/detection.css">
+
+  <!-- Shared JavaScript Dependencies -->
+
+  <script src="../js/services/api.js" defer></script>
+
+  <script src="../js/utils/helpers.js" defer></script>
+
+  <script src="../js/components/navigation.js" defer></script>
+
+  <script src="../js/components/sidebar.js" defer></script>
+
+  <script src="../js/components/notifications.js" defer></script>
+
+  <!-- Main JavaScript -->
+
+  <script src="../js/main.js" defer></script>
+
+  <script src="../js/detection.js" defer></script>
+
+</head>
+
+<body>
+
+  <!-- Background Effects -->
+
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
+
+  <!-- ================= NAVBAR ================= -->
+
+  <header class="navbar">
+    <div class="container nav-content">
+
+
+  <!-- Logo -->
+  <a href="dashboard.html" class="logo">
+    <span class="logo-icon">
+      <i class="fa-solid fa-shield-halved"></i>
+    </span>
+
+    <span class="logo-text">
+      ScamShield <span>AI</span>
+    </span>
+  </a>
+
+  <!-- Navigation -->
+  <nav class="nav-links" id="navLinks">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="detection.html" class="active" aria-current="page">Detection</a>
+    <a href="agents.html">AI Agents</a>
+    <a href="intelligence.html">Intelligence</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="reports.html">Reports</a>
+  </nav>
+
+  <!-- Navigation Actions -->
+  <div class="nav-actions">
+    <a href="settings.html" class="btn btn-secondary">
+      <i class="fa-solid fa-gear"></i>
+      Settings
+    </a>
+  </div>
+
+  <!-- Mobile Menu -->
+  <button
+    type="button"
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Toggle navigation"
+    aria-controls="navLinks"
+    aria-expanded="false"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+</div>
+
+
+  </header>
+
+  <!-- ================= MAIN CONTENT ================= -->
+
+  <main>
+
+
+<!-- Detection Hero -->
+<section class="detection-hero">
+  <div class="container">
+
+    <div class="detection-hero-content">
+
+      <div class="section-tag">
+        <i class="fa-solid fa-magnifying-glass-chart"></i>
+        AI-POWERED FRAUD ANALYSIS
+      </div>
+
+      <h1>
+        Detect Threats.
+        <span>Stay Protected.</span>
+      </h1>
+
+      <p>
+        Analyze suspicious messages, URLs, call transcripts and other
+        evidence using the ScamShield AI detection platform.
+      </p>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- Detection Workspace -->
+<section class="detection-workspace section">
+  <div class="container">
+
+    <div class="detection-layout">
+
+      <!-- ================= LEFT PANEL ================= -->
+
+      <div class="detection-main">
+
+        <div class="detection-panel">
+
+          <!-- Panel Heading -->
+          <div class="panel-heading">
+
+            <div>
+              <span class="panel-label">ANALYSIS WORKSPACE</span>
+              <h2>Submit Evidence</h2>
+
+              <p>
+                Select an evidence type and provide the information
+                you want to analyze.
+              </p>
+            </div>
+
+            <div class="panel-status">
+              <span class="status-dot"></span>
+              Ready
+            </div>
+
+          </div>
+
+          <!-- Evidence Type Selection -->
+          <div class="evidence-types">
+
+            <button
+              type="button"
+              class="evidence-type active"
+              data-evidence="message"
+              aria-pressed="true"
+            >
+              <i class="fa-solid fa-comment-sms"></i>
+              <span>Message</span>
+            </button>
+
+            <button
+              type="button"
+              class="evidence-type"
+              data-evidence="url"
+              aria-pressed="false"
+            >
+              <i class="fa-solid fa-link"></i>
+              <span>URL</span>
+            </button>
+
+            <button
+              type="button"
+              class="evidence-type"
+              data-evidence="call"
+              aria-pressed="false"
+            >
+              <i class="fa-solid fa-phone"></i>
+              <span>Call Transcript</span>
+            </button>
+
+            <button
+              type="button"
+              class="evidence-type"
+              data-evidence="transaction"
+              aria-pressed="false"
+            >
+              <i class="fa-solid fa-credit-card"></i>
+              <span>Transaction</span>
+            </button>
+
+          </div>
+
+          <!-- Message Form -->
+          <div
+            class="evidence-form active"
+            id="messageForm"
+            data-form="message"
+          >
+            <label for="messageInput">Suspicious Message</label>
+
+            <textarea
+              id="messageInput"
+              placeholder="Paste the suspicious SMS, WhatsApp message or email content here..."
+              rows="8"
+              maxlength="10000"
+            ></textarea>
+
+            <div class="input-footer">
+
+              <span>
+                <i class="fa-solid fa-shield-halved"></i>
+                Your sensitive credentials are not required.
+              </span>
+
+              <span id="messageCount">0 / 10000</span>
+
+            </div>
+          </div>
+
+          <!-- URL Form -->
+          <div
+            class="evidence-form"
+            id="urlForm"
+            data-form="url"
+            hidden
+          >
+            <label for="urlInput">Suspicious Website URL</label>
+
+            <div class="input-with-icon">
+              <i class="fa-solid fa-globe"></i>
+
+              <input
+                type="url"
+                id="urlInput"
+                placeholder="https://example.com"
+                maxlength="2048"
+              >
+            </div>
+
+            <div class="input-footer">
+              <span>
+                <i class="fa-solid fa-circle-info"></i>
+                Do not open suspicious links.
+              </span>
+            </div>
+          </div>
+
+          <!-- Call Transcript Form -->
+          <div
+            class="evidence-form"
+            id="callForm"
+            data-form="call"
+            hidden
+          >
+            <label for="callInput">Call Transcript</label>
+
+            <textarea
+              id="callInput"
+              placeholder="Paste the call transcript here. Example: The caller claimed to be from a government department and demanded an immediate payment..."
+              rows="8"
+              maxlength="15000"
+            ></textarea>
+
+            <div class="input-footer">
+
+              <span>
+                <i class="fa-solid fa-microphone"></i>
+                Transcript-based scam intent analysis.
+              </span>
+
+              <span id="callCount">0 / 15000</span>
+
+            </div>
+          </div>
+
+          <!-- Transaction Form -->
+          <div
+            class="evidence-form"
+            id="transactionForm"
+            data-form="transaction"
+            hidden
+          >
+            <label for="transactionInput">Transaction Details</label>
+
+            <textarea
+              id="transactionInput"
+              placeholder="Describe the suspicious transaction. Include only non-sensitive details such as transaction amount, date and payment method. Do not enter PIN, OTP, CVV or passwords."
+              rows="8"
+              maxlength="10000"
+            ></textarea>
+
+            <div class="input-footer">
+
+              <span>
+                <i class="fa-solid fa-lock"></i>
+                Never enter banking credentials.
+              </span>
+
+              <span id="transactionCount">0 / 10000</span>
+
+            </div>
+          </div>
+
+          <!-- Analysis Options -->
+          <div class="analysis-options">
+
+            <div class="analysis-option">
+
+              <div class="option-icon">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+
+              <div>
+                <h4>Guardian Analysis</h4>
+                <p>Scam classification and risk assessment</p>
+              </div>
+
+              <span class="option-indicator">
+                <i class="fa-solid fa-check"></i>
+              </span>
+
+            </div>
+
+            <div class="analysis-option">
+
+              <div class="option-icon">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </div>
+
+              <div>
+                <h4>Intelligence Analysis</h4>
+                <p>Extract potential fraud indicators</p>
+              </div>
+
+              <span class="option-indicator">
+                <i class="fa-solid fa-check"></i>
+              </span>
+
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="detection-actions">
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="analyzeBtn"
+            >
+              <i class="fa-solid fa-shield-halved"></i>
+              Analyze Evidence
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="clearBtn"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+              Clear
+            </button>
+
+          </div>
+
+          <!-- Analysis Message -->
+          <div
+            class="analysis-message"
+            id="analysisMessage"
+            role="status"
+            aria-live="polite"
+            hidden
+          ></div>
+
+        </div>
+
+        <!-- ================= RESULTS PANEL ================= -->
+
+        <div
+          class="detection-results"
+          id="detectionResults"
+          hidden
+        >
+
+          <!-- Results Heading -->
+          <div class="results-heading">
+
+            <div>
+              <span class="panel-label">ANALYSIS REPORT</span>
+              <h2>Detection Results</h2>
+            </div>
+
+            <span class="result-status" id="resultStatus">
+              Pending
+            </span>
+
+          </div>
+
+          <!-- Risk Score -->
+          <div class="risk-result-card">
+
+            <div
+              class="risk-score-circle"
+              id="riskScoreCircle"
+            >
+              <div class="risk-score-inner">
+                <strong id="riskScore">--</strong>
+                <span>RISK SCORE</span>
+              </div>
+            </div>
+
+            <div class="risk-result-info">
+
+              <span>Overall Risk Level</span>
+
+              <h3 id="riskLevel">Awaiting Analysis</h3>
+
+              <p id="riskDescription">
+                Submit evidence to receive an explainable risk assessment.
+              </p>
+
+            </div>
+
+          </div>
+
+          <!-- Fraud Classification -->
+          <div class="result-section">
+
+            <h3>
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Fraud Classification
+            </h3>
+
+            <p id="fraudCategory">Not classified yet.</p>
+
+          </div>
+
+          <!-- Analysis Explanation -->
+          <div class="result-section">
+
+            <h3>
+              <i class="fa-solid fa-lightbulb"></i>
+              Analysis Explanation
+            </h3>
+
+            <p id="riskExplanation">
+              Analysis explanation will appear here.
+            </p>
+
+          </div>
+
+          <!-- Potential Indicators -->
+          <div class="result-section">
+
+            <h3>
+              <i class="fa-solid fa-fingerprint"></i>
+              Potential Indicators
+            </h3>
+
+            <div class="indicator-list" id="indicatorList">
+              <p>No indicators extracted yet.</p>
+            </div>
+
+          </div>
+
+          <!-- Safety Guidance -->
+          <div class="result-section">
+
+            <h3>
+              <i class="fa-solid fa-heart-circle-check"></i>
+              Safety Guidance
+            </h3>
+
+            <ul
+              id="safetyGuidance"
+              class="safety-guidance-list"
+            >
+              <li>
+                Pause before replying, clicking, or transferring money.
+              </li>
+
+              <li>
+                Never share OTPs, PINs, passwords, or full card details.
+              </li>
+
+              <li>
+                Verify through an official contact you find independently.
+              </li>
+            </ul>
+
+          </div>
+
+          <!-- Classification Feedback -->
+          <div
+            class="classification-feedback"
+            id="classificationFeedbackPanel"
+            hidden
+          >
+
+            <label for="classificationFeedbackSelect">
+              Was this assessment useful?
+            </label>
+
+            <select id="classificationFeedbackSelect">
+              <option value="needs_review">
+                I want a human review
+              </option>
+
+              <option value="possible_false_positive">
+                This may be a false positive
+              </option>
+
+              <option value="category_correction_requested">
+                The category seems wrong
+              </option>
+            </select>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="submitClassificationFeedback"
+            >
+              Save Feedback
+            </button>
+
+            <span
+              id="classificationFeedbackStatus"
+              role="status"
+              aria-live="polite"
+            ></span>
+
+          </div>
+
+          <!-- Safety Disclaimer -->
+          <div class="result-safety-note">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <p>
+              This is a rule-based risk assessment, not proof of fraud.
+              Extracted identifiers are unverified clues. Verify through
+              official channels before acting.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= RIGHT SIDEBAR ================= -->
+
+      <aside class="detection-sidebar">
+
+        <!-- Supported Evidence -->
+        <div class="sidebar-card">
+
+          <div class="sidebar-card-heading">
+            <i class="fa-solid fa-file-shield"></i>
+            <h3>Supported Evidence</h3>
+          </div>
+
+          <div class="supported-item">
+            <i class="fa-solid fa-comment-sms"></i>
+            <span>SMS & Chat Messages</span>
+          </div>
+
+          <div class="supported-item">
+            <i class="fa-solid fa-link"></i>
+            <span>Suspicious URLs</span>
+          </div>
+
+          <div class="supported-item">
+            <i class="fa-solid fa-phone"></i>
+            <span>Call Transcripts</span>
+          </div>
+
+          <div class="supported-item">
+            <i class="fa-solid fa-money-bill-transfer"></i>
+            <span>Transaction Details</span>
+          </div>
+
+        </div>
+
+        <!-- Risk Classification -->
+        <div class="sidebar-card">
+
+          <div class="sidebar-card-heading">
+            <i class="fa-solid fa-gauge-high"></i>
+            <h3>Risk Classification</h3>
+          </div>
+
+          <div class="risk-level-item">
+            <span class="risk-color low"></span>
+
+            <div>
+              <h4>Low Risk</h4>
+              <p>0 – 24</p>
+            </div>
+          </div>
+
+          <div class="risk-level-item">
+            <span class="risk-color medium"></span>
+
+            <div>
+              <h4>Medium Risk</h4>
+              <p>25 – 49</p>
+            </div>
+          </div>
+
+          <div class="risk-level-item">
+            <span class="risk-color high"></span>
+
+            <div>
+              <h4>High Risk</h4>
+              <p>50 – 74</p>
+            </div>
+          </div>
+
+          <div class="risk-level-item">
+            <span class="risk-color critical"></span>
+
+            <div>
+              <h4>Critical Risk</h4>
+              <p>75 – 100</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Emergency Help -->
+        <div class="sidebar-card emergency-card">
+
+          <div class="emergency-icon">
+            <i class="fa-solid fa-phone-volume"></i>
+          </div>
+
+          <h3>Need Immediate Help?</h3>
+
+          <p>
+            If you have lost money due to cyber fraud, contact the
+            official cybercrime helpline.
+          </p>
+
+          <a href="tel:1930" class="emergency-number">
+            <i class="fa-solid fa-phone"></i>
+            1930
+          </a>
+
+          <a
+            href="https://cybercrime.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="emergency-link"
+          >
+            Report Cybercrime
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+        </div>
+
+        <!-- Safety Reminder -->
+        <div class="sidebar-card safety-card">
+
+          <div class="sidebar-card-heading">
+            <i class="fa-solid fa-lock"></i>
+            <h3>Safety Reminder</h3>
+          </div>
+
+          <p>
+            Never share your OTP, UPI PIN, ATM PIN, CVV, password
+            or full card credentials with anyone.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+</section>
+
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer class="footer">
+    <div class="container">
+
+
+  <div class="footer-bottom">
+
+    <p>© 2026 ScamShield AI. All rights reserved.</p>
+
+    <p>AI-powered fraud awareness and protection.</p>
+
+  </div>
+
+</div>
+
+
+  </footer>
+
+</body>
+</html>

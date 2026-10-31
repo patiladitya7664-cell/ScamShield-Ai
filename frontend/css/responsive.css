@@ -1,0 +1,800 @@
+/* =====================================================
+   SCAMSHIELD AI
+   RESPONSIVE STYLESHEET
+===================================================== */
+
+/* ================= LARGE LAPTOP ================= */
+
+@media (max-width: 1200px) {
+  .container {
+    width: 92%;
+  }
+
+  .hero-grid {
+    gap: 35px;
+  }
+
+  .hero-content h1 {
+    font-size: 55px;
+  }
+
+  .agents-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .workflow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid {
+    gap: 30px;
+  }
+}
+
+/* ================= TABLET ================= */
+
+@media (max-width: 992px) {
+  /* NAVBAR */
+
+  .nav-content {
+    height: 75px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .nav-actions .btn {
+    padding: 10px 13px;
+    font-size: 11px;
+  }
+
+  /* HERO */
+
+  .hero {
+    padding: 80px 0;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 65px;
+  }
+
+  .hero-content {
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 58px;
+  }
+
+  .hero-description {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .hero-note {
+    justify-content: center;
+  }
+
+  .hero-visual {
+    width: 85%;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  /* FRAUD CARDS */
+
+  .fraud-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* AGENTS */
+
+  .agents-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* FOOTER */
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ================= MOBILE NAVBAR ================= */
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+  }
+
+  .navbar {
+    position: sticky;
+  }
+
+  .nav-content {
+    height: 70px;
+  }
+
+  .logo-text {
+    font-size: 19px;
+  }
+
+  /* MOBILE MENU */
+
+  .menu-toggle {
+    display: grid;
+    place-items: center;
+  }
+
+  .nav-links {
+    position: absolute;
+
+    top: 70px;
+    left: 0;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 0;
+
+    padding: 10px 5% 20px;
+
+    background: rgba(8, 14, 28, 0.98);
+
+    backdrop-filter: blur(20px);
+
+    border-bottom: 1px solid var(--border);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(-10px);
+
+    transition: all 0.3s ease;
+  }
+
+  .nav-links.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav-links a {
+    padding: 14px 5px;
+
+    font-size: 14px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-actions {
+    display: none;
+  }
+
+  /* HERO */
+
+  .hero {
+    padding: 65px 0 75px;
+  }
+
+  .hero-grid {
+    gap: 55px;
+  }
+
+  .hero-content h1 {
+    font-size: 47px;
+    letter-spacing: -1.8px;
+  }
+
+  .hero-description {
+    font-size: 13px;
+  }
+
+  .hero-visual {
+    width: 100%;
+    padding: 8px;
+  }
+
+  .floating-one {
+    right: -5px;
+  }
+
+  .floating-two {
+    left: -5px;
+  }
+
+  /* TRUST STRIP */
+
+  .trust-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .trust-item {
+    font-size: 11px;
+  }
+
+  /* SECTIONS */
+
+  .section {
+    padding: 75px 0;
+  }
+
+  .section-heading {
+    margin-bottom: 40px;
+  }
+
+  .section-heading h2 {
+    font-size: 33px;
+  }
+
+  .section-heading p {
+    font-size: 12px;
+  }
+
+  /* FRAUD */
+
+  .fraud-grid {
+    gap: 14px;
+  }
+
+  .fraud-card {
+    padding: 21px;
+  }
+
+  .fraud-card h3 {
+    font-size: 16px;
+  }
+
+  /* WORKFLOW */
+
+  .workflow {
+    gap: 14px;
+  }
+
+  .workflow-card {
+    padding: 22px 18px;
+  }
+
+  /* FOOTER */
+
+  .footer {
+    padding-top: 50px;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 576px) {
+  .container {
+    width: 91%;
+  }
+
+  /* HERO */
+
+  .hero {
+    padding: 55px 0 65px;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    padding: 8px 12px;
+  }
+
+  .hero-content h1 {
+    font-size: 39px;
+    letter-spacing: -1.5px;
+  }
+
+  .hero-description {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+  }
+
+  .hero-note {
+    font-size: 10px;
+  }
+
+  /* DASHBOARD PREVIEW */
+
+  .dashboard-preview {
+    padding: 19px 15px;
+    border-radius: 15px;
+  }
+
+  .preview-header {
+    margin-bottom: 20px;
+  }
+
+  .preview-header h3 {
+    font-size: 16px;
+  }
+
+  .preview-status {
+    font-size: 8px;
+    padding: 6px 7px;
+  }
+
+  .preview-score {
+    padding: 13px;
+    gap: 12px;
+  }
+
+  .score-circle {
+    width: 85px;
+    height: 85px;
+  }
+
+  .score-inner strong {
+    font-size: 25px;
+  }
+
+  .score-inner span {
+    font-size: 7px;
+  }
+
+  .score-info h3 {
+    font-size: 12px;
+  }
+
+  .score-info p {
+    font-size: 9px;
+  }
+
+  .risk-badge {
+    font-size: 7px;
+  }
+
+  .preview-agent {
+    gap: 9px;
+    padding: 10px 0;
+  }
+
+  .agent-icon {
+    width: 33px;
+    height: 33px;
+    font-size: 13px;
+  }
+
+  .agent-details h4 {
+    font-size: 10px;
+  }
+
+  .agent-details p {
+    font-size: 9px;
+  }
+
+  .floating-label {
+    font-size: 8px;
+    padding: 9px;
+  }
+
+  .floating-one {
+    right: -2px;
+    top: -18px;
+  }
+
+  .floating-two {
+    left: -2px;
+    bottom: -18px;
+  }
+
+  /* TRUST */
+
+  .trust-content {
+    gap: 17px 10px;
+  }
+
+  .trust-item {
+    font-size: 9px;
+    gap: 7px;
+  }
+
+  .trust-item i {
+    font-size: 14px;
+  }
+
+  /* SECTION */
+
+  .section {
+    padding: 65px 0;
+  }
+
+  .section-heading h2 {
+    font-size: 28px;
+  }
+
+  .section-tag {
+    font-size: 9px;
+  }
+
+  /* FRAUD CARDS */
+
+  .fraud-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .fraud-card {
+    min-height: auto;
+    padding: 23px;
+  }
+
+  .fraud-icon {
+    width: 43px;
+    height: 43px;
+    font-size: 17px;
+    margin-bottom: 16px;
+  }
+
+  .fraud-card h3 {
+    font-size: 17px;
+  }
+
+  .fraud-card p {
+    font-size: 11px;
+  }
+
+  /* AGENTS */
+
+  .agents-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .ai-card {
+    padding: 23px;
+  }
+
+  .ai-number {
+    margin-bottom: 17px;
+  }
+
+  .ai-card-icon {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 16px;
+  }
+
+  .ai-card p {
+    min-height: auto;
+    font-size: 12px;
+  }
+
+  /* WORKFLOW */
+
+  .workflow {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .workflow-card {
+    padding: 23px;
+  }
+
+  .workflow-card p {
+    font-size: 12px;
+  }
+
+  /* CTA */
+
+  .cta-box {
+    padding: 45px 20px;
+    border-radius: 15px;
+  }
+
+  .cta-box h2 {
+    font-size: 27px;
+  }
+
+  .cta-box p {
+    font-size: 11px;
+  }
+
+  .cta-box .btn {
+    width: 100%;
+    font-size: 11px;
+  }
+
+  /* FOOTER */
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px 20px;
+  }
+
+  .footer-about {
+    grid-column: 1 / -1;
+  }
+
+  .footer-about p {
+    font-size: 11px;
+  }
+
+  .footer-column h4 {
+    font-size: 12px;
+  }
+
+  .footer-column a {
+    font-size: 10px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .footer-bottom p {
+    font-size: 9px;
+  }
+}
+
+/* ================= EXTRA SMALL DEVICES ================= */
+
+@media (max-width: 360px) {
+  .hero-content h1 {
+    font-size: 34px;
+  }
+
+  .logo-text {
+    font-size: 17px;
+  }
+
+  .preview-score {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .preview-header {
+    gap: 8px;
+  }
+
+  .preview-status {
+    font-size: 7px;
+  }
+
+  .section-heading h2 {
+    font-size: 25px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-about {
+    grid-column: auto;
+  }
+}
+
+/* ================= REDUCED MOTION ================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* =====================================================
+   SCAMSHIELD AI - AGENTS PAGE RESPONSIVENESS
+===================================================== */
+
+/* ================= TABLET ================= */
+
+@media (max-width: 992px) {
+  .agent-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .agent-directory-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .collaboration-flow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .flow-connector {
+    display: none;
+  }
+
+  .agent-detail-card {
+    padding: 25px;
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .agents-hero {
+    padding: 65px 0;
+  }
+
+  .agents-hero-content {
+    text-align: center;
+  }
+
+  .agent-overview {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .overview-item {
+    padding: 18px;
+  }
+
+  .agent-directory-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .agent-detail-card {
+    padding: 23px;
+  }
+
+  .agent-detail-top {
+    gap: 15px;
+  }
+
+  .agent-detail-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .agent-description {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .agent-responsibilities {
+    padding-left: 18px;
+  }
+
+  .collaboration-flow {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .flow-card {
+    padding: 22px;
+  }
+
+  .collaboration-note {
+    padding: 20px;
+  }
+
+  .agent-safety-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 22px;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 576px) {
+  .agents-hero {
+    padding: 50px 0;
+  }
+
+  .agent-overview {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .overview-item {
+    padding: 20px;
+  }
+
+  .overview-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 17px;
+  }
+
+  .agent-detail-card {
+    padding: 20px;
+  }
+
+  .agent-detail-top {
+    flex-wrap: wrap;
+  }
+
+  .agent-detail-icon {
+    width: 43px;
+    height: 43px;
+  }
+
+  .agent-number {
+    font-size: 11px;
+  }
+
+  .agent-category {
+    font-size: 10px;
+  }
+
+  .agent-description {
+    font-size: 12px;
+  }
+
+  .agent-responsibilities {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .agent-output {
+    padding: 15px;
+  }
+
+  .agent-action {
+    width: 100%;
+    text-align: center;
+  }
+
+  .flow-card {
+    padding: 20px;
+  }
+
+  .agent-safety-box {
+    padding: 19px;
+  }
+
+  .safety-notice-content {
+    font-size: 12px;
+    line-height: 1.7;
+  }
+}
+
+/* ================= EXTRA SMALL DEVICES ================= */
+
+@media (max-width: 360px) {
+  .agent-detail-card {
+    padding: 16px;
+  }
+
+  .agent-detail-top {
+    gap: 10px;
+  }
+
+  .agent-description {
+    font-size: 11px;
+  }
+
+  .overview-item {
+    padding: 16px;
+  }
+
+  .flow-card {
+    padding: 17px;
+  }
+}

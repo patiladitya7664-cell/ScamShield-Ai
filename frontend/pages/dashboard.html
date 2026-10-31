@@ -1,0 +1,869 @@
+<!--
+================================================================
+ PROJECT NAME : SCAMSHIELD AI
+ MODULE       : SECURITY DASHBOARD
+ FILE NAME    : dashboard.html
+ FILE PATH    : frontend/pages/dashboard.html
+
+ DESCRIPTION:
+ Main authenticated dashboard of the ScamShield AI platform.
+ Provides a centralized interface for monitoring potential
+ cyber threats, reviewing security statistics and accessing
+ fraud detection and protection modules.
+
+ CORE FEATURES:
+ 1. Security statistics and overview.
+ 2. Potential threat monitoring.
+ 3. Risk distribution visualization.
+ 4. Fraud category breakdown.
+ 5. Recent analysis activity.
+ 6. AI agent overview.
+ 7. Quick access to protection tools.
+ 8. Emergency cyber fraud support.
+
+ CONNECTED CSS FILES:
+ - ../css/style.css
+ - ../css/responsive.css
+ - ../css/dashboard.css
+
+ CONNECTED JAVASCRIPT FILES:
+ - ../js/main.js
+ - ../js/dashboard.js
+
+ BACKEND API:
+ - GET /api/dashboard/overview
+
+ NAVIGATION:
+ - Dashboard   : dashboard.html
+ - Detection   : detection.html
+ - AI Agents   : agents.html
+ - Intelligence: intelligence.html
+ - Analytics   : analytics.html
+ - Reports     : reports.html
+ - Settings    : settings.html
+
+ AUTHENTICATION:
+ Intended for authenticated users.
+ Login page    : login.html
+ Registration  : register.html
+
+ WORKING FLOW:
+ 1. User successfully logs in.
+ 2. User is redirected to dashboard.html.
+ 3. Dashboard interface and resources load.
+ 4. JavaScript requests available dashboard data.
+ 5. Available statistics and activity are displayed.
+ 6. User navigates to other platform modules.
+
+ IMPLEMENTATION STATUS:
+ Frontend UI      : Implemented
+ Backend API      : Pending integration
+ AI Integration  : Pending
+
+ NOTE:
+ Risk scores represent assessments and are not definitive
+ proof of fraudulent activity.
+
+================================================================
+-->
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+<title>ScamShield AI | Security Dashboard</title>
+
+<meta
+  name="description"
+  content="ScamShield AI security dashboard for fraud detection, threat monitoring and victim safety."
+/>
+
+<meta name="theme-color" content="#07111f" />
+
+<!-- GOOGLE FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<link
+  href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- FONT AWESOME -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+/>
+
+<!-- STYLESHEETS -->
+<link rel="stylesheet" href="../css/style.css" />
+<link rel="stylesheet" href="../css/responsive.css" />
+<link rel="stylesheet" href="../css/dashboard.css" />
+
+
+
+  </head>
+
+  <body>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+
+<!-- ======================================================
+     NAVBAR
+     Authenticated navigation: Dashboard is the main page.
+======================================================= -->
+
+<header class="navbar">
+  <div class="container nav-content">
+
+    <!-- LOGO: Redirects to Dashboard -->
+    <a href="dashboard.html" class="logo">
+      <span class="logo-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </span>
+
+      <span class="logo-text">
+        ScamShield <span>AI</span>
+      </span>
+    </a>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="nav-links" id="navLinks">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="agents.html">AI Agents</a>
+      <a href="intelligence.html">Intelligence</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+
+    <!-- NAVIGATION ACTIONS -->
+    <div class="nav-actions">
+      <a href="settings.html" class="btn btn-secondary">
+        <i class="fa-solid fa-gear"></i>
+        Settings
+      </a>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+  </div>
+</header>
+
+<main class="dashboard-page">
+
+  <!-- ==================================================
+       DASHBOARD HERO
+  =================================================== -->
+
+  <section class="dashboard-hero">
+    <div class="container">
+
+      <div class="dashboard-heading">
+        <div>
+          <span class="section-tag">
+            <i class="fa-solid fa-chart-line"></i>
+            SECURITY COMMAND CENTER
+          </span>
+
+          <h1>Security <span>Dashboard</span></h1>
+
+          <p>
+            Monitor potential threats, review analysis activity and access
+            your protection tools.
+          </p>
+        </div>
+
+        <div class="dashboard-heading-actions">
+          <span class="dashboard-date" id="dashboardDate">
+            <i class="fa-regular fa-calendar"></i>
+            Loading date...
+          </span>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="refreshDashboard"
+          >
+            <i class="fa-solid fa-rotate"></i>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- SYSTEM STATUS -->
+      <div class="system-status-bar">
+        <div class="system-status-left">
+          <span class="system-status-indicator"></span>
+
+          <div>
+            <strong>Platform Status</strong>
+            <span id="platformStatus">Checking connection...</span>
+          </div>
+        </div>
+
+        <div class="system-status-right">
+          <span>
+            <i class="fa-solid fa-shield-halved"></i>
+            ScamShield AI
+          </span>
+
+          <span class="system-version">Prototype v1.0</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================================================
+       SECURITY STATISTICS
+  =================================================== -->
+
+  <section class="section dashboard-overview">
+    <div class="container">
+
+      <div class="dashboard-section-heading">
+        <div>
+          <span class="section-tag">OVERVIEW</span>
+          <h2>Security <span>Insights</span></h2>
+        </div>
+
+        <span class="data-label">
+          <i class="fa-solid fa-database"></i>
+          <span id="statisticsStatus">Awaiting data</span>
+        </span>
+      </div>
+
+      <div class="dashboard-stats-grid">
+
+        <!-- TOTAL ANALYSES -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon blue">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="totalAnalyses">--</h3>
+            <p>Total Analyses</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-chart-simple"></i>
+            Evidence analysis records
+          </div>
+        </article>
+
+        <!-- POTENTIAL THREATS -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon red">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="threatsDetected">--</h3>
+            <p>Potential Threats</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-shield-virus"></i>
+            High and critical risk results
+          </div>
+        </article>
+
+        <!-- LOW RISK RESULTS -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon green">
+              <i class="fa-solid fa-shield-check"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="lowRiskResults">--</h3>
+            <p>Low Risk Results</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-circle-check"></i>
+            Low risk assessments
+          </div>
+        </article>
+
+        <!-- HIGH PRIORITY CASES -->
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-top">
+            <div class="dashboard-stat-icon orange">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+
+            <span class="stat-period">ALL TIME</span>
+          </div>
+
+          <div class="dashboard-stat-content">
+            <h3 id="highRiskResults">--</h3>
+            <p>High Priority Cases</p>
+          </div>
+
+          <div class="stat-footer">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            High and critical assessments
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       RISK DISTRIBUTION AND FRAUD CATEGORIES
+  =================================================== -->
+
+  <section class="section dashboard-main-section">
+    <div class="container">
+
+      <div class="dashboard-main-grid">
+
+        <!-- RISK DISTRIBUTION -->
+        <div class="dashboard-panel risk-distribution-panel">
+
+          <div class="panel-heading">
+            <div>
+              <span class="panel-label">RISK MONITORING</span>
+              <h3>Risk Distribution</h3>
+            </div>
+
+            <span class="panel-icon">
+              <i class="fa-solid fa-chart-pie"></i>
+            </span>
+          </div>
+
+          <div class="risk-chart-container">
+
+            <div class="risk-chart" id="riskChart">
+              <div class="risk-chart-inner">
+                <strong id="totalRiskCases">--</strong>
+                <span>Total Cases</span>
+              </div>
+            </div>
+
+            <div class="risk-legend">
+
+              <div class="legend-item">
+                <span class="legend-color low"></span>
+                <span>Low</span>
+                <strong id="lowRiskCount">--</strong>
+              </div>
+
+              <div class="legend-item">
+                <span class="legend-color medium"></span>
+                <span>Medium</span>
+                <strong id="mediumRiskCount">--</strong>
+              </div>
+
+              <div class="legend-item">
+                <span class="legend-color high"></span>
+                <span>High</span>
+                <strong id="highRiskCount">--</strong>
+              </div>
+
+              <div class="legend-item">
+                <span class="legend-color critical"></span>
+                <span>Critical</span>
+                <strong id="criticalRiskCount">--</strong>
+              </div>
+
+            </div>
+          </div>
+
+          <p class="panel-note">
+            Risk distribution will appear when analysis data becomes
+            available.
+          </p>
+
+        </div>
+
+        <!-- FRAUD CATEGORIES -->
+        <div class="dashboard-panel fraud-category-panel">
+
+          <div class="panel-heading">
+            <div>
+              <span class="panel-label">THREAT CATEGORIES</span>
+              <h3>Fraud Breakdown</h3>
+            </div>
+
+            <span class="panel-icon">
+              <i class="fa-solid fa-layer-group"></i>
+            </span>
+          </div>
+
+          <div class="fraud-category-list">
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon investment">
+                  <i class="fa-solid fa-chart-line"></i>
+                </span>
+
+                <span>Investment Scams</span>
+              </div>
+
+              <strong id="investmentCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon arrest">
+                  <i class="fa-solid fa-user-lock"></i>
+                </span>
+
+                <span>Digital Arrest</span>
+              </div>
+
+              <strong id="digitalArrestCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon card">
+                  <i class="fa-solid fa-credit-card"></i>
+                </span>
+
+                <span>Credit Card Fraud</span>
+              </div>
+
+              <strong id="creditCardCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon sextortion">
+                  <i class="fa-solid fa-user-shield"></i>
+                </span>
+
+                <span>Sextortion</span>
+              </div>
+
+              <strong id="sextortionCount">--</strong>
+            </div>
+
+            <div class="fraud-category-item">
+              <div class="fraud-category-info">
+                <span class="fraud-category-icon ecommerce">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </span>
+
+                <span>E-commerce Fraud</span>
+              </div>
+
+              <strong id="ecommerceCount">--</strong>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       RECENT ANALYSIS ACTIVITY
+  =================================================== -->
+
+  <section class="section dashboard-activity-section">
+    <div class="container">
+
+      <div class="dashboard-panel activity-panel">
+
+        <div class="panel-heading">
+          <div>
+            <span class="panel-label">MONITORING HISTORY</span>
+            <h3>Recent Analysis Activity</h3>
+          </div>
+
+          <a href="reports.html" class="panel-link">
+            View Reports
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="activity-table-wrapper">
+          <table class="activity-table">
+
+            <thead>
+              <tr>
+                <th>Evidence ID</th>
+                <th>Evidence Type</th>
+                <th>Fraud Category</th>
+                <th>Risk Score</th>
+                <th>Risk Level</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody id="activityTableBody">
+              <tr>
+                <td colspan="6" class="empty-activity">
+                  <i class="fa-solid fa-folder-open"></i>
+
+                  <strong>No analysis records yet</strong>
+
+                  <span>
+                    Submitted evidence will appear here after backend
+                    integration.
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       AI AGENT OVERVIEW
+  =================================================== -->
+
+  <section class="section dashboard-agents-section">
+    <div class="container">
+
+      <div class="dashboard-section-heading">
+        <div>
+          <span class="section-tag">MULTI-AGENT SYSTEM</span>
+          <h2>AI Agent <span>Overview</span></h2>
+        </div>
+
+        <a href="agents.html" class="panel-link">
+          Explore Agents
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="dashboard-agents-grid">
+
+        <!-- GUARDIAN AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon guardian">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Guardian Agent</h3>
+            <p>Fraud detection and risk assessment.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+        <!-- INTELLIGENCE AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon intelligence">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Intelligence Agent</h3>
+            <p>Indicator extraction and correlation.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+        <!-- VICTIM SAFETY AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon safety">
+            <i class="fa-solid fa-heart-circle-check"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Victim Safety Agent</h3>
+            <p>Victim guidance and safety recommendations.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+        <!-- DECOY AGENT -->
+        <article class="dashboard-agent-card">
+          <div class="dashboard-agent-icon decoy">
+            <i class="fa-solid fa-user-secret"></i>
+          </div>
+
+          <div class="dashboard-agent-info">
+            <h3>Decoy Agent</h3>
+            <p>Controlled scam-baiting simulations.</p>
+          </div>
+
+          <span class="agent-state">
+            <span></span>
+            Prototype
+          </span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       QUICK ACCESS PROTECTION TOOLS
+  =================================================== -->
+
+  <section class="section dashboard-actions-section">
+    <div class="container">
+
+      <div class="dashboard-section-heading">
+        <div>
+          <span class="section-tag">QUICK ACCESS</span>
+          <h2>Protection <span>Tools</span></h2>
+        </div>
+      </div>
+
+      <div class="dashboard-actions-grid">
+
+        <!-- DETECTION -->
+        <a href="detection.html" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </span>
+
+          <div>
+            <h3>Analyze Evidence</h3>
+            <p>Examine suspicious messages, URLs and calls.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- INTELLIGENCE -->
+        <a href="intelligence.html" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-brain"></i>
+          </span>
+
+          <div>
+            <h3>Threat Intelligence</h3>
+            <p>Explore potential fraud indicators.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- DECOY LAB -->
+        <a href="decoy-lab.html" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-user-secret"></i>
+          </span>
+
+          <div>
+            <h3>Decoy Laboratory</h3>
+            <p>Explore safe and controlled simulations.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+        <!-- REPORTS -->
+        <a href="reports.html" class="dashboard-action-card">
+          <span class="action-icon">
+            <i class="fa-solid fa-file-shield"></i>
+          </span>
+
+          <div>
+            <h3>Analysis Reports</h3>
+            <p>Review available analysis records.</p>
+          </div>
+
+          <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       EMERGENCY CYBER FRAUD SUPPORT
+  =================================================== -->
+
+  <section class="section emergency-support-section">
+    <div class="container">
+
+      <div class="emergency-support-card">
+
+        <div class="emergency-support-icon">
+          <i class="fa-solid fa-phone-volume"></i>
+        </div>
+
+        <div class="emergency-support-content">
+          <span>IMMEDIATE CYBER FRAUD SUPPORT</span>
+
+          <h2>Already Lost Money to Cyber Fraud?</h2>
+
+          <p>
+            Contact India's cyber financial fraud helpline immediately and
+            report the incident through the official government portal.
+          </p>
+        </div>
+
+        <div class="emergency-support-actions">
+
+          <a href="tel:1930" class="btn btn-emergency">
+            <i class="fa-solid fa-phone"></i>
+            Call 1930
+          </a>
+
+          <a
+            href="https://cybercrime.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-secondary"
+          >
+            Report Online
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
+<footer class="footer">
+  <div class="container">
+
+    <div class="footer-grid">
+
+      <!-- FOOTER BRAND -->
+      <div class="footer-about">
+
+        <!-- LOGO: Redirects to Dashboard -->
+        <a href="dashboard.html" class="logo">
+          <span class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </span>
+
+          <span class="logo-text">
+            ScamShield <span>AI</span>
+          </span>
+        </a>
+
+        <p>
+          AI-powered fraud intelligence and victim-safety platform designed
+          to help people recognize potential digital threats.
+        </p>
+
+      </div>
+
+      <!-- PLATFORM LINKS -->
+      <div class="footer-column">
+        <h4>Platform</h4>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="detection.html">Detection</a>
+        <a href="agents.html">AI Agents</a>
+        <a href="intelligence.html">Intelligence</a>
+        <a href="analytics.html">Analytics</a>
+      </div>
+
+      <!-- TOOL LINKS -->
+      <div class="footer-column">
+        <h4>Tools</h4>
+        <a href="decoy-lab.html">Decoy Lab</a>
+        <a href="reports.html">Reports</a>
+        <a href="settings.html">Settings</a>
+      </div>
+
+      <!-- EMERGENCY SUPPORT -->
+      <div class="footer-column">
+        <h4>Emergency Help</h4>
+
+        <a href="tel:1930">
+          Cyber Fraud Helpline: 1930
+        </a>
+
+        <a
+          href="https://cybercrime.gov.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Report Cyber Crime
+        </a>
+      </div>
+
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="footer-bottom">
+      <p>
+        © <span data-current-year></span>
+        ScamShield AI. All rights reserved.
+      </p>
+
+      <p>Built for a safer digital India.</p>
+    </div>
+
+  </div>
+</footer>
+<!-- ==========================================
+     SCAMSHIELD AI - JAVASCRIPT
+========================================== -->
+
+<!-- Core Scripts -->
+<script src="../js/main.js"></script>
+
+<!-- API Services -->
+<script src="../js/services/api.js"></script>
+
+<!-- Utility Functions -->
+<script src="../js/utils/helpers.js"></script>
+
+<!-- Components -->
+<script src="../js/components/navigation.js"></script>
+<script src="../js/components/sidebar.js"></script>
+<script src="../js/components/notifications.js"></script>
+
+<!-- Dashboard -->
+<script src="../js/dashboard.js"></script>
+
+
+
+
+  </body>
+</html>

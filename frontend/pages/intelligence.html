@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>ScamShield AI | Threat Intelligence</title>
+
+    <meta
+      name="description"
+      content="Explore suspicious phone numbers, URLs, UPI IDs and other potential fraud indicators with ScamShield AI."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/intelligence.css" />
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/intelligence.js" defer></script>
+  </head>
+
+  <body>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+   <!-- ======================================================
+     NAVBAR
+     Authenticated navigation: Dashboard is the main page.
+======================================================= -->
+
+<header class="navbar">
+  <div class="container nav-content">
+
+    <!-- LOGO: Redirects to Dashboard -->
+    <a href="dashboard.html" class="logo">
+      <span class="logo-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </span>
+
+      <span class="logo-text">
+        ScamShield <span>AI</span>
+      </span>
+    </a>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="nav-links" id="navLinks">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="agents.html">AI Agents</a>
+      <a href="intelligence.html">Intelligence</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+
+    <!-- NAVIGATION ACTIONS -->
+    <div class="nav-actions">
+      <a href="settings.html" class="btn btn-secondary">
+        <i class="fa-solid fa-gear"></i>
+        Settings
+      </a>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+  </div>
+</header>
+
+
+    <main>
+      <!-- HERO -->
+      <section class="intelligence-hero">
+        <div class="container">
+          <div class="intelligence-hero-content">
+            <span class="section-tag">
+              <i class="fa-solid fa-brain"></i>
+              AI-POWERED THREAT INTELLIGENCE
+            </span>
+
+            <h1>
+              Identify the Clues.
+              <span>Understand the Threat.</span>
+            </h1>
+
+            <p>
+              Examine potential fraud indicators, organize suspicious evidence
+              and understand how different clues may be connected.
+            </p>
+
+            <div class="intelligence-hero-actions">
+              <a href="#indicator-workspace" class="btn btn-primary">
+                Explore Indicators
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+
+              <a href="detection.html" class="btn btn-secondary">
+                Analyze Evidence
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OVERVIEW -->
+      <section class="section intelligence-overview">
+        <div class="container">
+          <div class="section-heading">
+            <span class="section-tag">INTELLIGENCE OVERVIEW</span>
+
+            <h2>
+              Understand Different
+              <span>Threat Indicators</span>
+            </h2>
+
+            <p>
+              Review the types of information that can help identify suspicious
+              activity.
+            </p>
+          </div>
+
+          <div class="intelligence-stats-grid">
+            <article class="intelligence-stat-card">
+              <div class="stat-icon phone-icon">
+                <i class="fa-solid fa-phone"></i>
+              </div>
+
+              <div>
+                <h3>Phone Numbers</h3>
+                <p>Potentially suspicious contact numbers.</p>
+              </div>
+
+              <span class="indicator-type">PHONE</span>
+            </article>
+
+            <article class="intelligence-stat-card">
+              <div class="stat-icon url-icon">
+                <i class="fa-solid fa-link"></i>
+              </div>
+
+              <div>
+                <h3>Suspicious URLs</h3>
+                <p>Potential phishing and fraudulent links.</p>
+              </div>
+
+              <span class="indicator-type">URL</span>
+            </article>
+
+            <article class="intelligence-stat-card">
+              <div class="stat-icon upi-icon">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+              </div>
+
+              <div>
+                <h3>UPI Identifiers</h3>
+                <p>UPI IDs appearing in submitted evidence.</p>
+              </div>
+
+              <span class="indicator-type">UPI</span>
+            </article>
+
+            <article class="intelligence-stat-card">
+              <div class="stat-icon keyword-icon">
+                <i class="fa-solid fa-file-lines"></i>
+              </div>
+
+              <div>
+                <h3>Fraud Keywords</h3>
+                <p>Suspicious phrases and communication patterns.</p>
+              </div>
+
+              <span class="indicator-type">TEXT</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- INDICATOR WORKSPACE -->
+      <section class="section indicator-workspace" id="indicator-workspace">
+        <div class="container">
+          <div class="section-heading">
+            <span class="section-tag">INDICATOR EXPLORER</span>
+
+            <h2>
+              Explore Potential
+              <span>Fraud Indicators</span>
+            </h2>
+
+            <p>
+              Enter an indicator to organize and examine suspicious information.
+            </p>
+          </div>
+
+          <div class="indicator-workspace-card">
+            <div class="indicator-search-header">
+              <div>
+                <h3>Indicator Analysis</h3>
+                <p>Choose an indicator type and enter its value.</p>
+              </div>
+
+              <span class="workspace-status">
+                <span class="status-dot"></span>
+                Analysis Workspace
+              </span>
+            </div>
+
+            <!-- INDICATOR TABS -->
+            <div
+              class="indicator-tabs"
+              role="group"
+              aria-label="Indicator type"
+            >
+              <button
+                type="button"
+                class="indicator-tab active"
+                data-indicator="phone"
+                aria-pressed="true"
+              >
+                <i class="fa-solid fa-phone"></i>
+                Phone
+              </button>
+
+              <button
+                type="button"
+                class="indicator-tab"
+                data-indicator="url"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-link"></i>
+                URL
+              </button>
+
+              <button
+                type="button"
+                class="indicator-tab"
+                data-indicator="upi"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-wallet"></i>
+                UPI ID
+              </button>
+
+              <button
+                type="button"
+                class="indicator-tab"
+                data-indicator="keyword"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-file-lines"></i>
+                Keyword
+              </button>
+            </div>
+
+            <!-- SEARCH FORM -->
+            <form id="indicatorForm" class="indicator-form">
+              <label for="indicatorInput" id="indicatorLabel">
+                Enter Phone Number
+              </label>
+
+              <div class="indicator-input-wrapper">
+                <i class="fa-solid fa-phone" id="indicatorInputIcon"></i>
+
+                <input
+                  type="text"
+                  id="indicatorInput"
+                  placeholder="Enter phone number"
+                  autocomplete="off"
+                  maxlength="250"
+                  required
+                />
+
+                <button type="submit" id="indicatorAnalyzeBtn">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  Examine
+                </button>
+              </div>
+
+              <p class="input-hint" id="indicatorHint">
+                Enter a phone number with country code if available.
+              </p>
+            </form>
+
+            <div
+              class="indicator-message"
+              id="indicatorMessage"
+              role="status"
+              aria-live="polite"
+              hidden
+            ></div>
+
+            <!-- RESULTS -->
+            <div class="indicator-results" id="indicatorResults" hidden>
+              <div class="results-heading">
+                <div>
+                  <span class="results-label">ANALYSIS OUTPUT</span>
+                  <h3>Indicator Examination</h3>
+                </div>
+
+                <span class="unverified-badge">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  Unverified Indicator
+                </span>
+              </div>
+
+              <div class="indicator-result-value">
+                <span>Submitted Indicator</span>
+                <strong id="resultIndicator">-</strong>
+              </div>
+
+              <div class="indicator-result-grid">
+                <div class="indicator-result-item">
+                  <span>Indicator Type</span>
+                  <strong id="resultType">-</strong>
+                </div>
+
+                <div class="indicator-result-item">
+                  <span>Assessment Status</span>
+                  <strong id="resultStatus">-</strong>
+                </div>
+
+                <div class="indicator-result-item">
+                  <span>Related Evidence</span>
+                  <strong id="resultEvidence">-</strong>
+                </div>
+              </div>
+
+              <div class="indicator-explanation">
+                <h4>
+                  <i class="fa-solid fa-lightbulb"></i>
+                  Intelligence Notes
+                </h4>
+
+                <p id="resultExplanation">No analysis available.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORRELATION -->
+      <section class="section correlation-section">
+        <div class="container">
+          <div class="section-heading">
+            <span class="section-tag">INTELLIGENCE CORRELATION</span>
+
+            <h2>
+              Connect the
+              <span>Evidence</span>
+            </h2>
+
+            <p>
+              Multiple indicators may appear across different messages, calls
+              and transactions.
+            </p>
+          </div>
+
+          <div class="correlation-grid">
+            <article class="correlation-card">
+              <div class="correlation-icon">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+
+              <h3>Communication Evidence</h3>
+
+              <p>
+                Identify phone numbers, suspicious phrases and links appearing
+                in submitted messages or call transcripts.
+              </p>
+            </article>
+
+            <article class="correlation-card">
+              <div class="correlation-icon">
+                <i class="fa-solid fa-diagram-project"></i>
+              </div>
+
+              <h3>Indicator Relationships</h3>
+
+              <p>
+                Organize multiple indicators and examine possible connections
+                between submitted evidence.
+              </p>
+            </article>
+
+            <article class="correlation-card">
+              <div class="correlation-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+
+              <h3>Contextual Assessment</h3>
+
+              <p>
+                Use evidence context to understand why an indicator may require
+                further investigation.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- SAFETY NOTICE -->
+      <section class="section intelligence-safety">
+        <div class="container">
+          <div class="intelligence-safety-card">
+            <div class="safety-icon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="safety-content">
+              <h3>Important Intelligence Disclaimer</h3>
+
+              <p>
+                An extracted phone number, URL or UPI ID is only a potential
+                indicator. Its appearance in submitted evidence does not
+                establish criminal activity or prove that its owner is involved
+                in fraud. Independent verification and appropriate context are
+                essential.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section">
+        <div class="container">
+          <div class="cta-box">
+            <span class="section-tag">STAY PROTECTED</span>
+
+            <h2>Have Suspicious Evidence?</h2>
+
+            <p>
+              Submit a message, URL, call transcript or transaction information
+              for an explainable risk assessment.
+            </p>
+
+            <a href="detection.html" class="btn btn-primary">
+              Start Detection
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-about">
+            <a href="../index.html" class="logo">
+              <span class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+              </span>
+
+              <span class="logo-text"> ScamShield <span>AI</span> </span>
+            </a>
+
+            <p>
+              AI-powered fraud intelligence and victim-safety platform designed
+              to help people recognize potential digital threats.
+            </p>
+          </div>
+
+          <div class="footer-column">
+            <h4>Platform</h4>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="detection.html">Detection</a>
+            <a href="agents.html">AI Agents</a>
+            <a href="intelligence.html">Intelligence</a>
+          </div>
+
+          <div class="footer-column">
+            <h4>Protection</h4>
+            <a href="decoy-lab.html">Decoy Lab</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html">Settings</a>
+          </div>
+
+          <div class="footer-column">
+            <h4>Emergency Help</h4>
+            <a href="tel:1930">Cyber Fraud Helpline: 1930</a>
+
+            <a
+              href="https://cybercrime.gov.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Report Cyber Crime
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            © <span data-current-year></span>
+            ScamShield AI. All rights reserved.
+          </p>
+
+          <p>Built for a safer digital India.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

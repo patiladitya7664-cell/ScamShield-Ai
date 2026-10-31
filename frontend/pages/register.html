@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Create Account | ScamShield AI</title>
+
+    <meta
+      name="description"
+      content="Create your ScamShield AI account and access intelligent cyber threat protection."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+  </head>
+
+  <body class="auth-page">
+    <main class="auth-layout">
+      <!-- LEFT VISUAL SECTION -->
+      <section class="auth-visual">
+        <a href="../index.html" class="auth-brand">
+          <span class="brand-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </span>
+
+          <span>ScamShield<span class="brand-highlight">AI</span></span>
+        </a>
+
+        <div class="auth-visual-content">
+          <span class="eyebrow">
+            <span class="status-dot"></span>
+            YOUR DIGITAL SAFETY STARTS HERE
+          </span>
+
+          <h1>
+            Build a safer
+            <span>digital future.</span>
+          </h1>
+
+          <p>
+            Create your account and access a central platform designed to help
+            identify suspicious activity, understand threats and improve digital
+            awareness.
+          </p>
+
+          <div class="auth-feature-list">
+            <div class="auth-feature">
+              <span>
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </span>
+
+              <div>
+                <h3>Intelligent Detection</h3>
+                <p>Analyse suspicious digital evidence.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature">
+              <span>
+                <i class="fa-solid fa-network-wired"></i>
+              </span>
+
+              <div>
+                <h3>Connected Intelligence</h3>
+                <p>Organise fraud indicators and insights.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature">
+              <span>
+                <i class="fa-solid fa-hand-holding-shield"></i>
+              </span>
+
+              <div>
+                <h3>Safety First</h3>
+                <p>Access practical cyber safety guidance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-visual-footer">
+          <span>SCAMSHIELD AI</span>
+          <span>SECURITY STARTS WITH AWARENESS</span>
+        </div>
+      </section>
+
+      <!-- RIGHT REGISTRATION SECTION -->
+      <section class="auth-form-section">
+        <div class="auth-form-container">
+          <a href="../index.html" class="mobile-auth-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            ScamShield<span>AI</span>
+          </a>
+
+          <div class="auth-heading">
+            <span class="form-label">GET STARTED</span>
+
+            <h2>Create your account</h2>
+
+            <p>
+              Join ScamShield AI and take a smarter approach to digital
+              security.
+            </p>
+          </div>
+
+          <form id="registerForm" class="auth-form">
+            <!-- FULL NAME -->
+            <div class="form-group">
+              <label for="name">Full name</label>
+
+              <div class="input-wrapper">
+                <i class="fa-regular fa-user"></i>
+
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Enter your full name"
+                  autocomplete="name"
+                  minlength="2"
+                  maxlength="60"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+              <label for="email">Email address</label>
+
+              <div class="input-wrapper">
+                <i class="fa-regular fa-envelope"></i>
+
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+              <label for="password">Create password</label>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Minimum 8 characters"
+                  autocomplete="new-password"
+                  minlength="8"
+                  required
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-password-target="password"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="form-group">
+              <label for="confirmPassword">Confirm password</label>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Re-enter your password"
+                  autocomplete="new-password"
+                  minlength="8"
+                  required
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  data-password-target="confirmPassword"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- TERMS -->
+            <div class="form-options">
+              <label class="remember-option">
+                <input type="checkbox" id="terms" required />
+
+                <span>
+                  I agree to the
+                  <a href="#" id="termsLink">Terms of Service</a>
+                  and
+                  <a href="#" id="privacyLink">Privacy Policy</a>.
+                </span>
+              </label>
+            </div>
+
+            <!-- MESSAGE -->
+            <div
+              id="authMessage"
+              class="auth-message"
+              role="alert"
+              aria-live="polite"
+            ></div>
+
+            <!-- SUBMIT -->
+            <button type="submit" class="auth-submit-btn" id="registerButton">
+              <span>Create Account</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+
+          <div class="auth-divider">
+            <span>SECURE REGISTRATION</span>
+          </div>
+
+          <div class="security-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Your credentials should always remain private.</span>
+          </div>
+
+          <p class="auth-switch">
+            Already have an account?
+            <a href="login.html">Sign in</a>
+          </p>
+
+          <a href="../index.html" class="back-home">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to homepage
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <script src="../js/register.js" defer></script>
+  </body>
+</html>

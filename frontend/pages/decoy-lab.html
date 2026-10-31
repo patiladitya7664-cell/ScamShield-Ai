@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Safe Decoy Lab | ScamShield AI</title>
+
+    <meta
+      name="description"
+      content="Explore safe, controlled scam simulations and learn how to identify suspicious messages with ScamShield AI."
+    />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+
+    <!-- Decoy Lab CSS -->
+    <link rel="stylesheet" href="../css/decoy-lab.css" />
+  </head>
+
+  <body>
+    <!-- Background Effects -->
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+   <!-- ======================================================
+     NAVBAR
+     Authenticated navigation: Dashboard is the main page.
+======================================================= -->
+
+<header class="navbar">
+  <div class="container nav-content">
+
+    <!-- LOGO: Redirects to Dashboard -->
+    <a href="dashboard.html" class="logo">
+      <span class="logo-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </span>
+
+      <span class="logo-text">
+        ScamShield <span>AI</span>
+      </span>
+    </a>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="nav-links" id="navLinks">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="agents.html">AI Agents</a>
+      <a href="intelligence.html">Intelligence</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+
+    <!-- NAVIGATION ACTIONS -->
+    <div class="nav-actions">
+      <a href="settings.html" class="btn btn-secondary">
+        <i class="fa-solid fa-gear"></i>
+        Settings
+      </a>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+  </div>
+</header>
+
+    <!-- Main Content -->
+    <main class="decoy-page">
+      <!-- Hero Section -->
+      <section class="decoy-hero">
+        <div class="container">
+          <div class="decoy-hero-content">
+            <div class="decoy-hero-text">
+              <div class="decoy-eyebrow">
+                <span class="decoy-live-dot"></span>
+                SAFE SIMULATION ENVIRONMENT
+              </div>
+
+              <h1>
+                Welcome to the
+                <span>Decoy Lab</span>
+              </h1>
+
+              <p>
+                Explore controlled fraud simulations, understand scammer tactics
+                and learn how to identify suspicious communication without
+                interacting with real scammers.
+              </p>
+
+              <div class="decoy-hero-actions">
+                <a href="#simulation" class="btn btn-primary">
+                  <i class="fa-solid fa-flask"></i>
+                  Start Simulation
+                </a>
+
+                <a href="#safety" class="btn btn-secondary">
+                  <i class="fa-solid fa-shield-halved"></i>
+                  Safety Guidelines
+                </a>
+              </div>
+
+              <div class="decoy-hero-note">
+                <i class="fa-solid fa-lock"></i>
+                100% controlled demonstration environment
+              </div>
+            </div>
+
+            <div class="decoy-hero-visual">
+              <div class="decoy-visual-card">
+                <div class="decoy-visual-header">
+                  <div>
+                    <span class="decoy-visual-label">SIMULATION STATUS</span>
+                    <h3>Decoy Environment</h3>
+                  </div>
+
+                  <span class="decoy-status">
+                    <span></span>
+                    Protected
+                  </span>
+                </div>
+
+                <div class="decoy-visual-icon">
+                  <i class="fa-solid fa-user-secret"></i>
+                </div>
+
+                <div class="decoy-visual-info">
+                  <div>
+                    <span>Environment</span>
+                    <strong>Isolated Simulation</strong>
+                  </div>
+
+                  <div>
+                    <span>External Interaction</span>
+                    <strong>Disabled</strong>
+                  </div>
+
+                  <div>
+                    <span>Data Mode</span>
+                    <strong>Synthetic Examples</strong>
+                  </div>
+                </div>
+
+                <div class="decoy-visual-footer">
+                  <i class="fa-solid fa-shield-check"></i>
+                  No real-world contact enabled
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Simulation Overview -->
+      <section class="decoy-overview">
+        <div class="container">
+          <div class="decoy-section-heading">
+            <span class="section-tag">LEARN THROUGH SIMULATION</span>
+
+            <h2>Understand the <span>Scammer's Playbook</span></h2>
+
+            <p>
+              Study common fraud patterns through fictional scenarios designed
+              for awareness and prevention.
+            </p>
+          </div>
+
+          <div class="decoy-scenario-grid">
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon red">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+
+              <span class="scenario-tag">FINANCIAL FRAUD</span>
+
+              <h3>Investment Scam</h3>
+
+              <p>
+                Understand fake investment opportunities, unrealistic returns
+                and pressure-based financial manipulation.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="investment"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon orange">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+
+              <span class="scenario-tag">IMPERSONATION</span>
+
+              <h3>Digital Arrest Scam</h3>
+
+              <p>
+                Learn how fraudsters use fake authority, threats and
+                psychological pressure to manipulate victims.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="digital-arrest"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon blue">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+
+              <span class="scenario-tag">PAYMENT FRAUD</span>
+
+              <h3>Credit Card Fraud</h3>
+
+              <p>
+                Identify suspicious payment requests, fake verification messages
+                and credential theft attempts.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="credit-card"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon purple">
+                <i class="fa-solid fa-message"></i>
+              </div>
+
+              <span class="scenario-tag">ONLINE EXTORTION</span>
+
+              <h3>Sextortion Scam</h3>
+
+              <p>
+                Recognize blackmail patterns, intimidation tactics and
+                suspicious demands involving private information.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="sextortion"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+
+            <article class="decoy-scenario-card">
+              <div class="scenario-icon green">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+
+              <span class="scenario-tag">ONLINE SHOPPING</span>
+
+              <h3>E-commerce Fraud</h3>
+
+              <p>
+                Study fake shopping websites, fraudulent offers and suspicious
+                payment or delivery requests.
+              </p>
+
+              <button
+                class="scenario-select-btn"
+                type="button"
+                data-scenario="ecommerce"
+              >
+                Explore Scenario
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Simulation Workspace -->
+      <section class="decoy-simulation-section" id="simulation">
+        <div class="container">
+          <div class="decoy-section-heading">
+            <span class="section-tag">INTERACTIVE LEARNING</span>
+
+            <h2>Simulation <span>Workspace</span></h2>
+
+            <p>
+              Select a fictional scenario and examine its suspicious
+              communication patterns.
+            </p>
+          </div>
+
+          <div class="decoy-workspace">
+            <!-- Scenario Selector -->
+            <div class="decoy-workspace-sidebar">
+              <div class="workspace-sidebar-heading">
+                <i class="fa-solid fa-layer-group"></i>
+                <h3>Scenarios</h3>
+              </div>
+
+              <button
+                class="workspace-scenario active"
+                type="button"
+                data-scenario="investment"
+              >
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Investment Scam</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="digital-arrest"
+              >
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Digital Arrest</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="credit-card"
+              >
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Credit Card Fraud</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="sextortion"
+              >
+                <i class="fa-solid fa-envelope"></i>
+                <span>Sextortion</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <button
+                class="workspace-scenario"
+                type="button"
+                data-scenario="ecommerce"
+              >
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>E-commerce Fraud</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+
+              <div class="workspace-sidebar-note">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                  All scenarios use fictional data and are isolated from real
+                  communication systems.
+                </p>
+              </div>
+            </div>
+
+            <!-- Simulation Main Area -->
+            <div class="decoy-workspace-main">
+              <div class="simulation-header">
+                <div>
+                  <span class="simulation-label">CURRENT SCENARIO</span>
+                  <h3 id="scenarioTitle">Investment Scam</h3>
+                </div>
+
+                <span class="simulation-badge">
+                  <i class="fa-solid fa-flask"></i>
+                  SIMULATED
+                </span>
+              </div>
+
+              <!-- Message Preview -->
+              <div class="simulation-message-area">
+                <div class="simulation-message-header">
+                  <div class="simulation-avatar">
+                    <i class="fa-solid fa-user-secret"></i>
+                  </div>
+
+                  <div>
+                    <strong id="scenarioSender"
+                      >Unknown Investment Group</strong
+                    >
+                    <span>Fictional scenario</span>
+                  </div>
+
+                  <i class="fa-solid fa-ellipsis"></i>
+                </div>
+
+                <div class="simulation-message-body">
+                  <span class="message-time">SIMULATED MESSAGE</span>
+
+                  <p id="scenarioMessage">
+                    Congratulations! You have been selected for an exclusive
+                    investment opportunity promising unusually high returns in a
+                    very short period. Contact our fictional representative to
+                    learn more.
+                  </p>
+
+                  <div class="simulation-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    Fictional example — not a real message.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Consent-gated fictional multi-turn chat preview -->
+              <section class="decoy-chat-panel" aria-labelledby="decoyChatTitle">
+                <div class="decoy-chat-heading">
+                  <div>
+                    <span class="simulation-label">SCRIPTED DEMO · NO REAL CONTACT</span>
+                    <h4 id="decoyChatTitle">Controlled conversation preview</h4>
+                  </div>
+                  <span class="simulation-badge"><i class="fa-solid fa-shield-halved"></i> LOCAL SIMULATION</span>
+                </div>
+                <label class="decoy-consent-row">
+                  <input type="checkbox" id="decoyConsent" />
+                  <span>I understand this is a fictional practice chat. Nothing will be sent to a real person.</span>
+                </label>
+                <div class="decoy-chat-log" id="decoyChatLog" aria-live="polite" aria-label="Simulation conversation">
+                  <p class="decoy-chat-empty">Give consent and start the simulation to begin.</p>
+                </div>
+                <div class="decoy-chat-controls">
+                  <textarea id="decoyScammerInput" rows="2" maxlength="1000" placeholder="Enter a simulated scammer message…" aria-label="Simulated scammer message" disabled></textarea>
+                  <div class="decoy-chat-buttons">
+                    <button class="btn btn-primary" type="button" id="decoyStartButton" disabled>Start simulation</button>
+                    <button class="btn btn-primary" type="button" id="decoySendButton" disabled>Send simulated message</button>
+                    <button class="btn btn-secondary" type="button" id="decoyEndButton" disabled>End simulation</button>
+                  </div>
+                </div>
+                <div class="decoy-extracted" id="decoyExtracted" hidden>
+                  <b>Clues in this fictional chat</b>
+                  <div id="decoyIndicatorList"></div>
+                  <small>All extracted identifiers are unverified demo data.</small>
+                </div>
+                <p class="decoy-chat-status" id="decoyChatStatus" role="status">Simulation is stopped.</p>
+              </section>
+
+              <!-- Analysis Controls -->
+              <div class="simulation-analysis">
+                <div class="simulation-analysis-heading">
+                  <div>
+                    <h4>Identify Suspicious Indicators</h4>
+
+                    <p>
+                      Review the fictional message and identify warning signs.
+                    </p>
+                  </div>
+
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+
+                <div class="simulation-options" id="simulationOptions">
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="urgency"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Unusual urgency</strong>
+                      <small>Pressure to act immediately.</small>
+                    </span>
+                  </label>
+
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="guaranteed-returns"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Unrealistic promises</strong>
+                      <small>Guaranteed or unusually high returns.</small>
+                    </span>
+                  </label>
+
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="suspicious-contact"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Suspicious contact</strong>
+                      <small>Unverified representatives or identities.</small>
+                    </span>
+                  </label>
+
+                  <label class="simulation-option">
+                    <input
+                      type="checkbox"
+                      name="simulationIndicator"
+                      value="payment-pressure"
+                    />
+
+                    <span class="custom-checkbox"></span>
+
+                    <span>
+                      <strong>Payment pressure</strong>
+                      <small>Requests to transfer money or credentials.</small>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="simulation-actions">
+                  <button
+                    type="button"
+                    class="simulation-submit-btn"
+                    id="checkSimulation"
+                  >
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Check My Analysis
+                  </button>
+
+                  <button
+                    type="button"
+                    class="simulation-reset-btn"
+                    id="resetSimulation"
+                  >
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Reset
+                  </button>
+                </div>
+
+                <!-- Simulation Result -->
+                <div
+                  class="simulation-result"
+                  id="simulationResult"
+                  aria-live="polite"
+                  hidden
+                >
+                  <div class="simulation-result-icon">
+                    <i class="fa-solid fa-chart-pie"></i>
+                  </div>
+
+                  <div>
+                    <h4 id="simulationResultTitle">Simulation Results</h4>
+
+                    <p id="simulationResultMessage">
+                      Your analysis results will appear here.
+                    </p>
+
+                    <div class="simulation-score">
+                      <span>Detection Score</span>
+                      <strong id="simulationScore">0%</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Learning Outcomes -->
+      <section class="decoy-learning">
+        <div class="container">
+          <div class="decoy-section-heading">
+            <span class="section-tag">BUILD CYBER AWARENESS</span>
+
+            <h2>What You Will <span>Learn</span></h2>
+          </div>
+
+          <div class="decoy-learning-grid">
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-eye"></i>
+              <h3>Recognize Red Flags</h3>
+              <p>
+                Understand suspicious language, fake promises and manipulation
+                techniques.
+              </p>
+            </article>
+
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-brain"></i>
+              <h3>Understand Tactics</h3>
+              <p>
+                Learn how social engineering techniques influence victims into
+                making unsafe decisions.
+              </p>
+            </article>
+
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-user-shield"></i>
+              <h3>Practice Safe Responses</h3>
+              <p>
+                Learn how to avoid suspicious links, protect credentials and
+                preserve evidence.
+              </p>
+            </article>
+
+            <article class="decoy-learning-card">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <h3>Improve Awareness</h3>
+              <p>
+                Build practical knowledge to recognize and prevent common
+                digital fraud attempts.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Safety Guidelines -->
+      <section class="decoy-safety-section" id="safety">
+        <div class="container">
+          <div class="decoy-safety-card">
+            <div class="decoy-safety-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="decoy-safety-content">
+              <span class="section-tag">RESPONSIBLE SIMULATION</span>
+
+              <h2>Safety Comes <span>First</span></h2>
+
+              <p>
+                ScamShield AI Decoy Lab is designed exclusively for
+                cybersecurity awareness and controlled educational
+                demonstrations.
+              </p>
+
+              <ul>
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Uses fictional scenarios and synthetic data.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Does not contact real scammers or suspicious accounts.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Does not perform unauthorized access or surveillance.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Never requests OTPs, PINs, passwords or CVVs.
+                </li>
+
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Encourages lawful reporting and victim protection.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Emergency CTA -->
+      <section class="decoy-emergency">
+        <div class="container">
+          <div class="decoy-emergency-card">
+            <div>
+              <span class="section-tag">NEED REAL-WORLD HELP?</span>
+
+              <h2>Report Cyber Fraud. <span>Act Quickly.</span></h2>
+
+              <p>
+                If you have experienced financial cyber fraud in India, contact
+                the national cybercrime helpline immediately.
+              </p>
+            </div>
+
+            <div class="decoy-emergency-actions">
+              <a href="tel:1930" class="btn btn-primary">
+                <i class="fa-solid fa-phone"></i>
+                Call 1930
+              </a>
+
+              <a
+                href="https://cybercrime.gov.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-secondary"
+              >
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                Report Online
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>
+            © <span id="currentYear"></span>
+            ScamShield AI. All rights reserved.
+          </p>
+
+          <p>Intelligent Fraud Detection & Victim Protection</p>
+        </div>
+      </div>
+    </footer>
+    <!-- API Service -->
+<script src="../js/services/api.js"></script>
+
+<!-- Helper Utilities -->
+<script src="../js/utils/helpers.js"></script>
+
+<!-- Navigation -->
+<script src="../js/components/navigation.js"></script>
+
+<!-- Sidebar -->
+<script src="../js/components/sidebar.js"></script>
+
+<!-- Notifications -->
+<script src="../js/components/notifications.js"></script>
+
+    <!-- Shared JavaScript -->
+    <script src="../js/main.js" defer></script>
+
+    <!-- Decoy Lab JavaScript -->
+    <script src="../js/decoy-lab.js" defer></script>
+<script src="../js/decoy-chat.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+text,label
+"URGENT: Your bank account will be blocked today. Verify your account immediately using this link.",scam
+"Congratulations! You have won a free cash prize. Pay a processing fee to claim your reward.",scam
+"Your KYC has expired. Share your OTP immediately to prevent account suspension.",scam
+"Your electricity connection will be disconnected tonight. Make an instant payment to avoid disconnection.",scam
+"An unknown person is asking for your banking password and card details to process a refund.",scam
+"Guaranteed 500 percent investment returns within seven days. Invest now without any risk.",scam
+"Your parcel is on hold. Pay an additional delivery charge through this suspicious payment link.",scam
+"A caller claiming to be a police officer is threatening arrest unless money is transferred immediately.",scam
+"Install this remote access application so our support team can fix your banking problem.",scam
+"You have been selected for a job. Pay a registration fee before receiving your appointment letter.",scam
+"Your bank has detected suspicious activity. Call the number in this unexpected message and share your PIN.",scam
+"Send money now to unlock your account and receive your promised reward.",scam
+"Your monthly mobile recharge was successful. Thank you for using our service.",legitimate
+"Your order has been shipped and is expected to arrive tomorrow.",legitimate
+"Your bank statement for this month is now available in your official banking application.",legitimate
+"Your appointment is confirmed for Monday at 10 AM. Please arrive fifteen minutes early.",legitimate
+"Your electricity bill has been generated. You can view it through the official provider application.",legitimate
+"Thank you for shopping with us. Your payment was received successfully.",legitimate
+"Your library book is due for return next Friday. Please renew it if needed.",legitimate
+"Your flight booking is confirmed. Please check your registered email for the itinerary.",legitimate
+"Your password was successfully changed. Contact official support if you did not make this change.",legitimate
+"Your monthly salary has been credited to your registered bank account.",legitimate
+"Your college examination timetable has been published on the official student portal.",legitimate
+"Your grocery delivery is scheduled between 5 PM and 6 PM today.",legitimate
