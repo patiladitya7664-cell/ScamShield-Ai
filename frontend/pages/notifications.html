@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e1c">
+  <meta
+    name="description"
+    content="Review ScamShield AI alerts and account notifications."
+  >
+  <title>Notifications | ScamShield AI</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/modules.css">
+
+  <script src="../js/components/notifications.js" defer></script>
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="dashboard.html" aria-label="ScamShield AI dashboard">
+      <span class="brand-mark" aria-hidden="true">⬡</span>
+      ScamShield <span>AI</span>
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="notifications.html" aria-current="page">Notifications</a>
+    </nav>
+  </header>
+
+  <main class="module-page">
+    <section class="module-heading">
+      <p class="module-eyebrow">YOUR UPDATES</p>
+      <h1>Notifications</h1>
+      <p>Review alerts and updates related to your ScamShield AI activity.</p>
+    </section>
+
+    <section class="scanner-panel" aria-labelledby="notifications-title">
+      <div class="scanner-result-header">
+        <div>
+          <h2 id="notifications-title">Recent notifications</h2>
+          <p class="scanner-help">
+            Important account and safety updates will appear here.
+          </p>
+        </div>
+      </div>
+
+      <div class="scanner-result" role="status" aria-live="polite">
+        <h3>No notifications yet</h3>
+        <p class="scanner-result-summary">
+          When notifications are available, you’ll find them listed here.
+        </p>
+      </div>
+
+      <p class="scanner-disclaimer">
+        Notification delivery and history require a connected backend service.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

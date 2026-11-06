@@ -41,7 +41,7 @@ ScamShield AI is a hackathon prototype for reviewing suspicious messages, explai
    ```
 
 5. In VS Code, start Live Server on port 5500. If it serves the project root, open `http://127.0.0.1:5500/frontend/index.html`; if it serves the `frontend` folder directly, open `http://127.0.0.1:5500/index.html`. The allowed browser origin must match `FRONTEND_URL` (default `http://127.0.0.1:5500`).
-6. Register an account and sign in. Try evidence analysis from Detection, then open **AI Agents** and run the prefilled synthetic message demo. The agent demo calls the authenticated `/api/agents/run` endpoint and does not save a case.
+6. Register an account and sign in. Try evidence analysis from Detection, then open **AI Agents** and run the prefilled synthetic message demo. The authenticated `/api/agents/run` endpoint saves assessment metadata and agent results to that account; it does not store the raw message or create a case.
 
 ## API routes
 

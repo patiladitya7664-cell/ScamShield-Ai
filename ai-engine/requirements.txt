@@ -14,9 +14,16 @@ numpy
 pandas
 joblib
 
+# Google Gemini LLM
+google-genai
+
 # Environment Configuration
 python-dotenv
 
+# HTTP Requests
+httpx
+requests
+
 # Testing
 pytest
-httpx
+

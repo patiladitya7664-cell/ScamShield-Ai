@@ -1,6 +1,7 @@
 /* =====================================================
    SCAMSHIELD AI - THREAT INTELLIGENCE
    Indicator Explorer
+   API + Authentication + MongoDB Integration
 ===================================================== */
 
 "use strict";
@@ -24,27 +25,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const resultIndicator = document.getElementById("resultIndicator");
   const resultType = document.getElementById("resultType");
-  const resultStatus = document.getElementById("intelligenceResultStatus");
+
+  // HTML ID is resultStatus
+  const resultStatus = document.getElementById("resultStatus");
+
   const resultEvidence = document.getElementById("resultEvidence");
   const resultExplanation = document.getElementById("resultExplanation");
 
-  if (
-    !indicatorForm ||
-    !indicatorInput ||
-    !indicatorAnalyzeBtn ||
-    !indicatorResults
-  ) {
-    console.error("ScamShield Intelligence: Required HTML elements not found.");
+  // ================================================
+  // REQUIRED ELEMENT CHECK
+  // ================================================
+
+  const requiredElements = {
+    indicatorForm,
+    indicatorInput,
+    indicatorLabel,
+    indicatorHint,
+    indicatorInputIcon,
+    indicatorAnalyzeBtn,
+    indicatorMessage,
+    indicatorResults,
+    resultIndicator,
+    resultType,
+    resultStatus,
+    resultEvidence,
+    resultExplanation,
+  };
+
+  const missingElements = Object.entries(requiredElements)
+    .filter(([, element]) => !element)
+    .map(([name]) => name);
+
+  if (missingElements.length > 0) {
+    console.error(
+      "ScamShield Intelligence: Missing HTML elements:",
+      missingElements,
+    );
+
     return;
   }
 
   // ================================================
-  // CONFIGURATION
+  // API CONFIGURATION
   // ================================================
 
-  const API_BASE_URL = window.SCAMSHIELD_API_URL || "http://localhost:5000/api";
+  const API = window.ScamShieldAPI;
 
-  const API_ENDPOINT = `${API_BASE_URL}/intelligence/analyze`;
+  if (!API || typeof API.post !== "function") {
+    console.error(
+      "ScamShield Intelligence: ScamShieldAPI is unavailable.",
+    );
+
+    showMessage(
+      "API service is unavailable. Please check api.js loading.",
+      "error",
+    );
+
+    return;
+  }
+
+  const API_ENDPOINT = "/intelligence/analyze";
 
   let currentIndicatorType = "phone";
 
@@ -85,6 +125,30 @@ document.addEventListener("DOMContentLoaded", () => {
       maxLength: 250,
     },
   };
+
+  // ================================================
+  // AUTHENTICATION
+  // ================================================
+
+  function getToken() {
+    return (
+      localStorage.getItem("scamshieldToken") ||
+      sessionStorage.getItem("scamshieldToken")
+    );
+  }
+
+  function checkAuthentication() {
+    if (!getToken()) {
+      showMessage(
+        "Your session has expired. Please log in again.",
+        "error",
+      );
+
+      return false;
+    }
+
+    return true;
+  }
 
   // ================================================
   // MESSAGE HANDLING
@@ -165,9 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   indicatorTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      const selectedType = tab.dataset.indicator;
-
-      updateIndicatorType(selectedType);
+      updateIndicatorType(tab.dataset.indicator);
     });
   });
 
@@ -178,6 +240,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function validateIndicator(value, type) {
     if (!value) {
       return "Please enter an indicator.";
+    }
+
+    if (value.length > 250) {
+      return "Indicator cannot exceed 250 characters.";
     }
 
     switch (type) {
@@ -205,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!parsedURL.hostname.includes(".")) {
             return "Enter a valid website URL.";
           }
-        } catch (error) {
+        } catch {
           return "Please enter a valid URL.";
         }
 
@@ -213,7 +279,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       case "upi": {
-        const upiPattern = /^[a-zA-Z0-9._-]{2,256}@[a-zA-Z0-9.-]{2,64}$/;
+        const upiPattern =
+          /^[a-zA-Z0-9._-]{2,256}@[a-zA-Z0-9.-]{2,64}$/;
 
         if (!upiPattern.test(value)) {
           return "Enter a valid UPI ID format.";
@@ -241,9 +308,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // LOADING STATE
   // ================================================
 
+  let originalButtonHTML = indicatorAnalyzeBtn.innerHTML;
+
   function setLoading(isLoading) {
     indicatorAnalyzeBtn.disabled = isLoading;
-
     indicatorInput.disabled = isLoading;
 
     indicatorTabs.forEach((tab) => {
@@ -252,36 +320,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isLoading) {
       indicatorAnalyzeBtn.innerHTML = `
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Examining...
-            `;
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Examining...
+      `;
     } else {
-      indicatorAnalyzeBtn.innerHTML = `
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Examine
-            `;
+      indicatorAnalyzeBtn.innerHTML = originalButtonHTML;
     }
+  }
+
+  // ================================================
+  // FORMAT RELATED EVIDENCE
+  // ================================================
+
+  function formatRelatedEvidence(value) {
+    if (typeof value === "number") {
+      return `${value} matching record(s)`;
+    }
+
+    if (Array.isArray(value)) {
+      return `${value.length} matching record(s)`;
+    }
+
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+
+    return "No matching evidence found";
   }
 
   // ================================================
   // RENDER RESULTS
   // ================================================
 
-  function renderResults(data, submittedValue, submittedType) {
-    const result = data.result || data.data || data;
+  function renderResults(response, submittedValue, submittedType) {
+    if (!response || response.success !== true || !response.result) {
+      throw new Error("Invalid response received from intelligence API.");
+    }
 
-    resultIndicator.textContent = result.indicator || submittedValue;
+    const result = response.result;
+
+    resultIndicator.textContent =
+      result.indicator || submittedValue;
 
     resultType.textContent =
-      result.indicatorType || submittedType.toUpperCase();
+      result.indicatorType?.toUpperCase() ||
+      submittedType.toUpperCase();
 
-    resultStatus.textContent = result.status || "Pending verification";
+    resultStatus.textContent =
+      result.status || "Pending verification";
 
-    resultEvidence.textContent = result.relatedEvidence ?? "Not available";
+    resultEvidence.textContent = formatRelatedEvidence(
+      result.relatedEvidence,
+    );
 
     resultExplanation.textContent =
       result.explanation ||
-      result.message ||
+      response.message ||
       "No additional intelligence information is available.";
 
     indicatorResults.hidden = false;
@@ -297,44 +391,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   async function analyzeIndicator(value, type) {
-    const controller = new AbortController();
+    const response = await API.post(API_ENDPOINT, {
+      indicatorType: type,
+      indicator: value,
+    });
 
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, 20000);
-
-    try {
-      const response = await fetch(API_ENDPOINT, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("scamshieldToken") || sessionStorage.getItem("scamshieldToken") || ""}`,
-        },
-
-        body: JSON.stringify({
-          indicatorType: type,
-
-          indicator: value,
-        }),
-
-        signal: controller.signal,
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.message || `Server error (${response.status}).`);
-      }
-
-      if (data.success === false) {
-        throw new Error(data.message || "Indicator examination failed.");
-      }
-
-      return data;
-    } finally {
-      clearTimeout(timeout);
+    if (!response || response.success !== true) {
+      throw new Error(
+        response?.message || "Indicator examination failed.",
+      );
     }
+
+    return response;
   }
 
   // ================================================
@@ -352,7 +420,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const type = currentIndicatorType;
 
-    // Validate input
+    // Authentication check
+
+    if (!checkAuthentication()) {
+      return;
+    }
+
+    // Input validation
 
     const validationError = validateIndicator(value, type);
 
@@ -364,24 +438,43 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Loading
+    // Loading state
 
     setLoading(true);
 
-    showMessage("Submitting indicator for examination...", "info");
+    showMessage(
+      "Searching your submitted evidence for matching indicators...",
+      "info",
+    );
 
     try {
-      const data = await analyzeIndicator(value, type);
+      const response = await analyzeIndicator(value, type);
 
-      renderResults(data, value, type);
+      renderResults(response, value, type);
 
       hideMessage();
-    } catch (error) {
-      console.error("ScamShield Intelligence Error:", error);
 
-      if (error.name === "AbortError") {
-        showMessage("Request timed out. Please try again.", "error");
-      } else if (error.message.includes("Failed to fetch")) {
+      console.log(
+        "ScamShield Intelligence: Indicator examination completed.",
+        response.result,
+      );
+    } catch (error) {
+      console.error(
+        "ScamShield Intelligence Error:",
+        error,
+      );
+
+      if (
+        error.message?.toLowerCase().includes("unauthorized") ||
+        error.message?.toLowerCase().includes("token")
+      ) {
+        showMessage(
+          "Authentication failed. Please log in again.",
+          "error",
+        );
+      } else if (
+        error.message?.includes("Failed to fetch")
+      ) {
         showMessage(
           "Unable to connect to the backend. Check whether the ScamShield API server is running.",
           "error",
@@ -398,16 +491,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ================================================
-  // INITIALIZATION
+  // FOOTER YEAR
   // ================================================
-
-  updateIndicatorType("phone");
-
-  // Footer year
 
   document.querySelectorAll("[data-current-year]").forEach((element) => {
     element.textContent = new Date().getFullYear();
   });
 
-  console.log("ScamShield Intelligence Module Initialized.");
+  // ================================================
+  // INITIALIZATION
+  // ================================================
+
+  updateIndicatorType("phone");
+
+  console.log(
+    "ScamShield Intelligence Module Initialized Successfully.",
+  );
 });

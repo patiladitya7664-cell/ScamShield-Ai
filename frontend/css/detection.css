@@ -895,3 +895,96 @@
     transition: none;
   }
 }
+/* =====================================================
+   SCAMSHIELD AI — 12 CATEGORY ACCESSIBILITY UPDATE
+===================================================== */
+
+.detection-panel .evidence-types {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.detection-panel .evidence-type {
+  box-sizing: border-box;
+  min-height: 105px;
+  padding: 15px 10px;
+  gap: 12px;
+  border-radius: 13px;
+}
+
+.detection-panel .evidence-type i {
+  font-size: 24px;
+}
+
+.detection-panel .evidence-type span {
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 650;
+}
+
+.detection-panel .evidence-type.active {
+  border: 2px solid #39d98a;
+  background: rgba(57, 217, 138, 0.12);
+}
+
+.detection-panel .evidence-type:focus-visible {
+  outline: 3px solid #39d98a;
+  outline-offset: 3px;
+}
+
+/* Better readability and touch targets */
+.evidence-form label {
+  font-size: 15px;
+}
+
+.evidence-form textarea,
+.evidence-form input {
+  font-size: 16px;
+}
+
+.detection-actions .btn {
+  min-height: 52px;
+  font-size: 14px;
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  .detection-panel .evidence-types {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .detection-panel .evidence-types {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+  }
+
+  .detection-panel .evidence-type {
+    min-height: 100px;
+    padding: 13px 8px;
+  }
+
+  .detection-panel .evidence-type span {
+    font-size: 13px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 360px) {
+  .detection-panel .evidence-type {
+    min-height: 95px;
+  }
+
+  .detection-panel .evidence-type span {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detection-panel .evidence-type {
+    transition: none;
+    transform: none;
+  }
+}

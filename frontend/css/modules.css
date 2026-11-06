@@ -1,0 +1,468 @@
+/* ScamShield feature modules: scanner forms, results, and reusable module cards. */
+
+.module-page {
+  width: min(100% - 2rem, 1180px);
+  margin-inline: auto;
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.module-heading {
+  max-width: 760px;
+  margin-bottom: 2rem;
+}
+
+.module-eyebrow {
+  margin: 0 0 0.65rem;
+  color: #65e0bb;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.module-heading h1 {
+  margin: 0;
+  color: #f4f7fb;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.1;
+}
+
+.module-heading p {
+  max-width: 680px;
+  margin: 0.85rem 0 0;
+  color: #a5b1c4;
+  line-height: 1.65;
+}
+
+/* Scanner input panel */
+
+.scanner-panel {
+  padding: clamp(1.1rem, 3vw, 1.75rem);
+  border: 1px solid #26364c;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #142137, #0e1727);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 16%);
+}
+
+.scanner-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.scanner-form label,
+.scanner-field-label {
+  color: #f4f7fb;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.scanner-form textarea,
+.scanner-form input[type="text"],
+.scanner-form input[type="email"],
+.scanner-form input[type="url"],
+.scanner-form select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #34445d;
+  border-radius: 9px;
+  outline: none;
+  background: #0b1422;
+  color: #f4f7fb;
+  font: inherit;
+}
+
+.scanner-form textarea {
+  min-height: 180px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.scanner-form textarea::placeholder,
+.scanner-form input::placeholder {
+  color: #7e8ca2;
+}
+
+.scanner-form textarea:focus,
+.scanner-form input:focus,
+.scanner-form select:focus {
+  border-color: #65e0bb;
+  box-shadow: 0 0 0 3px rgb(101 224 187 / 14%);
+}
+
+.scanner-help,
+.field-hint {
+  margin: 0;
+  color: #93a1b6;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.scanner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.scanner-button,
+.scanner-secondary-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.scanner-button {
+  background: #65e0bb;
+  color: #082019;
+}
+
+.scanner-button:hover {
+  background: #80edcc;
+  transform: translateY(-1px);
+}
+
+.scanner-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.scanner-secondary-button {
+  border-color: #34445d;
+  background: transparent;
+  color: #eaf0f8;
+}
+
+.scanner-secondary-button:hover {
+  border-color: #65e0bb;
+  background: rgb(101 224 187 / 7%);
+}
+
+.scanner-button:focus-visible,
+.scanner-secondary-button:focus-visible {
+  outline: 3px solid rgb(101 224 187 / 55%);
+  outline-offset: 2px;
+}
+
+/* Scan result */
+
+.scanner-result {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid #34445d;
+  border-radius: 13px;
+  background: #0b1422;
+}
+
+.scanner-result[hidden] {
+  display: none;
+}
+
+.scanner-result-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.scanner-result h2,
+.scanner-result h3 {
+  margin: 0;
+  color: #f4f7fb;
+}
+
+.scanner-result-summary {
+  margin: 0.75rem 0 0;
+  color: #a5b1c4;
+  line-height: 1.55;
+}
+
+.risk-badge {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.risk-badge--low {
+  border-color: #3dc99e;
+  background: rgb(61 201 158 / 10%);
+  color: #70e4bd;
+}
+
+.risk-badge--medium {
+  border-color: #e5b64f;
+  background: rgb(229 182 79 / 10%);
+  color: #f2ca70;
+}
+
+.risk-badge--high {
+  border-color: #ef7777;
+  background: rgb(239 119 119 / 10%);
+  color: #ff9696;
+}
+
+.risk-score {
+  color: #f4f7fb;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.finding-list,
+.advice-list {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.finding-item,
+.advice-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: #d6deea;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.finding-item::before {
+  content: "!";
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 1.35rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(229 182 79 / 14%);
+  color: #f2ca70;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.advice-item::before {
+  content: "✓";
+  color: #65e0bb;
+  font-weight: 900;
+}
+
+.scanner-disclaimer {
+  margin: 1rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid #26364c;
+  color: #93a1b6;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.scanner-error {
+  margin: 0;
+  color: #ff9696;
+  font-size: 0.88rem;
+}
+
+.scanner-status {
+  min-height: 1.4rem;
+  color: #a5b1c4;
+  font-size: 0.85rem;
+}
+
+/* Feature cards, useful on module and dashboard pages */
+
+.module-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.module-card {
+  padding: 1.25rem;
+  border: 1px solid #26364c;
+  border-radius: 14px;
+  background: #101a2c;
+}
+
+.module-card h2,
+.module-card h3 {
+  margin: 0;
+  color: #f4f7fb;
+  font-size: 1.08rem;
+}
+
+.module-card p {
+  margin: 0.65rem 0 0;
+  color: #a5b1c4;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.module-card-link {
+  display: inline-flex;
+  margin-top: 1rem;
+  color: #65e0bb;
+  font-size: 0.88rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.module-card-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Accessible live announcements */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* Responsive layout */
+
+@media (max-width: 850px) {
+  .module-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 580px) {
+  .module-page {
+    width: min(100% - 1.25rem, 1180px);
+  }
+
+  .module-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scanner-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .scanner-button,
+  .scanner-secondary-button {
+    width: 100%;
+  }
+
+  .scanner-result-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanner-button,
+  .scanner-secondary-button {
+    transition: none;
+  }
+}
+/* =====================================================
+   SCAMSHIELD AI — 12 DETECTION CATEGORIES
+===================================================== */
+
+.evidence-types {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+.evidence-type {
+  box-sizing: border-box;
+  min-height: 105px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #34445d;
+  border-radius: 13px;
+  background: #101a2c;
+  color: #f4f7fb;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.evidence-type i {
+  color: #65e0bb;
+  font-size: 25px;
+}
+
+.evidence-type span {
+  color: #eaf0f8;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.evidence-type:hover {
+  border-color: #65e0bb;
+  background: #17283a;
+}
+
+.evidence-type.active {
+  border: 2px solid #65e0bb;
+  background: #19372f;
+  box-shadow: 0 0 0 3px rgb(101 224 187 / 12%);
+}
+
+.evidence-type.active i {
+  color: #80edcc;
+}
+
+.evidence-type:focus-visible {
+  outline: 3px solid #65e0bb;
+  outline-offset: 3px;
+}
+
+@media (max-width: 850px) {
+  .evidence-types {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+  }
+}
+
+@media (max-width: 380px) {
+  .evidence-type {
+    min-height: 95px;
+    padding: 12px 7px;
+  }
+
+  .evidence-type span {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evidence-type {
+    transition: none;
+  }
+}

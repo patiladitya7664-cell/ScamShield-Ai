@@ -1,545 +1,1258 @@
+
 "use strict";
 
+/* =========================================================
+   SCAMSHIELD AI - DETECTION MODULE
+   12 Fraud Categories + Evidence Analysis
+   Risk Assessment + Case Management
+   Classification Feedback
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
-  // ==========================================
-  // DOM ELEMENTS
-  // ==========================================
 
-  const evidenceButtons = document.querySelectorAll(".evidence-type");
-  const evidenceForms = document.querySelectorAll(".evidence-form");
+  /* =======================================================
+     1. CONFIGURATION
+  ======================================================= */
 
-  const analyzeBtn = document.getElementById("analyzeBtn");
-  const clearBtn = document.getElementById("clearBtn");
+  const API = window.ScamShieldAPI;
 
-  const analysisMessage = document.getElementById("analysisMessage");
-  const detectionResults = document.getElementById("detectionResults");
+  const EVIDENCE_LIMITS = {
+    message: 10000,
+    url: 2048,
+    call: 15000,
+    transaction: 10000,
+  };
 
-  const messageInput = document.getElementById("messageInput");
-  const urlInput = document.getElementById("urlInput");
-  const callInput = document.getElementById("callInput");
-  const transactionInput = document.getElementById("transactionInput");
-  const safetyGuidance = document.getElementById("safetyGuidance");
-  const feedbackPanel = document.getElementById("classificationFeedbackPanel");
-  const feedbackSelect = document.getElementById("classificationFeedbackSelect");
-  const feedbackButton = document.getElementById("submitClassificationFeedback");
-  const feedbackStatus = document.getElementById("classificationFeedbackStatus");
+  const FRAUD_CATEGORIES = {
+    message: {
+      label: "Fraud Message",
+      evidenceType: "message",
+    },
+    call: {
+      label: "Fraud Call",
+      evidenceType: "call",
+    },
+    url: {
+      label: "URL & Phishing",
+      evidenceType: "url",
+    },
+    email: {
+      label: "Email Scam",
+      evidenceType: "message",
+    },
+    investment: {
+      label: "Investment Scam",
+      evidenceType: "message",
+    },
+    digital_arrest: {
+      label: "Digital Arrest",
+      evidenceType: "message",
+    },
+    upi: {
+      label: "UPI & Banking Fraud",
+      evidenceType: "transaction",
+    },
+    card: {
+      label: "Credit/Debit Card Fraud",
+      evidenceType: "transaction",
+    },
+    ecommerce: {
+      label: "E-commerce Scam",
+      evidenceType: "message",
+    },
+    job_loan: {
+      label: "Job & Loan Scam",
+      evidenceType: "message",
+    },
+    blackmail: {
+      label: "Sextortion & Blackmail",
+      evidenceType: "message",
+    },
+    social_media: {
+      label: "Social Media Scam",
+      evidenceType: "message",
+    },
+  };
 
-  let activeEvidence = "message";
-  let isAnalyzing = false;
+  const RISK_LEVELS = {
+    low: {
+      label: "Low Risk",
+      description: "Limited suspicious indicators detected.",
+    },
+    medium: {
+      label: "Medium Risk",
+      description: "Some suspicious indicators require attention.",
+    },
+    high: {
+      label: "High Risk",
+      description: "Multiple suspicious indicators were detected.",
+    },
+    critical: {
+      label: "Critical Risk",
+      description: "Strong warning signs of potential fraud were detected.",
+    },
+  };
+
+  const CATEGORY_LABELS = {
+    investment: "Investment Fraud",
+    digitalArrest: "Digital Arrest Scam",
+    digital_arrest: "Digital Arrest Scam",
+    creditCard: "Credit Card Fraud",
+    credit_card: "Credit Card Fraud",
+    card: "Credit/Debit Card Fraud",
+    sextortion: "Sextortion Scam",
+    blackmail: "Sextortion & Blackmail",
+    ecommerce: "E-commerce Fraud",
+    upi: "UPI & Banking Fraud",
+    email: "Email Scam",
+    job_loan: "Job & Loan Scam",
+    social_media: "Social Media Scam",
+    message: "Fraud Message",
+    call: "Fraud Call",
+    url: "URL & Phishing",
+    other: "Other Fraud",
+    unclassified: "Unclassified",
+  };
+
+  const SAFETY_GUIDANCE = {
+    low: [
+      "Continue exercising caution.",
+      "Never share OTPs, PINs, passwords or banking credentials.",
+      "Verify suspicious claims through official channels.",
+    ],
+
+    medium: [
+      "Do not respond immediately to suspicious requests.",
+      "Avoid clicking unknown links or downloading attachments.",
+      "Verify the sender through an independently obtained contact.",
+      "Never share OTPs, PINs or passwords.",
+    ],
+
+    high: [
+      "Do not click suspicious links or transfer money.",
+      "Do not share OTPs, PINs, CVV or passwords.",
+      "Block and report suspicious contacts when appropriate.",
+      "Verify the communication through official channels.",
+    ],
+
+    critical: [
+      "Stop interacting with the suspicious sender.",
+      "Do not transfer money or disclose sensitive information.",
+      "Contact your bank immediately if financial details were exposed.",
+      "Report financial cyber fraud through India's official 1930 helpline.",
+      "Preserve relevant messages and transaction evidence.",
+    ],
+  };
+
+  /* =======================================================
+     2. DOM ELEMENTS
+  ======================================================= */
+
+  const elements = {
+    evidenceButtons: document.querySelectorAll(".evidence-type"),
+    evidenceForms: document.querySelectorAll(".evidence-form"),
+
+    messageInput: document.getElementById("messageInput"),
+    urlInput: document.getElementById("urlInput"),
+    callInput: document.getElementById("callInput"),
+    transactionInput: document.getElementById("transactionInput"),
+
+    messageCount: document.getElementById("messageCount"),
+    callCount: document.getElementById("callCount"),
+    transactionCount: document.getElementById("transactionCount"),
+
+    analyzeBtn: document.getElementById("analyzeBtn"),
+    clearBtn: document.getElementById("clearBtn"),
+
+    analysisMessage: document.getElementById("analysisMessage"),
+    detectionResults: document.getElementById("detectionResults"),
+
+    resultStatus: document.getElementById("resultStatus"),
+
+    riskScoreCircle: document.getElementById("riskScoreCircle"),
+    riskScore: document.getElementById("riskScore"),
+    riskLevel: document.getElementById("riskLevel"),
+    riskDescription: document.getElementById("riskDescription"),
+
+    fraudCategory: document.getElementById("fraudCategory"),
+    riskExplanation: document.getElementById("riskExplanation"),
+
+    indicatorList: document.getElementById("indicatorList"),
+    safetyGuidance: document.getElementById("safetyGuidance"),
+
+    feedbackPanel: document.getElementById(
+      "classificationFeedbackPanel"
+    ),
+
+    feedbackSelect: document.getElementById(
+      "classificationFeedbackSelect"
+    ),
+
+    feedbackBtn: document.getElementById(
+      "submitClassificationFeedback"
+    ),
+
+    feedbackStatus: document.getElementById(
+      "classificationFeedbackStatus"
+    ),
+  };
+
+  /* =======================================================
+     3. STATE
+  ======================================================= */
+
+  let currentEvidenceType = "message";
+  let currentCategory = "message";
+
+  let currentAnalysisId = null;
   let currentCaseId = null;
 
-  // ==========================================
-  // API CONFIGURATION
-  // ==========================================
+  let isAnalyzing = false;
+  let isSubmittingFeedback = false;
 
-  const API_BASE_URL = window.SCAMSHIELD_API_URL || "http://localhost:5000/api";
-  const TOKEN_KEY = "scamshieldToken";
+  /* =======================================================
+     4. INITIAL VALIDATION
+  ======================================================= */
 
-  // ==========================================
-  // EVIDENCE SELECTION
-  // ==========================================
+  const requiredElements = [
+    elements.analyzeBtn,
+    elements.clearBtn,
+    elements.analysisMessage,
+    elements.detectionResults,
+    elements.resultStatus,
+    elements.riskScoreCircle,
+    elements.riskScore,
+    elements.riskLevel,
+    elements.riskDescription,
+    elements.fraudCategory,
+    elements.riskExplanation,
+    elements.indicatorList,
+    elements.safetyGuidance,
+  ];
 
-  evidenceButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      if (isAnalyzing) return;
+  if (requiredElements.some((element) => !element)) {
+    console.error(
+      "Detection module initialization failed: Required HTML elements are missing."
+    );
 
-      activeEvidence = button.dataset.evidence;
-
-      evidenceButtons.forEach((item) => {
-        item.classList.remove("active");
-        item.setAttribute("aria-pressed", "false");
-      });
-
-      button.classList.add("active");
-      button.setAttribute("aria-pressed", "true");
-
-      evidenceForms.forEach((form) => {
-        const isActive = form.dataset.form === activeEvidence;
-
-        form.classList.toggle("active", isActive);
-        form.hidden = !isActive;
-      });
-
-      hideMessage();
-      detectionResults.hidden = true;
-    });
-  });
-
-  // ==========================================
-  // CHARACTER COUNTERS
-  // ==========================================
-
-  function updateCounter(input, counter, maxLength) {
-    if (!input || !counter) return;
-
-    const update = () => {
-      counter.textContent = `${input.value.length} / ${maxLength}`;
-    };
-
-    input.addEventListener("input", update);
-    update();
+    return;
   }
 
-  updateCounter(messageInput, document.getElementById("messageCount"), 10000);
+  if (!API || typeof API.post !== "function") {
+    console.error(
+      "ScamShield API service not found or API.post is unavailable."
+    );
 
-  updateCounter(callInput, document.getElementById("callCount"), 15000);
+    showMessage(
+      "API service could not be loaded. Please refresh the page.",
+      "error"
+    );
 
-  updateCounter(
-    transactionInput,
-    document.getElementById("transactionCount"),
-    10000,
-  );
+    elements.analyzeBtn.disabled = true;
 
-  // ==========================================
-  // MESSAGE HELPERS
-  // ==========================================
+    return;
+  }
 
-  function showMessage(message, type = "success") {
-    analysisMessage.textContent = message;
-    analysisMessage.className = `analysis-message ${type}`;
-    analysisMessage.hidden = false;
+  if (typeof API.getToken !== "function") {
+    console.warn(
+      "API.getToken is unavailable. Using local storage fallback."
+    );
+  }
+
+  /* =======================================================
+     5. UTILITY FUNCTIONS
+  ======================================================= */
+
+  function getToken() {
+    try {
+      return (
+        (typeof API.getToken === "function"
+          ? API.getToken()
+          : null) ||
+        localStorage.getItem("scamshieldToken") ||
+        sessionStorage.getItem("scamshieldToken") ||
+        localStorage.getItem("scamshield_token") ||
+        sessionStorage.getItem("scamshield_token") ||
+        null
+      );
+    } catch (error) {
+      console.error("Token Retrieval Error:", error);
+      return null;
+    }
+  }
+
+  function showMessage(message, type = "info") {
+    elements.analysisMessage.textContent = String(message);
+
+    elements.analysisMessage.className =
+      `analysis-message ${type}`;
+
+    elements.analysisMessage.hidden = false;
   }
 
   function hideMessage() {
-    analysisMessage.textContent = "";
-    analysisMessage.className = "analysis-message";
-    analysisMessage.hidden = true;
+    elements.analysisMessage.textContent = "";
+    elements.analysisMessage.hidden = true;
+    elements.analysisMessage.className = "analysis-message";
   }
 
-  // ==========================================
-  // INPUT VALIDATION
-  // ==========================================
+  function setButtonLoading(button, loading, originalHTML) {
+    if (!button) return;
 
-  function getEvidenceValue() {
-    switch (activeEvidence) {
-      case "message":
-        return messageInput.value.trim();
+    button.disabled = loading;
 
-      case "url":
-        return urlInput.value.trim();
+    if (loading) {
+      if (!button.dataset.originalHTML) {
+        button.dataset.originalHTML = button.innerHTML;
+      }
 
-      case "call":
-        return callInput.value.trim();
-
-      case "transaction":
-        return transactionInput.value.trim();
-
-      default:
-        return "";
+      button.innerHTML = `
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Processing...
+      `;
+    } else {
+      button.innerHTML =
+        originalHTML ||
+        button.dataset.originalHTML ||
+        button.innerHTML;
     }
   }
 
-  function validateEvidence(value) {
-    if (!value) {
-      return "Please provide evidence before starting analysis.";
+  function normalizeText(value) {
+    if (value === null || value === undefined) {
+      return "";
     }
 
-    if (activeEvidence === "url") {
+    return String(value).trim();
+  }
+
+  function getRiskLevel(score) {
+    if (score <= 24) return "low";
+    if (score <= 49) return "medium";
+    if (score <= 74) return "high";
+
+    return "critical";
+  }
+
+  function getPriority(score) {
+    if (score >= 75) return "urgent";
+    if (score >= 50) return "high";
+    if (score >= 25) return "medium";
+
+    return "low";
+  }
+
+  function getCategoryLabel(category) {
+    return (
+      CATEGORY_LABELS[category] ||
+      CATEGORY_LABELS.unclassified
+    );
+  }
+
+  function getSelectedCategoryLabel() {
+    return (
+      FRAUD_CATEGORIES[currentCategory]?.label ||
+      "Fraud Detection"
+    );
+  }
+
+  function formatExplanation(explanation) {
+    if (Array.isArray(explanation)) {
+      return explanation
+        .map((item) => {
+          if (typeof item === "string") {
+            return item.trim();
+          }
+
+          if (item && typeof item === "object") {
+            return (
+              item.message ||
+              item.description ||
+              item.reason ||
+              JSON.stringify(item)
+            );
+          }
+
+          return "";
+        })
+        .filter(Boolean)
+        .join("\n");
+    }
+
+    if (typeof explanation === "string") {
+      return explanation.trim();
+    }
+
+    return "No additional explanation was provided by the analysis engine.";
+  }
+
+  /* =======================================================
+     6. CATEGORY & EVIDENCE SELECTION
+  ======================================================= */
+
+  function switchEvidenceType(type, category = null) {
+    if (!Object.prototype.hasOwnProperty.call(
+      EVIDENCE_LIMITS,
+      type
+    )) {
+      console.warn("Unsupported evidence type:", type);
+      return;
+    }
+
+    let selectedCategory = category;
+
+    if (
+      !selectedCategory ||
+      !FRAUD_CATEGORIES[selectedCategory] ||
+      FRAUD_CATEGORIES[selectedCategory].evidenceType !== type
+    ) {
+      selectedCategory = Object.keys(FRAUD_CATEGORIES).find(
+        (key) =>
+          FRAUD_CATEGORIES[key].evidenceType === type
+      );
+    }
+
+    if (!selectedCategory) return;
+
+    currentEvidenceType = type;
+    currentCategory = selectedCategory;
+
+    elements.evidenceButtons.forEach((button) => {
+      const active =
+        button.dataset.category === currentCategory;
+
+      button.classList.toggle("active", active);
+
+      button.setAttribute(
+        "aria-pressed",
+        String(active)
+      );
+    });
+
+    elements.evidenceForms.forEach((form) => {
+      const active = form.dataset.form === type;
+
+      form.classList.toggle("active", active);
+      form.hidden = !active;
+    });
+
+    resetResults();
+    hideMessage();
+  }
+
+  elements.evidenceButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      switchEvidenceType(
+        button.dataset.evidence,
+        button.dataset.category
+      );
+    });
+  });
+
+  /* =======================================================
+     7. CHARACTER COUNTERS
+  ======================================================= */
+
+  function updateCounter(input, counter, maximum) {
+    if (!input || !counter) return;
+
+    const length = input.value.length;
+
+    counter.textContent = `${length} / ${maximum}`;
+
+    counter.classList.toggle(
+      "limit-reached",
+      length >= maximum
+    );
+  }
+
+  const counterConfigurations = [
+    {
+      input: elements.messageInput,
+      counter: elements.messageCount,
+      maximum: EVIDENCE_LIMITS.message,
+    },
+    {
+      input: elements.callInput,
+      counter: elements.callCount,
+      maximum: EVIDENCE_LIMITS.call,
+    },
+    {
+      input: elements.transactionInput,
+      counter: elements.transactionCount,
+      maximum: EVIDENCE_LIMITS.transaction,
+    },
+  ];
+
+  counterConfigurations.forEach((config) => {
+    if (!config.input) return;
+
+    config.input.addEventListener("input", () => {
+      updateCounter(
+        config.input,
+        config.counter,
+        config.maximum
+      );
+    });
+
+    updateCounter(
+      config.input,
+      config.counter,
+      config.maximum
+    );
+  });
+
+  /* =======================================================
+     8. GET EVIDENCE
+  ======================================================= */
+
+  function getEvidence() {
+    const inputMap = {
+      message: elements.messageInput,
+      url: elements.urlInput,
+      call: elements.callInput,
+      transaction: elements.transactionInput,
+    };
+
+    const input = inputMap[currentEvidenceType];
+
+    if (!input) {
+      throw new Error(
+        "Selected evidence input is unavailable."
+      );
+    }
+
+    const evidence = normalizeText(input.value);
+
+    if (!evidence) {
+      throw new Error(
+        "Please provide evidence before analysis."
+      );
+    }
+
+    const maximum = EVIDENCE_LIMITS[currentEvidenceType];
+
+    if (evidence.length > maximum) {
+      throw new Error(
+        `Evidence exceeds the maximum limit of ${maximum} characters.`
+      );
+    }
+
+    if (currentEvidenceType === "url") {
+      let parsedURL;
+
       try {
-        const parsedURL = new URL(value);
-
-        if (!["http:", "https:"].includes(parsedURL.protocol)) {
-          return "Only HTTP and HTTPS URLs are supported.";
-        }
+        parsedURL = new URL(evidence);
       } catch {
-        return "Please enter a valid website URL.";
+        throw new Error(
+          "Please enter a valid website URL."
+        );
+      }
+
+      if (!["http:", "https:"].includes(parsedURL.protocol)) {
+        throw new Error(
+          "Only HTTP and HTTPS URLs are supported."
+        );
+      }
+
+      if (
+        !parsedURL.hostname ||
+        !parsedURL.hostname.includes(".")
+      ) {
+        throw new Error(
+          "Please enter a valid website hostname."
+        );
       }
     }
 
-    return null;
+    return evidence;
   }
 
-  // ==========================================
-  // LOADING STATE
-  // ==========================================
+  /* =======================================================
+     9. RESET RESULTS
+  ======================================================= */
 
-  function setLoading(loading) {
-    isAnalyzing = loading;
-
-    analyzeBtn.disabled = loading;
-    clearBtn.disabled = loading;
-
-    evidenceButtons.forEach((button) => {
-      button.disabled = loading;
-    });
-
-    analyzeBtn.innerHTML = loading
-      ? `<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...`
-      : `<i class="fa-solid fa-shield-halved"></i> Analyze Evidence`;
-  }
-
-  // ==========================================
-  // RESULT HELPERS
-  // ==========================================
-
-  function getRiskLevel(score) {
-    if (score <= 24) {
-      return {
-        name: "Low Risk",
-        description: "No strong fraud indicators were identified.",
-        color: "#39d98a",
-      };
-    }
-
-    if (score <= 49) {
-      return {
-        name: "Medium Risk",
-        description: "Some suspicious indicators require attention.",
-        color: "#f5bd65",
-      };
-    }
-
-    if (score <= 74) {
-      return {
-        name: "High Risk",
-        description: "Multiple suspicious indicators were identified.",
-        color: "#ff8b4a",
-      };
-    }
-
-    return {
-      name: "Critical Risk",
-      description: "Strong fraud indicators require immediate caution.",
-      color: "#ff5252",
-    };
-  }
-
-  // ==========================================
-  // SAFE RESULT RENDERING
-  // ==========================================
-
-  function renderResults(data) {
-    const score = Number(data.riskScore);
-
-    if (!Number.isFinite(score) || score < 0 || score > 100) {
-      throw new Error("Invalid risk score received from the server.");
-    }
-
-    const risk = getRiskLevel(score);
-
-    document.getElementById("riskScore").textContent = score;
-
-    document.getElementById("riskLevel").textContent = risk.name;
-
-    document.getElementById("riskDescription").textContent =
-      data.riskDescription || risk.description;
-
-    const categoryLabels = {
-      investment: "Investment scam",
-      digitalArrest: "Digital arrest / authority impersonation",
-      creditCard: "Banking or credit card fraud",
-      sextortion: "Sextortion or blackmail",
-      ecommerce: "E-commerce fraud",
-      other: "Other suspicious activity",
-      unclassified: "Unclassified",
-    };
-    const category = String(data.fraudCategory || "unclassified");
-    document.getElementById("fraudCategory").textContent =
-      categoryLabels[category] || category;
-
-    document.getElementById("riskExplanation").textContent =
-      data.explanation || "No explanation provided.";
-
-    document.getElementById("resultStatus").textContent = "Analysis Complete";
-
-    const circle = document.getElementById("riskScoreCircle");
-
-    circle.style.background = `conic-gradient(
-            ${risk.color} ${score * 3.6}deg,
-            rgba(255,255,255,0.08) ${score * 3.6}deg
-        )`;
-
-    document.getElementById("riskLevel").style.color = risk.color;
-
-    const indicatorList = document.getElementById("indicatorList");
-
-    indicatorList.replaceChildren();
-
-    const indicators = Array.isArray(data.indicators) ? data.indicators : [];
-
-    if (indicators.length === 0) {
-      const empty = document.createElement("p");
-      empty.textContent = "No indicators extracted.";
-      indicatorList.appendChild(empty);
-    } else {
-      indicators.forEach((indicator) => {
-        const item = document.createElement("span");
-
-        item.className = "indicator-item";
-        item.textContent =
-          indicator && typeof indicator === "object"
-            ? `${indicator.type || "clue"}: ${indicator.value || ""} (unverified)`
-            : String(indicator);
-
-        indicatorList.appendChild(item);
-      });
-    }
-
-    if (safetyGuidance) {
-      const guidanceByCategory = {
-        digitalArrest: [
-          "End the call or chat if you feel pressured; real law enforcement does not demand an urgent payment to avoid arrest.",
-          "Do not transfer money or share OTPs, PINs, passwords, or identity documents.",
-          "Verify the claim using an official contact you find independently; preserve the message and call details.",
-          "If money was transferred, contact your bank and call India's 1930 helpline promptly.",
-        ],
-        creditCard: [
-          "Do not open the link or share an OTP, PIN, CVV, password, or full card number.",
-          "Contact your bank using its official app or the number printed on your card.",
-          "If credentials or money may be at risk, ask the bank to secure the account and call 1930 promptly.",
-          "Keep the message, sender details, and transaction reference as evidence.",
-        ],
-        sextortion: [
-          "You are not to blame. Avoid paying or sending more material; payment may not stop the threats.",
-          "Preserve messages, account names, URLs, and timestamps; avoid forwarding intimate material.",
-          "Block and report the account on the platform, and seek support from someone you trust.",
-          "For immediate danger or financial loss, contact local emergency support or India's cybercrime helpline 1930.",
-        ],
-        investment: [
-          "Pause before investing; guaranteed high returns and pressure to act quickly are warning signs.",
-          "Verify the firm and registration independently through official sources; do not rely on links the sender supplied.",
-          "Do not share financial credentials or send more money to unlock a promised return.",
-          "If you already paid, contact your bank and call 1930 promptly; preserve transaction records.",
-        ],
-        ecommerce: [
-          "Do not pay outside the shopping platform or use an unfamiliar payment link.",
-          "Check the seller and return policy independently; unusually low prices and urgency can be warning signs.",
-          "Keep order, chat, and payment records; contact your bank if payment details may be exposed.",
-        ],
-        unclassified: [
-          "Pause before replying, clicking, or transferring money.",
-          "Never share OTPs, PINs, passwords, or full card details.",
-          "Verify through an official contact you find independently and preserve relevant evidence.",
-        ],
-      };
-      const guidance = guidanceByCategory[category] || guidanceByCategory.unclassified;
-      safetyGuidance.replaceChildren();
-      guidance.forEach((text) => {
-        const item = document.createElement("li");
-        item.textContent = text;
-        safetyGuidance.appendChild(item);
-      });
-    }
-
-    if (feedbackPanel) feedbackPanel.hidden = true;
+  function resetResults() {
+    currentAnalysisId = null;
     currentCaseId = null;
 
-    detectionResults.hidden = false;
+    elements.detectionResults.hidden = true;
 
-    detectionResults.scrollIntoView({
+    elements.resultStatus.textContent = "Pending";
+
+    elements.riskScore.textContent = "--";
+
+    elements.riskLevel.textContent =
+      "Awaiting Analysis";
+
+    elements.riskDescription.textContent =
+      "Submit evidence to receive an explainable risk assessment.";
+
+    elements.fraudCategory.textContent =
+      "Not classified yet.";
+
+    elements.riskExplanation.textContent =
+      "Analysis explanation will appear here.";
+
+    elements.indicatorList.replaceChildren();
+
+    const emptyIndicators = document.createElement("p");
+
+    emptyIndicators.textContent =
+      "No indicators extracted yet.";
+
+    elements.indicatorList.appendChild(emptyIndicators);
+
+    elements.riskScoreCircle.style.background =
+      "conic-gradient(#263746 0deg, #263746 360deg)";
+
+    renderSafetyGuidance("medium");
+
+    if (elements.feedbackPanel) {
+      elements.feedbackPanel.hidden = true;
+    }
+
+    if (elements.feedbackStatus) {
+      elements.feedbackStatus.textContent = "";
+      elements.feedbackStatus.className = "";
+    }
+
+    if (elements.feedbackSelect) {
+      elements.feedbackSelect.selectedIndex = 0;
+    }
+  }
+
+  /* =======================================================
+     10. RENDER INDICATORS
+  ======================================================= */
+
+  function renderIndicators(indicators) {
+    const container = elements.indicatorList;
+
+    container.replaceChildren();
+
+    if (!Array.isArray(indicators) || indicators.length === 0) {
+      const empty = document.createElement("p");
+
+      empty.textContent =
+        "No suspicious indicators were extracted.";
+
+      container.appendChild(empty);
+
+      return;
+    }
+
+    indicators.forEach((indicator) => {
+      if (
+        !indicator ||
+        typeof indicator !== "object"
+      ) {
+        return;
+      }
+
+      const item = document.createElement("div");
+
+      item.className = "indicator-item";
+
+      const type = document.createElement("strong");
+
+      type.textContent =
+        indicator.type || "Indicator";
+
+      const value = document.createElement("span");
+
+      value.textContent =
+        indicator.value || "Not available";
+
+      const verification = document.createElement("span");
+
+      if (indicator.verified === true) {
+        verification.className = "indicator-verified";
+        verification.textContent = "Verified";
+      } else {
+        verification.className = "indicator-unverified";
+        verification.textContent = "Unverified";
+      }
+
+      item.append(
+        type,
+        value,
+        verification
+      );
+
+      container.appendChild(item);
+    });
+
+    if (!container.children.length) {
+      const empty = document.createElement("p");
+
+      empty.textContent =
+        "No valid indicators were returned.";
+
+      container.appendChild(empty);
+    }
+  }
+
+  /* =======================================================
+     11. RENDER SAFETY GUIDANCE
+  ======================================================= */
+
+  function renderSafetyGuidance(level) {
+    const guidance =
+      SAFETY_GUIDANCE[level] ||
+      SAFETY_GUIDANCE.medium;
+
+    const container = elements.safetyGuidance;
+
+    container.replaceChildren();
+
+    guidance.forEach((message) => {
+      const item = document.createElement("li");
+
+      item.textContent = message;
+
+      container.appendChild(item);
+    });
+  }
+
+  /* =======================================================
+     12. RENDER ANALYSIS RESULTS
+  ======================================================= */
+
+  function renderResults(result) {
+    if (!result || typeof result !== "object") {
+      throw new Error(
+        "Invalid analysis response received."
+      );
+    }
+
+    if (
+      result.riskScore === null ||
+      result.riskScore === undefined ||
+      result.riskScore === ""
+    ) {
+      throw new Error(
+        "Analysis response does not contain a valid risk score."
+      );
+    }
+
+    const score = Number(result.riskScore);
+
+    if (
+      !Number.isFinite(score) ||
+      score < 0 ||
+      score > 100
+    ) {
+      throw new Error(
+        "The returned risk score is invalid."
+      );
+    }
+
+    const roundedScore = Math.round(score);
+
+    // UI risk classification follows the configured score thresholds.
+    const riskLevel = getRiskLevel(roundedScore);
+
+    const riskInfo = RISK_LEVELS[riskLevel];
+
+    const category = getCategoryLabel(
+      result.fraudCategory
+    );
+
+    elements.riskScore.textContent = roundedScore;
+
+    elements.riskLevel.textContent =
+      riskInfo.label;
+
+    elements.riskDescription.textContent =
+      result.riskDescription ||
+      result.summary ||
+      riskInfo.description;
+
+    elements.fraudCategory.textContent =
+      category;
+
+    elements.riskExplanation.textContent =
+      formatExplanation(result.explanation);
+
+    elements.resultStatus.textContent =
+      "Analysis Complete";
+
+    const degrees = roundedScore * 3.6;
+
+    const riskColors = {
+      low: "#22c55e",
+      medium: "#eab308",
+      high: "#f97316",
+      critical: "#ef4444",
+    };
+
+    const color = riskColors[riskLevel];
+
+    elements.riskScoreCircle.style.background = `
+      conic-gradient(
+        ${color} ${degrees}deg,
+        #263746 ${degrees}deg
+      )
+    `;
+
+    renderIndicators(result.indicators);
+
+    renderSafetyGuidance(riskLevel);
+
+    elements.detectionResults.hidden = false;
+
+    elements.detectionResults.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
+
+    return {
+      score: roundedScore,
+      riskLevel,
+      category: result.fraudCategory || "unclassified",
+    };
   }
 
-  // ==========================================
-  // API ANALYSIS
-  // ==========================================
+  /* =======================================================
+     13. CREATE CASE
+  ======================================================= */
+
+  async function createAnalysisCase(result, evidence) {
+    if (!result.id) {
+      throw new Error(
+        "Analysis ID missing. Case cannot be created."
+      );
+    }
+
+    const score = Number(result.riskScore);
+
+    if (!Number.isFinite(score)) {
+      throw new Error(
+        "Invalid risk score. Case cannot be created."
+      );
+    }
+
+    const riskLevel = getRiskLevel(score);
+
+    const category =
+      result.fraudCategory || "unclassified";
+
+    const indicators = Array.isArray(result.indicators)
+      ? result.indicators
+          .filter(
+            (item) =>
+              item &&
+              typeof item === "object" &&
+              item.type &&
+              item.value
+          )
+          .slice(0, 50)
+          .map((item) => ({
+            type: String(item.type).slice(0, 30),
+            value: String(item.value).slice(0, 300),
+          }))
+      : [];
+
+    const casePayload = {
+      analysisId: result.id,
+
+      title:
+        `${getSelectedCategoryLabel()} Detection Case`,
+
+      description:
+        `Selected category: ${getSelectedCategoryLabel()}\n` +
+        `Evidence type: ${currentEvidenceType}\n` +
+        `Risk score: ${Math.round(score)}/100\n` +
+        `Risk level: ${riskLevel}\n` +
+        `Evidence preview: ${evidence.slice(0, 500)}`,
+
+      fraudCategory: category,
+
+      riskLevel,
+
+      priority: getPriority(score),
+
+      indicators,
+    };
+
+    const response = await API.post(
+      "/cases",
+      casePayload
+    );
+
+    if (!response || response.success !== true) {
+      throw new Error(
+        response?.message ||
+        "Unable to save the detection case."
+      );
+    }
+
+    const savedCase = response.data;
+
+    if (!savedCase) {
+      throw new Error(
+        "Case was not returned by the server."
+      );
+    }
+
+    currentCaseId =
+      savedCase._id ||
+      savedCase.id ||
+      null;
+
+    if (!currentCaseId) {
+      throw new Error(
+        "Saved case ID was not returned by the server."
+      );
+    }
+
+    return savedCase;
+  }
+
+  /* =======================================================
+     14. ANALYZE EVIDENCE
+  ======================================================= */
 
   async function analyzeEvidence() {
     if (isAnalyzing) return;
 
     hideMessage();
 
-    const value = getEvidenceValue();
-
-    const validationError = validateEvidence(value);
-
-    if (validationError) {
-      showMessage(validationError, "error");
-      return;
-    }
-
-    const token =
-      localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
-
-    if (!token) {
-      showMessage("Please sign in before analyzing evidence.", "error");
-      return;
-    }
-
-    setLoading(true);
-    detectionResults.hidden = true;
+    let evidence;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/analysis/analyze`, {
-        method: "POST",
+      evidence = getEvidence();
+    } catch (error) {
+      showMessage(error.message, "error");
+      return;
+    }
 
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+    if (!getToken()) {
+      showMessage(
+        "Your session has expired. Please login again.",
+        "error"
+      );
 
-        body: JSON.stringify({
-          evidenceType: activeEvidence,
-          evidence: value,
-        }),
-      });
+      return;
+    }
 
-      const data = await response.json();
+    isAnalyzing = true;
 
-      if (!response.ok || data.success === false) {
-        throw new Error(data.message || "Analysis request failed.");
-      }
+    resetResults();
 
-      if (!data.result) {
-        throw new Error("Invalid analysis response from server.");
-      }
+    setButtonLoading(
+      elements.analyzeBtn,
+      true
+    );
 
-      renderResults(data.result);
+    elements.clearBtn.disabled = true;
 
-      // Save a case linked to the analysis. Raw evidence is not copied into
-      // the case description; only the structured assessment and clues persist.
-      try {
-        const caseResponse = await fetch(`${API_BASE_URL}/cases`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            title: `${String(data.result.fraudCategory || "Scam").replace(/([A-Z])/g, " $1")} review`,
-            description: "User-submitted evidence reviewed by ScamShield's rule-based assessment. Original evidence is not stored in this case record.",
-            analysisId: data.result.id,
-            fraudCategory: data.result.fraudCategory,
-            riskLevel: String(data.result.riskLevel || "medium").toLowerCase(),
-            priority:
-              Number(data.result.riskScore) >= 75
-                ? "urgent"
-                : Number(data.result.riskScore) >= 50
-                  ? "high"
-                  : "medium",
-            indicators: Array.isArray(data.result.indicators)
-              ? data.result.indicators
-              : [],
-          }),
-        });
+    showMessage(
+      `Analyzing ${getSelectedCategoryLabel()} evidence. Please wait...`,
+      "info"
+    );
 
-        const caseData = await caseResponse.json().catch(() => ({}));
+    try {
 
-        if (!caseResponse.ok || caseData.success === false) {
-          throw new Error(caseData.message || "Case record could not be saved.");
+      /* STEP 1: ANALYZE EVIDENCE */
+
+      const response = await API.post(
+        "/analysis/analyze",
+        {
+          evidenceType: currentEvidenceType,
+
+          evidence,
+
+          selectedCategory: currentCategory,
+
+          selectedCategoryLabel:
+            getSelectedCategoryLabel(),
         }
+      );
 
-        currentCaseId = caseData.data?._id || caseData.data?.id || null;
-        if (feedbackPanel && currentCaseId) feedbackPanel.hidden = false;
-
-        showMessage("Analysis complete and case saved to your account.", "success");
-      } catch (caseError) {
-        console.error("ScamShield Case Save Error:", caseError);
-        showMessage(
-          `Analysis completed, but the case could not be saved: ${caseError.message}`,
-          "error",
+      if (!response || response.success !== true) {
+        throw new Error(
+          response?.message ||
+          "Evidence analysis failed."
         );
       }
-    } catch (error) {
-      console.error("ScamShield Detection Error:", error);
 
-      showMessage(
-        error.message || "Unable to analyze evidence. Please try again.",
-        "error",
+      const result = response.result;
+
+      if (!result) {
+        throw new Error(
+          "Analysis server returned an empty result."
+        );
+      }
+
+      currentAnalysisId = result.id || null;
+
+      /* STEP 2: DISPLAY RESULTS */
+
+      renderResults(result);
+
+      /* STEP 3: SAVE CASE */
+
+      try {
+        await createAnalysisCase(
+          result,
+          evidence
+        );
+
+        if (elements.feedbackPanel) {
+          elements.feedbackPanel.hidden = false;
+        }
+
+        showMessage(
+          "Analysis completed successfully. Detection case saved.",
+          "success"
+        );
+
+      } catch (caseError) {
+        console.error(
+          "Case Creation Error:",
+          caseError
+        );
+
+        if (elements.feedbackPanel) {
+          elements.feedbackPanel.hidden = true;
+        }
+
+        showMessage(
+          "Analysis completed, but the case could not be saved: " +
+          caseError.message,
+          "warning"
+        );
+      }
+
+    } catch (error) {
+      console.error(
+        "Detection Analysis Error:",
+        error
       );
+
+      const message =
+        error.message ||
+        "Unable to analyze evidence.";
+
+      if (
+        message.toLowerCase().includes("token") ||
+        message.toLowerCase().includes("login") ||
+        message.toLowerCase().includes("authentication")
+      ) {
+        showMessage(
+          "Authentication failed. Please login again.",
+          "error"
+        );
+      } else {
+        showMessage(
+          message,
+          "error"
+        );
+      }
+
     } finally {
-      setLoading(false);
+      isAnalyzing = false;
+
+      setButtonLoading(
+        elements.analyzeBtn,
+        false
+      );
+
+      elements.clearBtn.disabled = false;
     }
   }
 
-  // ==========================================
-  // CLEAR FORM
-  // ==========================================
+  /* =======================================================
+     15. CLASSIFICATION FEEDBACK
+  ======================================================= */
 
-  function clearForm() {
-    if (isAnalyzing) return;
+  async function submitClassificationFeedback() {
+    if (isSubmittingFeedback) return;
 
-    messageInput.value = "";
-    urlInput.value = "";
-    callInput.value = "";
-    transactionInput.value = "";
+    if (!currentCaseId) {
+      showMessage(
+        "No saved case is available for feedback.",
+        "error"
+      );
 
-    updateCounters();
+      return;
+    }
 
-    detectionResults.hidden = true;
-    currentCaseId = null;
-    if (feedbackPanel) feedbackPanel.hidden = true;
+    if (
+      !elements.feedbackSelect ||
+      !elements.feedbackBtn ||
+      !elements.feedbackStatus
+    ) {
+      showMessage(
+        "Classification feedback elements are unavailable.",
+        "error"
+      );
+
+      return;
+    }
+
+    const feedback =
+      elements.feedbackSelect.value;
+
+    const allowedFeedback = [
+      "needs_review",
+      "possible_false_positive",
+      "category_correction_requested",
+    ];
+
+    if (!allowedFeedback.includes(feedback)) {
+      elements.feedbackStatus.textContent =
+        "Please select valid feedback.";
+
+      elements.feedbackStatus.className = "error";
+
+      return;
+    }
+
+    isSubmittingFeedback = true;
+
+    const originalHTML =
+      elements.feedbackBtn.innerHTML;
+
+    elements.feedbackBtn.disabled = true;
+
+    elements.feedbackBtn.innerHTML = `
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      Saving...
+    `;
+
+    elements.feedbackStatus.textContent = "";
+
+    try {
+      const response = await API.patch(
+        `/cases/${encodeURIComponent(currentCaseId)}`,
+        {
+          classificationFeedback: feedback,
+        }
+      );
+
+      if (!response || response.success !== true) {
+        throw new Error(
+          response?.message ||
+          "Unable to save feedback."
+        );
+      }
+
+      elements.feedbackStatus.textContent =
+        "Feedback saved successfully.";
+
+      elements.feedbackStatus.className =
+        "success";
+
+    } catch (error) {
+      console.error(
+        "Feedback Error:",
+        error
+      );
+
+      elements.feedbackStatus.textContent =
+        error.message ||
+        "Failed to save feedback.";
+
+      elements.feedbackStatus.className =
+        "error";
+
+    } finally {
+      isSubmittingFeedback = false;
+
+      elements.feedbackBtn.disabled = false;
+
+      elements.feedbackBtn.innerHTML =
+        originalHTML;
+    }
+  }
+
+  /* =======================================================
+     16. CLEAR FORM
+  ======================================================= */
+
+  function clearDetectionForm() {
+    if (
+      isAnalyzing ||
+      isSubmittingFeedback
+    ) {
+      return;
+    }
+
+    if (elements.messageInput) {
+      elements.messageInput.value = "";
+    }
+
+    if (elements.urlInput) {
+      elements.urlInput.value = "";
+    }
+
+    if (elements.callInput) {
+      elements.callInput.value = "";
+    }
+
+    if (elements.transactionInput) {
+      elements.transactionInput.value = "";
+    }
+
+    counterConfigurations.forEach((config) => {
+      updateCounter(
+        config.input,
+        config.counter,
+        config.maximum
+      );
+    });
+
+    switchEvidenceType(
+      "message",
+      "message"
+    );
+
+    resetResults();
 
     hideMessage();
 
-    activeEvidence = "message";
+    elements.analyzeBtn.disabled = false;
 
-    evidenceButtons.forEach((button) => {
-      const active = button.dataset.evidence === "message";
-
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
-
-    evidenceForms.forEach((form) => {
-      const active = form.dataset.form === "message";
-
-      form.classList.toggle("active", active);
-      form.hidden = !active;
-    });
+    elements.clearBtn.disabled = false;
   }
 
-  function updateCounters() {
-    const counters = [
-      [messageInput, "messageCount", 10000],
-      [callInput, "callCount", 15000],
-      [transactionInput, "transactionCount", 10000],
-    ];
+  /* =======================================================
+     17. EVENT LISTENERS
+  ======================================================= */
 
-    counters.forEach(([input, counterId, max]) => {
-      const counter = document.getElementById(counterId);
+  elements.analyzeBtn.addEventListener(
+    "click",
+    analyzeEvidence
+  );
 
-      if (counter) {
-        counter.textContent = `${input.value.length} / ${max}`;
-      }
-    });
+  elements.clearBtn.addEventListener(
+    "click",
+    clearDetectionForm
+  );
+
+  if (elements.feedbackBtn) {
+    elements.feedbackBtn.addEventListener(
+      "click",
+      submitClassificationFeedback
+    );
   }
 
-  // ==========================================
-  // EVENT LISTENERS
-  // ==========================================
+  /* =======================================================
+     18. INITIALIZATION
+  ======================================================= */
 
-  analyzeBtn.addEventListener("click", analyzeEvidence);
+  switchEvidenceType(
+    "message",
+    "message"
+  );
 
-  clearBtn.addEventListener("click", clearForm);
+  resetResults();
 
-  feedbackButton?.addEventListener("click", async () => {
-    const token =
-      localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
-    if (!currentCaseId || !token) return;
+  console.log(
+    "ScamShield AI Detection Module initialized successfully."
+  );
 
-    feedbackButton.disabled = true;
-    feedbackStatus.textContent = "Saving feedback…";
-    try {
-      const response = await fetch(`${API_BASE_URL}/cases/${encodeURIComponent(currentCaseId)}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          classificationFeedback: feedbackSelect.value,
-        }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result.success === false) {
-        throw new Error(result.message || "Could not save feedback.");
-      }
-      feedbackStatus.textContent = "Feedback saved for case review.";
-    } catch (error) {
-      feedbackStatus.textContent = error.message;
-    } finally {
-      feedbackButton.disabled = false;
-    }
-  });
-
-  // ==========================================
-  // INITIALIZATION
-  // ==========================================
-
-  clearForm();
-
-  console.log("ScamShield AI | Detection module initialized.");
 });

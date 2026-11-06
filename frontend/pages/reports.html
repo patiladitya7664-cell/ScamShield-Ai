@@ -39,56 +39,51 @@
     <div class="background-glow glow-one"></div>
     <div class="background-glow glow-two"></div>
 
-   <!-- ======================================================
+    <!-- ======================================================
      NAVBAR
      Authenticated navigation: Dashboard is the main page.
 ======================================================= -->
 
-<header class="navbar">
-  <div class="container nav-content">
+    <header class="navbar">
+      <div class="container nav-content">
+        <!-- LOGO: Redirects to Dashboard -->
+        <a href="dashboard.html" class="logo">
+          <span class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </span>
 
-    <!-- LOGO: Redirects to Dashboard -->
-    <a href="dashboard.html" class="logo">
-      <span class="logo-icon">
-        <i class="fa-solid fa-shield-halved"></i>
-      </span>
+          <span class="logo-text"> ScamShield <span>AI</span> </span>
+        </a>
 
-      <span class="logo-text">
-        ScamShield <span>AI</span>
-      </span>
-    </a>
+        <!-- MAIN NAVIGATION -->
+        <nav class="nav-links" id="navLinks">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="detection.html">Detection</a>
+          <a href="agents.html">AI Agents</a>
+          <a href="intelligence.html">Intelligence</a>
+          <a href="analytics.html">Analytics</a>
+          <a href="reports.html" class="active">Reports</a>
+        </nav>
 
-    <!-- MAIN NAVIGATION -->
-    <nav class="nav-links" id="navLinks">
-      <a href="dashboard.html" >Dashboard</a>
-      <a href="detection.html">Detection</a>
-      <a href="agents.html">AI Agents</a>
-      <a href="intelligence.html">Intelligence</a>
-      <a href="analytics.html">Analytics</a>
-      <a href="reports.html" class="active">Reports</a>
-    </nav>
+        <!-- NAVIGATION ACTIONS -->
+        <div class="nav-actions">
+          <a href="settings.html" class="btn btn-secondary">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+          </a>
+        </div>
 
-    <!-- NAVIGATION ACTIONS -->
-    <div class="nav-actions">
-      <a href="settings.html" class="btn btn-secondary">
-        <i class="fa-solid fa-gear"></i>
-        Settings
-      </a>
-    </div>
-
-    <!-- MOBILE MENU -->
-    <button
-      class="menu-toggle"
-      id="menuToggle"
-      aria-label="Toggle navigation"
-      aria-expanded="false"
-    >
-      <i class="fa-solid fa-bars"></i>
-    </button>
-
-  </div>
-</header>
-
+        <!-- MOBILE MENU -->
+        <button
+          class="menu-toggle"
+          id="menuToggle"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+        >
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </header>
 
     <main class="reports-page">
       <!-- =================================================
@@ -498,10 +493,17 @@
       </div>
     </footer>
 
-    <!-- Shared JavaScript -->
-    <script src="../js/main.js" defer></script>
+    <!-- Core Dependencies -->
+    <script src="../js/services/api.js" defer></script>
+    <script src="../js/utils/helpers.js" defer></script>
 
-    <!-- Reports JavaScript -->
+    <!-- UI Components -->
+    <script src="../js/components/sidebar.js" defer></script>
+    <script src="../js/components/navigation.js" defer></script>
+    <script src="../js/components/notifications.js" defer></script>
+
+    <!-- Main & Reports -->
+    <script src="../js/main.js" defer></script>
     <script src="../js/reports.js" defer></script>
   </body>
 </html>

@@ -1,15 +1,18 @@
-
 """
 =========================================================
 SCAMSHIELD AI - AGENT ORCHESTRATOR
 =========================================================
 
+Version: 1.1.0
+
 Purpose:
 - Coordinate all four AI agents.
-- Execute fraud detection and intelligence analysis.
+- Execute primary fraud detection.
+- Extract intelligence indicators.
 - Generate victim safety recommendations.
-- Keep Decoy simulation separately controlled.
-- Combine results into one unified response.
+- Track individual agent execution.
+- Keep decoy simulation separately controlled.
+- Generate a unified analysis response.
 
 No real-world communication is performed.
 =========================================================
@@ -30,7 +33,18 @@ from utils.logger import logger, log_agent_execution
 
 class AgentOrchestrator:
 
-    VERSION = "1.0.0"
+    VERSION = "1.1.0"
+
+    SUPPORTED_EVIDENCE_TYPES = {
+        "message",
+        "url",
+        "call",
+        "transaction",
+        "screenshot",
+        "email",
+    }
+
+    MAX_EVIDENCE_LENGTH = 20000
 
     def __init__(self):
 
@@ -39,9 +53,125 @@ class AgentOrchestrator:
         self.victim_safety = VictimSafetyAgent()
         self.decoy = DecoyAgent()
 
-    # -----------------------------------------------------
-    # MAIN PIPELINE
-    # -----------------------------------------------------
+        logger.info(
+            "ScamShield AI Agent Orchestrator initialized | version=%s",
+            self.VERSION,
+        )
+
+    # =====================================================
+    # SAFE HELPERS
+    # =====================================================
+
+    @staticmethod
+    def _timestamp():
+
+        return datetime.now(
+            timezone.utc
+        ).isoformat()
+
+    @staticmethod
+    def _safe_dict(value):
+
+        return value if isinstance(value, dict) else {}
+
+    @staticmethod
+    def _safe_list(value):
+
+        return value if isinstance(value, list) else []
+
+    @staticmethod
+    def _safe_string(value, default=""):
+
+        if isinstance(value, str):
+            return value
+
+        return default
+
+    # =====================================================
+    # INPUT VALIDATION
+    # =====================================================
+
+    def _validate_input(
+        self,
+        evidence,
+        evidence_type,
+    ):
+
+        if not isinstance(evidence, str):
+            raise ValueError(
+                "Evidence must be a string."
+            )
+
+        evidence = evidence.strip()
+
+        if not evidence:
+            raise ValueError(
+                "Evidence cannot be empty."
+            )
+
+        if len(evidence) > self.MAX_EVIDENCE_LENGTH:
+            raise ValueError(
+                "Evidence exceeds maximum allowed length."
+            )
+
+        if not isinstance(evidence_type, str):
+            raise ValueError(
+                "Evidence type must be a string."
+            )
+
+        evidence_type = evidence_type.strip().lower()
+
+        if evidence_type not in self.SUPPORTED_EVIDENCE_TYPES:
+            raise ValueError(
+                "Unsupported evidence type."
+            )
+
+        return evidence, evidence_type
+
+    # =====================================================
+    # AGENT RESPONSE VALIDATION
+    # =====================================================
+
+    @staticmethod
+    def _validate_agent_result(
+        result,
+        agent_name,
+    ):
+
+        if not isinstance(result, dict):
+
+            logger.error(
+                "%s returned an invalid response.",
+                agent_name,
+            )
+
+            return {
+                "success": False,
+                "error": {
+                    "code": "invalid_agent_response",
+                    "message": (
+                        f"{agent_name} returned an invalid response."
+                    ),
+                },
+            }
+
+        if not isinstance(result.get("success"), bool):
+
+            return {
+                "success": False,
+                "error": {
+                    "code": "missing_success_status",
+                    "message": (
+                        f"{agent_name} returned an incomplete response."
+                    ),
+                },
+            }
+
+        return result
+
+    # =====================================================
+    # MAIN ANALYSIS
+    # =====================================================
 
     def analyze(
         self,
@@ -56,6 +186,7 @@ class AgentOrchestrator:
             "guardian": None,
             "intelligence": None,
             "victim_safety": None,
+
             "decoy": {
                 "status": "not_started",
                 "message": (
@@ -67,148 +198,56 @@ class AgentOrchestrator:
 
         errors: List[Dict[str, str]] = []
 
+        # =============================================
+        # INPUT VALIDATION
+        # =============================================
+
         try:
 
-            # =============================================
-            # 1. GUARDIAN AGENT
-            # =============================================
-
-            guardian_result = self._run_guardian(
+            evidence, evidence_type = self._validate_input(
                 evidence,
                 evidence_type,
             )
 
-            results["guardian"] = guardian_result
-
-            if not guardian_result.get("success"):
-
-                errors.append({
-                    "agent": "guardian",
-                    "message": (
-                        "Primary fraud analysis could not be completed."
-                    ),
-                })
-
-                # Guardian is the primary fraud assessment agent.
-                # Without its result, downstream risk-dependent
-                # processing must not invent risk information.
-
-                return self._build_response(
-                    analysis_id=analysis_id,
-                    results=results,
-                    errors=errors,
-                    start_time=start_time,
-                    status="failed",
-                )
-
-            guardian_analysis = guardian_result.get(
-                "analysis",
-                {},
-            )
-
-            if not isinstance(guardian_analysis, dict):
-
-                errors.append({
-                    "agent": "guardian",
-                    "message": (
-                        "Guardian returned an invalid analysis structure."
-                    ),
-                })
-
-                return self._build_response(
-                    analysis_id=analysis_id,
-                    results=results,
-                    errors=errors,
-                    start_time=start_time,
-                    status="failed",
-                )
-
-            # =============================================
-            # 2. INTELLIGENCE AGENT
-            # =============================================
-
-            intelligence_result = self._run_intelligence(
-                evidence,
-                evidence_type,
-            )
-
-            results["intelligence"] = intelligence_result
-
-            if not intelligence_result.get("success"):
-
-                errors.append({
-                    "agent": "intelligence",
-                    "message": (
-                        "Intelligence analysis could not be completed."
-                    ),
-                })
-
-            # =============================================
-            # 3. VICTIM SAFETY AGENT
-            # =============================================
-
-            risk_level = guardian_analysis.get(
-                "risk_level",
-                "UNKNOWN",
-            )
-
-            risk_score = guardian_analysis.get(
-                "risk_score",
-            )
-
-            detected_signals = guardian_analysis.get(
-                "signals",
-                [],
-            )
-
-            safety_result = self._run_victim_safety(
-                evidence=evidence,
-                evidence_type=evidence_type,
-                risk_level=risk_level,
-                risk_score=risk_score,
-                detected_signals=detected_signals,
-            )
-
-            results["victim_safety"] = safety_result
-
-            if not safety_result.get("success"):
-
-                errors.append({
-                    "agent": "victim_safety",
-                    "message": (
-                        "Victim safety analysis could not be completed."
-                    ),
-                })
-
-            # =============================================
-            # 4. FINAL STATUS
-            # =============================================
-
-            status = (
-                "completed"
-                if not errors
-                else "partial"
-            )
+        except ValueError as error:
 
             return self._build_response(
                 analysis_id=analysis_id,
                 results=results,
-                errors=errors,
+                errors=[
+                    {
+                        "agent": "orchestrator",
+                        "message": str(error),
+                    }
+                ],
                 start_time=start_time,
-                status=status,
+                status="failed",
+                evidence_type=None,
             )
 
-        except Exception:
+        logger.info(
+            "Agent orchestration started | analysis_id=%s | type=%s",
+            analysis_id,
+            evidence_type,
+        )
 
-            logger.exception(
-                "Agent orchestration failed | analysis_id=%s",
-                analysis_id,
-            )
+        # =============================================
+        # 1. GUARDIAN AGENT
+        # =============================================
+
+        guardian_result = self._run_guardian(
+            evidence=evidence,
+            evidence_type=evidence_type,
+        )
+
+        results["guardian"] = guardian_result
+
+        if not guardian_result["success"]:
 
             errors.append({
-                "agent": "orchestrator",
+                "agent": "guardian",
                 "message": (
-                    "Unexpected orchestration failure."
+                    "Primary fraud analysis could not be completed."
                 ),
             })
 
@@ -218,23 +257,135 @@ class AgentOrchestrator:
                 errors=errors,
                 start_time=start_time,
                 status="failed",
+                evidence_type=evidence_type,
             )
 
-    # -----------------------------------------------------
-    # GUARDIAN EXECUTION
-    # -----------------------------------------------------
+        guardian_analysis = self._safe_dict(
+            guardian_result.get("analysis")
+        )
+
+        if not guardian_analysis:
+
+            errors.append({
+                "agent": "guardian",
+                "message": (
+                    "Guardian returned an invalid analysis structure."
+                ),
+            })
+
+            return self._build_response(
+                analysis_id=analysis_id,
+                results=results,
+                errors=errors,
+                start_time=start_time,
+                status="failed",
+                evidence_type=evidence_type,
+            )
+
+        # =============================================
+        # 2. INTELLIGENCE AGENT
+        # =============================================
+
+        intelligence_result = self._run_intelligence(
+            evidence=evidence,
+            evidence_type=evidence_type,
+        )
+
+        results["intelligence"] = intelligence_result
+
+        if not intelligence_result["success"]:
+
+            errors.append({
+                "agent": "intelligence",
+                "message": (
+                    "Intelligence analysis could not be completed."
+                ),
+            })
+
+        # =============================================
+        # 3. VICTIM SAFETY AGENT
+        # =============================================
+
+        risk_level = guardian_analysis.get(
+            "risk_level",
+            "UNKNOWN",
+        )
+
+        risk_score = guardian_analysis.get(
+            "risk_score",
+        )
+
+        detected_signals = guardian_analysis.get(
+            "signals",
+            [],
+        )
+
+        safety_result = self._run_victim_safety(
+            evidence=evidence,
+            evidence_type=evidence_type,
+            risk_level=risk_level,
+            risk_score=risk_score,
+            detected_signals=detected_signals,
+        )
+
+        results["victim_safety"] = safety_result
+
+        if not safety_result["success"]:
+
+            errors.append({
+                "agent": "victim_safety",
+                "message": (
+                    "Victim safety analysis could not be completed."
+                ),
+            })
+
+        # =============================================
+        # 4. FINAL STATUS
+        # =============================================
+
+        status = (
+            "completed"
+            if not errors
+            else "partial"
+        )
+
+        response = self._build_response(
+            analysis_id=analysis_id,
+            results=results,
+            errors=errors,
+            start_time=start_time,
+            status=status,
+            evidence_type=evidence_type,
+        )
+
+        logger.info(
+            "Agent orchestration completed | analysis_id=%s | status=%s",
+            analysis_id,
+            status,
+        )
+
+        return response
+
+    # =====================================================
+    # GUARDIAN AGENT
+    # =====================================================
 
     def _run_guardian(
         self,
-        evidence: str,
-        evidence_type: str,
-    ) -> Dict[str, Any]:
+        evidence,
+        evidence_type,
+    ):
 
         try:
 
-            return self.guardian.analyze(
+            result = self.guardian.analyze(
                 evidence=evidence,
                 evidence_type=evidence_type,
+            )
+
+            return self._validate_agent_result(
+                result,
+                "Guardian",
             )
 
         except Exception:
@@ -253,21 +404,26 @@ class AgentOrchestrator:
                 },
             }
 
-    # -----------------------------------------------------
-    # INTELLIGENCE EXECUTION
-    # -----------------------------------------------------
+    # =====================================================
+    # INTELLIGENCE AGENT
+    # =====================================================
 
     def _run_intelligence(
         self,
-        evidence: str,
-        evidence_type: str,
-    ) -> Dict[str, Any]:
+        evidence,
+        evidence_type,
+    ):
 
         try:
 
-            return self.intelligence.analyze(
+            result = self.intelligence.analyze(
                 evidence=evidence,
                 evidence_type=evidence_type,
+            )
+
+            return self._validate_agent_result(
+                result,
+                "Intelligence",
             )
 
         except Exception:
@@ -286,27 +442,32 @@ class AgentOrchestrator:
                 },
             }
 
-    # -----------------------------------------------------
-    # VICTIM SAFETY EXECUTION
-    # -----------------------------------------------------
+    # =====================================================
+    # VICTIM SAFETY AGENT
+    # =====================================================
 
     def _run_victim_safety(
         self,
-        evidence: str,
-        evidence_type: str,
-        risk_level: str,
-        risk_score: Any,
-        detected_signals: Any,
-    ) -> Dict[str, Any]:
+        evidence,
+        evidence_type,
+        risk_level,
+        risk_score,
+        detected_signals,
+    ):
 
         try:
 
-            return self.victim_safety.analyze(
+            result = self.victim_safety.analyze(
                 evidence=evidence,
                 evidence_type=evidence_type,
                 risk_level=risk_level,
                 risk_score=risk_score,
                 detected_signals=detected_signals,
+            )
+
+            return self._validate_agent_result(
+                result,
+                "VictimSafety",
             )
 
         except Exception:
@@ -325,29 +486,49 @@ class AgentOrchestrator:
                 },
             }
 
-    # -----------------------------------------------------
+    # =====================================================
     # UNIFIED RESPONSE
-    # -----------------------------------------------------
+    # =====================================================
 
     def _build_response(
         self,
-        analysis_id: str,
-        results: Dict[str, Any],
-        errors: List[Dict[str, str]],
-        start_time: float,
-        status: str,
-    ) -> Dict[str, Any]:
+        analysis_id,
+        results,
+        errors,
+        start_time,
+        status,
+        evidence_type=None,
+    ):
 
         duration = round(
             (perf_counter() - start_time) * 1000,
             2,
         )
 
+        agents = [
+            "guardian",
+            "intelligence",
+            "victim_safety",
+        ]
+
         agents_executed = [
             name
-            for name, result in results.items()
-            if isinstance(result, dict)
-            and result.get("success") is not None
+            for name in agents
+            if isinstance(results.get(name), dict)
+        ]
+
+        agents_successful = [
+            name
+            for name in agents
+            if isinstance(results.get(name), dict)
+            and results[name].get("success") is True
+        ]
+
+        agents_failed = [
+            name
+            for name in agents
+            if isinstance(results.get(name), dict)
+            and results[name].get("success") is False
         ]
 
         response = {
@@ -361,37 +542,34 @@ class AgentOrchestrator:
                 "status": status,
             },
 
-            # AI Pipeline consumes this exact key.
             "results": results,
 
             "errors": errors,
 
             "metadata": {
-                "created_at": datetime.now(
-                    timezone.utc
-                ).isoformat(),
+                "created_at": self._timestamp(),
 
                 "duration_ms": duration,
 
+                "evidence_type": evidence_type,
+
                 "agents_executed": agents_executed,
 
-                "agents_successful": [
-                    name
-                    for name, result in results.items()
-                    if isinstance(result, dict)
-                    and result.get("success") is True
-                ],
+                "agents_successful": agents_successful,
 
-                "agents_failed": [
+                "agents_failed": agents_failed,
+
+                "agents_skipped": [
                     name
-                    for name, result in results.items()
-                    if isinstance(result, dict)
-                    and result.get("success") is False
+                    for name in agents
+                    if name not in agents_executed
                 ],
             },
 
             "verification": {
                 "status": "UNVERIFIED",
+
+                "external_verification": False,
 
                 "message": (
                     "Automated analysis is advisory. "
@@ -408,55 +586,129 @@ class AgentOrchestrator:
             ),
         }
 
-        # ---------------------------------------------
-        # STANDARD EXECUTION LOGGING
-        # ---------------------------------------------
+        try:
 
-        log_agent_execution(
-            "AgentOrchestrator",
-            status.upper(),
-            (
-                f"Analysis ID: {analysis_id} | "
-                f"Status: {status} | "
-                f"Errors: {len(errors)} | "
-                f"Duration: {duration} ms"
-            ),
-        )
+            log_agent_execution(
+                "AgentOrchestrator",
+                status.upper(),
+                (
+                    f"Analysis ID: {analysis_id} | "
+                    f"Status: {status} | "
+                    f"Successful agents: {len(agents_successful)} | "
+                    f"Failed agents: {len(agents_failed)} | "
+                    f"Duration: {duration} ms"
+                ),
+            )
+
+        except Exception:
+
+            logger.exception(
+                "Orchestrator execution logging failed."
+            )
 
         return response
 
-    # -----------------------------------------------------
+    # =====================================================
     # CONTROLLED DECOY SIMULATION
-    # -----------------------------------------------------
+    # =====================================================
 
     def start_decoy_simulation(
         self,
-        scam_message: str,
-    ) -> Dict[str, Any]:
+        scam_message,
+    ):
 
-        return self.decoy.start_session(
-            scam_message
-        )
+        try:
+
+            result = self.decoy.start_session(
+                scam_message
+            )
+
+            return self._validate_agent_result(
+                result,
+                "Decoy",
+            )
+
+        except Exception:
+
+            logger.exception(
+                "Decoy simulation start failed."
+            )
+
+            return {
+                "success": False,
+                "error": {
+                    "code": "decoy_start_failed",
+                    "message": (
+                        "Could not start decoy simulation."
+                    ),
+                },
+            }
 
     def continue_decoy_simulation(
         self,
-        session_id: str,
-        scam_message: str,
-    ) -> Dict[str, Any]:
+        session_id,
+        scam_message,
+    ):
 
-        return self.decoy.continue_session(
-            session_id,
-            scam_message,
-        )
+        try:
+
+            result = self.decoy.continue_session(
+                session_id,
+                scam_message,
+            )
+
+            return self._validate_agent_result(
+                result,
+                "Decoy",
+            )
+
+        except Exception:
+
+            logger.exception(
+                "Decoy simulation continuation failed."
+            )
+
+            return {
+                "success": False,
+                "error": {
+                    "code": "decoy_continue_failed",
+                    "message": (
+                        "Could not continue decoy simulation."
+                    ),
+                },
+            }
 
     def end_decoy_simulation(
         self,
-        session_id: str,
-    ) -> Dict[str, Any]:
+        session_id,
+    ):
 
-        return self.decoy.end_session(
-            session_id
-        )
+        try:
+
+            result = self.decoy.end_session(
+                session_id
+            )
+
+            return self._validate_agent_result(
+                result,
+                "Decoy",
+            )
+
+        except Exception:
+
+            logger.exception(
+                "Decoy simulation termination failed."
+            )
+
+            return {
+                "success": False,
+                "error": {
+                    "code": "decoy_end_failed",
+                    "message": (
+                        "Could not end decoy simulation."
+                    ),
+                },
+            }
 
 
 # =========================================================
@@ -471,9 +723,9 @@ agent_orchestrator = AgentOrchestrator()
 # =========================================================
 
 def run_complete_analysis(
-    evidence: str,
-    evidence_type: str = "message",
-) -> Dict[str, Any]:
+    evidence,
+    evidence_type="message",
+):
 
     return agent_orchestrator.analyze(
         evidence=evidence,

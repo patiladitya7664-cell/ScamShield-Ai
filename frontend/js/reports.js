@@ -1,1043 +1,1107 @@
+
 /* =====================================================
-   SCAMSHIELD AI - REPORTS
-   Reports Management & Filtering
+   SCAMSHIELD AI - REPORTS MODULE
+   Case + Analysis Integration
+   Search | Filters | Pagination | CSV | PDF
 ===================================================== */
 
 "use strict";
 
-/* =====================================================
-   CONFIGURATION
-===================================================== */
+document.addEventListener("DOMContentLoaded", () => {
 
-const REPORTS_API_BASE =
-  window.SCAMSHIELD_API_URL || "http://localhost:5000/api";
+  // ================================================
+  // CONFIGURATION
+  // ================================================
 
-const REPORTS_API_URL = `${REPORTS_API_BASE}/cases?limit=50`;
+  const API = window.ScamShieldAPI;
+  const REPORTS_PER_PAGE = 8;
+  const API_ENDPOINT = "/cases?limit=100";
 
-const REPORTS_PER_PAGE = 8;
+  // ================================================
+  // DOM ELEMENTS
+  // ================================================
 
-/* =====================================================
-   DOM ELEMENTS
-===================================================== */
+  const el = {
+    total: document.getElementById("totalReports"),
+    highRisk: document.getElementById("highRiskReports"),
+    review: document.getElementById("reviewReports"),
+    completed: document.getElementById("completedReports"),
 
-const reportsElements = {
-  totalReports: document.getElementById("totalReports"),
-  highRiskReports: document.getElementById("highRiskReports"),
-  reviewReports: document.getElementById("reviewReports"),
-  completedReports: document.getElementById("completedReports"),
+    notice: document.getElementById("reportsNotice"),
+    noticeMessage: document.getElementById("reportsStatusMessage"),
 
-  notice: document.getElementById("reportsNotice"),
-  noticeMessage: document.getElementById("reportsStatusMessage"),
+    search: document.getElementById("reportSearch"),
+    risk: document.getElementById("riskFilter"),
+    category: document.getElementById("categoryFilter"),
+    date: document.getElementById("dateFilter"),
 
-  search: document.getElementById("reportSearch"),
-  riskFilter: document.getElementById("riskFilter"),
-  categoryFilter: document.getElementById("categoryFilter"),
-  dateFilter: document.getElementById("dateFilter"),
+    clear: document.getElementById("clearReportFilters"),
+    refresh: document.getElementById("refreshReports"),
+    export: document.getElementById("exportReports"),
 
-  clearFilters: document.getElementById("clearReportFilters"),
-  refresh: document.getElementById("refreshReports"),
-  export: document.getElementById("exportReports"),
+    resultCount: document.getElementById("reportResultCount"),
+    table: document.getElementById("reportsTableBody"),
 
-  resultCount: document.getElementById("reportResultCount"),
-  tableBody: document.getElementById("reportsTableBody"),
+    pagination: document.getElementById("reportsPagination"),
+    paginationInfo: document.getElementById("paginationInfo"),
+    previous: document.getElementById("previousPage"),
+    currentPage: document.getElementById("currentPage"),
+    next: document.getElementById("nextPage"),
 
-  pagination: document.getElementById("reportsPagination"),
-  paginationInfo: document.getElementById("paginationInfo"),
-  previousPage: document.getElementById("previousPage"),
-  currentPage: document.getElementById("currentPage"),
-  nextPage: document.getElementById("nextPage"),
+    modal: document.getElementById("reportDetailsModal"),
+    modalTitle: document.getElementById("reportModalTitle"),
+    modalContent: document.getElementById("reportDetailsContent"),
 
-  modal: document.getElementById("reportDetailsModal"),
-  modalTitle: document.getElementById("reportModalTitle"),
-  modalContent: document.getElementById("reportDetailsContent"),
+    overlay: document.getElementById("closeModalOverlay"),
+    close: document.getElementById("closeReportModal"),
+    closeDetails: document.getElementById("closeReportDetails"),
 
-  closeModalOverlay: document.getElementById("closeModalOverlay"),
-  closeModal: document.getElementById("closeReportModal"),
-  closeDetails: document.getElementById("closeReportDetails"),
+    downloadSingle: document.getElementById("downloadSingleReport"),
 
-  downloadSingle: document.getElementById("downloadSingleReport"),
-
-  currentYear: document.getElementById("currentYear"),
-};
-
-/* =====================================================
-   STATE
-===================================================== */
-
-let allReports = [];
-let filteredReports = [];
-
-let currentPage = 1;
-let selectedReport = null;
-
-let isLoadingReports = false;
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function reportElementExists(element) {
-  return Boolean(element);
-}
-
-function formatReportNumber(value) {
-  const number = Number(value);
-
-  return Number.isFinite(number) ? number.toLocaleString("en-IN") : "0";
-}
-
-function normalizeReportValue(value) {
-  return String(value ?? "")
-    .trim()
-    .toLowerCase();
-}
-
-function formatReportDate(value) {
-  if (!value) return "N/A";
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "N/A";
-  }
-
-  return date.toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function formatCategory(value) {
-  const categories = {
-    investment: "Investment Scam",
-    "digital-arrest": "Digital Arrest",
-    digital_arrest: "Digital Arrest",
-    "credit-card": "Credit Card Fraud",
-    credit_card: "Credit Card Fraud",
-    sextortion: "Sextortion",
-    ecommerce: "E-commerce Fraud",
-    "e-commerce": "E-commerce Fraud",
+    currentYear: document.getElementById("currentYear"),
   };
 
-  const normalized = normalizeReportValue(value);
+  // ================================================
+  // API AVAILABILITY
+  // ================================================
 
-  return categories[normalized] || value || "Unclassified";
-}
+  if (!API || typeof API.get !== "function") {
+    console.error("ScamShield Reports: API service unavailable.");
 
-function normalizeRisk(value, score) {
-  const normalized = normalizeReportValue(value);
+    showNotice(
+      "API service unavailable. Check frontend/js/services/api.js.",
+      "error"
+    );
 
-  if (["low", "medium", "high", "critical"].includes(normalized)) {
-    return normalized;
+    renderEmpty("API service unavailable.");
+
+    return;
   }
 
-  const numericScore = Number(score);
+  // ================================================
+  // STATE
+  // ================================================
 
-  if (!Number.isFinite(numericScore)) {
-    return "unknown";
+  let allReports = [];
+  let filteredReports = [];
+
+  let currentPage = 1;
+  let selectedReport = null;
+  let isLoading = false;
+
+  // ================================================
+  // HELPERS
+  // ================================================
+
+  function normalize(value) {
+    return String(value ?? "").trim().toLowerCase();
   }
 
-  if (numericScore <= 24) return "low";
-  if (numericScore <= 49) return "medium";
-  if (numericScore <= 74) return "high";
+  function formatNumber(value) {
+    return Number(value || 0).toLocaleString("en-IN");
+  }
 
-  return "critical";
-}
+  function formatDate(value) {
+    if (!value) return "N/A";
 
-function normalizeStatus(value) {
-  const normalized = normalizeReportValue(value);
+    const date = new Date(value);
 
-  if (
-    ["pending", "review", "completed", "resolved", "failed"].includes(
-      normalized,
-    )
+    if (Number.isNaN(date.getTime())) return "N/A";
+
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function getAnalysis(report) {
+    return report.analysis && typeof report.analysis === "object"
+      ? report.analysis
+      : {};
+  }
+
+  function getId(report) {
+    return String(report._id || report.id || report.reportId || "N/A");
+  }
+
+  function getScore(report) {
+    const analysis = getAnalysis(report);
+
+    const raw = report.riskScore ?? analysis.riskScore;
+
+    if (raw === null || raw === undefined || raw === "") {
+      return null;
+    }
+
+    const score = Number(raw);
+
+    if (!Number.isFinite(score) || score < 0 || score > 100) {
+      return null;
+    }
+
+    return score;
+  }
+
+  function getRisk(report) {
+    const analysis = getAnalysis(report);
+
+    const value = normalize(
+      report.riskLevel || analysis.riskLevel
+    );
+
+    if (["low", "medium", "high", "critical"].includes(value)) {
+      return value;
+    }
+
+    const score = getScore(report);
+
+    if (score === null) return "unknown";
+
+    if (score < 25) return "low";
+    if (score < 50) return "medium";
+    if (score < 75) return "high";
+
+    return "critical";
+  }
+
+  function getCategory(report) {
+    const analysis = getAnalysis(report);
+
+    return (
+      report.fraudCategory ||
+      analysis.fraudCategory ||
+      "unclassified"
+    );
+  }
+
+  function getEvidenceType(report) {
+    const analysis = getAnalysis(report);
+
+    return (
+      report.evidenceType ||
+      analysis.evidenceType ||
+      "N/A"
+    );
+  }
+
+  function getStatus(report) {
+    const value = normalize(report.status);
+
+    const allowed = [
+      "pending",
+      "review",
+      "completed",
+      "resolved",
+      "open",
+      "investigating",
+      "closed",
+      "failed",
+    ];
+
+    return allowed.includes(value) ? value : "pending";
+  }
+
+  function getDate(report) {
+    const analysis = getAnalysis(report);
+
+    return (
+      report.createdAt ||
+      analysis.analyzedAt ||
+      analysis.createdAt ||
+      null
+    );
+  }
+
+  function getExplanation(report) {
+    const analysis = getAnalysis(report);
+
+    const explanation =
+      report.description ||
+      analysis.explanation ||
+      analysis.summary ||
+      analysis.riskDescription ||
+      "No explanation available.";
+
+    return Array.isArray(explanation)
+      ? explanation.join("\n")
+      : String(explanation);
+  }
+
+  function formatCategory(value) {
+    const categories = {
+      investment: "Investment Scam",
+      digitalarrest: "Digital Arrest",
+      "digital-arrest": "Digital Arrest",
+      digital_arrest: "Digital Arrest",
+      creditcard: "Credit Card Fraud",
+      "credit-card": "Credit Card Fraud",
+      credit_card: "Credit Card Fraud",
+      sextortion: "Sextortion",
+      ecommerce: "E-commerce Fraud",
+      "e-commerce": "E-commerce Fraud",
+      other: "Other",
+      unclassified: "Unclassified",
+    };
+
+    const key = normalize(value).replace(/\s+/g, "");
+
+    return categories[key] || categories[normalize(value)] || value;
+  }
+
+  function normalizeCategoryFilter(value) {
+    const aliases = {
+      investment: "investment",
+      "investment scam": "investment",
+
+      "digital arrest": "digital-arrest",
+      digital_arrest: "digital-arrest",
+      "digital-arrest": "digital-arrest",
+
+      "credit card": "credit-card",
+      "credit card fraud": "credit-card",
+      credit_card: "credit-card",
+      "credit-card": "credit-card",
+
+      ecommerce: "ecommerce",
+      "e-commerce": "ecommerce",
+      "e-commerce fraud": "ecommerce",
+
+      sextortion: "sextortion",
+    };
+
+    return aliases[normalize(value)] || normalize(value);
+  }
+
+  // ================================================
+  // NOTICE
+  // ================================================
+
+  function showNotice(message, state = "info") {
+    if (!el.notice) return;
+
+    el.notice.classList.add("show");
+    el.notice.dataset.state = state;
+
+    if (el.noticeMessage) {
+      el.noticeMessage.textContent = message;
+    }
+  }
+
+  function hideNotice() {
+    el.notice?.classList.remove("show");
+  }
+
+  // ================================================
+  // EMPTY STATE
+  // ================================================
+
+  function renderEmpty(
+    heading = "No reports available",
+    description = "Investigation records will appear here when available."
   ) {
-    return normalized;
+    if (!el.table) return;
+
+    el.table.replaceChildren();
+
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+
+    cell.colSpan = 8;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "reports-empty-state";
+
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-folder-open";
+
+    const title = document.createElement("h4");
+    title.textContent = heading;
+
+    const text = document.createElement("p");
+    text.textContent = description;
+
+    wrapper.append(icon, title, text);
+    cell.appendChild(wrapper);
+    row.appendChild(cell);
+
+    el.table.appendChild(row);
   }
 
-  return "pending";
-}
+  // ================================================
+  // LOADING
+  // ================================================
 
-function getReportId(report) {
-  return report.reportId || report._id || report.id || "N/A";
-}
+  function setLoading(value) {
+    isLoading = value;
 
-function getReportScore(report) {
-  const score = Number(report.riskScore ?? report.score);
+    if (el.refresh) {
+      el.refresh.disabled = value;
 
-  return Number.isFinite(score) ? Math.min(100, Math.max(0, score)) : 0;
-}
-
-function getReportCategory(report) {
-  return report.fraudCategory || report.category || "Unclassified";
-}
-
-function getReportEvidenceType(report) {
-  return report.evidenceType || report.type || "N/A";
-}
-
-function getReportDate(report) {
-  return report.createdAt || report.date || report.timestamp || null;
-}
-
-/* =====================================================
-   NOTICE SYSTEM
-===================================================== */
-
-function showReportsNotice(message, state = "info") {
-  if (!reportsElements.notice) return;
-
-  reportsElements.notice.classList.add("show");
-
-  reportsElements.notice.dataset.state = state;
-
-  if (reportsElements.noticeMessage) {
-    reportsElements.noticeMessage.textContent = message;
-  }
-}
-
-function hideReportsNotice() {
-  if (!reportsElements.notice) return;
-
-  reportsElements.notice.classList.remove("show");
-}
-
-/* =====================================================
-   EMPTY STATE
-===================================================== */
-
-function renderEmptyState(
-  message = "No reports found.",
-  description = "Reports will appear here when analysis records are available.",
-) {
-  if (!reportsElements.tableBody) return;
-
-  reportsElements.tableBody.replaceChildren();
-
-  const row = document.createElement("tr");
-  const cell = document.createElement("td");
-
-  cell.colSpan = 8;
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "reports-empty-state";
-
-  const icon = document.createElement("i");
-  icon.className = "fa-solid fa-folder-open";
-
-  const heading = document.createElement("h3");
-  heading.textContent = message;
-
-  const paragraph = document.createElement("p");
-  paragraph.textContent = description;
-
-  wrapper.append(icon, heading, paragraph);
-  cell.appendChild(wrapper);
-  row.appendChild(cell);
-
-  reportsElements.tableBody.appendChild(row);
-}
-
-/* =====================================================
-   LOADING STATE
-===================================================== */
-
-function setReportsLoading(loading) {
-  isLoadingReports = loading;
-
-  if (reportsElements.refresh) {
-    reportsElements.refresh.disabled = loading;
-
-    reportsElements.refresh.innerHTML = loading
-      ? '<i class="fa-solid fa-spinner fa-spin"></i> Loading...'
-      : '<i class="fa-solid fa-rotate"></i> Refresh';
+      el.refresh.innerHTML = value
+        ? '<i class="fa-solid fa-spinner fa-spin"></i> Loading...'
+        : '<i class="fa-solid fa-rotate"></i> Refresh';
+    }
   }
 
-  if (loading) {
-    renderEmptyState(
-      "Loading reports...",
-      "Please wait while report records are being retrieved.",
-    );
+  // ================================================
+  // RESPONSE NORMALIZATION
+  // ================================================
+
+  function extractRecords(response) {
+    if (Array.isArray(response?.cases)) {
+      return response.cases;
+    }
+
+    if (Array.isArray(response?.data?.cases)) {
+      return response.data.cases;
+    }
+
+    if (Array.isArray(response?.data?.data)) {
+      return response.data.data;
+    }
+
+    if (Array.isArray(response?.data)) {
+      return response.data;
+    }
+
+    if (Array.isArray(response?.results)) {
+      return response.results;
+    }
+
+    return [];
   }
-}
 
-/* =====================================================
-   API REQUEST
-===================================================== */
+  // ================================================
+  // FETCH REPORTS
+  // ================================================
 
-async function fetchReports() {
-  if (isLoadingReports) return;
+  async function fetchReports() {
+    if (isLoading) return;
 
-  setReportsLoading(true);
-  hideReportsNotice();
-
-  try {
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, 20000);
-
-    let response;
+    setLoading(true);
+    hideNotice();
 
     try {
-      response = await fetch(REPORTS_API_URL, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("scamshieldToken") || sessionStorage.getItem("scamshieldToken") || ""}`,
-        },
-        credentials: "include",
-        signal: controller.signal,
-      });
+      const response = await API.get(API_ENDPOINT);
+
+      if (!response || response.success === false) {
+        throw new Error(
+          response?.message || "Unable to retrieve reports."
+        );
+      }
+
+      const records = extractRecords(response);
+
+      allReports = records.map((record) => ({
+        ...record,
+        analysis:
+          record.analysis && typeof record.analysis === "object"
+            ? record.analysis
+            : null,
+      }));
+
+      currentPage = 1;
+
+      updateStatistics();
+      applyFilters();
+
+      if (allReports.length === 0) {
+        showNotice(
+          "No investigation records found. Analyze evidence to create your first report.",
+          "info"
+        );
+      } else {
+        showNotice(
+          `${allReports.length} investigation record(s) loaded successfully.`,
+          "success"
+        );
+      }
+
+      console.log(
+        "ScamShield Reports loaded:",
+        allReports.length
+      );
+
+    } catch (error) {
+      console.error("Reports API Error:", error);
+
+      allReports = [];
+      filteredReports = [];
+
+      updateStatistics();
+
+      renderEmpty(
+        "Unable to load reports",
+        error.message || "Please check your backend connection."
+      );
+
+      updatePagination();
+      updateExportButton();
+
+      showNotice(
+        error.message || "Unable to connect to the reports API.",
+        "error"
+      );
+
     } finally {
-      clearTimeout(timeout);
+      setLoading(false);
     }
-
-    let data;
-
-    try {
-      data = await response.json();
-    } catch {
-      throw new Error("The server returned an invalid response.");
-    }
-
-    if (!response.ok || data.success === false) {
-      throw new Error(
-        data.message || `Unable to load reports (${response.status}).`,
-      );
-    }
-
-    const records = Array.isArray(data.reports)
-      ? data.reports
-      : Array.isArray(data.data?.reports)
-        ? data.data.reports
-        : Array.isArray(data.data)
-          ? data.data
-          : [];
-
-    allReports = records.map((record) => ({
-      ...record,
-      reportId: record.reportId || record._id || record.id,
-      evidenceType: record.evidenceType || record.analysis?.evidenceType || "message",
-      fraudCategory: record.fraudCategory || record.analysis?.fraudCategory,
-      riskScore: record.riskScore ?? record.analysis?.riskScore,
-      riskLevel: record.riskLevel || record.analysis?.riskLevel,
-      explanation: record.explanation || record.analysis?.summary,
-      createdAt: record.createdAt || record.analysis?.analyzedAt,
-      indicators: record.indicators || record.analysis?.indicators || [],
-    }));
-
-    currentPage = 1;
-
-    updateReportStatistics();
-    applyReportFilters();
-
-    if (allReports.length === 0) {
-      showReportsNotice("No report records are currently available.", "info");
-    } else {
-      showReportsNotice(
-        `${allReports.length} report record(s) loaded successfully.`,
-        "success",
-      );
-    }
-  } catch (error) {
-    console.error("Reports API Error:", error);
-
-    allReports = [];
-    filteredReports = [];
-
-    updateReportStatistics();
-    renderEmptyState(
-      "Unable to load reports",
-      error.name === "AbortError"
-        ? "The request timed out. Please try again."
-        : error.message,
-    );
-
-    updateReportPagination();
-
-    showReportsNotice(
-      error.message || "Could not connect to the reports server.",
-      "error",
-    );
-  } finally {
-    setReportsLoading(false);
-  }
-}
-
-/* =====================================================
-   STATISTICS
-===================================================== */
-
-function updateReportStatistics() {
-  const total = allReports.length;
-
-  const highRisk = allReports.filter((report) => {
-    const risk = normalizeRisk(report.riskLevel, getReportScore(report));
-
-    return risk === "high" || risk === "critical";
-  }).length;
-
-  const review = allReports.filter((report) => {
-    const status = normalizeStatus(report.status);
-
-    return status === "pending" || status === "review";
-  }).length;
-
-  const completed = allReports.filter((report) => {
-    const status = normalizeStatus(report.status);
-
-    return status === "completed" || status === "resolved";
-  }).length;
-
-  if (reportsElements.totalReports) {
-    reportsElements.totalReports.textContent = formatReportNumber(total);
   }
 
-  if (reportsElements.highRiskReports) {
-    reportsElements.highRiskReports.textContent = formatReportNumber(highRisk);
+  // ================================================
+  // STATISTICS
+  // ================================================
+
+  function updateStatistics() {
+    const total = allReports.length;
+
+    const high = allReports.filter((report) => {
+      const risk = getRisk(report);
+
+      return risk === "high" || risk === "critical";
+    }).length;
+
+    const review = allReports.filter((report) => {
+      return ["pending", "review", "open", "investigating"]
+        .includes(getStatus(report));
+    }).length;
+
+    const completed = allReports.filter((report) => {
+      return ["completed", "resolved", "closed"]
+        .includes(getStatus(report));
+    }).length;
+
+    if (el.total) el.total.textContent = formatNumber(total);
+    if (el.highRisk) el.highRisk.textContent = formatNumber(high);
+    if (el.review) el.review.textContent = formatNumber(review);
+
+    if (el.completed) {
+      el.completed.textContent = formatNumber(completed);
+    }
   }
 
-  if (reportsElements.reviewReports) {
-    reportsElements.reviewReports.textContent = formatReportNumber(review);
-  }
+  // ================================================
+  // FILTERS
+  // ================================================
 
-  if (reportsElements.completedReports) {
-    reportsElements.completedReports.textContent =
-      formatReportNumber(completed);
-  }
-}
+  function applyFilters() {
+    const search = normalize(el.search?.value);
+    const selectedRisk = el.risk?.value || "all";
+    const selectedCategory = el.category?.value || "all";
+    const selectedDate = el.date?.value || "all";
 
-/* =====================================================
-   FILTERING
-===================================================== */
+    const now = new Date();
+    const oneDay = 86400000;
 
-function applyReportFilters() {
-  const searchTerm = normalizeReportValue(reportsElements.search?.value);
+    filteredReports = allReports.filter((report) => {
+      const id = normalize(getId(report));
+      const type = normalize(getEvidenceType(report));
+      const category = normalize(getCategory(report));
+      const risk = getRisk(report);
+      const status = getStatus(report);
 
-  const selectedRisk = reportsElements.riskFilter?.value || "all";
+      const searchable = [
+        id,
+        type,
+        category,
+        formatCategory(category),
+        risk,
+        status,
+      ].join(" ");
 
-  const selectedCategory = reportsElements.categoryFilter?.value || "all";
-
-  const selectedDate = reportsElements.dateFilter?.value || "all";
-
-  const now = new Date();
-
-  filteredReports = allReports.filter((report) => {
-    const reportId = normalizeReportValue(getReportId(report));
-
-    const evidenceType = normalizeReportValue(getReportEvidenceType(report));
-
-    const category = normalizeReportValue(getReportCategory(report));
-
-    const risk = normalizeRisk(report.riskLevel, getReportScore(report));
-
-    const status = normalizeStatus(report.status);
-
-    const searchableText = [
-      reportId,
-      evidenceType,
-      category,
-      risk,
-      status,
-    ].join(" ");
-
-    if (searchTerm && !searchableText.includes(searchTerm)) {
-      return false;
-    }
-
-    if (selectedRisk !== "all" && risk !== selectedRisk) {
-      return false;
-    }
-
-    if (
-      selectedCategory !== "all" &&
-      normalizeCategoryForFilter(category) !== selectedCategory
-    ) {
-      return false;
-    }
-
-    if (selectedDate !== "all") {
-      const reportDate = new Date(getReportDate(report));
-
-      if (Number.isNaN(reportDate.getTime())) {
+      if (search && !searchable.includes(search)) {
         return false;
       }
 
-      const difference = now.getTime() - reportDate.getTime();
+      if (selectedRisk !== "all" && risk !== selectedRisk) {
+        return false;
+      }
 
-      const oneDay = 24 * 60 * 60 * 1000;
+      if (
+        selectedCategory !== "all" &&
+        normalizeCategoryFilter(category) !== selectedCategory
+      ) {
+        return false;
+      }
 
-      if (selectedDate === "today") {
-        if (reportDate.toDateString() !== now.toDateString()) {
-          return false;
+      if (selectedDate !== "all") {
+        const date = new Date(getDate(report));
+
+        if (Number.isNaN(date.getTime())) return false;
+
+        const difference = now.getTime() - date.getTime();
+
+        if (selectedDate === "today") {
+          if (date.toDateString() !== now.toDateString()) {
+            return false;
+          }
+        }
+
+        if (selectedDate === "7days") {
+          if (difference < 0 || difference > 7 * oneDay) {
+            return false;
+          }
+        }
+
+        if (selectedDate === "30days") {
+          if (difference < 0 || difference > 30 * oneDay) {
+            return false;
+          }
         }
       }
 
-      if (selectedDate === "7days") {
-        if (difference < 0 || difference > 7 * oneDay) {
-          return false;
-        }
-      }
+      return true;
+    });
 
-      if (selectedDate === "30days") {
-        if (difference < 0 || difference > 30 * oneDay) {
-          return false;
-        }
-      }
+    currentPage = 1;
+
+    renderTable();
+  }
+
+  // ================================================
+  // TABLE
+  // ================================================
+
+  function renderTable() {
+    if (!el.table) return;
+
+    el.table.replaceChildren();
+
+    if (filteredReports.length === 0) {
+      renderEmpty(
+        "No matching reports",
+        "Try changing your search term or filters."
+      );
+
+      updatePagination();
+      updateExportButton();
+
+      return;
     }
 
-    return true;
-  });
+    const start = (currentPage - 1) * REPORTS_PER_PAGE;
 
-  currentPage = 1;
-
-  renderReportsTable();
-}
-
-/* =====================================================
-   CATEGORY FILTER NORMALIZATION
-===================================================== */
-
-function normalizeCategoryForFilter(category) {
-  const value = normalizeReportValue(category);
-
-  const aliases = {
-    "investment scam": "investment",
-    investment: "investment",
-
-    "digital arrest": "digital-arrest",
-    "digital arrest scam": "digital-arrest",
-    "digital-arrest": "digital-arrest",
-    digital_arrest: "digital-arrest",
-
-    "credit card fraud": "credit-card",
-    "credit card": "credit-card",
-    "credit-card": "credit-card",
-    credit_card: "credit-card",
-
-    sextortion: "sextortion",
-
-    "e-commerce fraud": "ecommerce",
-    "e-commerce": "ecommerce",
-    ecommerce: "ecommerce",
-  };
-
-  return aliases[value] || value;
-}
-
-/* =====================================================
-   TABLE RENDERING
-===================================================== */
-
-function renderReportsTable() {
-  if (!reportsElements.tableBody) return;
-
-  reportsElements.tableBody.replaceChildren();
-
-  if (filteredReports.length === 0) {
-    renderEmptyState(
-      "No matching reports",
-      "Try changing your search term or filters.",
+    const records = filteredReports.slice(
+      start,
+      start + REPORTS_PER_PAGE
     );
 
-    updateReportPagination();
-    updateReportExportButton();
+    records.forEach((report) => {
+      el.table.appendChild(createRow(report));
+    });
 
-    return;
+    updatePagination();
+    updateExportButton();
   }
 
-  const startIndex = (currentPage - 1) * REPORTS_PER_PAGE;
+  // ================================================
+  // TABLE ROW
+  // ================================================
 
-  const currentReports = filteredReports.slice(
-    startIndex,
-    startIndex + REPORTS_PER_PAGE,
-  );
+  function createRow(report) {
+    const row = document.createElement("tr");
 
-  currentReports.forEach((report) => {
-    const row = createReportRow(report);
+    const score = getScore(report);
+    const risk = getRisk(report);
+    const status = getStatus(report);
 
-    reportsElements.tableBody.appendChild(row);
-  });
+    const values = [
+      getId(report),
+      getEvidenceType(report),
+      formatCategory(getCategory(report)),
+      score === null ? "N/A" : `${score}/100`,
+      risk,
+      status,
+      formatDate(getDate(report)),
+    ];
 
-  updateReportPagination();
-  updateReportExportButton();
-}
+    values.forEach((value, index) => {
+      const cell = document.createElement("td");
 
-/* =====================================================
-   CREATE REPORT ROW
-===================================================== */
+      if (index === 0) cell.className = "report-id";
+      if (index === 2) cell.className = "report-category";
+      if (index === 3) cell.className = "report-score";
+      if (index === 6) cell.className = "report-date";
 
-function createReportRow(report) {
-  const row = document.createElement("tr");
+      if (index === 4 || index === 5) {
+        const badge = document.createElement("span");
 
-  const reportId = getReportId(report);
-  const evidenceType = getReportEvidenceType(report);
-  const category = getReportCategory(report);
-  const score = getReportScore(report);
+        badge.className = index === 4
+          ? `report-risk-badge ${risk}`
+          : `report-status-badge ${status}`;
 
-  const risk = normalizeRisk(report.riskLevel, score);
+        badge.textContent = value;
 
-  const status = normalizeStatus(report.status);
+        cell.appendChild(badge);
+      } else {
+        cell.textContent = String(value);
+      }
 
-  const date = formatReportDate(getReportDate(report));
+      row.appendChild(cell);
+    });
 
-  const values = [
-    reportId,
-    evidenceType,
-    formatCategory(category),
-    `${score}/100`,
-    risk,
-    status,
-    date,
-  ];
+    const action = document.createElement("td");
 
-  values.forEach((value, index) => {
-    const cell = document.createElement("td");
+    const button = document.createElement("button");
 
-    if (index === 0) {
-      cell.className = "report-id";
+    button.type = "button";
+    button.className = "report-view-btn";
+
+    button.innerHTML = '<i class="fa-solid fa-eye"></i> View';
+
+    button.addEventListener("click", () => {
+      openDetails(report);
+    });
+
+    action.appendChild(button);
+    row.appendChild(action);
+
+    return row;
+  }
+
+  // ================================================
+  // PAGINATION
+  // ================================================
+
+  function updatePagination() {
+    const total = filteredReports.length;
+
+    const pages = Math.max(
+      1,
+      Math.ceil(total / REPORTS_PER_PAGE)
+    );
+
+    currentPage = Math.min(currentPage, pages);
+
+    const start = total === 0
+      ? 0
+      : (currentPage - 1) * REPORTS_PER_PAGE + 1;
+
+    const end = Math.min(
+      currentPage * REPORTS_PER_PAGE,
+      total
+    );
+
+    if (el.resultCount) {
+      el.resultCount.textContent = `${total} report(s)`;
     }
 
-    if (index === 2) {
-      cell.className = "report-category";
+    if (el.paginationInfo) {
+      el.paginationInfo.textContent =
+        `Showing ${start}-${end} of ${total} reports`;
     }
 
-    if (index === 3) {
-      cell.className = "report-score";
+    if (el.currentPage) {
+      el.currentPage.textContent = `${currentPage} / ${pages}`;
     }
 
-    if (index === 6) {
-      cell.className = "report-date";
+    if (el.previous) {
+      el.previous.disabled = currentPage <= 1;
     }
 
-    if (index === 4) {
-      const badge = document.createElement("span");
-
-      badge.className = `report-risk-badge ${risk}`;
-      badge.textContent = risk;
-
-      cell.appendChild(badge);
-    } else if (index === 5) {
-      const badge = document.createElement("span");
-
-      badge.className = `report-status-badge ${status}`;
-      badge.textContent = status;
-
-      cell.appendChild(badge);
-    } else {
-      cell.textContent = String(value);
+    if (el.next) {
+      el.next.disabled = currentPage >= pages;
     }
 
-    row.appendChild(cell);
-  });
-
-  const actionCell = document.createElement("td");
-
-  const viewButton = document.createElement("button");
-
-  viewButton.type = "button";
-  viewButton.className = "report-view-btn";
-
-  viewButton.innerHTML = '<i class="fa-solid fa-eye"></i> View';
-
-  viewButton.addEventListener("click", () => {
-    openReportDetails(report);
-  });
-
-  actionCell.appendChild(viewButton);
-  row.appendChild(actionCell);
-
-  return row;
-}
-
-/* =====================================================
-   PAGINATION
-===================================================== */
-
-function updateReportPagination() {
-  const total = filteredReports.length;
-
-  const totalPages = Math.max(1, Math.ceil(total / REPORTS_PER_PAGE));
-
-  currentPage = Math.min(currentPage, totalPages);
-
-  const start = total === 0 ? 0 : (currentPage - 1) * REPORTS_PER_PAGE + 1;
-
-  const end = Math.min(currentPage * REPORTS_PER_PAGE, total);
-
-  if (reportsElements.resultCount) {
-    reportsElements.resultCount.textContent = `${total} report(s)`;
+    if (el.pagination) {
+      el.pagination.style.display =
+        total > REPORTS_PER_PAGE ? "flex" : "none";
+    }
   }
 
-  if (reportsElements.paginationInfo) {
-    reportsElements.paginationInfo.textContent = `Showing ${start}-${end} of ${total} reports`;
+  function previousPage() {
+    if (currentPage <= 1) return;
+
+    currentPage--;
+    renderTable();
   }
 
-  if (reportsElements.currentPage) {
-    reportsElements.currentPage.textContent = `${currentPage} / ${totalPages}`;
+  function nextPage() {
+    const pages = Math.ceil(
+      filteredReports.length / REPORTS_PER_PAGE
+    );
+
+    if (currentPage >= pages) return;
+
+    currentPage++;
+    renderTable();
   }
 
-  if (reportsElements.previousPage) {
-    reportsElements.previousPage.disabled = currentPage <= 1;
+  // ================================================
+  // DETAILS MODAL
+  // ================================================
+
+  function createDetail(label, value) {
+    const wrapper = document.createElement("div");
+
+    wrapper.className = "report-detail-item";
+
+    const title = document.createElement("span");
+    title.className = "report-detail-label";
+    title.textContent = label;
+
+    const content = document.createElement("div");
+    content.className = "report-detail-value";
+    content.textContent = String(value ?? "N/A");
+
+    wrapper.append(title, content);
+
+    return wrapper;
   }
 
-  if (reportsElements.nextPage) {
-    reportsElements.nextPage.disabled = currentPage >= totalPages;
+  function openDetails(report) {
+    if (!el.modal || !el.modalContent) return;
+
+    selectedReport = report;
+
+    const score = getScore(report);
+
+    if (el.modalTitle) {
+      el.modalTitle.textContent =
+        `Report Details - ${getId(report)}`;
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "report-detail-grid";
+
+    grid.append(
+      createDetail("Report ID", getId(report)),
+      createDetail("Evidence Type", getEvidenceType(report)),
+      createDetail("Fraud Category", formatCategory(getCategory(report))),
+      createDetail("Risk Score", score === null ? "N/A" : `${score}/100`),
+      createDetail("Risk Level", getRisk(report)),
+      createDetail("Report Status", getStatus(report)),
+      createDetail("Created At", formatDate(getDate(report))),
+      createDetail("Analysis Explanation", getExplanation(report))
+    );
+
+    el.modalContent.replaceChildren(grid);
+
+    el.modal.classList.add("show");
+    el.modal.setAttribute("aria-hidden", "false");
+
+    document.body.style.overflow = "hidden";
+
+    if (el.downloadSingle) {
+      el.downloadSingle.disabled = false;
+    }
   }
 
-  if (reportsElements.pagination) {
-    reportsElements.pagination.style.display =
-      total > REPORTS_PER_PAGE ? "flex" : "none";
-  }
-}
+  function closeModal() {
+    if (!el.modal) return;
 
-function goToPreviousReportPage() {
-  if (currentPage <= 1) return;
+    el.modal.classList.remove("show");
+    el.modal.setAttribute("aria-hidden", "true");
 
-  currentPage--;
+    document.body.style.overflow = "";
 
-  renderReportsTable();
-}
+    selectedReport = null;
 
-function goToNextReportPage() {
-  const totalPages = Math.ceil(filteredReports.length / REPORTS_PER_PAGE);
-
-  if (currentPage >= totalPages) return;
-
-  currentPage++;
-
-  renderReportsTable();
-}
-
-/* =====================================================
-   REPORT DETAILS MODAL
-===================================================== */
-
-function createDetailItem(label, value, fullWidth = false) {
-  const wrapper = document.createElement("div");
-
-  wrapper.className = fullWidth
-    ? "report-detail-item full-width"
-    : "report-detail-item";
-
-  const title = document.createElement("span");
-
-  title.className = "report-detail-label";
-  title.textContent = label;
-
-  const content = document.createElement("div");
-
-  content.className = "report-detail-value";
-  content.textContent = String(value ?? "N/A");
-
-  wrapper.append(title, content);
-
-  return wrapper;
-}
-
-function openReportDetails(report) {
-  if (!reportsElements.modal || !reportsElements.modalContent) {
-    return;
+    if (el.downloadSingle) {
+      el.downloadSingle.disabled = true;
+    }
   }
 
-  selectedReport = report;
+  // ================================================
+  // CSV EXPORT
+  // ================================================
 
-  const reportId = getReportId(report);
-  const score = getReportScore(report);
+  function csvEscape(value) {
+    let text = String(value ?? "");
 
-  const risk = normalizeRisk(report.riskLevel, score);
+    // Prevent spreadsheet formula injection.
+    if (/^[\s]*[=+\-@\t\r]/.test(text)) {
+      text = "'" + text;
+    }
 
-  const status = normalizeStatus(report.status);
-
-  if (reportsElements.modalTitle) {
-    reportsElements.modalTitle.textContent = `Report Details - ${reportId}`;
+    return `"${text.replace(/"/g, '""')}"`;
   }
 
-  const details = document.createElement("div");
+  function exportCSV(records) {
+    if (!records.length) {
+      showNotice("No reports available to export.", "warning");
+      return;
+    }
 
-  details.className = "report-detail-grid";
-
-  details.append(
-    createDetailItem("Report ID", reportId),
-    createDetailItem("Evidence Type", getReportEvidenceType(report)),
-    createDetailItem(
+    const headers = [
+      "Report ID",
+      "Evidence Type",
       "Fraud Category",
-      formatCategory(getReportCategory(report)),
-    ),
-    createDetailItem("Risk Score", `${score}/100`),
-    createDetailItem("Risk Level", risk),
-    createDetailItem("Report Status", status),
-    createDetailItem("Created At", formatReportDate(getReportDate(report))),
-    createDetailItem(
-      "Analysis Explanation",
-      report.explanation ||
-        report.riskExplanation ||
-        "No explanation is available for this report.",
-      true,
-    ),
-  );
+      "Risk Score",
+      "Risk Level",
+      "Status",
+      "Created At",
+    ];
 
-  reportsElements.modalContent.replaceChildren(details);
+    const rows = records.map((report) => [
+      getId(report),
+      getEvidenceType(report),
+      formatCategory(getCategory(report)),
+      getScore(report) ?? "N/A",
+      getRisk(report),
+      getStatus(report),
+      formatDate(getDate(report)),
+    ]);
 
-  reportsElements.modal.classList.add("show");
-  reportsElements.modal.setAttribute("aria-hidden", "false");
+    const csv = [headers, ...rows]
+      .map((row) => row.map(csvEscape).join(","))
+      .join("\r\n");
 
-  document.body.style.overflow = "hidden";
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;",
+    });
 
-  if (reportsElements.downloadSingle) {
-    reportsElements.downloadSingle.disabled = false;
-  }
-}
+    const url = URL.createObjectURL(blob);
 
-function closeReportDetailsModal() {
-  if (!reportsElements.modal) return;
+    const link = document.createElement("a");
 
-  reportsElements.modal.classList.remove("show");
-  reportsElements.modal.setAttribute("aria-hidden", "true");
+    link.href = url;
+    link.download =
+      `scamshield-reports-${new Date().toISOString().slice(0, 10)}.csv`;
 
-  document.body.style.overflow = "";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 
-  selectedReport = null;
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-  if (reportsElements.downloadSingle) {
-    reportsElements.downloadSingle.disabled = true;
-  }
-}
-
-/* =====================================================
-   CSV EXPORT
-===================================================== */
-
-function escapeCSVValue(value) {
-  const text = String(value ?? "");
-
-  return `"${text.replace(/"/g, '""')}"`;
-}
-
-function exportReportsCSV(reports) {
-  if (!reports.length) {
-    showReportsNotice("There are no report records to export.", "warning");
-
-    return;
+    showNotice(
+      `${records.length} report(s) exported successfully.`,
+      "success"
+    );
   }
 
-  const headers = [
-    "Report ID",
-    "Evidence Type",
-    "Fraud Category",
-    "Risk Score",
-    "Risk Level",
-    "Status",
-    "Created At",
-  ];
-
-  const rows = reports.map((report) => [
-    getReportId(report),
-    getReportEvidenceType(report),
-    formatCategory(getReportCategory(report)),
-    getReportScore(report),
-    normalizeRisk(report.riskLevel, getReportScore(report)),
-    normalizeStatus(report.status),
-    formatReportDate(getReportDate(report)),
-  ]);
-
-  const csvContent = [headers, ...rows]
-    .map((row) => row.map(escapeCSVValue).join(","))
-    .join("\r\n");
-
-  const blob = new Blob(["\uFEFF" + csvContent], {
-    type: "text/csv;charset=utf-8;",
-  });
-
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = `scamshield-reports-${new Date()
-    .toISOString()
-    .slice(0, 10)}.csv`;
-
-  document.body.appendChild(link);
-
-  link.click();
-  link.remove();
-
-  URL.revokeObjectURL(url);
-
-  showReportsNotice(
-    `${reports.length} report(s) exported successfully.`,
-    "success",
-  );
-}
-
-function updateReportExportButton() {
-  if (!reportsElements.export) return;
-
-  reportsElements.export.disabled = filteredReports.length === 0;
-}
-
-/* =====================================================
-   SINGLE REPORT PRINT / SAVE AS PDF
-===================================================== */
-
-function downloadSingleReport() {
-  if (!selectedReport) return;
-
-  const safeReport = {
-    reportId: getReportId(selectedReport),
-    evidenceType: getReportEvidenceType(selectedReport),
-    fraudCategory: formatCategory(getReportCategory(selectedReport)),
-    riskScore: getReportScore(selectedReport),
-    riskLevel: normalizeRisk(
-      selectedReport.riskLevel,
-      getReportScore(selectedReport),
-    ),
-    status: normalizeStatus(selectedReport.status),
-    createdAt: formatReportDate(getReportDate(selectedReport)),
-    explanation:
-      selectedReport.explanation ||
-      selectedReport.riskExplanation ||
-      "Not available",
-    indicators: Array.isArray(selectedReport.indicators)
-      ? selectedReport.indicators
-      : [],
-  };
-
-  const printWindow = window.open("", "_blank", "width=900,height=720");
-
-  if (!printWindow) {
-    showReportsNotice("Allow pop-ups to print or save the report as PDF.", "error");
-    return;
-  }
-
-  const escapeHtml = (value) =>
-    String(value ?? "").replace(/[&<>"']/g, (character) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    })[character]);
-
-  const indicatorRows = safeReport.indicators.length
-    ? safeReport.indicators
-        .map((item) => {
-          const type = typeof item === "object" ? item.type : "clue";
-          const value = typeof item === "object" ? item.value : item;
-          return `<li><b>${escapeHtml(type || "clue")}:</b> ${escapeHtml(value)} <small>Unverified</small></li>`;
-        })
-        .join("")
-    : "<li>No indicators recorded.</li>";
-
-  printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>ScamShield case ${escapeHtml(safeReport.reportId)}</title><style>
-    body{font:15px/1.55 Arial,sans-serif;color:#172033;max-width:780px;margin:40px auto;padding:0 24px}h1{margin-bottom:4px;color:#0b2340}h2{font-size:17px;margin:26px 0 8px;border-bottom:1px solid #ccd5df;padding-bottom:5px}.sub{color:#52657b;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.item{padding:12px;background:#f3f6fa;border-radius:6px}.label{display:block;color:#607187;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.value{font-weight:700}.notice{margin-top:22px;padding:12px;border:1px solid #d8a951;background:#fff9ea;border-radius:6px;font-size:12px}li{margin:8px 0}small{color:#9a6900;margin-left:8px}.footer{margin-top:32px;border-top:1px solid #ccd5df;padding-top:10px;font-size:11px;color:#52657b}@media print{body{margin:0 auto}.notice{break-inside:avoid}}
-  </style></head><body><h1>ScamShield AI</h1><div class="sub">Cyber fraud case report draft · Prepared ${escapeHtml(safeReport.createdAt)}</div><h2>Case summary</h2><div class="grid"><div class="item"><span class="label">Case ID</span><span class="value">${escapeHtml(safeReport.reportId)}</span></div><div class="item"><span class="label">Fraud category</span><span class="value">${escapeHtml(safeReport.fraudCategory)}</span></div><div class="item"><span class="label">Risk assessment</span><span class="value">${escapeHtml(safeReport.riskLevel)} · ${escapeHtml(safeReport.riskScore)}/100</span></div><div class="item"><span class="label">Review status</span><span class="value">${escapeHtml(safeReport.status)}</span></div></div><h2>Assessment</h2><p>${escapeHtml(safeReport.explanation)}</p><h2>Extracted clues</h2><ul>${indicatorRows}</ul><div class="notice"><b>Human review required.</b> This is a rule-based risk assessment, not proof of fraud. Extracted identifiers are unverified clues. Verify details and review evidence before making a report. This draft is not submitted to any government system.</div><div class="footer">For suspected financial cyber fraud in India, contact 1930 promptly and use the official portal at cybercrime.gov.in. Preserve original evidence securely.</div><script>window.addEventListener('load',()=>window.print());</script></body></html>`);
-  printWindow.document.close();
-}
-
-/* =====================================================
-   CLEAR FILTERS
-===================================================== */
-
-function clearReportFilters() {
-  if (reportsElements.search) {
-    reportsElements.search.value = "";
-  }
-
-  if (reportsElements.riskFilter) {
-    reportsElements.riskFilter.value = "all";
-  }
-
-  if (reportsElements.categoryFilter) {
-    reportsElements.categoryFilter.value = "all";
-  }
-
-  if (reportsElements.dateFilter) {
-    reportsElements.dateFilter.value = "all";
-  }
-
-  applyReportFilters();
-}
-
-/* =====================================================
-   EVENT LISTENERS
-===================================================== */
-
-function initializeReportsEvents() {
-  reportsElements.search?.addEventListener("input", applyReportFilters);
-
-  reportsElements.riskFilter?.addEventListener("change", applyReportFilters);
-
-  reportsElements.categoryFilter?.addEventListener(
-    "change",
-    applyReportFilters,
-  );
-
-  reportsElements.dateFilter?.addEventListener("change", applyReportFilters);
-
-  reportsElements.clearFilters?.addEventListener("click", clearReportFilters);
-
-  reportsElements.refresh?.addEventListener("click", fetchReports);
-
-  reportsElements.export?.addEventListener("click", () =>
-    exportReportsCSV(filteredReports),
-  );
-
-  reportsElements.previousPage?.addEventListener(
-    "click",
-    goToPreviousReportPage,
-  );
-
-  reportsElements.nextPage?.addEventListener("click", goToNextReportPage);
-
-  reportsElements.closeModal?.addEventListener(
-    "click",
-    closeReportDetailsModal,
-  );
-
-  reportsElements.closeDetails?.addEventListener(
-    "click",
-    closeReportDetailsModal,
-  );
-
-  reportsElements.closeModalOverlay?.addEventListener(
-    "click",
-    closeReportDetailsModal,
-  );
-
-  reportsElements.downloadSingle?.addEventListener(
-    "click",
-    downloadSingleReport,
-  );
-
-  document.addEventListener("keydown", (event) => {
-    if (
-      event.key === "Escape" &&
-      reportsElements.modal?.classList.contains("show")
-    ) {
-      closeReportDetailsModal();
+  function updateExportButton() {
+    if (el.export) {
+      el.export.disabled = filteredReports.length === 0;
     }
-  });
-}
-
-/* =====================================================
-   INITIALIZATION
-===================================================== */
-
-function initializeReportsPage() {
-  if (reportsElements.currentYear) {
-    reportsElements.currentYear.textContent = new Date().getFullYear();
   }
 
-  initializeReportsEvents();
+  // ================================================
+  // PRINT / SAVE PDF
+  // ================================================
 
-  fetchReports();
-}
+  function printReport() {
+    if (!selectedReport) return;
 
-document.addEventListener("DOMContentLoaded", initializeReportsPage);
+    const report = selectedReport;
+
+    const printWindow = window.open(
+      "",
+      "_blank",
+      "width=900,height=720"
+    );
+
+    if (!printWindow) {
+      showNotice(
+        "Please allow pop-ups to print or save the report.",
+        "error"
+      );
+
+      return;
+    }
+
+    const escapeHTML = (value) =>
+      String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character]);
+
+    const score = getScore(report);
+
+    const html = `
+      <!doctype html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>ScamShield Report</title>
+
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            color: #172033;
+            max-width: 780px;
+            margin: 40px auto;
+            padding: 20px;
+          }
+
+          h1 { color: #14532d; }
+
+          .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+          }
+
+          .item {
+            background: #f3f6fa;
+            padding: 14px;
+            border-radius: 6px;
+          }
+
+          .label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 5px;
+          }
+
+          .notice {
+            margin-top: 25px;
+            padding: 14px;
+            background: #fff9ea;
+            border: 1px solid #e5c477;
+          }
+
+          @media print {
+            body { margin: 0; }
+          }
+        </style>
+      </head>
+
+      <body>
+        <h1>ScamShield AI</h1>
+        <p>Security Investigation Report</p>
+
+        <div class="grid">
+          <div class="item">
+            <span class="label">Report ID</span>
+            ${escapeHTML(getId(report))}
+          </div>
+
+          <div class="item">
+            <span class="label">Evidence Type</span>
+            ${escapeHTML(getEvidenceType(report))}
+          </div>
+
+          <div class="item">
+            <span class="label">Fraud Category</span>
+            ${escapeHTML(formatCategory(getCategory(report)))}
+          </div>
+
+          <div class="item">
+            <span class="label">Risk Score</span>
+            ${score === null ? "N/A" : `${score}/100`}
+          </div>
+
+          <div class="item">
+            <span class="label">Risk Level</span>
+            ${escapeHTML(getRisk(report))}
+          </div>
+
+          <div class="item">
+            <span class="label">Status</span>
+            ${escapeHTML(getStatus(report))}
+          </div>
+
+          <div class="item">
+            <span class="label">Created At</span>
+            ${escapeHTML(formatDate(getDate(report)))}
+          </div>
+        </div>
+
+        <h3>Assessment Explanation</h3>
+
+        <p>${escapeHTML(getExplanation(report))}</p>
+
+        <div class="notice">
+          <strong>Important Disclaimer</strong>
+          <p>
+            This report contains a risk assessment, not definitive proof
+            of fraud. Extracted indicators are unverified and require
+            independent verification.
+          </p>
+        </div>
+
+        <p>
+          Generated by ScamShield AI.
+        </p>
+
+        <script>
+          window.addEventListener("load", () => window.print());
+        <\/script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
+
+  // ================================================
+  // CLEAR FILTERS
+  // ================================================
+
+  function clearFilters() {
+    if (el.search) el.search.value = "";
+    if (el.risk) el.risk.value = "all";
+    if (el.category) el.category.value = "all";
+    if (el.date) el.date.value = "all";
+
+    applyFilters();
+  }
+
+  // ================================================
+  // EVENTS
+  // ================================================
+
+  function initializeEvents() {
+    el.search?.addEventListener("input", applyFilters);
+    el.risk?.addEventListener("change", applyFilters);
+    el.category?.addEventListener("change", applyFilters);
+    el.date?.addEventListener("change", applyFilters);
+
+    el.clear?.addEventListener("click", clearFilters);
+    el.refresh?.addEventListener("click", fetchReports);
+
+    el.export?.addEventListener("click", () => {
+      exportCSV(filteredReports);
+    });
+
+    el.previous?.addEventListener("click", previousPage);
+    el.next?.addEventListener("click", nextPage);
+
+    el.close?.addEventListener("click", closeModal);
+    el.closeDetails?.addEventListener("click", closeModal);
+    el.overlay?.addEventListener("click", closeModal);
+
+    el.downloadSingle?.addEventListener("click", printReport);
+
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape" &&
+        el.modal?.classList.contains("show")
+      ) {
+        closeModal();
+      }
+    });
+  }
+
+  // ================================================
+  // INITIALIZATION
+  // ================================================
+
+  function initialize() {
+    if (el.currentYear) {
+      el.currentYear.textContent = new Date().getFullYear();
+    }
+
+    initializeEvents();
+
+    fetchReports();
+
+    console.log(
+      "ScamShield AI Reports Module Initialized Successfully."
+    );
+  }
+
+  initialize();
+
+});

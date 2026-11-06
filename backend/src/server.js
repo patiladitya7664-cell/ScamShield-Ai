@@ -1,226 +1,320 @@
 "use strict";
 
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const helmet = require("helmet");
-const morgan = require("morgan");
-const path = require("path");
-const mongoose = require("mongoose");
+// =====================================================
+// SCAMSHIELD AI
+// SERVER ENTRY POINT
+//
+// Responsibilities:
+// 1. Load environment variables.
+// 2. Connect MongoDB.
+// 3. Start HTTP server.
+// 4. Handle server errors.
+// 5. Gracefully shut down resources.
+//
+// Express configuration and API routes are managed
+// separately inside app.js.
+// =====================================================
 
-// ================================================
-// ENVIRONMENT CONFIGURATION
-// ================================================
+const path = require("path");
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+const http = require("http");
+
+// =====================================================
+// 1. ENVIRONMENT CONFIGURATION
+// =====================================================
 
 dotenv.config({
-  path: path.resolve(__dirname, "../../.env"),
+path: path.resolve(__dirname, "../../.env"),
 });
 
-// ================================================
-// DATABASE
-// ================================================
+// =====================================================
+// 2. DATABASE CONFIGURATION
+// =====================================================
 
 const connectDB = require("./config/db");
 
-// ================================================
-// ROUTES
-// ================================================
+// =====================================================
+// 3. EXPRESS APPLICATION
+// =====================================================
 
-const authRoutes = require("./routes/authRoutes");
-const analysisRoutes = require("./routes/analysisRoutes");
-const caseRoutes = require("./routes/caseRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
-const intelligenceRoutes = require("./routes/intelligenceRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
-const agentsRoutes = require("./routes/agentsRoutes");
+const app = require("./app");
 
-// ================================================
-// ERROR HANDLING
-// ================================================
+// =====================================================
+// 4. SERVER CONFIGURATION
+// =====================================================
 
-const errorMiddleware = require("./middleware/errorMiddleware");
+const PORT = Number(process.env.PORT) || 5000;
+const HOST = process.env.HOST || "0.0.0.0";
 
-// ================================================
-// EXPRESS APP
-// ================================================
+let server = null;
+let isStarting = false;
+let isShuttingDown = false;
 
-const app = express();
+// =====================================================
+// 5. SERVER INFORMATION
+// =====================================================
 
-app.disable("x-powered-by");
+const displayServerInfo = (port) => {
+console.log("");
+console.log("================================================");
+console.log("              SCAMSHIELD AI");
+console.log("             BACKEND SERVER");
+console.log("================================================");
 
-// ================================================
-// SECURITY MIDDLEWARE
-// ================================================
 
-app.use(helmet());
+console.log(`Environment:    ${process.env.NODE_ENV || "development"}`);
+console.log(`Server:         http://localhost:${port}`);
+console.log(`Health Check:   http://localhost:${port}/api/health`);
 
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || "http://127.0.0.1:5500",
-    credentials: true,
-  }),
-);
+console.log("");
+console.log("---------------- API MODULES ----------------");
 
-// ================================================
-// REQUEST LOGGING
-// ================================================
+console.log(`Authentication: http://localhost:${port}/api/auth`);
+console.log(`Analysis:       http://localhost:${port}/api/analysis`);
+console.log(`Cases:          http://localhost:${port}/api/cases`);
+console.log(`Dashboard:      http://localhost:${port}/api/dashboard`);
+console.log(`Intelligence:   http://localhost:${port}/api/intelligence`);
+console.log(`Notifications:  http://localhost:${port}/api/notifications`);
+console.log(`Agents:         http://localhost:${port}/api/agents`);
 
-app.use(morgan("dev"));
+console.log("================================================");
+console.log("Backend started successfully.");
+console.log("");
 
-// ================================================
-// BODY PARSING
-// ================================================
 
-app.use(express.json({ limit: "1mb" }));
-
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "1mb",
-  }),
-);
-
-// ================================================
-// ROOT ROUTE
-// ================================================
-
-app.get("/", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Welcome to ScamShield AI API",
-  });
-});
-
-// ================================================
-// HEALTH CHECK
-// ================================================
-
-app.get("/api/health", (req, res) => {
-  const databaseState = mongoose.connection.readyState;
-
-  const databaseStatus =
-    databaseState === 1
-      ? "Connected"
-      : databaseState === 2
-        ? "Connecting"
-        : databaseState === 3
-          ? "Disconnecting"
-          : "Disconnected";
-
-  return res.status(databaseState === 1 ? 200 : 503).json({
-    success: databaseState === 1,
-    message: "ScamShield AI Backend health check",
-    server: "Running",
-    database: databaseStatus,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// ================================================
-// API ROUTES
-// ================================================
-
-app.use("/api/auth", authRoutes);
-
-app.use("/api/analysis", analysisRoutes);
-
-app.use("/api/cases", caseRoutes);
-
-app.use("/api/dashboard", dashboardRoutes);
-
-app.use("/api/intelligence", intelligenceRoutes);
-
-app.use("/api/notifications", notificationRoutes);
-
-app.use("/api/agents", agentsRoutes);
-
-// ================================================
-// 404 HANDLER
-// ================================================
-
-app.use((req, res) => {
-  return res.status(404).json({
-    success: false,
-    message: `Route not found: ${req.method} ${req.originalUrl}`,
-  });
-});
-
-// ================================================
-// GLOBAL ERROR HANDLER
-// ================================================
-
-app.use(errorMiddleware);
-
-// ================================================
-// SERVER CONFIGURATION
-// ================================================
-
-const PORT = process.env.PORT || 5000;
-
-// ================================================
-// START SERVER
-// ================================================
-
-const startServer = async () => {
-  try {
-    await connectDB();
-
-    const server = app.listen(PORT, () => {
-      console.log("");
-      console.log("====================================");
-      console.log("       SCAMSHIELD AI BACKEND");
-      console.log("====================================");
-
-      console.log(`Server:        http://localhost:${PORT}`);
-      console.log(`Health:        http://localhost:${PORT}/api/health`);
-      console.log(`Auth:          http://localhost:${PORT}/api/auth`);
-      console.log(`Analysis:      http://localhost:${PORT}/api/analysis`);
-      console.log(`Cases:         http://localhost:${PORT}/api/cases`);
-      console.log(`Dashboard:     http://localhost:${PORT}/api/dashboard`);
-      console.log(`Intelligence:  http://localhost:${PORT}/api/intelligence`);
-      console.log(`Notifications: http://localhost:${PORT}/api/notifications`);
-      console.log(`Agents:        http://localhost:${PORT}/api/agents`);
-
-      console.log("====================================");
-      console.log("Backend is ready.");
-      console.log("");
-    });
-
-    server.on("error", (error) => {
-      console.error("Server startup error:", error.message);
-
-      if (error.code === "EADDRINUSE") {
-        console.error(`Port ${PORT} is already in use.`);
-      }
-
-      process.exit(1);
-    });
-
-    const shutdown = (signal) => {
-      console.log(`\n${signal} received. Closing server...`);
-
-      server.close(async () => {
-        try {
-          await mongoose.connection.close();
-          console.log("Database connection closed.");
-          process.exit(0);
-        } catch (error) {
-          console.error("Shutdown Error:", error.message);
-          process.exit(1);
-        }
-      });
-    };
-
-    process.once("SIGINT", () => shutdown("SIGINT"));
-    process.once("SIGTERM", () => shutdown("SIGTERM"));
-  } catch (error) {
-    console.error("====================================");
-    console.error("BACKEND STARTUP FAILED");
-    console.error("====================================");
-    console.error(error.message);
-
-    process.exit(1);
-  }
 };
 
-startServer();
+// =====================================================
+// 6. CLOSE DATABASE CONNECTION
+// =====================================================
+
+const closeDatabase = async () => {
+if (mongoose.connection.readyState !== 0) {
+await mongoose.connection.close();
+console.log("MongoDB connection closed.");
+}
+};
+
+// =====================================================
+// 7. START HTTP SERVER
+// =====================================================
+
+const listen = (port, host) => {
+return new Promise((resolve, reject) => {
+const httpServer = http.createServer(app);
+
+
+    const handleError = (error) => {
+        httpServer.removeListener("listening", handleListening);
+        reject(error);
+    };
+
+    const handleListening = () => {
+        httpServer.removeListener("error", handleError);
+        resolve(httpServer);
+    };
+
+    httpServer.once("error", handleError);
+    httpServer.once("listening", handleListening);
+
+    httpServer.listen(port, host);
+});
+
+
+};
+
+// =====================================================
+// 8. START APPLICATION
+// =====================================================
+
+const startServer = async () => {
+if (isStarting || server) {
+throw new Error("Server is already starting or running.");
+}
+
+
+isStarting = true;
+
+try {
+    console.log("");
+    console.log("Starting ScamShield AI Backend...");
+
+    // ---------------------------------------------
+    // STEP 1: CONNECT DATABASE
+    // ---------------------------------------------
+
+    console.log("Connecting to MongoDB...");
+
+    await connectDB();
+
+    if (mongoose.connection.readyState !== 1) {
+        throw new Error("MongoDB connection could not be established.");
+    }
+
+    console.log("MongoDB connected successfully.");
+
+    // ---------------------------------------------
+    // STEP 2: START HTTP SERVER
+    // ---------------------------------------------
+
+    console.log("Starting HTTP server...");
+
+    server = await listen(PORT, HOST);
+
+    // ---------------------------------------------
+    // STEP 3: DISPLAY SERVER INFORMATION
+    // ---------------------------------------------
+
+    const address = server.address();
+
+    const activePort =
+        address && typeof address === "object"
+            ? address.port
+            : PORT;
+
+    displayServerInfo(activePort);
+
+    return server;
+
+} catch (error) {
+    console.error("");
+    console.error("================================================");
+    console.error("           BACKEND STARTUP FAILED");
+    console.error("================================================");
+    console.error(error.message);
+    console.error("================================================");
+
+    // Close partially started HTTP server.
+    if (server) {
+        await new Promise((resolve) => {
+            server.close(() => resolve());
+        });
+
+        server = null;
+    }
+
+    // Release database connection after startup failure.
+    try {
+        await closeDatabase();
+    } catch (dbError) {
+        console.error("Database cleanup failed:", dbError.message);
+    }
+
+    throw error;
+
+} finally {
+    isStarting = false;
+}
+
+
+};
+
+// =====================================================
+// 9. GRACEFUL SHUTDOWN
+// =====================================================
+
+const shutdown = async (signal = "SHUTDOWN") => {
+if (isShuttingDown) {
+return;
+}
+
+
+isShuttingDown = true;
+
+console.log("");
+console.log("================================================");
+console.log(`${signal} received.`);
+console.log("Graceful shutdown initiated...");
+console.log("================================================");
+
+let shutdownError = null;
+
+try {
+    // ---------------------------------------------
+    // STEP 1: STOP ACCEPTING NEW HTTP CONNECTIONS
+    // ---------------------------------------------
+
+    if (server && server.listening) {
+        await new Promise((resolve, reject) => {
+            server.close((error) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                resolve();
+            });
+        });
+
+        console.log("HTTP server closed.");
+    }
+
+    server = null;
+
+    // ---------------------------------------------
+    // STEP 2: CLOSE MONGODB CONNECTION
+    // ---------------------------------------------
+
+    await closeDatabase();
+
+    console.log("Graceful shutdown completed.");
+
+} catch (error) {
+    shutdownError = error;
+    console.error("Shutdown error:", error.message);
+
+} finally {
+    isShuttingDown = false;
+}
+
+if (shutdownError) {
+    process.exitCode = 1;
+}
+
+
+};
+
+// =====================================================
+// 10. PROCESS SIGNAL HANDLERS
+// =====================================================
+
+const registerProcessHandlers = () => {
+process.once("SIGINT", () => {
+shutdown("SIGINT");
+});
+
+
+process.once("SIGTERM", () => {
+    shutdown("SIGTERM");
+});
+
+
+};
+
+// =====================================================
+// 11. APPLICATION ENTRY POINT
+// =====================================================
+
+// Start the server only when this file is executed
+// directly. Importing it in tests will not start it.
+
+if (require.main === module) {
+registerProcessHandlers();
+
+
+startServer().catch(() => {
+    process.exitCode = 1;
+});
+
+
+}
+
+// =====================================================
+// 12. EXPORTS
+// =====================================================
+
+module.exports = {
+startServer,
+shutdown,
+getServer: () => server,
+};

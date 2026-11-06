@@ -6,16 +6,19 @@
 
 Agents:
 
-1. Guardian Agent       - Scam detection and risk scoring
-2. Intelligence Agent   - Indicator extraction
-3. Victim Safety Agent  - Safety recommendations
-4. Decoy Agent          - Controlled simulation status
+1. Guardian Agent
+2. Intelligence Agent
+3. Victim Safety Agent
+4. Decoy Agent
 
-MongoDB Integration:
+AI Processing:
+Node.js -> Python FastAPI -> AI Pipeline
 
-* Saves analysis in Analysis collection.
-* Saves all four agent results inside the same document.
+MongoDB:
+
+* Saves analysis and all four agent results.
 * Does not store raw evidence.
+* Preserves existing frontend response contract.
   =========================================================
   */
 
@@ -24,37 +27,67 @@ const { analyzeEvidence } = require("../services/aiService");
 
 /*
 
-1. GUARDIAN AGENT
+1. AGENT RESULT NORMALIZATION
+   =========================================================
+   */
+
+const getAgentStatus = (agent) => {
+  if (!agent || typeof agent !== "object") {
+    return "failed";
+  }
+
+  if (agent.success === false) {
+    return "failed";
+  }
+
+  return agent.status || "completed";
+};
+
+/*
+
+2. GUARDIAN AGENT
    =========================================================
    */
 
 const guardianAgent = (analysis) => {
+  const pythonGuardian = analysis.agents?.guardian || {};
+
   return {
     agent: "Guardian Agent",
-    status: "completed",
+
+    status: getAgentStatus(pythonGuardian),
 
     fraudCategory: analysis.fraudCategory,
+
     riskScore: analysis.riskScore,
+
     riskLevel: analysis.riskLevel,
 
-    detectedRules: analysis.detectedRules,
+    detectedRules: analysis.detectedRules || [],
 
     summary: analysis.summary,
+
+    analysisMethod: analysis.analysisMethod,
+
+    machineLearning: analysis.machineLearning,
   };
 };
 
 /*
 
-2. INTELLIGENCE AGENT
+3. INTELLIGENCE AGENT
    =========================================================
    */
 
 const intelligenceAgent = (analysis) => {
+  const pythonIntelligence = analysis.agents?.intelligence || {};
+
   const indicators = analysis.indicators || [];
 
   return {
     agent: "Intelligence Agent",
-    status: "completed",
+
+    status: getAgentStatus(pythonIntelligence),
 
     totalIndicators: indicators.length,
 
@@ -66,103 +99,78 @@ const intelligenceAgent = (analysis) => {
 
     message:
       "Extracted indicators are clues only. They have not been independently verified.",
+
+    pythonResult: pythonIntelligence,
   };
 };
 
 /*
 
-3. VICTIM SAFETY AGENT
+4. VICTIM SAFETY AGENT
    =========================================================
    */
 
 const victimSafetyAgent = (analysis) => {
-  const recommendations = [];
+  const pythonSafety = analysis.agents?.victimSafety || {};
 
-  recommendations.push(
-    "Do not share OTP, PIN, CVV, passwords or banking credentials.",
-  );
-
-  recommendations.push("Do not transfer money under pressure or urgency.");
-
-  recommendations.push(
-    "Verify suspicious messages through official websites or customer support.",
-  );
-
-  if (analysis.fraudCategory === "digitalArrest") {
-    recommendations.push(
-      "Real law enforcement agencies do not conduct digital arrest through video calls or demand payments.",
-    );
-  }
-
-  if (analysis.fraudCategory === "investment") {
-    recommendations.push(
-      "Avoid guaranteed-return investment offers. Verify the organization and its regulatory registration independently.",
-    );
-  }
-
-  if (analysis.fraudCategory === "creditCard") {
-    recommendations.push(
-      "Never share card credentials or banking verification codes with callers or unknown websites.",
-    );
-  }
-
-  if (analysis.fraudCategory === "sextortion") {
-    recommendations.push(
-      "Do not make payments under blackmail threats. Preserve evidence and report the incident.",
-    );
-  }
-
-  if (analysis.fraudCategory === "ecommerce") {
-    recommendations.push(
-      "Use trusted shopping platforms and avoid payments outside their official payment systems.",
-    );
-  }
-
-  if (analysis.riskLevel === "high" || analysis.riskLevel === "critical") {
-    recommendations.push(
-      "Stop interacting with the suspicious source and report the incident to the appropriate authorities.",
-    );
-  }
+  const recommendations = Array.isArray(analysis.recommendations)
+    ? analysis.recommendations
+    : [];
 
   return {
     agent: "Victim Safety Agent",
-    status: "completed",
+
+    status: getAgentStatus(pythonSafety),
+
+    safetyLevel:
+      pythonSafety.safety_level ||
+      pythonSafety.safetyLevel ||
+      analysis.riskLevel.toUpperCase(),
 
     recommendations,
+
     totalRecommendations: recommendations.length,
+
+    pythonResult: pythonSafety,
   };
 };
 
 /*
 
-4. DECOY AGENT
+5. DECOY AGENT
    =========================================================
-   */
+
+Decoy simulation is NOT automatically started.
+It requires a separate, explicit user-controlled action.
+========================================================
+
+*/
 
 const decoyAgent = () => {
   return {
     agent: "Decoy Agent",
 
-    status: "not_configured",
+    status: "not_started",
 
-    message: "Controlled scam simulation is not configured yet.",
+    message:
+      "Controlled simulation is available through the separate Decoy operation.",
 
     simulationEnabled: false,
+
+    simulationOnly: true,
   };
 };
 
 /*
 
-5. MAIN AGENT ORCHESTRATOR
+6. MAIN AGENT CONTROLLER
    =========================================================
    */
 
 const runAgents = async (req, res) => {
   try {
-    const { evidenceType, evidence } = req.body;
-
     // -----------------------------------------------
-    // AUTHENTICATION CHECK
+    // AUTHENTICATION
     // -----------------------------------------------
 
     if (!req.user || !req.user._id) {
@@ -173,7 +181,20 @@ const runAgents = async (req, res) => {
     }
 
     // -----------------------------------------------
-    // RUN EXISTING ANALYSIS SERVICE
+    // REQUEST VALIDATION
+    // -----------------------------------------------
+
+    const { evidenceType, evidence } = req.body || {};
+
+    if (!evidenceType || typeof evidence !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Evidence type and evidence are required.",
+      });
+    }
+
+    // -----------------------------------------------
+    // PYTHON AI ENGINE EXECUTION
     // -----------------------------------------------
 
     const analysis = await analyzeEvidence({
@@ -182,7 +203,7 @@ const runAgents = async (req, res) => {
     });
 
     // -----------------------------------------------
-    // EXECUTE FOUR AGENTS
+    // EXECUTE AGENT RESULT MAPPERS
     // -----------------------------------------------
 
     const guardian = guardianAgent(analysis);
@@ -205,7 +226,7 @@ const runAgents = async (req, res) => {
     };
 
     // -----------------------------------------------
-    // SAVE ANALYSIS + AGENTS IN MONGODB
+    // SAVE RESULTS IN MONGODB
     // -----------------------------------------------
 
     const savedAnalysis = await Analysis.create({
@@ -241,13 +262,12 @@ const runAgents = async (req, res) => {
     return res.status(201).json({
       success: true,
 
-      message: "ScamShield AI agents executed and results saved successfully.",
+      message:
+        "Python AI Engine analysis and agent execution completed successfully.",
 
       data: {
-        // Actual MongoDB document ID.
         analysisId: savedAnalysis._id,
 
-        // Unique evidence reference.
         evidenceId: savedAnalysis.evidenceId,
 
         agents: savedAnalysis.agents,
@@ -263,16 +283,28 @@ const runAgents = async (req, res) => {
 
           explanation: analysis.explanation,
 
+          analysisMethod: analysis.analysisMethod,
+
+          aiEngineUsed: analysis.aiEngineUsed,
+
+          machineLearning: analysis.machineLearning,
+
           analyzedAt: savedAnalysis.analyzedAt,
         },
+
+        orchestration: analysis.orchestration,
+
+        verification: analysis.verification,
 
         disclaimer: analysis.disclaimer,
       },
     });
   } catch (error) {
-    console.error("Agents Controller Error:", error);
+    console.error("Agents Controller Error:", error.message);
 
-    return res.status(400).json({
+    const statusCode = error.statusCode || 500;
+
+    return res.status(statusCode).json({
       success: false,
 
       message: error.message || "Agent execution failed.",

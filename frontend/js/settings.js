@@ -1,26 +1,23 @@
 "use strict";
 
 /* =========================================================
-SCAMSHIELD AI — SETTINGS
-File: frontend/js/setting.js
+   SCAMSHIELD AI — SETTINGS
+   File: frontend/js/setting.js
 
-Handles:
+   Features:
+   1. Account preferences
+   2. Notification preferences
+   3. Security preferences
+   4. Privacy preferences
+   5. Appearance preferences
+   6. Local storage persistence
+   7. Settings reset
+========================================================= */
 
-1. Account preferences
-2. Notification preferences
-3. Security preferences
-4. Privacy preferences
-5. Appearance preferences
-6. Local storage
-7. Settings reset
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  initializeSettings();
-});
+document.addEventListener("DOMContentLoaded", initializeSettings);
 
 /* =========================================================
-CONFIGURATION
+   CONFIGURATION
 ========================================================= */
 
 const SETTINGS_STORAGE_KEY = "scamshieldSettingsV1";
@@ -55,76 +52,119 @@ const DEFAULT_SETTINGS = {
   },
 };
 
-let settings = structuredClone(DEFAULT_SETTINGS);
+let settings = cloneDefaults();
 
 /* =========================================================
-INITIALIZATION
+   INITIALIZATION
 ========================================================= */
 
 function initializeSettings() {
   loadSettings();
+
   initializeAccountSettings();
   initializePreferenceControls();
   initializeAppearanceSettings();
   initializeNavigation();
   initializeButtons();
+
   updateCurrentYear();
 }
 
 /* =========================================================
-STORAGE
+   UTILITIES
+========================================================= */
+
+function cloneDefaults() {
+  return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+}
+
+function isObject(value) {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/* =========================================================
+   STORAGE
 ========================================================= */
 
 function loadSettings() {
   try {
-    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    const savedSettings = localStorage.getItem(
+      SETTINGS_STORAGE_KEY,
+    );
 
     if (!savedSettings) {
-      settings = structuredClone(DEFAULT_SETTINGS);
+      settings = cloneDefaults();
       return;
     }
 
     const parsedSettings = JSON.parse(savedSettings);
 
+    if (!isObject(parsedSettings)) {
+      throw new Error("Invalid settings format.");
+    }
+
     settings = {
       account: {
         ...DEFAULT_SETTINGS.account,
-        ...parsedSettings.account,
+        ...(isObject(parsedSettings.account)
+          ? parsedSettings.account
+          : {}),
       },
 
       notifications: {
         ...DEFAULT_SETTINGS.notifications,
-        ...parsedSettings.notifications,
+        ...(isObject(parsedSettings.notifications)
+          ? parsedSettings.notifications
+          : {}),
       },
 
       security: {
         ...DEFAULT_SETTINGS.security,
-        ...parsedSettings.security,
+        ...(isObject(parsedSettings.security)
+          ? parsedSettings.security
+          : {}),
       },
 
       privacy: {
         ...DEFAULT_SETTINGS.privacy,
-        ...parsedSettings.privacy,
+        ...(isObject(parsedSettings.privacy)
+          ? parsedSettings.privacy
+          : {}),
       },
 
       appearance: {
         ...DEFAULT_SETTINGS.appearance,
-        ...parsedSettings.appearance,
+        ...(isObject(parsedSettings.appearance)
+          ? parsedSettings.appearance
+          : {}),
       },
     };
   } catch (error) {
     console.error("Unable to load settings:", error);
-    settings = structuredClone(DEFAULT_SETTINGS);
+
+    settings = cloneDefaults();
   }
 }
 
 function saveSettings() {
   try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify(settings),
+    );
 
     return true;
   } catch (error) {
     console.error("Unable to save settings:", error);
+
     showMessage(
       "settingsSaveMessage",
       "Unable to save settings in this browser.",
@@ -136,7 +176,7 @@ function saveSettings() {
 }
 
 /* =========================================================
-ACCOUNT SETTINGS
+   ACCOUNT SETTINGS
 ========================================================= */
 
 function initializeAccountSettings() {
@@ -153,15 +193,15 @@ function initializeAccountSettings() {
 
   updateAccountLabels();
 
-  const editProfileBtn = document.getElementById("editProfileBtn");
+  document
+    .getElementById("editProfileBtn")
+    ?.addEventListener("click", () => {
+      displayNameInput?.focus();
+    });
 
-  editProfileBtn?.addEventListener("click", () => {
-    displayNameInput?.focus();
-  });
-
-  const saveAccountBtn = document.getElementById("saveAccountBtn");
-
-  saveAccountBtn?.addEventListener("click", saveAccountSettings);
+  document
+    .getElementById("saveAccountBtn")
+    ?.addEventListener("click", saveAccountSettings);
 }
 
 function saveAccountSettings() {
@@ -196,15 +236,15 @@ function saveAccountSettings() {
   settings.account.displayName = displayName;
   settings.account.email = email;
 
-  if (saveSettings()) {
-    updateAccountLabels();
+  if (!saveSettings()) return;
 
-    showMessage(
-      "accountSaveMessage",
-      "Account preferences saved in this browser.",
-      "success",
-    );
-  }
+  updateAccountLabels();
+
+  showMessage(
+    "accountSaveMessage",
+    "Account preferences saved in this browser.",
+    "success",
+  );
 }
 
 function updateAccountLabels() {
@@ -212,20 +252,18 @@ function updateAccountLabels() {
   const emailElement = document.getElementById("settingsUserEmail");
 
   if (nameElement) {
-    nameElement.textContent = settings.account.displayName || "ScamShield User";
+    nameElement.textContent =
+      settings.account.displayName || "ScamShield User";
   }
 
   if (emailElement) {
-    emailElement.textContent = settings.account.email || "No email added";
+    emailElement.textContent =
+      settings.account.email || "No email added";
   }
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email);
-}
-
 /* =========================================================
-PREFERENCE CONTROLS
+   PREFERENCE CONTROLS
 ========================================================= */
 
 function initializePreferenceControls() {
@@ -237,59 +275,86 @@ function initializePreferenceControls() {
       "productUpdates",
     ],
 
-    security: ["loginVerification", "loginMonitoring"],
+    security: [
+      "loginVerification",
+      "loginMonitoring",
+    ],
 
-    privacy: ["saveAnalysisHistory", "usageAnalytics"],
+    privacy: [
+      "saveAnalysisHistory",
+      "usageAnalytics",
+    ],
   };
 
-  Object.entries(preferenceElements).forEach(([section, elementIds]) => {
-    elementIds.forEach((id) => {
-      const element = document.getElementById(id);
+  Object.entries(preferenceElements).forEach(
+    ([section, elementIds]) => {
+      elementIds.forEach((id) => {
+        const element = document.getElementById(id);
 
-      if (!element) return;
+        if (!element) return;
 
-      element.checked = Boolean(settings[section][id]);
+        element.checked = Boolean(settings[section][id]);
 
-      element.addEventListener("change", () => {
-        settings[section][id] = element.checked;
+        element.addEventListener("change", () => {
+          settings[section][id] = element.checked;
 
-        saveSettings();
+          saveSettings();
+        });
       });
-    });
-  });
+    },
+  );
 }
 
 /* =========================================================
-APPEARANCE SETTINGS
+   APPEARANCE SETTINGS
 ========================================================= */
 
 function initializeAppearanceSettings() {
   const themeSelect = document.getElementById("themePreference");
-  const languageSelect = document.getElementById("languagePreference");
-  const reduceAnimations = document.getElementById("reduceAnimations");
+
+  const languageSelect = document.getElementById(
+    "languagePreference",
+  );
+
+  const reduceAnimations = document.getElementById(
+    "reduceAnimations",
+  );
 
   if (themeSelect) {
     themeSelect.value = settings.appearance.themePreference;
 
     themeSelect.addEventListener("change", () => {
-      settings.appearance.themePreference = themeSelect.value;
+      const selectedTheme = themeSelect.value;
 
-      applyTheme(themeSelect.value);
+      if (!["dark", "light", "system"].includes(selectedTheme)) {
+        return;
+      }
+
+      settings.appearance.themePreference = selectedTheme;
+
+      applyTheme(selectedTheme);
       saveSettings();
     });
   }
 
   if (languageSelect) {
-    languageSelect.value = settings.appearance.languagePreference;
+    languageSelect.value =
+      settings.appearance.languagePreference;
 
     languageSelect.addEventListener("change", () => {
-      settings.appearance.languagePreference = languageSelect.value;
+      const selectedLanguage = languageSelect.value;
+
+      if (!["en", "hi"].includes(selectedLanguage)) {
+        return;
+      }
+
+      settings.appearance.languagePreference = selectedLanguage;
 
       saveSettings();
 
       showMessage(
         "settingsSaveMessage",
-        languageSelect.value === "hi"
+        selectedLanguage === "hi"
           ? "Hindi preference saved. Translation support is not connected yet."
           : "English preference saved.",
         "success",
@@ -298,10 +363,12 @@ function initializeAppearanceSettings() {
   }
 
   if (reduceAnimations) {
-    reduceAnimations.checked = settings.appearance.reduceAnimations;
+    reduceAnimations.checked =
+      settings.appearance.reduceAnimations;
 
     reduceAnimations.addEventListener("change", () => {
-      settings.appearance.reduceAnimations = reduceAnimations.checked;
+      settings.appearance.reduceAnimations =
+        reduceAnimations.checked;
 
       applyReducedMotion(reduceAnimations.checked);
       saveSettings();
@@ -313,32 +380,77 @@ function initializeAppearanceSettings() {
   applyReducedMotion(settings.appearance.reduceAnimations);
 }
 
+/* =========================================================
+   THEME MANAGEMENT
+========================================================= */
+
 function applyTheme(theme) {
   const root = document.documentElement;
+
+  if (!["dark", "light", "system"].includes(theme)) {
+    theme = "dark";
+  }
 
   root.setAttribute("data-theme", theme);
 
   if (theme === "system") {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
+    updateSystemTheme();
+    return;
+  }
 
-    root.setAttribute("data-active-theme", prefersDark ? "dark" : "light");
+  root.setAttribute("data-active-theme", theme);
+}
+
+function updateSystemTheme() {
+  const prefersDark = window.matchMedia(
+    "(prefers-color-scheme: dark)",
+  ).matches;
+
+  document.documentElement.setAttribute(
+    "data-active-theme",
+    prefersDark ? "dark" : "light",
+  );
+}
+
+function initializeSystemThemeListener() {
+  if (!window.matchMedia) return;
+
+  const mediaQuery = window.matchMedia(
+    "(prefers-color-scheme: dark)",
+  );
+
+  const handleThemeChange = () => {
+    if (settings.appearance.themePreference === "system") {
+      updateSystemTheme();
+    }
+  };
+
+  if (mediaQuery.addEventListener) {
+    mediaQuery.addEventListener("change", handleThemeChange);
   } else {
-    root.setAttribute("data-active-theme", theme);
+    mediaQuery.addListener(handleThemeChange);
   }
 }
 
 function applyReducedMotion(enabled) {
-  document.documentElement.classList.toggle("reduce-motion", enabled);
+  document.documentElement.classList.toggle(
+    "reduce-motion",
+    Boolean(enabled),
+  );
 }
 
 /* =========================================================
-NAVIGATION
+   NAVIGATION
 ========================================================= */
 
 function initializeNavigation() {
-  const navLinks = document.querySelectorAll(".settings-nav-link");
+  const navLinks = document.querySelectorAll(
+    ".settings-nav-link",
+  );
+
+  const sections = document.querySelectorAll(
+    ".settings-card[id]",
+  );
 
   navLinks.forEach((link) => {
     link.addEventListener("click", () => {
@@ -349,8 +461,6 @@ function initializeNavigation() {
       link.classList.add("active");
     });
   });
-
-  const sections = document.querySelectorAll(".settings-card[id]");
 
   if (!("IntersectionObserver" in window)) return;
 
@@ -364,7 +474,10 @@ function initializeNavigation() {
         navLinks.forEach((link) => {
           const target = link.getAttribute("href");
 
-          link.classList.toggle("active", target === `#${sectionId}`);
+          link.classList.toggle(
+            "active",
+            target === `#${sectionId}`,
+          );
         });
       });
     },
@@ -379,36 +492,39 @@ function initializeNavigation() {
 }
 
 /* =========================================================
-BUTTON ACTIONS
+   BUTTON ACTIONS
 ========================================================= */
 
 function initializeButtons() {
-  const saveAllBtn = document.getElementById("saveAllSettings");
-  const resetBtn = document.getElementById("resetSettingsBtn");
-  const changePasswordBtn = document.getElementById("changePasswordBtn");
+  document
+    .getElementById("saveAllSettings")
+    ?.addEventListener("click", () => {
+      if (!saveSettings()) return;
 
-  saveAllBtn?.addEventListener("click", () => {
-    if (saveSettings()) {
       showMessage(
         "settingsSaveMessage",
         "All preferences saved successfully.",
         "success",
       );
-    }
-  });
+    });
 
-  resetBtn?.addEventListener("click", resetSettings);
+  document
+    .getElementById("resetSettingsBtn")
+    ?.addEventListener("click", resetSettings);
 
-  changePasswordBtn?.addEventListener("click", () => {
-    alert(
-      "Password management is not connected yet. " +
-        "Please use the official account authentication system.",
-    );
-  });
+  document
+    .getElementById("changePasswordBtn")
+    ?.addEventListener("click", () => {
+      showMessage(
+        "settingsSaveMessage",
+        "Password management is not connected yet.",
+        "error",
+      );
+    });
 }
 
 /* =========================================================
-RESET SETTINGS
+   RESET SETTINGS
 ========================================================= */
 
 function resetSettings() {
@@ -419,18 +535,25 @@ function resetSettings() {
 
   if (!confirmed) return;
 
-  settings = structuredClone(DEFAULT_SETTINGS);
-
   try {
     localStorage.removeItem(SETTINGS_STORAGE_KEY);
   } catch (error) {
     console.error("Unable to reset settings:", error);
+
+    showMessage(
+      "settingsSaveMessage",
+      "Unable to reset settings in this browser.",
+      "error",
+    );
+
+    return;
   }
 
-  loadSettings();
+  settings = cloneDefaults();
+
   initializeAccountSettings();
-  initializePreferenceControls();
-  initializeAppearanceSettings();
+  refreshPreferenceControls();
+  refreshAppearanceControls();
 
   showMessage(
     "settingsSaveMessage",
@@ -440,10 +563,78 @@ function resetSettings() {
 }
 
 /* =========================================================
-MESSAGE HELPER
+   REFRESH CONTROLS AFTER RESET
 ========================================================= */
 
-function showMessage(elementId, message, type = "success") {
+function refreshPreferenceControls() {
+  const preferenceIds = [
+    "securityAlerts",
+    "threatAlerts",
+    "reportNotifications",
+    "productUpdates",
+    "loginVerification",
+    "loginMonitoring",
+    "saveAnalysisHistory",
+    "usageAnalytics",
+  ];
+
+  preferenceIds.forEach((id) => {
+    const element = document.getElementById(id);
+
+    if (!element) return;
+
+    const section = Object.keys(settings).find(
+      (key) =>
+        key !== "account" &&
+        key !== "appearance" &&
+        Object.prototype.hasOwnProperty.call(settings[key], id),
+    );
+
+    if (section) {
+      element.checked = Boolean(settings[section][id]);
+    }
+  });
+}
+
+function refreshAppearanceControls() {
+  const themeSelect = document.getElementById("themePreference");
+
+  const languageSelect = document.getElementById(
+    "languagePreference",
+  );
+
+  const reduceAnimations = document.getElementById(
+    "reduceAnimations",
+  );
+
+  if (themeSelect) {
+    themeSelect.value = settings.appearance.themePreference;
+  }
+
+  if (languageSelect) {
+    languageSelect.value =
+      settings.appearance.languagePreference;
+  }
+
+  if (reduceAnimations) {
+    reduceAnimations.checked =
+      settings.appearance.reduceAnimations;
+  }
+
+  applyTheme(settings.appearance.themePreference);
+
+  applyReducedMotion(settings.appearance.reduceAnimations);
+}
+
+/* =========================================================
+   MESSAGE HELPER
+========================================================= */
+
+function showMessage(
+  elementId,
+  message,
+  type = "success",
+) {
   const element = document.getElementById(elementId);
 
   if (!element) return;
@@ -460,7 +651,7 @@ function showMessage(elementId, message, type = "success") {
 }
 
 /* =========================================================
-CURRENT YEAR
+   CURRENT YEAR
 ========================================================= */
 
 function updateCurrentYear() {
@@ -470,3 +661,9 @@ function updateCurrentYear() {
     yearElement.textContent = new Date().getFullYear();
   }
 }
+
+/* =========================================================
+   SYSTEM THEME LISTENER
+========================================================= */
+
+initializeSystemThemeListener();

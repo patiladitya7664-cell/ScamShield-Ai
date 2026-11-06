@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e1c">
+  <meta name="description" content="Review and manage your ScamShield AI cases.">
+  <title>Cases | ScamShield AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/modules.css">
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="dashboard.html" aria-label="ScamShield AI dashboard">
+      <span class="brand-mark" aria-hidden="true">⬡</span>
+      ScamShield <span>AI</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="cases.html" aria-current="page">Cases</a>
+    </nav>
+  </header>
+
+  <main class="module-page">
+    <section class="module-heading">
+      <p class="module-eyebrow">CASE MANAGEMENT</p>
+      <h1>Your cases</h1>
+      <p>Keep suspicious messages, call notes, and analysis details organized for follow-up.</p>
+    </section>
+
+    <section class="scanner-panel" aria-labelledby="cases-title">
+      <div class="scanner-result-header">
+        <div>
+          <h2 id="cases-title">Saved cases</h2>
+          <p class="scanner-help">Cases connected to your account will appear here.</p>
+        </div>
+        <a class="scanner-button" href="detection.html">Start a detection</a>
+      </div>
+
+      <div class="scanner-result" role="status">
+        <h3>No cases to show yet</h3>
+        <p class="scanner-result-summary">
+          After case storage is connected, your saved investigations will be listed on this page.
+        </p>
+      </div>
+
+      <p class="scanner-disclaimer">
+        Case saving and retrieval require a connected backend service.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,26 +1,7 @@
 "use strict";
 
-/*
-=========================================================
- SCAMSHIELD AI - ANALYSIS SERVICE
-=========================================================
-
- Purpose:
- 1. Validate submitted evidence.
- 2. Detect common scam indicators.
- 3. Classify potential fraud category.
- 4. Calculate explainable risk score.
- 5. Return structured analysis results.
-
- IMPORTANT:
- This is a rule-based assessment service.
- It is NOT a trained AI model.
- It does NOT prove that a person or transaction is fraudulent.
-
-=========================================================
-*/
-
 const crypto = require("crypto");
+const axios = require("axios");
 
 const MAX_EVIDENCE_LENGTH = 20000;
 
@@ -33,430 +14,495 @@ const ALLOWED_EVIDENCE_TYPES = [
   "email",
 ];
 
-const FRAUD_CATEGORIES = [
-  "investment",
-  "digitalArrest",
-  "creditCard",
-  "sextortion",
-  "ecommerce",
-  "other",
-  "unclassified",
-];
+const AI_ENGINE_URL = (
+  process.env.AI_ENGINE_URL || "http://127.0.0.1:8000"
+).replace(/\/+$/, "");
 
-/*
-=========================================================
- 1. EVIDENCE VALIDATION
-=========================================================
-*/
+const AI_ENGINE_TIMEOUT = Number(
+  process.env.AI_ENGINE_TIMEOUT || 30000,
+);
+
+// =====================================================
+// VALIDATION
+// =====================================================
 
 const validateEvidence = ({ evidenceType, evidence }) => {
-  if (!evidenceType || !ALLOWED_EVIDENCE_TYPES.includes(evidenceType)) {
-    throw new Error("Invalid evidence type.");
+  if (
+    typeof evidenceType !== "string" ||
+    !ALLOWED_EVIDENCE_TYPES.includes(
+      evidenceType.trim().toLowerCase(),
+    )
+  ) {
+    const error = new Error("Invalid evidence type.");
+    error.statusCode = 400;
+    throw error;
   }
 
   if (typeof evidence !== "string") {
-    throw new Error("Evidence must be provided as text.");
+    const error = new Error("Evidence must be provided as text.");
+    error.statusCode = 400;
+    throw error;
   }
 
   const normalizedEvidence = evidence.trim();
 
   if (!normalizedEvidence) {
-    throw new Error("Evidence cannot be empty.");
+    const error = new Error("Evidence cannot be empty.");
+    error.statusCode = 400;
+    throw error;
   }
 
   if (normalizedEvidence.length > MAX_EVIDENCE_LENGTH) {
-    throw new Error(
+    const error = new Error(
       `Evidence must not exceed ${MAX_EVIDENCE_LENGTH} characters.`,
     );
+    error.statusCode = 400;
+    throw error;
   }
 
   return normalizedEvidence;
 };
 
-/*
-=========================================================
- 2. SENSITIVE INFORMATION DETECTION
-=========================================================
+// =====================================================
+// SAFE HELPERS
+// =====================================================
 
- Never request or expose:
- - OTP
- - PIN
- - Password
- - CVV
- - Full card credentials
+const safeObject = (value) =>
+  value && typeof value === "object" && !Array.isArray(value)
+    ? value
+    : {};
 
- The service detects possible sensitive information and
- avoids returning the matched value.
-=========================================================
-*/
+const safeArray = (value) =>
+  Array.isArray(value) ? value : [];
 
-const detectSensitiveInformation = (text) => {
-  const patterns = [
-    {
-      type: "possible_otp",
-      regex: /\b(?:otp|one[\s-]?time password|verification code)\b/i,
-    },
-    {
-      type: "possible_pin",
-      regex: /\b(?:pin|upi pin|atm pin)\b/i,
-    },
-    {
-      type: "possible_password",
-      regex: /\bpassword\b/i,
-    },
-    {
-      type: "possible_cvv",
-      regex: /\bcvv\b|\bcvc\b/i,
-    },
-    {
-      type: "possible_card_number",
-      regex: /\b(?:\d[ -]*?){13,19}\b/,
-    },
-  ];
+const normalizeRiskLevel = (value) => {
+  const level = String(value || "").toLowerCase();
 
-  return patterns
-    .filter((item) => item.regex.test(text))
-    .map((item) => ({
-      type: item.type,
-      message:
-        "Potentially sensitive information detected. Do not share credentials or verification codes.",
-    }));
+  const allowed = ["low", "medium", "high", "critical"];
+
+  if (!allowed.includes(level)) {
+    const error = new Error(
+      "Python AI Engine returned an invalid risk level.",
+    );
+    error.statusCode = 502;
+    throw error;
+  }
+
+  return level;
 };
 
-/*
-=========================================================
- 3. SCAM INDICATOR DETECTION
-=========================================================
-*/
+const normalizeCategory = (value) => {
+  const category = String(value || "").toLowerCase();
 
-const SCAM_RULES = [
-  {
-    category: "digitalArrest",
-    weight: 25,
-    label: "Digital arrest threat",
-    patterns: [
-      /\bdigital arrest\b/i,
-      /\byou are under arrest\b/i,
-      /\bpolice case against you\b/i,
-      /\bcbi officer\b/i,
-      /\bcyber crime officer\b/i,
-      /\bvideo call interrogation\b/i,
-    ],
-  },
+  const categoryMap = {
+    digital_arrest: "digitalArrest",
+    digitalarrest: "digitalArrest",
+    credit_card: "creditCard",
+    creditcard: "creditCard",
+  };
 
-  {
-    category: "investment",
-    weight: 20,
-    label: "Unrealistic investment returns",
-    patterns: [
-      /\bguaranteed returns?\b/i,
-      /\bdouble your money\b/i,
-      /\b100% profit\b/i,
-      /\brisk[- ]free investment\b/i,
-      /\bquick profit\b/i,
-      /\bhigh return.{0,30}low risk\b/i,
-    ],
-  },
+  const normalized = categoryMap[category] || category;
 
-  {
-    category: "creditCard",
-    weight: 20,
-    label: "Card or banking credential request",
-    patterns: [
-      /\bshare.{0,20}(otp|cvv|pin)\b/i,
-      /\bverify.{0,20}(card|bank account)\b/i,
-      /\bcard blocked\b/i,
-      /\bkyc.{0,30}(expire|update|verify)\b/i,
-      /\baccount.{0,20}(blocked|suspended)\b/i,
-    ],
-  },
-
-  {
-    category: "sextortion",
-    weight: 25,
-    label: "Blackmail or intimate-content threat",
-    patterns: [
-      /\bsextortion\b/i,
-      /\bpay.{0,30}(or|otherwise).{0,30}(leak|expose)\b/i,
-      /\bshare your private photos\b/i,
-      /\bleak your private video\b/i,
-      /\bsend money.{0,30}(photos|video|family)\b/i,
-      /\bblackmail\b/i,
-    ],
-  },
-
-  {
-    category: "ecommerce",
-    weight: 15,
-    label: "Suspicious online shopping activity",
-    patterns: [
-      /\bpayment successful.{0,30}no order\b/i,
-      /\bpay outside the platform\b/i,
-      /\badvance payment.{0,30}delivery\b/i,
-      /\bfake tracking\b/i,
-      /\brefund.{0,30}processing fee\b/i,
-      /\bprize.{0,30}delivery charge\b/i,
-    ],
-  },
-];
-
-/*
-=========================================================
- 4. INDICATOR EXTRACTION
-=========================================================
-*/
-
-const extractIndicators = (text) => {
-  const indicators = [];
-
-  const patterns = [
-    {
-      type: "phone",
-      regex: /(?:\+91[\s-]?)?[6-9]\d{9}\b/g,
-    },
-    {
-      type: "email",
-      regex: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
-    },
-    {
-      type: "url",
-      regex: /\bhttps?:\/\/[^\s<>"']+/gi,
-    },
-    {
-      type: "upi",
-      regex: /\b[a-zA-Z0-9._-]+@[a-zA-Z]{2,}\b/g,
-    },
+  const allowed = [
+    "investment",
+    "digitalArrest",
+    "creditCard",
+    "sextortion",
+    "ecommerce",
+    "other",
+    "unclassified",
+    "unknown",
   ];
 
-  for (const pattern of patterns) {
-    const matches = text.match(pattern.regex) || [];
+  return allowed.includes(normalized)
+    ? normalized === "unknown"
+      ? "unclassified"
+      : normalized
+    : "unclassified";
+};
 
-    for (const value of matches) {
-      const normalizedValue = value.replace(/[.,!?;]+$/, "");
+// =====================================================
+// INDICATORS
+// =====================================================
 
+const normalizeIndicators = (indicators) => {
+  if (Array.isArray(indicators)) {
+    return indicators
+      .filter(
+        (item) =>
+          item &&
+          typeof item === "object" &&
+          !Array.isArray(item),
+      )
+      .map((item) => ({
+        type: String(
+          item.type ||
+          item.indicator_type ||
+          item.indicatorType ||
+          "unknown",
+        ),
+        value: String(item.value || item.indicator || ""),
+        verified: item.verified === true,
+      }))
+      .filter((item) => item.value);
+  }
+
+  // Python pipeline currently may return indicators as an object.
+  const indicatorObject = safeObject(indicators);
+
+  const normalized = [];
+
+  for (const [type, values] of Object.entries(indicatorObject)) {
+    const items = Array.isArray(values) ? values : [values];
+
+    for (const value of items) {
       if (
-        !indicators.some(
-          (item) =>
-            item.type === pattern.type && item.value === normalizedValue,
-        )
+        typeof value === "string" ||
+        typeof value === "number"
       ) {
-        indicators.push({
-          type: pattern.type,
-          value: normalizedValue,
+        normalized.push({
+          type,
+          value: String(value),
           verified: false,
         });
       }
     }
   }
 
-  return indicators;
+  return normalized;
 };
 
-/*
-=========================================================
- 5. CATEGORY CLASSIFICATION
-=========================================================
-*/
+// =====================================================
+// DETECTED RULES
+// =====================================================
 
-const classifyFraud = (text) => {
-  const categoryScores = {};
+const normalizeDetectedRules = (rules) => {
+  return safeArray(rules)
+    .filter(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        !Array.isArray(item),
+    )
+    .map((item) => ({
+      category: normalizeCategory(item.category || "other"),
 
-  for (const category of FRAUD_CATEGORIES) {
-    categoryScores[category] = 0;
-  }
+      label: String(
+        item.label ||
+        item.name ||
+        item.message ||
+        "Suspicious indicator detected",
+      ),
 
-  const detectedRules = [];
+      weight: Math.max(
+        0,
+        Math.min(100, Number(item.weight) || 0),
+      ),
+    }));
+};
 
-  for (const rule of SCAM_RULES) {
-    const matchedPatterns = rule.patterns.filter((pattern) =>
-      pattern.test(text),
+// =====================================================
+// SENSITIVE INFORMATION
+// =====================================================
+
+const normalizeSensitiveInformation = (signals) => {
+  return safeArray(signals)
+    .filter(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        !Array.isArray(item),
+    )
+    .filter((item) => {
+      const text = JSON.stringify(item).toLowerCase();
+
+      return (
+        text.includes("sensitive") ||
+        text.includes("credential") ||
+        text.includes("otp") ||
+        text.includes("password") ||
+        text.includes("pin") ||
+        text.includes("cvv")
+      );
+    })
+    .map((item) => ({
+      type: String(
+        item.type || item.code || "potential_sensitive_information",
+      ),
+      message: String(
+        item.message ||
+        item.description ||
+        "Potentially sensitive information detected. Do not share credentials or verification codes.",
+      ),
+    }));
+};
+
+// =====================================================
+// PYTHON AI ENGINE REQUEST
+// =====================================================
+
+const callPythonAIEngine = async ({
+  evidenceType,
+  evidence,
+}) => {
+  let response;
+
+  try {
+    response = await axios.post(
+      `${AI_ENGINE_URL}/api/ai/analyze`,
+      {
+        evidence,
+        evidence_type: evidenceType,
+      },
+      {
+        timeout: AI_ENGINE_TIMEOUT,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        maxBodyLength: MAX_EVIDENCE_LENGTH + 10000,
+      },
+    );
+  } catch (error) {
+    const status = error.response?.status;
+
+    if (status) {
+      const serviceError = new Error(
+        `Python AI Engine returned HTTP ${status}.`,
+      );
+
+      serviceError.statusCode =
+        status >= 400 && status < 500 ? 400 : 502;
+
+      throw serviceError;
+    }
+
+    const serviceError = new Error(
+      error.code === "ECONNABORTED"
+        ? "Python AI Engine request timed out."
+        : "Python AI Engine is unavailable.",
     );
 
-    if (matchedPatterns.length > 0) {
-      categoryScores[rule.category] +=
-        rule.weight * Math.min(matchedPatterns.length, 2);
+    serviceError.statusCode = 503;
 
-      detectedRules.push({
-        category: rule.category,
-        label: rule.label,
-        weight: rule.weight,
-      });
-    }
+    throw serviceError;
   }
 
-  const rankedCategories = Object.entries(categoryScores)
-    .filter(([category, score]) => {
-      return category !== "other" && category !== "unclassified" && score > 0;
-    })
-    .sort((a, b) => b[1] - a[1]);
+  if (
+    !response.data ||
+    typeof response.data !== "object" ||
+    response.data.success !== true
+  ) {
+    const serviceError = new Error(
+      response.data?.message ||
+      "Python AI Engine could not complete the analysis.",
+    );
 
-  if (rankedCategories.length === 0) {
-    return {
-      fraudCategory: "unclassified",
-      detectedRules,
-      categoryScores,
-    };
+    serviceError.statusCode = 502;
+
+    throw serviceError;
   }
+
+  return response.data;
+};
+
+// =====================================================
+// PYTHON RESPONSE NORMALIZATION
+// =====================================================
+
+const normalizePythonResult = ({
+  pythonResult,
+  evidenceType,
+}) => {
+  const result = safeObject(pythonResult.result);
+
+  const intelligence = safeObject(
+    pythonResult.intelligence,
+  );
+
+  const victimSafety = safeObject(
+    pythonResult.victim_safety,
+  );
+
+  const agentResults = safeObject(
+    pythonResult.agent_results,
+  );
+
+  const guardian = safeObject(agentResults.guardian);
+
+  const ml = safeObject(
+    pythonResult.machine_learning,
+  );
+
+  const riskScore = Number(result.risk_score);
+
+  if (
+    !Number.isFinite(riskScore) ||
+    riskScore < 0 ||
+    riskScore > 100
+  ) {
+    const error = new Error(
+      "Python AI Engine returned an invalid risk score.",
+    );
+
+    error.statusCode = 502;
+
+    throw error;
+  }
+
+  const indicators = normalizeIndicators(
+    result.indicators || intelligence.indicators,
+  );
+
+  const detectedRules = normalizeDetectedRules(
+    result.detected_rules,
+  );
+
+  const signals = safeArray(result.signals);
+
+  const sensitiveInformation =
+    normalizeSensitiveInformation(signals);
+
+  const recommendations = safeArray(
+    result.recommendations,
+  ).filter((item) => typeof item === "string");
+
+  const explanations = safeArray(
+    result.explanations,
+  );
+
+  const analysisMethod =
+    ml.available === true
+      ? "hybrid"
+      : "python_rule_based";
 
   return {
-    fraudCategory: rankedCategories[0][0],
+    evidenceId: crypto.randomUUID(),
+
+    evidenceType,
+
+    fraudCategory: normalizeCategory(
+      result.category,
+    ),
+
+    riskScore: Math.round(riskScore),
+
+    riskLevel: normalizeRiskLevel(
+      result.risk_level,
+    ),
+
+    summary: String(
+      result.summary || "Evidence analysis completed.",
+    ),
+
+    explanation: explanations,
+
+    indicators,
+
+    sensitiveInformation,
+
     detectedRules,
-    categoryScores,
-  };
-};
 
-/*
-=========================================================
- 6. RISK SCORE CALCULATION
-=========================================================
-*/
+    recommendations,
 
-const calculateRisk = ({ detectedRules, indicators, sensitiveInformation }) => {
-  let riskScore = 0;
+    agents: {
+      guardian,
 
-  const reasons = [];
+      intelligence,
 
-  for (const rule of detectedRules) {
-    riskScore += rule.weight;
+      victimSafety: safeObject(
+        agentResults.victim_safety || victimSafety,
+      ),
 
-    reasons.push(rule.label);
-  }
+      decoy: {
+        status: "not_started",
+        message:
+          "Decoy simulation requires separate user-controlled activation.",
+        simulationEnabled: false,
+      },
+    },
 
-  if (indicators.some((item) => item.type === "url")) {
-    riskScore += 10;
-    reasons.push("A URL was found in the submitted evidence.");
-  }
+    machineLearning: {
+      available: ml.available === true,
+      prediction: ml.prediction ?? null,
+      confidence: ml.confidence ?? null,
+      method: ml.method || "not_available",
+    },
 
-  if (indicators.some((item) => item.type === "upi")) {
-    riskScore += 8;
-    reasons.push("A UPI identifier was found.");
-  }
+    analysisMethod,
 
-  if (sensitiveInformation.length > 0) {
-    riskScore += 10;
-    reasons.push("The evidence refers to potentially sensitive credentials.");
-  }
+    aiEngineUsed: true,
 
-  riskScore = Math.min(100, riskScore);
+    orchestration: safeObject(
+      pythonResult.orchestration,
+    ),
 
-  let riskLevel = "low";
+    verification: safeObject(
+      pythonResult.verification,
+    ),
 
-  if (riskScore >= 75) {
-    riskLevel = "critical";
-  } else if (riskScore >= 50) {
-    riskLevel = "high";
-  } else if (riskScore >= 25) {
-    riskLevel = "medium";
-  }
-
-  return {
-    riskScore,
-    riskLevel,
-    reasons,
-  };
-};
-
-/*
-=========================================================
- 7. ANALYSIS SUMMARY
-=========================================================
-*/
-
-const generateSummary = (fraudCategory, riskLevel) => {
-  const categoryNames = {
-    investment: "Investment scam",
-    digitalArrest: "Digital arrest scam",
-    creditCard: "Credit card or banking fraud",
-    sextortion: "Sextortion or blackmail",
-    ecommerce: "E-commerce fraud",
-    other: "Other suspicious activity",
-    unclassified: "Unclassified activity",
-  };
-
-  const categoryName = categoryNames[fraudCategory] || "Suspicious activity";
-
-  if (riskLevel === "critical") {
-    return `${categoryName} indicators detected. Immediate caution is recommended.`;
-  }
-
-  if (riskLevel === "high") {
-    return `${categoryName} indicators detected. Verify the source before taking action.`;
-  }
-
-  if (riskLevel === "medium") {
-    return `Some suspicious indicators were detected. Exercise caution and verify independently.`;
-  }
-
-  return "No strong scam indicators were detected by the current rules. This does not guarantee that the evidence is safe.";
-};
-
-/*
-=========================================================
- 8. MAIN ANALYSIS FUNCTION
-=========================================================
-*/
-
-const analyzeEvidence = async ({ evidenceType, evidence }) => {
-  const normalizedEvidence = validateEvidence({
-    evidenceType,
-    evidence,
-  });
-
-  // Use an opaque, unique reference rather than hashing user text. A stable
-  // content hash can reveal repeated submissions and be guessed offline.
-  const evidenceId = crypto.randomUUID();
-
-  const sensitiveInformation = detectSensitiveInformation(normalizedEvidence);
-
-  const classification = classifyFraud(normalizedEvidence);
-
-  const indicators = extractIndicators(normalizedEvidence);
-
-  const risk = calculateRisk({
-    detectedRules: classification.detectedRules,
-    indicators,
-    sensitiveInformation,
-  });
-
-  const summary = generateSummary(classification.fraudCategory, risk.riskLevel);
-
-  return {
-    evidenceId,
-
-    evidenceType,
-
-    fraudCategory: classification.fraudCategory,
-
-    riskScore: risk.riskScore,
-
-    riskLevel: risk.riskLevel,
-
-    summary,
-
-    explanation: risk.reasons,
-
-    indicators,
-
-    sensitiveInformation,
-
-    detectedRules: classification.detectedRules,
-
-    analysisMethod: "rule_based",
-
-    aiEngineUsed: false,
-
-    disclaimer:
-      "This is an automated rule-based assessment, not proof of fraud. Indicators are unverified clues. Verify independently before taking action.",
+    disclaimer: String(
+      pythonResult.disclaimer ||
+      "Automated analysis is advisory and does not independently prove fraud.",
+    ),
 
     analyzedAt: new Date(),
   };
 };
 
-/*
-=========================================================
- EXPORTS
-=========================================================
-*/
+// =====================================================
+// MAIN ANALYSIS
+// =====================================================
+
+const analyzeEvidence = async ({
+  evidenceType,
+  evidence,
+}) => {
+  const normalizedEvidence = validateEvidence({
+    evidenceType,
+    evidence,
+  });
+
+  const normalizedEvidenceType = evidenceType
+    .trim()
+    .toLowerCase();
+
+  const pythonResult = await callPythonAIEngine({
+    evidenceType: normalizedEvidenceType,
+    evidence: normalizedEvidence,
+  });
+
+  return normalizePythonResult({
+    pythonResult,
+    evidenceType: normalizedEvidenceType,
+  });
+};
+
+// =====================================================
+// LEGACY HELPERS
+// =====================================================
+
+const classifyFraud = () => {
+  throw new Error(
+    "Local classification is disabled. Use the Python AI Engine.",
+  );
+};
+
+const extractIndicators = () => {
+  throw new Error(
+    "Local indicator extraction is disabled. Use the Python AI Engine.",
+  );
+};
+
+const calculateRisk = () => {
+  throw new Error(
+    "Local risk calculation is disabled. Use the Python AI Engine.",
+  );
+};
+
+// =====================================================
+// EXPORTS
+// =====================================================
 
 module.exports = {
   analyzeEvidence,

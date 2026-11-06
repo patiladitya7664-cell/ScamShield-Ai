@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e1c">
+  <meta
+    name="description"
+    content="Get general digital safety guidance from ScamShield AI."
+  >
+  <title>Safety Assistant | ScamShield AI</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <link rel="stylesheet" href="../css/modules.css">
+
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="dashboard.html" aria-label="ScamShield AI dashboard">
+      <span class="brand-mark" aria-hidden="true">⬡</span>
+      ScamShield <span>AI</span>
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="detection.html">Detection</a>
+      <a href="assistant.html" aria-current="page">Assistant</a>
+    </nav>
+  </header>
+
+  <main class="module-page">
+    <section class="module-heading">
+      <p class="module-eyebrow">DIGITAL SAFETY SUPPORT</p>
+      <h1>Safety assistant</h1>
+      <p>
+        Find general guidance for suspicious messages, calls, links, and payment
+        requests.
+      </p>
+    </section>
+
+    <section class="scanner-panel" aria-labelledby="assistant-title">
+      <h2 id="assistant-title">How can we help?</h2>
+      <p class="scanner-help">
+        Choose a topic to see the relevant safety guidance.
+      </p>
+
+      <div class="module-card-grid" aria-label="Assistant topics">
+        <a class="module-card module-card-link" href="detection.html">
+          <h3>Check a suspicious message</h3>
+          <p>Open Detection to review a message or email for common warning signs.</p>
+        </a>
+
+        <a class="module-card module-card-link" href="detection.html">
+          <h3>Check a suspicious link</h3>
+          <p>Review a URL before entering personal or payment information.</p>
+        </a>
+
+        <a class="module-card module-card-link" href="family-protection.html">
+          <h3>Get family safety tips</h3>
+          <p>Review simple steps for verifying urgent requests and protecting accounts.</p>
+        </a>
+      </div>
+
+      <div class="scanner-result" role="note" aria-label="Assistant availability">
+        <h3>Chat assistant is not connected yet</h3>
+        <p class="scanner-result-summary">
+          This page provides links to available safety guidance. A live chat
+          assistant needs a connected backend service.
+        </p>
+      </div>
+
+      <p class="scanner-disclaimer">
+        ScamShield guidance is for awareness and does not replace your bank,
+        local authorities, or professional advice.
+      </p>
+    </section>
+  </main>
+  <script src="../js/services/api.js" defer></script>
+<script src="../js/main.js" defer></script>
+</body>
+</html>

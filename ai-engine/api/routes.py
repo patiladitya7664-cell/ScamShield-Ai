@@ -3,7 +3,18 @@
 SCAMSHIELD AI - API ROUTES
 =========================================================
 
+Version: 1.1.0
+
 Main AI analysis and controlled decoy simulation endpoints.
+
+Endpoints:
+- GET  /health
+- POST /analyze
+- POST /decoy/start
+- POST /decoy/continue
+- POST /decoy/end
+
+=========================================================
 """
 
 from datetime import datetime, timezone
@@ -18,6 +29,8 @@ from utils.logger import logger
 
 router = APIRouter()
 
+API_VERSION = "1.1.0"
+
 EvidenceType = Literal[
     "message",
     "url",
@@ -27,12 +40,14 @@ EvidenceType = Literal[
     "email",
 ]
 
+
 # =========================================================
 # REQUEST MODELS
 # =========================================================
 
 
 class AnalysisRequest(BaseModel):
+
     model_config = ConfigDict(
         str_strip_whitespace=True,
         extra="forbid",
@@ -50,6 +65,7 @@ class AnalysisRequest(BaseModel):
 
 
 class DecoyStartRequest(BaseModel):
+
     model_config = ConfigDict(
         str_strip_whitespace=True,
         extra="forbid",
@@ -63,6 +79,7 @@ class DecoyStartRequest(BaseModel):
 
 
 class DecoyContinueRequest(BaseModel):
+
     model_config = ConfigDict(
         str_strip_whitespace=True,
         extra="forbid",
@@ -82,6 +99,7 @@ class DecoyContinueRequest(BaseModel):
 
 
 class DecoyEndRequest(BaseModel):
+
     model_config = ConfigDict(
         str_strip_whitespace=True,
         extra="forbid",
@@ -99,13 +117,18 @@ class DecoyEndRequest(BaseModel):
 # =========================================================
 
 
-def validate_service_response(result: Any) -> Dict[str, Any]:
+def validate_service_response(
+    result: Any,
+) -> Dict[str, Any]:
     """
-    Ensure that internal services return a dictionary.
+    Validate internal service response.
     """
 
     if not isinstance(result, dict):
-        raise RuntimeError("Invalid internal service response.")
+
+        raise RuntimeError(
+            "Invalid internal service response."
+        )
 
     return result
 
@@ -115,13 +138,54 @@ def raise_service_error(
     status_code: int = 422,
 ):
     """
-    Convert an unsuccessful service response into an API error.
+    Convert unsuccessful service responses
+    into safe HTTP errors.
     """
 
     if not result.get("success", False):
+
+        metadata = result.get("metadata")
+
+        if not isinstance(metadata, dict):
+            metadata = {}
+
+        errors = result.get("errors")
+
+        if not isinstance(errors, list):
+            errors = []
+
         raise HTTPException(
             status_code=status_code,
-            detail=result,
+
+            detail={
+                "success": False,
+
+                "message": result.get(
+                    "message",
+                    "The requested operation could not be completed.",
+                ),
+
+                "status": result.get(
+                    "status",
+                    "failed",
+                ),
+
+                "request_id": result.get(
+                    "request_id"
+                ),
+
+                "errors": errors,
+
+                "metadata": {
+                    "request_id": metadata.get(
+                        "request_id"
+                    ),
+
+                    "duration_seconds": metadata.get(
+                        "duration_seconds"
+                    ),
+                },
+            },
         )
 
 
@@ -131,13 +195,22 @@ def raise_service_error(
 
 
 @router.get("/health")
-async def health_check():
+def health_check():
+
     return {
         "success": True,
+
         "service": "ScamShield AI Engine",
+
         "status": "online",
-        "version": "1.0.0",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+
+        "version": API_VERSION,
+
+        "pipeline_version": ai_pipeline.VERSION,
+
+        "timestamp": datetime.now(
+            timezone.utc
+        ).isoformat(),
     }
 
 
@@ -147,17 +220,33 @@ async def health_check():
 
 
 @router.post("/analyze")
-async def analyze_evidence(request: AnalysisRequest):
+def analyze_evidence(
+    request: AnalysisRequest,
+):
+
     try:
+
+        logger.info(
+            "AI analysis API request received | type=%s",
+            request.evidence_type,
+        )
+
         result = ai_pipeline.analyze(
             evidence=request.evidence,
+
             evidence_type=request.evidence_type,
+
             metadata=request.metadata,
         )
 
-        result = validate_service_response(result)
+        result = validate_service_response(
+            result
+        )
 
-        raise_service_error(result, status_code=422)
+        raise_service_error(
+            result,
+            status_code=422,
+        )
 
         return result
 
@@ -165,15 +254,20 @@ async def analyze_evidence(request: AnalysisRequest):
         raise
 
     except Exception:
+
         logger.exception(
             "Evidence analysis API failed."
         )
 
         raise HTTPException(
             status_code=500,
+
             detail={
                 "success": False,
-                "message": "AI analysis service encountered an error.",
+
+                "message": (
+                    "AI analysis service encountered an error."
+                ),
             },
         )
 
@@ -184,17 +278,30 @@ async def analyze_evidence(request: AnalysisRequest):
 
 
 @router.post("/decoy/start")
-async def start_decoy_simulation(
+def start_decoy_simulation(
     request: DecoyStartRequest,
 ):
+
     try:
-        result = ai_pipeline.orchestrator.start_decoy_simulation(
-            request.scam_message
+
+        logger.info(
+            "Decoy simulation start requested."
         )
 
-        result = validate_service_response(result)
+        result = (
+            ai_pipeline.orchestrator.start_decoy_simulation(
+                request.scam_message
+            )
+        )
 
-        raise_service_error(result, status_code=422)
+        result = validate_service_response(
+            result
+        )
+
+        raise_service_error(
+            result,
+            status_code=422,
+        )
 
         return result
 
@@ -202,15 +309,20 @@ async def start_decoy_simulation(
         raise
 
     except Exception:
+
         logger.exception(
             "Decoy simulation start failed."
         )
 
         raise HTTPException(
             status_code=500,
+
             detail={
                 "success": False,
-                "message": "Could not start decoy simulation.",
+
+                "message": (
+                    "Could not start decoy simulation."
+                ),
             },
         )
 
@@ -221,18 +333,32 @@ async def start_decoy_simulation(
 
 
 @router.post("/decoy/continue")
-async def continue_decoy_simulation(
+def continue_decoy_simulation(
     request: DecoyContinueRequest,
 ):
+
     try:
-        result = ai_pipeline.orchestrator.continue_decoy_simulation(
-            session_id=request.session_id,
-            scam_message=request.scam_message,
+
+        logger.info(
+            "Decoy simulation continuation requested."
         )
 
-        result = validate_service_response(result)
+        result = (
+            ai_pipeline.orchestrator.continue_decoy_simulation(
+                session_id=request.session_id,
 
-        raise_service_error(result, status_code=422)
+                scam_message=request.scam_message,
+            )
+        )
+
+        result = validate_service_response(
+            result
+        )
+
+        raise_service_error(
+            result,
+            status_code=422,
+        )
 
         return result
 
@@ -240,15 +366,20 @@ async def continue_decoy_simulation(
         raise
 
     except Exception:
+
         logger.exception(
             "Decoy simulation continuation failed."
         )
 
         raise HTTPException(
             status_code=500,
+
             detail={
                 "success": False,
-                "message": "Could not continue decoy simulation.",
+
+                "message": (
+                    "Could not continue decoy simulation."
+                ),
             },
         )
 
@@ -259,17 +390,30 @@ async def continue_decoy_simulation(
 
 
 @router.post("/decoy/end")
-async def end_decoy_simulation(
+def end_decoy_simulation(
     request: DecoyEndRequest,
 ):
+
     try:
-        result = ai_pipeline.orchestrator.end_decoy_simulation(
-            session_id=request.session_id
+
+        logger.info(
+            "Decoy simulation termination requested."
         )
 
-        result = validate_service_response(result)
+        result = (
+            ai_pipeline.orchestrator.end_decoy_simulation(
+                session_id=request.session_id
+            )
+        )
 
-        raise_service_error(result, status_code=404)
+        result = validate_service_response(
+            result
+        )
+
+        raise_service_error(
+            result,
+            status_code=404,
+        )
 
         return result
 
@@ -277,14 +421,19 @@ async def end_decoy_simulation(
         raise
 
     except Exception:
+
         logger.exception(
             "Decoy simulation termination failed."
         )
 
         raise HTTPException(
             status_code=500,
+
             detail={
                 "success": False,
-                "message": "Could not end decoy simulation.",
+
+                "message": (
+                    "Could not end decoy simulation."
+                ),
             },
         )

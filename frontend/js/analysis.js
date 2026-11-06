@@ -429,7 +429,7 @@
       localStorage.removeItem(TOKEN_KEY);
       sessionStorage.removeItem(TOKEN_KEY);
 
-      window.location.href = "login.html";
+      window.ScamShieldApp?.showScreen("login");
 
       throw new Error(
         "Your session has expired. Please login again."

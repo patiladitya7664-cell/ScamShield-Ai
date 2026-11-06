@@ -1,18 +1,19 @@
-
 """
 =========================================================
 SCAMSHIELD AI - INTELLIGENCE AGENT
 =========================================================
 
 Responsibilities:
-- Extract intelligence indicators.
-- Identify URLs, phone numbers, emails and UPI IDs.
-- Detect suspicious keyword categories.
-- Preserve previously extracted indicators.
-- Clearly mark indicators as UNVERIFIED.
-- Never claim external reputation verification.
+    1. Extract intelligence indicators.
+    2. Identify URLs, phone numbers, emails and UPI IDs.
+    3. Detect suspicious keyword categories.
+    4. Preserve previously extracted indicators.
+    5. Normalize and deduplicate extracted data.
+    6. Clearly mark indicators as UNVERIFIED.
+    7. Never claim external reputation verification.
 
 No external contact or URL interaction is performed.
+
 =========================================================
 """
 
@@ -32,7 +33,7 @@ from utils.logger import (
 class IntelligenceAgent:
 
     AGENT_NAME = "IntelligenceAgent"
-    AGENT_VERSION = "1.0.0"
+    AGENT_VERSION = "1.1.0"
 
     MAX_EVIDENCE_LENGTH = 20000
 
@@ -45,13 +46,20 @@ class IntelligenceAgent:
         "email",
     }
 
+    INDICATOR_FIELDS = {
+        "urls": ["urls", "links"],
+        "phone_numbers": ["phone_numbers", "phones"],
+        "emails": ["emails", "email_addresses"],
+        "upi_ids": ["upi_ids", "upi"],
+    }
+
     # =====================================================
     # INITIALIZATION
     # =====================================================
 
-    def __init__(self):
+    def __init__(self, extractor=None):
 
-        self.extractor = EvidenceExtractor()
+        self.extractor = extractor or EvidenceExtractor()
 
     # =====================================================
     # MAIN ANALYSIS
@@ -67,7 +75,13 @@ class IntelligenceAgent:
         start_time = perf_counter()
         analysis_id = str(uuid4())
 
+        started_at = self._timestamp()
+
         try:
+
+            # ---------------------------------------------
+            # INPUT VALIDATION
+            # ---------------------------------------------
 
             evidence, evidence_type = self._validate_input(
                 evidence,
@@ -81,46 +95,75 @@ class IntelligenceAgent:
             if existing_indicators is not None:
 
                 if not isinstance(existing_indicators, dict):
+
                     raise ValueError(
                         "Existing indicators must be a dictionary."
                     )
 
                 extracted = existing_indicators
 
+                indicators_reused = True
+
             else:
 
-                extracted = self.extractor.extract(evidence)
+                extracted = self.extractor.extract(
+                    evidence
+                )
 
                 if not isinstance(extracted, dict):
+
                     raise RuntimeError(
                         "Invalid evidence extractor response."
                     )
 
                 if not extracted.get("success", False):
+
                     raise RuntimeError(
                         "Evidence extraction failed."
                     )
+
+                indicators_reused = False
+
+            # ---------------------------------------------
+            # NORMALIZE INDICATORS
+            # ---------------------------------------------
 
             normalized = self._normalize_indicators(
                 extracted
             )
 
-            summary = self._build_summary(normalized)
+            # ---------------------------------------------
+            # SUMMARY AND COUNTS
+            # ---------------------------------------------
 
-            counts = self._build_counts(normalized)
-
-            duration_ms = round(
-                (perf_counter() - start_time) * 1000,
-                2,
+            counts = self._build_counts(
+                normalized
             )
 
+            summary = self._build_summary(
+                counts
+            )
+
+            duration_ms = self._duration_ms(
+                start_time
+            )
+
+            # ---------------------------------------------
+            # FINAL RESULT
+            # ---------------------------------------------
+
             result = {
+
                 "success": True,
 
                 "agent": {
+
                     "name": self.AGENT_NAME,
+
                     "version": self.AGENT_VERSION,
+
                     "status": "completed",
+
                 },
 
                 "analysis_id": analysis_id,
@@ -128,15 +171,19 @@ class IntelligenceAgent:
                 "evidence_type": evidence_type,
 
                 "intelligence": {
+
                     "urls": normalized["urls"],
+
                     "phone_numbers": normalized["phone_numbers"],
+
                     "emails": normalized["emails"],
+
                     "upi_ids": normalized["upi_ids"],
 
-                    # Preserve keyword categories.
                     "suspicious_keywords": normalized[
                         "suspicious_keywords"
                     ],
+
                 },
 
                 "summary": summary,
@@ -144,25 +191,35 @@ class IntelligenceAgent:
                 "indicator_counts": counts,
 
                 "verification": {
+
                     "status": "UNVERIFIED",
+
                     "external_lookup_performed": False,
+
                     "message": (
                         "Indicators are extracted from submitted evidence. "
                         "Their ownership, reputation and malicious status "
                         "have not been independently verified."
                     ),
+
                 },
 
                 "metadata": {
+
                     "analysis_method": "rule_based_extraction",
-                    "analysis_started_at": datetime.now(
-                        timezone.utc
-                    ).isoformat(),
+
+                    "analysis_started_at": started_at,
+
+                    "completed_at": self._timestamp(),
+
                     "duration_ms": duration_ms,
-                    "indicators_reused": (
-                        existing_indicators is not None
-                    ),
+
+                    "indicators_reused": indicators_reused,
+
+                    "external_services_contacted": False,
+
                 },
+
             }
 
             # ---------------------------------------------
@@ -174,6 +231,7 @@ class IntelligenceAgent:
                 "SUCCESS",
                 (
                     f"Analysis ID: {analysis_id} | "
+                    f"Evidence type: {evidence_type} | "
                     f"Total indicators: {summary['total_indicators']} | "
                     f"Duration: {duration_ms} ms"
                 ),
@@ -258,7 +316,8 @@ class IntelligenceAgent:
         if evidence_type not in self.SUPPORTED_EVIDENCE_TYPES:
 
             raise ValueError(
-                "Unsupported evidence type."
+                "Unsupported evidence type: "
+                + evidence_type
             )
 
         return evidence, evidence_type
@@ -275,8 +334,9 @@ class IntelligenceAgent:
         if not isinstance(extracted, dict):
             extracted = {}
 
-        # Support both full extractor output and
-        # a direct indicators dictionary.
+        # Support both:
+        # 1. Full EvidenceExtractor response.
+        # 2. Direct indicators dictionary.
 
         indicators = extracted.get(
             "indicators",
@@ -286,43 +346,44 @@ class IntelligenceAgent:
         if not isinstance(indicators, dict):
             indicators = {}
 
+        normalized = {}
+
+        # ---------------------------------------------
+        # STANDARD INDICATORS
+        # ---------------------------------------------
+
+        for output_key, possible_keys in self.INDICATOR_FIELDS.items():
+
+            normalized[output_key] = self._get_list(
+                indicators,
+                possible_keys,
+            )
+
+        # ---------------------------------------------
+        # SUSPICIOUS KEYWORDS
+        # ---------------------------------------------
+
         suspicious_keywords = extracted.get(
             "suspicious_keywords",
             indicators.get("suspicious_keywords", {}),
         )
 
-        return {
-            "urls": self._get_list(
-                indicators,
-                ["urls", "links"],
-            ),
-
-            "phone_numbers": self._get_list(
-                indicators,
-                ["phone_numbers", "phones"],
-            ),
-
-            "emails": self._get_list(
-                indicators,
-                ["emails", "email_addresses"],
-            ),
-
-            "upi_ids": self._get_list(
-                indicators,
-                ["upi_ids", "upi"],
-            ),
-
-            "suspicious_keywords": self._normalize_keywords(
+        normalized["suspicious_keywords"] = (
+            self._normalize_keywords(
                 suspicious_keywords
-            ),
-        }
+            )
+        )
+
+        return normalized
 
     # =====================================================
     # KEYWORD NORMALIZATION
     # =====================================================
 
     @staticmethod
-    def _normalize_keywords(value) -> Dict[str, List[str]]:
+    def _normalize_keywords(
+        value,
+    ) -> Dict[str, List[str]]:
 
         if isinstance(value, dict):
 
@@ -330,30 +391,48 @@ class IntelligenceAgent:
 
             for category, matches in value.items():
 
-                if isinstance(matches, list):
+                category_name = str(category).strip()
 
-                    valid_matches = [
-                        str(item)
-                        for item in matches
-                        if isinstance(item, str) and item.strip()
-                    ]
+                if not category_name:
+                    continue
 
-                    if valid_matches:
-                        normalized[str(category)] = valid_matches
+                if isinstance(matches, str):
 
-                elif isinstance(matches, str) and matches.strip():
+                    matches = [matches]
 
-                    normalized[str(category)] = [matches]
+                if not isinstance(matches, (list, tuple, set)):
+                    continue
+
+                valid_matches = []
+
+                for item in matches:
+
+                    if not isinstance(item, str):
+                        continue
+
+                    item = item.strip()
+
+                    if item and item not in valid_matches:
+                        valid_matches.append(item)
+
+                if valid_matches:
+
+                    normalized[category_name] = valid_matches
 
             return normalized
 
-        if isinstance(value, list):
+        if isinstance(value, (list, tuple, set)):
 
-            valid_matches = [
-                str(item)
-                for item in value
-                if isinstance(item, str) and item.strip()
-            ]
+            valid_matches = []
+
+            for item in value:
+
+                if isinstance(item, str):
+
+                    item = item.strip()
+
+                    if item and item not in valid_matches:
+                        valid_matches.append(item)
 
             return (
                 {"general": valid_matches}
@@ -371,19 +450,30 @@ class IntelligenceAgent:
     def _get_list(
         data: Dict[str, Any],
         possible_keys: List[str],
-    ) -> List[Any]:
+    ) -> List[str]:
 
         for key in possible_keys:
 
             value = data.get(key)
 
-            if isinstance(value, list):
+            if isinstance(value, str):
+                value = [value]
 
-                return [
-                    item
-                    for item in value
-                    if isinstance(item, str) and item.strip()
-                ]
+            if isinstance(value, (list, tuple, set)):
+
+                normalized = []
+
+                for item in value:
+
+                    if not isinstance(item, str):
+                        continue
+
+                    item = item.strip()
+
+                    if item and item not in normalized:
+                        normalized.append(item)
+
+                return normalized
 
         return []
 
@@ -391,16 +481,15 @@ class IntelligenceAgent:
     # SUMMARY
     # =====================================================
 
+    @staticmethod
     def _build_summary(
-        self,
-        indicators: Dict[str, Any],
+        counts: Dict[str, int],
     ) -> Dict[str, Any]:
-
-        counts = self._build_counts(indicators)
 
         total = sum(counts.values())
 
         return {
+
             "total_indicators": total,
 
             "message": (
@@ -411,6 +500,7 @@ class IntelligenceAgent:
                     "were detected."
                 )
             ),
+
         }
 
     # =====================================================
@@ -422,9 +512,10 @@ class IntelligenceAgent:
         indicators: Dict[str, Any],
     ) -> Dict[str, int]:
 
-        keyword_categories = indicators[
-            "suspicious_keywords"
-        ]
+        keyword_categories = indicators.get(
+            "suspicious_keywords",
+            {},
+        )
 
         keyword_count = sum(
             len(matches)
@@ -432,18 +523,51 @@ class IntelligenceAgent:
         )
 
         return {
-            "urls": len(indicators["urls"]),
 
-            "phone_numbers": len(
-                indicators["phone_numbers"]
+            "urls": len(
+                indicators.get("urls", [])
             ),
 
-            "emails": len(indicators["emails"]),
+            "phone_numbers": len(
+                indicators.get("phone_numbers", [])
+            ),
 
-            "upi_ids": len(indicators["upi_ids"]),
+            "emails": len(
+                indicators.get("emails", [])
+            ),
+
+            "upi_ids": len(
+                indicators.get("upi_ids", [])
+            ),
 
             "suspicious_keywords": keyword_count,
+
         }
+
+    # =====================================================
+    # TIMESTAMP
+    # =====================================================
+
+    @staticmethod
+    def _timestamp() -> str:
+
+        return datetime.now(
+            timezone.utc
+        ).isoformat()
+
+    # =====================================================
+    # DURATION
+    # =====================================================
+
+    @staticmethod
+    def _duration_ms(
+        start_time: float,
+    ) -> float:
+
+        return round(
+            (perf_counter() - start_time) * 1000,
+            2,
+        )
 
     # =====================================================
     # ERROR RESPONSE
@@ -458,40 +582,60 @@ class IntelligenceAgent:
     ) -> Dict[str, Any]:
 
         return {
+
             "success": False,
 
             "agent": {
+
                 "name": self.AGENT_NAME,
+
                 "version": self.AGENT_VERSION,
+
                 "status": "failed",
+
             },
 
             "analysis_id": analysis_id,
 
             "error": {
+
                 "code": error_code,
+
                 "message": message,
+
+            },
+
+            "verification": {
+
+                "status": "UNVERIFIED",
+
+                "external_lookup_performed": False,
+
             },
 
             "metadata": {
-                "duration_ms": round(
-                    (perf_counter() - start_time) * 1000,
-                    2,
+
+                "duration_ms": self._duration_ms(
+                    start_time
                 ),
+
+                "timestamp": self._timestamp(),
+
             },
+
         }
 
 
-# =====================================================
+# =========================================================
 # REUSABLE AGENT INSTANCE
-# =====================================================
+# =========================================================
 
 intelligence_agent = IntelligenceAgent()
 
 
-# =====================================================
+# =========================================================
 # PUBLIC FUNCTION
-# =====================================================
+# =========================================================
 
 def run_intelligence_analysis(
     evidence: str,

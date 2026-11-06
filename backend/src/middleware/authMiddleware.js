@@ -55,7 +55,9 @@ const protect = async (req, res, next) => {
         }
 
         console.error("Authentication Error:", error.message);
-
+        
+       console.error("Error Name:", error.name);
+console.error("JWT_SECRET Exists:", !!process.env.JWT_SECRET);
         return res.status(500).json({
             success: false,
             message: "Authentication failed."

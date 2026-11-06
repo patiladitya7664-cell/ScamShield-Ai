@@ -1,137 +1,235 @@
 "use strict";
 
-/* ==========================================
-   SCAMSHIELD AI - API SERVICE
-   Backend API Communication
-========================================== */
+(function () {
+  const API_BASE_URL =
+    window.SCAMSHIELD_API_URL || "http://localhost:5000/api";
 
-(function (window) {
-  const API_BASE_URL = window.SCAMSHIELD_API_URL || "http://localhost:5000/api";
+  const TOKEN_KEY = "scamshield_token";
+  const USER_KEY = "scamshield_user";
 
-  const getToken = () => {
-    return (
-      localStorage.getItem("scamshieldToken") ||
-      sessionStorage.getItem("scamshieldToken")
-    );
-  };
-
-  const request = async (endpoint, options = {}) => {
-    try {
-      const token = getToken();
-
-      const headers = {
-        ...(options.headers || {}),
-      };
-
-      // Don't override Content-Type for FormData
-      if (!(options.body instanceof FormData)) {
-        headers["Content-Type"] = "application/json";
-      }
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers,
-      });
-
-      const contentType = response.headers.get("content-type") || "";
-
-      const result = contentType.includes("application/json")
-        ? await response.json()
-        : await response.text();
-
-      if (!response.ok) {
-        const message =
-          typeof result === "object" && result !== null
-            ? result.message || "Something went wrong."
-            : result || "Something went wrong.";
-
-        throw new Error(message);
-      }
-
-      return result;
-    } catch (error) {
-      console.error(`API Error [${endpoint}]:`, error.message);
-      throw error;
+  class ApiError extends Error {
+    constructor(message, status, data) {
+      super(message);
+      this.name = "ApiError";
+      this.status = status;
+      this.data = data;
     }
-  };
+  }
 
-  const API = {
-    // GET Request
-    get(endpoint) {
-      return request(endpoint, {
-        method: "GET",
+  function getToken() {
+    const keys = [
+        "scamshield_token",
+        "scamshieldToken"
+    ];
+
+    for (const key of keys) {
+        const token =
+            localStorage.getItem(key) ||
+            sessionStorage.getItem(key);
+
+        if (token) {
+            return token;
+        }
+    }
+
+    return null;
+}
+
+  function getSavedUser() {
+    const savedUser = localStorage.getItem(USER_KEY);
+
+    if (!savedUser) return null;
+
+    try {
+      return JSON.parse(savedUser);
+    } catch {
+      localStorage.removeItem(USER_KEY);
+      return null;
+    }
+  }
+
+  function saveSession(token, user) {
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+
+    if (user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+    }
+  }
+
+  function clearSession() {
+    const keys = [
+        "scamshield_token",
+        "scamshieldToken",
+        "scamshield_user",
+        "scamshieldUser"
+    ];
+
+    keys.forEach((key) => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+    });
+}
+
+  async function request(path, options = {}) {
+    const headers = new Headers(options.headers || {});
+    const token = getToken();
+
+    if (options.body && !headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+
+    if (token && !headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    let response;
+
+    try {
+      response = await fetch(`${API_BASE_URL}${path}`, {
+        ...options,
+        headers
       });
-    },
+    } catch {
+      throw new ApiError(
+        "Backend se connect nahi ho pa raha. Check karein ki server chal raha hai.",
+        0,
+        null
+      );
+    }
 
-    // POST Request
-    post(endpoint, data = {}) {
-      return request(endpoint, {
-        method: "POST",
-        body: data instanceof FormData ? data : JSON.stringify(data),
-      });
-    },
+    const contentType = response.headers.get("content-type") || "";
+    const data = contentType.includes("application/json")
+      ? await response.json()
+      : null;
 
-    // PUT Request
-    put(endpoint, data = {}) {
-      return request(endpoint, {
-        method: "PUT",
-        body: data instanceof FormData ? data : JSON.stringify(data),
-      });
-    },
+    if (!response.ok) {
+      if (response.status === 401) {
+        clearSession();
+      }
 
-    // PATCH Request
-    patch(endpoint, data = {}) {
-      return request(endpoint, {
-        method: "PATCH",
-        body: data instanceof FormData ? data : JSON.stringify(data),
-      });
-    },
+      throw new ApiError(
+        data?.message || `Request fail hua (${response.status}).`,
+        response.status,
+        data
+      );
+    }
 
-    // DELETE Request
-    delete(endpoint) {
-      return request(endpoint, {
-        method: "DELETE",
-      });
-    },
+    return data;
+  }
 
-    // Authentication APIs
-    auth: {
-      register(data) {
-        return API.post("/auth/register", data);
-      },
+  // ================================================
+  // HTTP METHODS
+  // ================================================
 
-      login(data) {
-        return API.post("/auth/login", data);
-      },
+  function get(path, options = {}) {
+    return request(path, {
+      ...options,
+      method: "GET"
+    });
+  }
 
-      getProfile() {
-        return API.get("/auth/me");
-      },
+  function post(path, body, options = {}) {
+    return request(path, {
+      ...options,
+      method: "POST",
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+  }
 
-      logout() {
-        localStorage.removeItem("scamshieldToken");
-        localStorage.removeItem("scamshieldUser");
-        sessionStorage.removeItem("scamshieldToken");
-        sessionStorage.removeItem("scamshieldUser");
-      },
-    },
+  function put(path, body, options = {}) {
+    return request(path, {
+      ...options,
+      method: "PUT",
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+  }
 
-    // Dashboard APIs
-    dashboard: {
-      getOverview() {
-        return API.get("/dashboard/overview");
-      },
-    },
+  function patch(path, body, options = {}) {
+    return request(path, {
+      ...options,
+      method: "PATCH",
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+  }
 
-    // Health Check
-    healthCheck() {
-      return API.get("/health");
-    },
-  };
+  function deleteRequest(path, options = {}) {
+    return request(path, {
+      ...options,
+      method: "DELETE"
+    });
+  }
 
-  window.ScamShieldAPI = API;
-})(window);
+  // ================================================
+  // AUTHENTICATION
+  // ================================================
+
+  async function register({ name, email, password }) {
+    const data = await post("/auth/register", {
+      name,
+      email,
+      password
+    });
+
+    if (data?.user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    }
+
+    return data;
+  }
+
+  async function login({ email, password }) {
+    const data = await post("/auth/login", {
+      email,
+      password
+    });
+
+    if (!data?.token || !data?.user) {
+      throw new ApiError(
+        "Login response mein token ya user details nahi mile.",
+        500,
+        data
+      );
+    }
+
+    saveSession(data.token, data.user);
+    return data;
+  }
+
+  async function getCurrentUser() {
+    const data = await get("/auth/me");
+
+    if (data?.user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    }
+
+    return data?.user || null;
+  }
+
+  function logout() {
+    clearSession();
+  }
+
+  // ================================================
+  // PUBLIC API
+  // ================================================
+
+  window.ScamShieldAPI = Object.freeze({
+    ApiError,
+
+    request,
+    get,
+    post,
+    put,
+    patch,
+    delete: deleteRequest,
+
+    register,
+    login,
+    getCurrentUser,
+    getToken,
+    getSavedUser,
+    logout
+  });
+})();

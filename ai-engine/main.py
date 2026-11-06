@@ -1,13 +1,17 @@
-
 """
 =========================================================
 SCAMSHIELD AI - MAIN APPLICATION
 =========================================================
 
 FastAPI entry point for the ScamShield AI Engine.
+
+Version: 1.1.0
+
+=========================================================
 """
 
 import os
+
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
@@ -15,6 +19,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import router
+from services.ai_pipeline import ai_pipeline
 from utils.logger import logger
 
 
@@ -23,7 +28,7 @@ from utils.logger import logger
 # =========================================================
 
 APP_NAME = "ScamShield AI"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 
 DEFAULT_CORS_ORIGINS = [
     "http://localhost:3000",
@@ -31,6 +36,7 @@ DEFAULT_CORS_ORIGINS = [
     "http://localhost:5000",
     "http://localhost:5173",
     "http://localhost:5500",
+
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
     "http://127.0.0.1:5000",
@@ -38,6 +44,10 @@ DEFAULT_CORS_ORIGINS = [
     "http://127.0.0.1:5500",
 ]
 
+
+# =========================================================
+# CORS CONFIGURATION
+# =========================================================
 
 def get_cors_origins():
     """
@@ -47,25 +57,36 @@ def get_cors_origins():
     CORS_ORIGINS=http://localhost:5173,https://example.com
     """
 
-    configured_origins = os.getenv("CORS_ORIGINS", "").strip()
+    configured_origins = os.getenv(
+        "CORS_ORIGINS",
+        "",
+    ).strip()
 
     if not configured_origins:
         return DEFAULT_CORS_ORIGINS
 
-    return [
+    origins = [
         origin.strip().rstrip("/")
         for origin in configured_origins.split(",")
         if origin.strip()
     ]
+
+    return origins or DEFAULT_CORS_ORIGINS
+
+
+CORS_ORIGINS = get_cors_origins()
+
+# Wildcard origins cannot be combined with credential support.
+ALLOW_CREDENTIALS = "*" not in CORS_ORIGINS
 
 
 # =========================================================
 # APPLICATION LIFESPAN
 # =========================================================
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+
     logger.info(
         "ScamShield AI Engine starting..."
     )
@@ -74,10 +95,23 @@ async def lifespan(app: FastAPI):
         timezone.utc
     )
 
+    app.state.pipeline_version = ai_pipeline.VERSION
+
+    logger.info(
+        "Application version: %s",
+        APP_VERSION,
+    )
+
+    logger.info(
+        "AI pipeline version: %s",
+        ai_pipeline.VERSION,
+    )
+
     try:
         yield
 
     finally:
+
         logger.info(
             "ScamShield AI Engine shutting down..."
         )
@@ -87,30 +121,38 @@ async def lifespan(app: FastAPI):
 # FASTAPI APPLICATION
 # =========================================================
 
-
 app = FastAPI(
-    title=APP_NAME + " Engine",
+
+    title=f"{APP_NAME} Engine",
+
     description=(
         "Hybrid AI-powered scam detection, "
         "evidence extraction, specialized agent "
         "orchestration and victim safety analysis service."
     ),
+
     version=APP_VERSION,
+
     docs_url="/docs",
+
     redoc_url="/redoc",
+
     lifespan=lifespan,
 )
 
 
 # =========================================================
-# CORS CONFIGURATION
+# CORS MIDDLEWARE
 # =========================================================
 
-
 app.add_middleware(
+
     CORSMiddleware,
-    allow_origins=get_cors_origins(),
-    allow_credentials=True,
+
+    allow_origins=CORS_ORIGINS,
+
+    allow_credentials=ALLOW_CREDENTIALS,
+
     allow_methods=[
         "GET",
         "POST",
@@ -119,6 +161,7 @@ app.add_middleware(
         "DELETE",
         "OPTIONS",
     ],
+
     allow_headers=[
         "Authorization",
         "Content-Type",
@@ -130,13 +173,15 @@ app.add_middleware(
 
 
 # =========================================================
-# REGISTER API ROUTES
+# REGISTER AI API ROUTES
 # =========================================================
 
-
 app.include_router(
+
     router,
+
     prefix="/api/ai",
+
     tags=["ScamShield AI"],
 )
 
@@ -145,17 +190,30 @@ app.include_router(
 # ROOT ENDPOINT
 # =========================================================
 
-
-@app.get("/", tags=["System"])
+@app.get(
+    "/",
+    tags=["System"],
+)
 async def root():
+
     return {
+
         "success": True,
+
         "application": APP_NAME,
+
         "service": "Hybrid AI Engine",
+
         "status": "running",
+
         "version": APP_VERSION,
+
+        "pipeline_version": ai_pipeline.VERSION,
+
         "documentation": "/docs",
+
         "health": "/api/ai/health",
+
         "timestamp": datetime.now(
             timezone.utc
         ).isoformat(),
@@ -166,15 +224,26 @@ async def root():
 # APPLICATION HEALTH
 # =========================================================
 
-
-@app.get("/health", tags=["System"])
+@app.get(
+    "/health",
+    tags=["System"],
+)
 async def application_health():
+
     return {
+
         "success": True,
+
         "application": APP_NAME,
+
         "service": "ScamShield AI Engine",
+
         "status": "healthy",
+
         "version": APP_VERSION,
+
+        "pipeline_version": ai_pipeline.VERSION,
+
         "timestamp": datetime.now(
             timezone.utc
         ).isoformat(),
