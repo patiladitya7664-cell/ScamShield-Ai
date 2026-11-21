@@ -1,3 +1,9 @@
+import json
+import sys
+from pathlib import Path
+
+AI_ENGINE_ROOT = Path(__file__).resolve().parent
+
 if str(AI_ENGINE_ROOT) not in sys.path:
     sys.path.insert(0, str(AI_ENGINE_ROOT))
 
@@ -7,11 +13,9 @@ if str(AI_ENGINE_ROOT) not in sys.path:
 # =========================================================
 
 try:
-
     from services.gemini_service import gemini_service
 
 except Exception as error:
-
     print("\nFAILED: Unable to import Gemini service.")
     print(type(error).__name__, str(error))
     sys.exit(1)

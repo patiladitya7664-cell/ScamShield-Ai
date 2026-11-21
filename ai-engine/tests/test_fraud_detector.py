@@ -4,7 +4,7 @@ SCAMSHIELD AI - FRAUD DETECTOR REGRESSION TEST SUITE
 =========================================================
 
 Version: 1.0.0
-Target: FraudDetector v3.4.0
+Target: FraudDetector v3.6.0
 
 Coverage:
     1. Detector initialization.
@@ -109,7 +109,7 @@ class TestFraudDetector(unittest.TestCase):
 
         self.assertEqual(
             self.detector.VERSION,
-            "3.4.0",
+            "3.6.0",
         )
 
     # =====================================================

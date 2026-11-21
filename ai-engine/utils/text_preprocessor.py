@@ -86,17 +86,8 @@ class TextPreprocessor:
     )
 
     CURRENCY_PATTERN = re.compile(
-        r"""
-        (?:
-            ₹
-            |
-            \b(?:rs\.?|inr)\b
-        )
-        \s*
-        \d[\d,]*
-        (?:\.\d{1,2})?
-        """,
-        re.IGNORECASE | re.VERBOSE
+    r"""(?:₹|\b(?:rs\.?|inr)(?=\s*\d))\s*\d[\d,]*(?:\.\d{1,2})?""",
+    re.IGNORECASE | re.VERBOSE
     )
 
     # PAN-like identifier.

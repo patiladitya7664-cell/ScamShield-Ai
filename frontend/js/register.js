@@ -1,226 +1,360 @@
+"use strict";
+
+/* =====================================================
+   SCAMSHIELD AI
+   REGISTRATION HANDLER
+
+   Version: 3.0.0
+
+   Responsibilities:
+   1. Registration form handling
+   2. Client-side validation
+   3. Centralized API integration
+   4. Password confirmation
+   5. Password visibility
+   6. Terms acceptance
+   7. Registration feedback
+   8. Login page redirection
+===================================================== */
+
 (() => {
-  "use strict";
+  if (window.ScamShieldRegisterInitialized) {
+    return;
+  }
 
-  /* =========================================
-   SCAMSHIELD AI - REGISTRATION
-========================================= */
+  window.ScamShieldRegisterInitialized = true;
 
-  const API_BASE_URL = "http://localhost:5000/api";
+  /* ================================================
+     CONFIGURATION
+  ================================================ */
 
-  const registerForm = document.getElementById("registerForm");
+  const REDIRECT_DELAY = 1000;
+
+  /* ================================================
+     DOM ELEMENTS
+  ================================================ */
+
+  const form = document.getElementById("registerForm");
+
+  if (!form) {
+    return;
+  }
 
   const nameInput = document.getElementById("name");
-  const emailInput = document.getElementById("registerEmail");
-  const passwordInput = document.getElementById("registerPassword");
-  const confirmPasswordInput = document.getElementById("confirmPassword");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput =
+    document.getElementById("confirmPassword");
+
   const termsInput = document.getElementById("terms");
 
-  const registerButton = document.getElementById("registerButton");
-  const authMessage = document.getElementById("registerAuthMessage");
+  const submitButton =
+    document.getElementById("registerButton");
 
-  /* =========================================
-   MESSAGE HANDLER
-========================================= */
+  const messageElement =
+    document.getElementById("authMessage");
+
+  const termsLink = document.getElementById("termsLink");
+  const privacyLink = document.getElementById("privacyLink");
+
+  /* ================================================
+     STATE
+  ================================================ */
+
+  let isSubmitting = false;
+
+  const originalButtonContent =
+    submitButton?.innerHTML || "";
+
+  /* ================================================
+     MESSAGE HANDLING
+  ================================================ */
 
   function showMessage(message, type = "error") {
-    if (!authMessage) return;
+    if (!messageElement) {
+      return;
+    }
 
-    authMessage.textContent = message;
-    authMessage.className = `auth-message show ${type}`;
+    messageElement.textContent = message;
+
+    messageElement.classList.remove(
+      "success",
+      "error",
+      "warning"
+    );
+
+    messageElement.classList.add(type);
+    messageElement.hidden = false;
   }
 
   function clearMessage() {
-    if (!authMessage) return;
+    if (!messageElement) {
+      return;
+    }
 
-    authMessage.textContent = "";
-    authMessage.className = "auth-message";
-  }
+    messageElement.textContent = "";
 
-  /* =========================================
-   PASSWORD VISIBILITY
-========================================= */
-
-  document.querySelectorAll("[data-password-target]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const targetId = button.dataset.passwordTarget;
-      const input = document.getElementById(targetId);
-
-      if (!input) return;
-
-      const isPassword = input.type === "password";
-
-      input.type = isPassword ? "text" : "password";
-
-      button.innerHTML = isPassword
-        ? '<i class="fa-regular fa-eye-slash"></i>'
-        : '<i class="fa-regular fa-eye"></i>';
-
-      button.setAttribute(
-        "aria-label",
-        isPassword ? "Hide password" : "Show password",
-      );
-    });
-  });
-
-  /* =========================================
-   VALIDATION HELPERS
-========================================= */
-
-  function isValidEmail(email) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    return emailPattern.test(email);
-  }
-
-  function isStrongPassword(password) {
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /[0-9]/.test(password)
+    messageElement.classList.remove(
+      "success",
+      "error",
+      "warning"
     );
+
+    messageElement.hidden = true;
   }
 
-  /* =========================================
-   BUTTON LOADING STATE
-========================================= */
+  /* ================================================
+     BUTTON LOADING
+  ================================================ */
 
-  function setLoading(isLoading) {
-    if (!registerButton) return;
+  function setLoading(loading) {
+    if (!submitButton) {
+      return;
+    }
 
-    registerButton.disabled = isLoading;
+    submitButton.disabled = loading;
 
-    registerButton.innerHTML = isLoading
-      ? '<span>Creating account...</span><i class="fa-solid fa-spinner fa-spin"></i>'
-      : '<span>Create Account</span><i class="fa-solid fa-arrow-right"></i>';
+    submitButton.setAttribute(
+      "aria-busy",
+      String(loading)
+    );
+
+    submitButton.innerHTML = loading
+      ? `
+        <span>Creating account...</span>
+        <i class="fa-solid fa-spinner fa-spin"
+           aria-hidden="true"></i>
+      `
+      : originalButtonContent;
   }
 
-  /* =========================================
-   REGISTRATION SUBMISSION
-========================================= */
+  /* ================================================
+     PASSWORD VISIBILITY
+  ================================================ */
 
-  if (registerForm) {
-    registerForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  function initializePasswordToggles() {
+    const toggles = document.querySelectorAll(
+      "[data-password-target]"
+    );
 
-      clearMessage();
+    toggles.forEach((button) => {
+      button.addEventListener("click", () => {
+        const targetId =
+          button.getAttribute("data-password-target");
 
-      const name = nameInput.value.trim();
-      const email = emailInput.value.trim().toLowerCase();
-      const password = passwordInput.value;
-      const confirmPassword = confirmPasswordInput.value;
+        const input = document.getElementById(targetId);
 
-      // Name validation
-      if (name.length < 2 || name.length > 60) {
-        showMessage("Name must contain between 2 and 60 characters.");
-
-        nameInput.focus();
-
-        return;
-      }
-
-      // Email validation
-      if (!isValidEmail(email)) {
-        showMessage("Please enter a valid email address.");
-
-        emailInput.focus();
-
-        return;
-      }
-
-      // Password validation
-      if (!isStrongPassword(password)) {
-        showMessage(
-          "Password must contain at least 8 characters, one uppercase letter, one lowercase letter and one number.",
-        );
-
-        passwordInput.focus();
-
-        return;
-      }
-
-      // Confirm password validation
-      if (password !== confirmPassword) {
-        showMessage("Passwords do not match.");
-
-        confirmPasswordInput.focus();
-
-        return;
-      }
-
-      // Terms validation
-      if (!termsInput.checked) {
-        showMessage("Please accept the Terms of Service and Privacy Policy.");
-
-        termsInput.focus();
-
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            name,
-            email,
-            password,
-          }),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(
-            result.message || "Registration failed. Please try again.",
-          );
+        if (!input) {
+          return;
         }
 
-        showMessage(
-          "Account created successfully! Redirecting to login...",
-          "success",
+        const isPassword =
+          input.type === "password";
+
+        input.type = isPassword
+          ? "text"
+          : "password";
+
+        button.setAttribute(
+          "aria-label",
+          isPassword ? "Hide password" : "Show password"
         );
 
-        registerForm.reset();
+        const icon = button.querySelector("i");
 
-        setTimeout(() => {
-          window.ScamShieldApp?.showScreen("login");
-        }, 1500);
-      } catch (error) {
-        console.error("Registration Error:", error);
-
-        showMessage(
-          error.message || "Unable to create account. Please try again.",
-        );
-      } finally {
-        setLoading(false);
-      }
+        if (icon) {
+          icon.classList.toggle("fa-eye", !isPassword);
+          icon.classList.toggle("fa-eye-slash", isPassword);
+        }
+      });
     });
   }
 
-  /* =========================================
-   CLEAR MESSAGE ON INPUT
-========================================= */
+  /* ================================================
+     VALIDATION
+  ================================================ */
 
-  [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(
-    (input) => {
-      if (!input) return;
+  function validateForm(data) {
+    const emailPattern =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      input.addEventListener("input", clearMessage);
-    },
+    const strongPassword =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    if (!data.name) {
+      return "Please enter your full name.";
+    }
+
+    if (data.name.length < 2 || data.name.length > 60) {
+      return "Name must contain 2 to 60 characters.";
+    }
+
+    if (!data.email) {
+      return "Please enter your email address.";
+    }
+
+    if (!emailPattern.test(data.email)) {
+      return "Please enter a valid email address.";
+    }
+
+    if (!data.password) {
+      return "Please create a password.";
+    }
+
+    if (!strongPassword.test(data.password)) {
+      return "Password must contain at least 8 characters, including uppercase, lowercase and a number.";
+    }
+
+    if (data.password !== data.confirmPassword) {
+      return "Passwords do not match.";
+    }
+
+    if (!data.termsAccepted) {
+      return "Please accept the Terms of Service and Privacy Policy.";
+    }
+
+    return null;
+  }
+
+  /* ================================================
+     REDIRECT TO LOGIN
+  ================================================ */
+
+  function redirectToLogin() {
+    window.location.replace("login.html");
+  }
+
+  /* ================================================
+     PLACEHOLDER LEGAL LINKS
+  ================================================ */
+
+  [termsLink, privacyLink].forEach((link) => {
+    link?.addEventListener("click", (event) => {
+      if (link.getAttribute("href") === "#") {
+        event.preventDefault();
+
+        showMessage(
+          "This document is not available yet.",
+          "warning"
+        );
+      }
+    });
+  });
+
+  /* ================================================
+     CLEAR MESSAGE ON INPUT
+  ================================================ */
+
+  [
+    nameInput,
+    emailInput,
+    passwordInput,
+    confirmPasswordInput,
+    termsInput
+  ].forEach((input) => {
+    input?.addEventListener("input", clearMessage);
+    input?.addEventListener("change", clearMessage);
+  });
+
+  /* ================================================
+     FORM SUBMISSION
+  ================================================ */
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    clearMessage();
+
+    const formData = {
+      name: nameInput?.value.trim() || "",
+      email: emailInput?.value.trim().toLowerCase() || "",
+      password: passwordInput?.value || "",
+      confirmPassword: confirmPasswordInput?.value || "",
+      termsAccepted: Boolean(termsInput?.checked)
+    };
+
+    const validationError = validateForm(formData);
+
+    if (validationError) {
+      showMessage(validationError, "error");
+      return;
+    }
+
+    const API = window.ScamShieldAPI;
+
+    if (!API || typeof API.register !== "function") {
+      showMessage(
+        "Registration service is unavailable. Please refresh the page.",
+        "error"
+      );
+
+      console.error(
+        "ScamShield AI: ScamShieldAPI is not initialized."
+      );
+
+      return;
+    }
+
+    isSubmitting = true;
+    setLoading(true);
+
+    try {
+      const response = await API.register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (!response || response.success !== true) {
+        throw new Error(
+          response?.message || "Registration failed."
+        );
+      }
+
+      showMessage(
+        response.message ||
+        "Account created successfully! Redirecting to sign in...",
+        "success"
+      );
+
+      form.reset();
+
+      window.setTimeout(
+        redirectToLogin,
+        REDIRECT_DELAY
+      );
+
+    } catch (error) {
+      console.error(
+        "ScamShield AI Registration Error:",
+        error.message
+      );
+
+      showMessage(
+        error.message ||
+        "Unable to create your account. Please try again.",
+        "error"
+      );
+
+    } finally {
+      isSubmitting = false;
+      setLoading(false);
+    }
+  });
+
+  /* ================================================
+     INITIALIZATION
+  ================================================ */
+
+  initializePasswordToggles();
+  clearMessage();
+
+  console.info(
+    "ScamShield AI Registration Handler v3.0.0 initialized."
   );
 
-  /* =========================================
-   INITIALIZATION
-========================================= */
-
-  document.addEventListener("DOMContentLoaded", () => {
-    console.log("ScamShield AI Registration initialized.");
-  });
 })();

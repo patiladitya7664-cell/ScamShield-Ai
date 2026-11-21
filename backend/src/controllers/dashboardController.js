@@ -2,6 +2,49 @@
 
 const Analysis = require("../models/analysis");
 
+// ======================================================
+// SCAMSHIELD AI - DASHBOARD CONTROLLER
+// Version: 2.0.0
+//
+// Features:
+// 1. User-specific dashboard statistics
+// 2. Risk-level distribution
+// 3. All 12 fraud detection categories
+// 4. Five major detection modules
+// 5. Recent analysis activity
+// 6. MongoDB aggregation
+// ======================================================
+
+// All 12 individual detection categories.
+const DETECTION_CATEGORIES = [
+  "fraud_message",
+  "fraud_call",
+  "url_phishing",
+  "email_scam",
+  "investment_scam",
+  "digital_arrest",
+  "upi_banking_fraud",
+  "card_fraud",
+  "ecommerce_scam",
+  "job_loan_scam",
+  "sextortion_blackmail",
+  "social_media_scam",
+];
+
+// Five major detection modules.
+const FRAUD_MODULES = [
+  "investment",
+  "digitalArrest",
+  "creditCard",
+  "sextortion",
+  "ecommerce",
+];
+
+// ======================================================
+// GET DASHBOARD OVERVIEW
+// GET /api/dashboard/overview
+// ======================================================
+
 const getDashboardOverview = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -13,7 +56,7 @@ const getDashboardOverview = async (req, res) => {
       });
     }
 
-    // Only completed analyses are included in statistics.
+    // Only completed analyses contribute to statistics.
     const completedFilter = {
       user: userId,
       status: "completed",
@@ -25,31 +68,35 @@ const getDashboardOverview = async (req, res) => {
       lowRiskResults,
       highRiskResults,
       riskDistribution,
-      fraudCategories,
+      categoryDistribution,
+      moduleDistribution,
       recentActivity,
     ] = await Promise.all([
-      // Total completed analyses
+
+      // 1. Total completed analyses.
       Analysis.countDocuments(completedFilter),
 
-      // High + Critical risk detections
+      // 2. High + Critical threats.
       Analysis.countDocuments({
         ...completedFilter,
-        riskLevel: { $in: ["high", "critical"] },
+        riskLevel: {
+          $in: ["high", "critical"],
+        },
       }),
 
-      // Low-risk analyses
+      // 3. Low-risk analyses.
       Analysis.countDocuments({
         ...completedFilter,
         riskLevel: "low",
       }),
 
-      // High-risk only (Critical excluded)
+      // 4. High-risk analyses (Critical excluded).
       Analysis.countDocuments({
         ...completedFilter,
         riskLevel: "high",
       }),
 
-      // Risk-level distribution
+      // 5. Risk-level distribution.
       Analysis.aggregate([
         {
           $match: completedFilter,
@@ -57,12 +104,29 @@ const getDashboardOverview = async (req, res) => {
         {
           $group: {
             _id: "$riskLevel",
-            count: { $sum: 1 },
+            count: {
+              $sum: 1,
+            },
           },
         },
       ]),
 
-      // Fraud-category distribution
+      // 6. Individual 12-category distribution.
+      Analysis.aggregate([
+        {
+          $match: completedFilter,
+        },
+        {
+          $group: {
+            _id: "$detectionCategory",
+            count: {
+              $sum: 1,
+            },
+          },
+        },
+      ]),
+
+      // 7. Five major fraud modules.
       Analysis.aggregate([
         {
           $match: completedFilter,
@@ -70,22 +134,31 @@ const getDashboardOverview = async (req, res) => {
         {
           $group: {
             _id: "$fraudCategory",
-            count: { $sum: 1 },
+            count: {
+              $sum: 1,
+            },
           },
         },
       ]),
 
-      // Latest 10 activities (all statuses)
-      Analysis.find({ user: userId })
-        .sort({ createdAt: -1 })
+      // 8. Latest 10 user activities.
+      Analysis.find({
+        user: userId,
+      })
+        .sort({
+          createdAt: -1,
+        })
         .limit(10)
         .select(
-          "evidenceType fraudCategory riskScore riskLevel status createdAt",
+          "evidenceType fraudCategory detectionCategory riskScore riskLevel status createdAt"
         )
         .lean(),
     ]);
 
-    // Initialize risk distribution
+    // ==================================================
+    // RISK DISTRIBUTION
+    // ==================================================
+
     const riskCounts = {
       low: 0,
       medium: 0,
@@ -94,30 +167,71 @@ const getDashboardOverview = async (req, res) => {
     };
 
     riskDistribution.forEach((item) => {
-      if (Object.prototype.hasOwnProperty.call(riskCounts, item._id)) {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          riskCounts,
+          item._id
+        )
+      ) {
         riskCounts[item._id] = item.count;
       }
     });
 
-    // Initialize fraud category distribution
-    const categoryCounts = {
-      investment: 0,
-      digitalArrest: 0,
-      creditCard: 0,
-      sextortion: 0,
-      ecommerce: 0,
-      other: 0,
-      unclassified: 0,
-    };
+    // ==================================================
+    // 12 DETECTION CATEGORIES
+    // ==================================================
 
-    fraudCategories.forEach((item) => {
-      if (Object.prototype.hasOwnProperty.call(categoryCounts, item._id)) {
+    const categoryCounts = {};
+
+    DETECTION_CATEGORIES.forEach((category) => {
+      categoryCounts[category] = 0;
+    });
+
+    let unclassifiedCategories = 0;
+
+    categoryDistribution.forEach((item) => {
+      if (
+        item._id &&
+        Object.prototype.hasOwnProperty.call(
+          categoryCounts,
+          item._id
+        )
+      ) {
         categoryCounts[item._id] = item.count;
+      } else {
+        // Includes old records without detectionCategory.
+        unclassifiedCategories += item.count;
       }
     });
 
+    // ==================================================
+    // FIVE MAJOR DETECTION MODULES
+    // ==================================================
+
+    const moduleCounts = {};
+
+    FRAUD_MODULES.forEach((module) => {
+      moduleCounts[module] = 0;
+    });
+
+    moduleDistribution.forEach((item) => {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          moduleCounts,
+          item._id
+        )
+      ) {
+        moduleCounts[item._id] = item.count;
+      }
+    });
+
+    // ==================================================
+    // RESPONSE
+    // ==================================================
+
     return res.status(200).json({
       success: true,
+
       message: "Dashboard overview fetched successfully.",
 
       data: {
@@ -132,11 +246,19 @@ const getDashboardOverview = async (req, res) => {
 
         fraudCategories: categoryCounts,
 
+        fraudModules: moduleCounts,
+
+        unclassifiedCategories,
+
         recentActivity,
       },
     });
+
   } catch (error) {
-    console.error("Dashboard Overview Error:", error);
+    console.error(
+      "Dashboard Overview Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
@@ -144,6 +266,10 @@ const getDashboardOverview = async (req, res) => {
     });
   }
 };
+
+// ======================================================
+// EXPORTS
+// ======================================================
 
 module.exports = {
   getDashboardOverview,

@@ -1196,13 +1196,6 @@ class TestKnownLimitations:
 
         assert "1234567890123456" in result
 
-    @pytest.mark.xfail(
-        strict=False,
-        reason=(
-            "Extraction methods currently need "
-            "independent Unicode normalization."
-        )
-    )
     def test_normalize_unicode_before_extraction(self):
 
         text = "９８７６５４３２１０"
@@ -1212,7 +1205,6 @@ class TestKnownLimitations:
         result = TextPreprocessor.extract_phone_numbers(normalized)
 
         assert len(result) == 1
-
 
 # =========================================================
 # 24. PUBLIC FUNCTION COMPATIBILITY

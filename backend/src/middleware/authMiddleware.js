@@ -1,32 +1,84 @@
 "use strict";
 
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const User = require("../models/User");
 
 const protect = async (req, res, next) => {
     try {
-        let token;
+        // Validate JWT configuration
+        const jwtSecret = process.env.JWT_SECRET;
 
-        // Read Bearer token from Authorization header
-        if (
-            req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer ")
-        ) {
-            token = req.headers.authorization.split(" ")[1];
+        if (!jwtSecret) {
+            const error = new Error(
+                "JWT_SECRET is not configured."
+            );
+
+            error.statusCode = 500;
+
+            return next(error);
         }
 
-        if (!token) {
+        // Read Authorization header
+        const authorization = req.headers.authorization;
+
+        if (!authorization || typeof authorization !== "string") {
             return res.status(401).json({
                 success: false,
                 message: "Authentication required. Please login."
             });
         }
 
+        // Extract Bearer token
+        const parts = authorization.trim().split(/\s+/);
+
+        if (
+            parts.length !== 2 ||
+            parts[0].toLowerCase() !== "bearer" ||
+            !parts[1]
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid authentication header."
+            });
+        }
+
+        const token = parts[1];
+
         // Verify JWT
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
+        let decoded;
+
+        try {
+            decoded = jwt.verify(token, jwtSecret, {
+                algorithms: ["HS256"]
+            });
+        } catch (error) {
+            if (
+                error.name === "JsonWebTokenError" ||
+                error.name === "TokenExpiredError" ||
+                error.name === "NotBeforeError"
+            ) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Invalid or expired authentication token."
+                });
+            }
+
+            throw error;
+        }
+
+        // Validate token payload
+        if (
+            !decoded ||
+            typeof decoded !== "object" ||
+            typeof decoded.id !== "string" ||
+            !mongoose.isValidObjectId(decoded.id)
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid authentication token payload."
+            });
+        }
 
         // Find authenticated user
         const user = await User.findById(decoded.id)
@@ -39,30 +91,21 @@ const protect = async (req, res, next) => {
             });
         }
 
+        // Attach authenticated user
         req.user = user;
 
-        next();
+        return next();
 
     } catch (error) {
-        if (
-            error.name === "JsonWebTokenError" ||
-            error.name === "TokenExpiredError"
-        ) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid or expired authentication token."
-            });
-        }
+        console.error(
+            "Authentication Middleware Error:",
+            error.message
+        );
 
-        console.error("Authentication Error:", error.message);
-        
-       console.error("Error Name:", error.name);
-console.error("JWT_SECRET Exists:", !!process.env.JWT_SECRET);
-        return res.status(500).json({
-            success: false,
-            message: "Authentication failed."
-        });
+        return next(error);
     }
 };
 
-module.exports = { protect };
+module.exports = {
+    protect
+};

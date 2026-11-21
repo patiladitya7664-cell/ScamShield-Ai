@@ -1,164 +1,245 @@
+
 "use strict";
 
 /* =====================================================
-SCAMSHIELD AI - NAVIGATION MANAGER
-Horizontal Navbar + Mobile Navigation
+   SCAMSHIELD AI - NAVIGATION MANAGER
+   Version: 2.0.0
+
+   Responsibilities:
+   1. Active navigation link management.
+   2. Dropdown menu management.
+   3. SPA and multi-page navigation support.
+
+   Mobile navigation: main.js
+   Logout handling: app.js
 ===================================================== */
 
 (function (window, document) {
-  const Navigation = {
-    init() {
-      this.setActiveLink();
-      this.initMobileMenu();
-      this.initLogout();
-      this.initDropdowns();
-    },
+    const Navigation = {
+        initialized: false,
 
-    /* ================================================
-   ACTIVE NAVIGATION LINK
-================================================ */
+        init() {
+            if (this.initialized) return;
 
-    setActiveLink() {
-      const currentPage =
-        window.location.pathname.split("/").pop().replace(".html", "") ||
-        "dashboard";
+            this.initialized = true;
 
-      document.querySelectorAll(".nav-links a").forEach((link) => {
-        const href = link.getAttribute("href");
+            this.setActiveLink();
+            this.initMobileMenu();
+            this.initLogout();
+            this.initDropdowns();
 
-        if (!href) return;
+            window.addEventListener("hashchange", () => {
+                this.setActiveLink();
+            });
 
-        const linkPage = href
-          .split("/")
-          .pop()
-          .split("?")[0]
-          .replace(".html", "");
+            window.addEventListener("popstate", () => {
+                this.setActiveLink();
+            });
 
-        const isActive = linkPage === currentPage;
+            document.addEventListener("scamshield:screenchange", () => {
+                this.setActiveLink();
+            });
+        },
 
-        link.classList.toggle("active", isActive);
+        /* ================================================
+           ROUTE NORMALIZATION
+        ================================================ */
 
-        if (isActive) {
-          link.setAttribute("aria-current", "page");
-        } else {
-          link.removeAttribute("aria-current");
-        }
-      });
-    },
+        normalizeRoute(value) {
+            if (!value) return "";
 
-    /* ================================================
-   MOBILE HORIZONTAL NAVBAR
-================================================ */
+            return String(value)
+                .replace(/^#\/?/, "")
+                .replace(/^\/+|\/+$/g, "")
+                .split("?")[0]
+                .replace(/\.html$/i, "")
+                .toLowerCase();
+        },
 
-    initMobileMenu() {
-      const menuButton = document.querySelector(
-        "#menuToggle, #menu-toggle, .menu-toggle, [data-menu-toggle]",
-      );
+        /* ================================================
+           GET CURRENT PAGE
+        ================================================ */
 
-      const navLinks = document.querySelector("#navLinks");
-
-      if (!menuButton || !navLinks) return;
-
-      const closeMenu = () => {
-        navLinks.classList.remove("open", "active");
-
-        menuButton.setAttribute("aria-expanded", "false");
-
-        const icon = menuButton.querySelector("i");
-
-        if (icon) {
-          icon.classList.remove("fa-xmark");
-          icon.classList.add("fa-bars");
-        }
-      };
-
-      const toggleMenu = () => {
-        const isOpen = !navLinks.classList.contains("open");
-
-        navLinks.classList.toggle("open", isOpen);
-        navLinks.classList.toggle("active", isOpen);
-
-        menuButton.setAttribute("aria-expanded", String(isOpen));
-
-        const icon = menuButton.querySelector("i");
-
-        if (icon) {
-          icon.classList.toggle("fa-bars", !isOpen);
-          icon.classList.toggle("fa-xmark", isOpen);
-        }
-      };
-
-      menuButton.addEventListener("click", toggleMenu);
-
-      navLinks.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", closeMenu);
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeMenu();
-        }
-      });
-
-      window.addEventListener("resize", () => {
-        if (window.innerWidth > 768) {
-          closeMenu();
-        }
-      });
-    },
-
-    /* ================================================
-   LOGOUT
-================================================ */
-
-    initLogout() {
-      document
-        .querySelectorAll("#logout-btn, .logout-btn, [data-logout]")
-        .forEach((button) => {
-          button.addEventListener("click", (event) => {
-            event.preventDefault();
-
-            const confirmed = window.confirm(
-              "Are you sure you want to logout?",
+        getCurrentPage() {
+            const hashRoute = this.normalizeRoute(
+                window.location.hash
             );
 
-            if (!confirmed) return;
+            if (hashRoute) {
+                return hashRoute;
+            }
 
-            localStorage.removeItem("scamshieldToken");
-            localStorage.removeItem("scamshieldUser");
+            const currentPath = window.location.pathname
+                .split("/")
+                .pop()
+                .replace(/\.html$/i, "")
+                .toLowerCase();
 
-            sessionStorage.removeItem("scamshieldToken");
-            sessionStorage.removeItem("scamshieldUser");
+            return currentPath || "dashboard";
+        },
 
-            window.location.href = "login.html";
-          });
-        });
-    },
+        /* ================================================
+           ACTIVE NAVIGATION LINK
+        ================================================ */
+
+        setActiveLink() {
+            const currentPage = this.getCurrentPage();
+
+            document.querySelectorAll(
+                ".nav-links a, [data-nav-link]"
+            ).forEach((link) => {
+                const route =
+                    link.getAttribute("data-route") ||
+                    link.getAttribute("data-screen") ||
+                    link.getAttribute("href");
+
+                if (!route) return;
+
+                const linkPage = this.normalizeRoute(route);
+
+                const isActive =
+                    linkPage === currentPage ||
+                    (
+                        currentPage &&
+                        linkPage &&
+                        currentPage.startsWith(linkPage + "/")
+                    );
+
+                link.classList.toggle("active", isActive);
+
+                if (isActive) {
+                    link.setAttribute("aria-current", "page");
+                } else {
+                    link.removeAttribute("aria-current");
+                }
+            });
+        },
+
+        /* ================================================
+           MOBILE NAVIGATION
+
+           Managed by main.js.
+           No duplicate event listeners here.
+        ================================================ */
+
+        initMobileMenu() {
+            // Mobile navigation is managed by main.js.
+        },
+
+        /* ================================================
+           LOGOUT
+
+           Managed by app.js.
+           No duplicate logout listeners here.
+        ================================================ */
+
+        initLogout() {
+            // Authentication and logout are managed by app.js.
+        },
+
+        /* ================================================
+           DROPDOWN MENUS
+        ================================================ */
+
+        initDropdowns() {
+            const dropdownButtons = document.querySelectorAll(
+                "[data-dropdown-toggle]"
+            );
+
+            dropdownButtons.forEach((button) => {
+                if (button.dataset.dropdownInitialized === "true") {
+                    return;
+                }
+
+                button.dataset.dropdownInitialized = "true";
+
+                const targetId = button.getAttribute(
+                    "data-dropdown-toggle"
+                );
+
+                const dropdown = document.getElementById(targetId);
+
+                if (!dropdown) return;
+
+                button.setAttribute(
+                    "aria-expanded",
+                    String(dropdown.classList.contains("show"))
+                );
+
+                button.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const isCurrentlyOpen =
+                        dropdown.classList.contains("show");
+
+                    this.closeAllDropdowns();
+
+                    if (!isCurrentlyOpen) {
+                        dropdown.classList.add("show");
+                        button.setAttribute("aria-expanded", "true");
+                    }
+                });
+            });
+
+            if (!this.dropdownGlobalListenersInitialized) {
+                this.dropdownGlobalListenersInitialized = true;
+
+                document.addEventListener("click", (event) => {
+                    const clickedInsideDropdown =
+                        event.target.closest("[data-dropdown-toggle]") ||
+                        event.target.closest(".dropdown");
+
+                    if (!clickedInsideDropdown) {
+                        this.closeAllDropdowns();
+                    }
+                });
+
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape") {
+                        this.closeAllDropdowns();
+                    }
+                });
+            }
+        },
+
+        /* ================================================
+           CLOSE ALL DROPDOWNS
+        ================================================ */
+
+        closeAllDropdowns() {
+            document.querySelectorAll(
+                "[data-dropdown-toggle]"
+            ).forEach((button) => {
+                const targetId = button.getAttribute(
+                    "data-dropdown-toggle"
+                );
+
+                const dropdown = document.getElementById(targetId);
+
+                if (!dropdown) return;
+
+                dropdown.classList.remove("show");
+
+                button.setAttribute("aria-expanded", "false");
+            });
+        }
+    };
+
+    window.ScamShieldNavigation = Navigation;
 
     /* ================================================
-   DROPDOWN MENUS
-================================================ */
+       INITIALIZATION
+    ================================================ */
 
-    initDropdowns() {
-      document.querySelectorAll("[data-dropdown-toggle]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const targetId = button.getAttribute("data-dropdown-toggle");
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => Navigation.init(),
+            { once: true }
+        );
+    } else {
+        Navigation.init();
+    }
 
-          const dropdown = document.getElementById(targetId);
-
-          if (!dropdown) return;
-
-          const isOpen = dropdown.classList.toggle("show");
-
-          button.setAttribute("aria-expanded", String(isOpen));
-        });
-      });
-    },
-  };
-
-  window.ScamShieldNavigation = Navigation;
-
-  document.addEventListener("DOMContentLoaded", () => {
-    Navigation.init();
-  });
 })(window, document);

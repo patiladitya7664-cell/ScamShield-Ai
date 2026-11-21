@@ -3,7 +3,7 @@
 SCAMSHIELD AI - ADVANCED HYBRID FRAUD DETECTOR
 =========================================================
 
-Version: 3.4.0
+Version: 3.6.0
 
 Capabilities:
     1. Text preprocessing
@@ -29,7 +29,6 @@ IMPORTANT:
     URL analysis is heuristic; no live reputation check.
     ML predictions are advisory only.
     Risk score is not a calibrated probability.
-
 =========================================================
 """
 
@@ -50,7 +49,7 @@ from utils.logger import logger
 
 class FraudDetector:
 
-    VERSION = "3.4.0"
+    VERSION = "3.6.0"
     MAX_EVIDENCE_LENGTH = 20000
 
     SUPPORTED_EVIDENCE_TYPES = {
@@ -96,8 +95,8 @@ class FraudDetector:
         r"\bclick\s+(?:this|the)\s+link\b",
         r"\bverify\s+your\s+account\b",
         r"\bconfirm\s+your\s+(?:account|identity|details)\b",
-        r"\baccount\s+(?:will\s+be\s+)?suspended\b",
-        r"\baccount\s+(?:will\s+be\s+)?blocked\b",
+        r"\baccount\s+(?:(?:will|would|may|might|could)\s+be\s+)?suspended\b",
+        r"\baccount\s+(?:(?:will|would|may|might|could)\s+be\s+)?blocked\b",
         r"\bupdate\s+your\s+(?:bank|account|kyc)\b",
         r"\blogin\s+immediately\b",
         r"\brestore\s+your\s+account\b",
@@ -106,37 +105,6 @@ class FraudDetector:
         r"\bvisit\s+this\s+link\b",
         r"\bverify\s+immediately\b",
         r"\benter\s+your\s+(?:password|otp|pin)\b",
-    ]
-
-    CREDENTIAL_PATTERNS = [
-        r"\b(?:share|send|provide|enter|submit|reveal)\s+(?:your\s+)?(?:otp|one[\s-]?time\s+password)\b",
-
-        r"\b(?:otp|one[\s-]?time\s+password)\s+(?:is\s+required|verification|required)\b",
-
-        r"\b(?:share|send|provide|enter|submit|reveal)\s+(?:your\s+)?(?:password|passcode)\b",
-
-        r"\b(?:internet|net|online|mobile)\s+banking\s+(?:username|password|credentials|login\s+details)\b",
-
-        r"\busername\s*(?:and|&|,)\s*password\b",
-
-        r"\b(?:enter|provide|submit|share)\s+(?:your\s+)?(?:login\s+credentials|banking\s+credentials)\b",
-
-        r"\b(?:banking|internet\s+banking)\s+(?:username|password)\s+and\s+(?:password|otp|pin)\b",
-
-        r"\b(?:share|send|provide|enter|submit)\s+(?:your\s+)?(?:upi\s+pin|atm\s+pin|card\s+pin)\b",
-
-        r"\benter\s+(?:your\s+)?pin\s+to\s+receive\s+money\b",
-
-        r"\b(?:share|send|provide|enter)\s+(?:your\s+)?(?:cvv|cvc|card\s+details)\b",
-
-        r"\b(?:credit|debit)\s+card\s+(?:number|details|cvv|pin)\b",
-
-        # Victim-reported credential requests.
-        r"\b(?:scammer|fraudster)\s+(?:asked|told)\s+me\s+to\s+(?:share|send|provide|reveal|enter|submit)\s+(?:my|the)\s+(?:otp|one[\s-]?time\s+password|password|passcode|pin|cvv)\b",
-
-        r"\b(?:scammer|fraudster)\s+(?:asked|requested)\s+me\s+for\s+(?:my\s+)?(?:otp|one[\s-]?time\s+password|password|pin|cvv)\b",
-
-        r"\b(?:they|he|she)\s+(?:asked|told)\s+me\s+to\s+(?:share|send|provide|reveal|enter|submit)\s+(?:my|the)\s+(?:otp|one[\s-]?time\s+password|password|pin|cvv)\b",
     ]
 
     SHORTENED_DOMAINS = {
@@ -189,29 +157,94 @@ class FraudDetector:
     }
 
     # =====================================================
+    # CREDENTIAL REQUEST DETECTION
+    # =====================================================
+
+    CREDENTIAL_PATTERNS = [
+
+        # Direct OTP requests.
+        r"\b(?:share|send|provide|enter|submit|reveal)\s+(?:(?:your|my|the)\s+)?(?:otp|one[\s-]?time\s+password)\b",
+
+        r"\b(?:otp|one[\s-]?time\s+password)\s+(?:is\s+required|required|verification\s+required)\b",
+
+        # Password and passcode requests.
+        r"\b(?:share|send|provide|enter|submit|reveal)\s+(?:(?:your|my|the)\s+)?(?:password|passcode)\b",
+
+        r"\b(?:internet|net|online|mobile)\s+banking\s+(?:username|password|credentials|login\s+details)\b",
+
+        r"\busername\s*(?:and|&|,)\s*password\b",
+
+        r"\b(?:enter|provide|submit|share)\s+(?:(?:your|my|the)\s+)?(?:login\s+credentials|banking\s+credentials)\b",
+
+        # PIN requests.
+        r"\b(?:share|send|provide|enter|submit|reveal)\s+(?:(?:your|my|the)\s+)?(?:upi\s+pin|atm\s+pin|card\s+pin|debit\s+card\s+pin)\b",
+
+        r"\benter\s+(?:(?:your|my|the)\s+)?pin\s+to\s+receive\s+money\b",
+
+        # Card information requests.
+        r"\b(?:share|send|provide|enter|submit|reveal)\s+(?:(?:your|my|the)\s+)?(?:cvv|cvc|card\s+details)\b",
+
+        r"\b(?:credit|debit)\s+card\s+(?:number|details|cvv|pin)\b",
+
+        # Victim-reported credential requests.
+        r"\b(?:scammer|fraudster|caller)\s+(?:asked|told|requested)\s+me\s+to\s+(?:share|send|provide|reveal|enter|submit)\s+(?:(?:my|the)\s+)?(?:otp|one[\s-]?time\s+password|password|passcode|pin|cvv)\b",
+
+        r"\b(?:scammer|fraudster|caller)\s+(?:asked|requested)\s+me\s+for\s+(?:(?:my|the)\s+)?(?:otp|one[\s-]?time\s+password|password|pin|cvv)\b",
+
+        r"\b(?:they|he|she|caller|message|sms|email|it|the\s+message|the\s+caller)\s+(?:asked|told|requested)\s+me\s+to\s+(?:share|send|provide|reveal|enter|submit)\s+(?:(?:my|the)\s+)?(?:otp|one[\s-]?time\s+password|password|passcode|pin|cvv)\b",
+
+        r"\b(?:message|sms|email|caller|it|the\s+message)\s+(?:asked|requested)\s+for\s+(?:(?:my|the)\s+)?(?:otp|one[\s-]?time\s+password|password|pin|cvv)\b",
+
+        r"\b(?:asked|requested|told)\s+me\s+to\s+(?:share|send|provide|enter)\s+(?:(?:my|the)\s+)?(?:otp|pin|password|cvv)\b",
+
+        # Hinglish.
+        r"\b(?:otp|pin|password|cvv)\s+(?:maanga|manga|maang|manga\s+tha)\b",
+
+        r"\b(?:otp|pin|password|cvv)\s+(?:share|send|provide)\s+karne\s+(?:ko|ke\s+liye)\s+(?:kaha|bola)\b",
+
+        r"\b(?:mujhse|mujhe)\s+(?:otp|pin|password|cvv)\s+(?:maanga|manga|maangne)\b",
+
+        r"\b(?:otp|pin|password)\s+(?:dene|batane|share\s+karne)\s+ko\s+(?:kaha|bola)\b",
+    ]
+
+    # =====================================================
     # CONTEXT DETECTION
     # =====================================================
 
     VICTIM_REPORT_PATTERNS = [
+
+        r"\bi received\b",
+        r"\bi got\s+(?:a\s+|an\s+)?(?:message|call|email|sms)\b",
+        r"\bi was contacted\b",
+        r"\bsomeone contacted me\b",
+
+        r"\bthe\s+(?:message|sms|email|caller)\b",
+        r"\bit said\b",
+
         r"\bthe scammer\b",
-        r"\bscammer asked\b",
-        r"\bfraudster asked\b",
+        r"\bfraudster\b",
+        r"\bscammer\b",
+
         r"\bthey asked me\b",
         r"\bhe asked me\b",
         r"\bshe asked me\b",
-        r"\bi was asked\b",
-        r"\bi received\b",
-        r"\bi got a message\b",
         r"\bsomeone asked me\b",
-        r"\bthey told me to\b",
+        r"\bi was asked\b",
+
         r"\bi shared my\b",
         r"\bi entered my\b",
         r"\bi already shared\b",
         r"\bi already entered\b",
         r"\bi accidentally shared\b",
+
+        r"\bmujhe message mila\b",
+        r"\bmujhe call aaya\b",
+        r"\bmujhe otp maanga\b",
+        r"\bmujhse otp maanga\b",
     ]
 
     EDUCATIONAL_PATTERNS = [
+
         r"\bthis article\b",
         r"\bthis tutorial\b",
         r"\beducational purpose\b",
@@ -228,11 +261,17 @@ class FraudDetector:
     ]
 
     ADVISORY_PATTERNS = [
+
         r"\bnever\s+(?:share|send|provide|reveal|enter|submit)\b",
-        r"\bdo not\s+(?:share|send|provide|reveal|enter|submit)\b",
+
+        r"\bdo\s+not\s+(?:share|send|provide|reveal|enter|submit)\b",
+
         r"\bdon't\s+(?:share|send|provide|reveal|enter|submit)\b",
-        r"\bshould not\s+(?:share|send|provide|reveal|enter|submit)\b",
-        r"\bmust not\s+(?:share|send|provide|reveal|enter|submit)\b",
+
+        r"\bshould\s+not\s+(?:share|send|provide|reveal|enter|submit)\b",
+
+        r"\bmust\s+not\s+(?:share|send|provide|reveal|enter|submit)\b",
+
         r"\bavoid\s+(?:sharing|sending|providing|revealing)\b",
     ]
 
@@ -251,10 +290,11 @@ class FraudDetector:
                 r"\bshare your otp\b",
                 r"\bclaim your reward\b",
                 r"\bpay immediately\b",
-                r"\baccount will be blocked\b",
+                r"\baccount\s+(?:will|would|may|might|could)\s+be\s+blocked\b",
                 r"\bclick this link\b",
                 r"\bverify your account immediately\b",
-                r"\baccount will be suspended\b",
+                r"\baccount\s+(?:will|would|may|might|could)\s+be\s+suspended\b",
+                r"\baccount\s+(?:will|would|may|might|could)\s+be\s+deactivated\b",
             ],
         },
 
@@ -463,13 +503,15 @@ class FraudDetector:
                 r"\barrest\b",
                 r"\bpolice case\b",
                 r"\blegal action\b",
-                r"\baccount will be blocked\b",
                 r"\bconnection will be disconnected\b",
                 r"\byou will be arrested\b",
                 r"\bdigital arrest\b",
                 r"\bcase registered against you\b",
                 r"\bimmediate detention\b",
                 r"\bcbi investigation\b",
+                r"\baccount\s+(?:will|would|may|might|could)\s+be\s+blocked\b",
+                r"\baccount\s+(?:will|would|may|might|could)\s+be\s+suspended\b",
+                r"\baccount\s+(?:will|would|may|might|could)\s+be\s+deactivated\b",
             ],
             "signal": "threat_or_intimidation",
             "description": "Threat or intimidation language detected.",
@@ -1004,41 +1046,60 @@ class FraudDetector:
 
     def _is_actionable_match(self, text, match):
         """
-        Evaluates context around an individual detection match.
+        Evaluates whether a match is actionable.
 
-        Victim reports are recognized locally.
-        Educational examples are suppressed.
-        Advisory instructions are not treated as scam requests.
+        Priority:
+            1. Victim report.
+            2. Educational content.
+            3. Safety advisory.
+            4. Normal detection.
         """
 
-        start = max(0, match.start() - 160)
-        end = min(len(text), match.end() + 100)
-
-        local_context = text[start:end]
-
-        if self._is_victim_reported(local_context):
-            return True
-
-        if self._is_educational_context(text):
+        if not isinstance(text, str) or match is None:
             return False
 
-        preceding_text = text[
-            max(0, match.start() - 100):match.start()
-        ].lower()
-
-        advisory_patterns = [
-            r"\bnever\s+$",
-            r"\bdo not\s+$",
-            r"\bdon't\s+$",
-            r"\bshould not\s+$",
-            r"\bmust not\s+$",
-            r"\bavoid\s+$",
+        preceding_boundaries = [
+            text.rfind(".", 0, match.start()),
+            text.rfind("!", 0, match.start()),
+            text.rfind("?", 0, match.start()),
+            text.rfind(";", 0, match.start()),
+            text.rfind("\n", 0, match.start()),
         ]
 
-        if any(
-            re.search(pattern, preceding_text)
-            for pattern in advisory_patterns
-        ):
+        clause_start = max(preceding_boundaries) + 1
+
+        following_boundaries = [
+            position
+            for position in (
+                text.find(".", match.end()),
+                text.find("!", match.end()),
+                text.find("?", match.end()),
+                text.find(";", match.end()),
+                text.find("\n", match.end()),
+            )
+            if position != -1
+        ]
+
+        clause_end = (
+            min(following_boundaries)
+            if following_boundaries
+            else len(text)
+        )
+
+        clause = text[clause_start:clause_end].strip()
+
+        if not clause:
+            return True
+
+        # Victim reports must not be suppressed by general
+        # educational or advisory wording elsewhere.
+        if self._is_victim_reported(clause):
+            return True
+
+        if self._is_educational_context(clause):
+            return False
+
+        if self._is_advisory_context(clause):
             return False
 
         return True
@@ -1046,6 +1107,9 @@ class FraudDetector:
     def _filter_context_matches(self, text, patterns):
 
         matched = []
+
+        if not isinstance(text, str):
+            return matched
 
         for pattern in patterns:
 
@@ -1057,9 +1121,15 @@ class FraudDetector:
                     re.IGNORECASE,
                 ):
 
-                    if self._is_actionable_match(text, match):
-                        matched.append(pattern)
-                        break
+                    if not self._is_actionable_match(text, match):
+                        continue
+
+                    actual_match = match.group(0).strip()
+
+                    if actual_match and actual_match not in matched:
+                        matched.append(actual_match)
+
+                    break
 
             except re.error:
 
@@ -1068,7 +1138,7 @@ class FraudDetector:
                     pattern,
                 )
 
-        return list(dict.fromkeys(matched))
+        return matched
 
     # =====================================================
     # INPUT VALIDATION
@@ -1577,14 +1647,7 @@ class FraudDetector:
 
             return sanitized
 
-        if isinstance(value, list):
-
-            return [
-                self._sanitize_value(item, key)
-                for item in value
-            ]
-
-        if isinstance(value, tuple):
+        if isinstance(value, (list, tuple)):
 
             return [
                 self._sanitize_value(item, key)
@@ -1782,7 +1845,7 @@ class FraudDetector:
 
             elif isinstance(score_result, dict):
 
-                score = score_result.get("risk_score", 0)
+                score = score_result.get("risk_score")
                 breakdown = score_result.get("breakdown", {})
 
             else:
@@ -1791,7 +1854,7 @@ class FraudDetector:
                     "Unsupported RiskScorer response."
                 )
 
-            risk_score = float(score)
+            risk_score = self._validate_risk_score(score)
 
             if hasattr(self.risk_scorer, "get_risk_level"):
 
@@ -1837,9 +1900,54 @@ class FraudDetector:
                 + ", ".join(missing)
             )
 
+        risk_score = self._validate_risk_score(
+            result["risk_score"]
+        )
+
+        expected_level = self._get_fallback_risk_level(
+            risk_score
+        )
+
+        actual_level = str(
+            result["risk_level"]
+        ).upper()
+
+        if actual_level != expected_level:
+
+            raise RuntimeError(
+                "RiskScorer risk level does not match its score. "
+                f"Expected {expected_level}, got {actual_level}."
+            )
+
+        if not isinstance(result["recommendations"], list):
+
+            raise RuntimeError(
+                "RiskScorer recommendations must be a list."
+            )
+
+        if not isinstance(result["breakdown"], dict):
+
+            raise RuntimeError(
+                "RiskScorer breakdown must be a dictionary."
+            )
+
+        result["risk_score"] = risk_score
+        result["risk_level"] = actual_level
+
+        return result
+
+    @staticmethod
+    def _validate_risk_score(score):
+
+        if isinstance(score, bool):
+
+            raise RuntimeError(
+                "Boolean values are not valid risk scores."
+            )
+
         try:
 
-            risk_score = float(result["risk_score"])
+            risk_score = float(score)
 
         except (TypeError, ValueError):
 
@@ -1856,9 +1964,7 @@ class FraudDetector:
                 "Risk score must be finite and between 0 and 100."
             )
 
-        result["risk_score"] = risk_score
-
-        return result
+        return risk_score
 
     @staticmethod
     def _get_fallback_risk_level(score):
@@ -1947,32 +2053,52 @@ class FraudDetector:
             evidence_type
         )
 
-        # Text preprocessing.
+        # -------------------------------------------------
+        # Text preprocessing
+        # -------------------------------------------------
+
         processed_text = self._preprocess(evidence)
 
         if not isinstance(processed_text, str):
-            processed_text = evidence.lower()
+            processed_text = ""
 
-        processed_text = processed_text.lower()
+        processed_text = processed_text.lower().strip()
 
-        analysis_text = (
-            evidence.lower()
-            + "\n"
-            + processed_text
-        )
+        original_text = evidence.lower()
 
-        # Rule detection.
+        # Keep original evidence available.
+        # Preprocessing must not silently remove evidence.
+        if processed_text and processed_text != original_text:
+
+            analysis_text = (
+                original_text + "\n" + processed_text
+            )
+
+        else:
+
+            analysis_text = original_text
+
+        # -------------------------------------------------
+        # Rule detection
+        # -------------------------------------------------
+
         detected_rules, rule_signals = self._detect_rules(
             analysis_text
         )
 
-        # Evidence-type signals.
+        # -------------------------------------------------
+        # Evidence-type signals
+        # -------------------------------------------------
+
         evidence_signals = self._get_evidence_type_signals(
             evidence,
             evidence_type,
         )
 
-        # URL signals.
+        # -------------------------------------------------
+        # URL signals
+        # -------------------------------------------------
+
         url_signals = self._get_url_signals(
             evidence,
             evidence_type,
@@ -1986,7 +2112,10 @@ class FraudDetector:
             )
         )
 
-        # Fraud category classification.
+        # -------------------------------------------------
+        # Fraud category classification
+        # -------------------------------------------------
+
         detected_categories = self._classify_fraud_categories(
             analysis_text
         )
@@ -2025,7 +2154,10 @@ class FraudDetector:
             detected_categories
         )
 
-        # Evidence extraction.
+        # -------------------------------------------------
+        # Evidence extraction
+        # -------------------------------------------------
+
         indicators = self._extract_indicators(
             evidence
         )
@@ -2034,31 +2166,46 @@ class FraudDetector:
             indicators
         )
 
-        # Risk scoring.
+        # -------------------------------------------------
+        # Risk scoring
+        # -------------------------------------------------
+
         risk_result = self._calculate_risk(
             signals=signals,
             indicators=indicators,
             categories=fraud_categories,
         )
 
-        # Legacy classification.
+        # -------------------------------------------------
+        # Legacy classification
+        # -------------------------------------------------
+
         legacy_categories = self._classify_category(
             analysis_text
         )
 
-        # Optional ML prediction.
+        # -------------------------------------------------
+        # Optional ML prediction
+        # -------------------------------------------------
+
         ml_result = self._predict_ml(
-            processed_text
+            processed_text or original_text
         )
 
-        # Explanations.
+        # -------------------------------------------------
+        # Explanations
+        # -------------------------------------------------
+
         explanations = self._build_explanations(
             detected_rules,
             detected_categories,
             evidence_signals + url_signals,
         )
 
-        # Final response.
+        # -------------------------------------------------
+        # Final response
+        # -------------------------------------------------
+
         return {
             "success": True,
 
