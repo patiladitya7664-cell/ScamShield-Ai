@@ -1,18 +1,26 @@
+
 "use strict";
 
 // =====================================================
 // SCAMSHIELD AI - ASYNC HANDLER
-// Centralized Async Error Handling
+// Version: 2.0.0
+//
+// Centralized asynchronous Express error handling.
+//
+// Responsibilities:
+// 1. Validate controller functions.
+// 2. Handle synchronous exceptions.
+// 3. Handle rejected promises.
+// 4. Forward errors to Express error middleware.
+//
+// Compatible with Express 4 and Express 5.
 // =====================================================
 
 /**
- * Wraps an asynchronous Express controller.
+ * Wrap an asynchronous Express controller.
  *
- * Automatically forwards rejected promises
- * to Express error-handling middleware.
- *
- * @param {Function} requestHandler - Express controller
- * @returns {Function} Express middleware
+ * @param {Function} requestHandler
+ * @returns {Function}
  */
 
 const asyncHandler = (requestHandler) => {
@@ -22,12 +30,17 @@ const asyncHandler = (requestHandler) => {
         );
     }
 
-    return (req, res, next) => {
-        Promise.resolve(
-            requestHandler(req, res, next)
-        ).catch(next);
+    return function wrappedAsyncHandler(req, res, next) {
+        try {
+            return Promise.resolve(
+                requestHandler(req, res, next)
+            ).catch(next);
+        } catch (error) {
+            return next(error);
+        }
     };
 };
+
 
 // =====================================================
 // EXPORT

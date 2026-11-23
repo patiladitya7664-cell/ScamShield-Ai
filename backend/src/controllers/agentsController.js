@@ -1,323 +1,298 @@
 "use strict";
 
-/*
-
-# SCAMSHIELD AI - MULTI AGENT CONTROLLER
-
-Agents:
-
-1. Guardian Agent
-2. Intelligence Agent
-3. Victim Safety Agent
-4. Decoy Agent
-
-AI Processing:
-Node.js -> Python FastAPI -> AI Pipeline
-
-MongoDB:
-
-* Saves analysis and all four agent results.
-* Does not store raw evidence.
-* Preserves existing frontend response contract.
-  =========================================================
-  */
+// =====================================================
+// SCAMSHIELD AI - MULTI AGENT CONTROLLER
+// Version: 3.0.0
+//
+// Processing:
+// Node.js -> Analysis Service -> Python AI Pipeline
+//
+// Responsibilities:
+// 1. Validate authenticated requests.
+// 2. Execute centralized analysis pipeline.
+// 3. Preserve Python agent execution metadata.
+// 4. Persist normalized analysis results.
+// 5. Never store raw evidence.
+// 6. Preserve frontend response compatibility.
+// =====================================================
 
 const Analysis = require("../models/analysis");
-const { analyzeEvidence } = require("../services/aiService");
+const { executeAnalysis } = require("../services/analysisService");
 
-/*
+// =====================================================
+// 1. RESPONSE HELPERS
+// =====================================================
 
-1. AGENT RESULT NORMALIZATION
-   =========================================================
-   */
-
-const getAgentStatus = (agent) => {
-  if (!agent || typeof agent !== "object") {
-    return "failed";
-  }
-
-  if (agent.success === false) {
-    return "failed";
-  }
-
-  return agent.status || "completed";
-};
-
-/*
-
-2. GUARDIAN AGENT
-   =========================================================
-   */
-
-const guardianAgent = (analysis) => {
-  const pythonGuardian = analysis.agents?.guardian || {};
-
-  return {
-    agent: "Guardian Agent",
-
-    status: getAgentStatus(pythonGuardian),
-
-    fraudCategory: analysis.fraudCategory,
-
-    riskScore: analysis.riskScore,
-
-    riskLevel: analysis.riskLevel,
-
-    detectedRules: analysis.detectedRules || [],
-
-    summary: analysis.summary,
-
-    analysisMethod: analysis.analysisMethod,
-
-    machineLearning: analysis.machineLearning,
-  };
-};
-
-/*
-
-3. INTELLIGENCE AGENT
-   =========================================================
-   */
-
-const intelligenceAgent = (analysis) => {
-  const pythonIntelligence = analysis.agents?.intelligence || {};
-
-  const indicators = analysis.indicators || [];
-
-  return {
-    agent: "Intelligence Agent",
-
-    status: getAgentStatus(pythonIntelligence),
-
-    totalIndicators: indicators.length,
-
-    indicators,
-
-    indicatorTypes: [...new Set(indicators.map((item) => item.type))],
-
-    verificationStatus: "unverified",
-
-    message:
-      "Extracted indicators are clues only. They have not been independently verified.",
-
-    pythonResult: pythonIntelligence,
-  };
-};
-
-/*
-
-4. VICTIM SAFETY AGENT
-   =========================================================
-   */
-
-const victimSafetyAgent = (analysis) => {
-  const pythonSafety = analysis.agents?.victimSafety || {};
-
-  const recommendations = Array.isArray(analysis.recommendations)
-    ? analysis.recommendations
-    : [];
-
-  return {
-    agent: "Victim Safety Agent",
-
-    status: getAgentStatus(pythonSafety),
-
-    safetyLevel:
-      pythonSafety.safety_level ||
-      pythonSafety.safetyLevel ||
-      analysis.riskLevel.toUpperCase(),
-
-    recommendations,
-
-    totalRecommendations: recommendations.length,
-
-    pythonResult: pythonSafety,
-  };
-};
-
-/*
-
-5. DECOY AGENT
-   =========================================================
-
-Decoy simulation is NOT automatically started.
-It requires a separate, explicit user-controlled action.
-========================================================
-
-*/
-
-const decoyAgent = () => {
-  return {
-    agent: "Decoy Agent",
-
-    status: "not_started",
-
-    message:
-      "Controlled simulation is available through the separate Decoy operation.",
-
-    simulationEnabled: false,
-
-    simulationOnly: true,
-  };
-};
-
-/*
-
-6. MAIN AGENT CONTROLLER
-   =========================================================
-   */
-
-const runAgents = async (req, res) => {
-  try {
-    // -----------------------------------------------
-    // AUTHENTICATION
-    // -----------------------------------------------
-
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({
+const sendError = (res, statusCode, message) => {
+    return res.status(statusCode).json({
         success: false,
-        message: "Authentication required.",
-      });
-    }
-
-    // -----------------------------------------------
-    // REQUEST VALIDATION
-    // -----------------------------------------------
-
-    const { evidenceType, evidence } = req.body || {};
-
-    if (!evidenceType || typeof evidence !== "string") {
-      return res.status(400).json({
-        success: false,
-        message: "Evidence type and evidence are required.",
-      });
-    }
-
-    // -----------------------------------------------
-    // PYTHON AI ENGINE EXECUTION
-    // -----------------------------------------------
-
-    const analysis = await analyzeEvidence({
-      evidenceType,
-      evidence,
+        message,
     });
+};
 
-    // -----------------------------------------------
-    // EXECUTE AGENT RESULT MAPPERS
-    // -----------------------------------------------
+const normalizeArray = (value) => {
+    return Array.isArray(value) ? value : [];
+};
 
-    const guardian = guardianAgent(analysis);
+// =====================================================
+// 2. AGENT RESULT NORMALIZATION
+// =====================================================
 
-    const intelligence = intelligenceAgent(analysis);
+const normalizeAgentResults = (agents = {}) => {
+    const guardian = agents.guardian || {};
+    const intelligence = agents.intelligence || {};
+    const victimSafety = agents.victimSafety || {};
+    const decoy = agents.decoy || {};
 
-    const victimSafety = victimSafetyAgent(analysis);
-
-    const decoy = decoyAgent();
-
-    // -----------------------------------------------
-    // COMBINE AGENT RESULTS
-    // -----------------------------------------------
-
-    const agentResults = {
-      guardian,
-      intelligence,
-      victimSafety,
-      decoy,
-    };
-
-    // -----------------------------------------------
-    // SAVE RESULTS IN MONGODB
-    // -----------------------------------------------
-
-    const savedAnalysis = await Analysis.create({
-      user: req.user._id,
-
-      evidenceId: analysis.evidenceId,
-
-      evidenceType: analysis.evidenceType,
-
-      fraudCategory: analysis.fraudCategory,
-
-      riskScore: analysis.riskScore,
-
-      riskLevel: analysis.riskLevel,
-
-      status: "completed",
-
-      summary: analysis.summary,
-
-      indicators: analysis.indicators || [],
-
-      detectedRules: analysis.detectedRules || [],
-
-      agents: agentResults,
-
-      analyzedAt: analysis.analyzedAt || new Date(),
-    });
-
-    // -----------------------------------------------
-    // SUCCESS RESPONSE
-    // -----------------------------------------------
-
-    return res.status(201).json({
-      success: true,
-
-      message:
-        "Python AI Engine analysis and agent execution completed successfully.",
-
-      data: {
-        analysisId: savedAnalysis._id,
-
-        evidenceId: savedAnalysis.evidenceId,
-
-        agents: savedAnalysis.agents,
-
-        analysis: {
-          fraudCategory: savedAnalysis.fraudCategory,
-
-          riskScore: savedAnalysis.riskScore,
-
-          riskLevel: savedAnalysis.riskLevel,
-
-          summary: savedAnalysis.summary,
-
-          explanation: analysis.explanation,
-
-          analysisMethod: analysis.analysisMethod,
-
-          aiEngineUsed: analysis.aiEngineUsed,
-
-          machineLearning: analysis.machineLearning,
-
-          analyzedAt: savedAnalysis.analyzedAt,
+    return {
+        guardian: {
+            agent: "Guardian Agent",
+            status: guardian.status || "unknown",
+            fraudCategory: guardian.fraudCategory || null,
+            detectionCategory: guardian.detectionCategory || null,
+            riskScore: guardian.riskScore ?? null,
+            riskLevel: guardian.riskLevel || null,
+            detectedRules: normalizeArray(guardian.detectedRules),
+            summary: guardian.summary || "",
+            analysisMethod: guardian.analysisMethod || null,
         },
 
-        orchestration: analysis.orchestration,
+        intelligence: {
+            agent: "Intelligence Agent",
+            status: intelligence.status || "unknown",
+            totalIndicators: normalizeArray(
+                intelligence.indicators
+            ).length,
+            indicators: normalizeArray(
+                intelligence.indicators
+            ).map((indicator) => ({
+                type: indicator.type || "unknown",
+                value: indicator.value || "",
+                verified: false,
+            })),
+            verificationStatus: "unverified",
+            message:
+                "Extracted indicators are clues only and have not been independently verified.",
+        },
 
-        verification: analysis.verification,
+        victimSafety: {
+            agent: "Victim Safety Agent",
+            status: victimSafety.status || "unknown",
+            safetyLevel: victimSafety.safetyLevel || null,
+            recommendations: normalizeArray(
+                victimSafety.recommendations
+            ),
+            totalRecommendations: normalizeArray(
+                victimSafety.recommendations
+            ).length,
+        },
 
-        disclaimer: analysis.disclaimer,
-      },
-    });
-  } catch (error) {
-    console.error("Agents Controller Error:", error.message);
-
-    const statusCode = error.statusCode || 500;
-
-    return res.status(statusCode).json({
-      success: false,
-
-      message: error.message || "Agent execution failed.",
-    });
-  }
+        decoy: {
+            agent: "Decoy Agent",
+            status: decoy.status || "not_started",
+            message:
+                decoy.message ||
+                "Controlled simulation requires a separate user-controlled operation.",
+            simulationEnabled: false,
+            simulationOnly: true,
+        },
+    };
 };
 
-/*
+// =====================================================
+// 3. MAIN AGENT CONTROLLER
+// =====================================================
 
-# EXPORTS
+const runAgents = async (req, res) => {
+    try {
+        // ---------------------------------------------
+        // AUTHENTICATION
+        // ---------------------------------------------
 
-*/
+        if (!req.user || !req.user._id) {
+            return sendError(
+                res,
+                401,
+                "Authentication required."
+            );
+        }
+
+        // ---------------------------------------------
+        // REQUEST VALIDATION
+        // ---------------------------------------------
+
+        const { evidenceType, evidence } = req.body || {};
+
+        if (
+            typeof evidenceType !== "string" ||
+            typeof evidence !== "string"
+        ) {
+            return sendError(
+                res,
+                400,
+                "Evidence type and evidence are required."
+            );
+        }
+
+        // ---------------------------------------------
+        // CENTRALIZED ANALYSIS PIPELINE
+        // ---------------------------------------------
+
+        const analysis = await executeAnalysis({
+            evidenceType,
+            evidence,
+        });
+
+        if (!analysis || typeof analysis !== "object") {
+            throw new Error(
+                "Analysis service returned an invalid result."
+            );
+        }
+
+        // ---------------------------------------------
+        // NORMALIZE AGENT RESULTS
+        // ---------------------------------------------
+
+        const agentResults = normalizeAgentResults(
+            analysis.agents
+        );
+
+        // ---------------------------------------------
+        // PERSIST ANALYSIS
+        // ---------------------------------------------
+
+        const savedAnalysis = await Analysis.create({
+            user: req.user._id,
+
+            evidenceId: analysis.evidenceId,
+
+            evidenceType: analysis.evidenceType,
+
+            fraudCategory: analysis.fraudCategory,
+
+            detectionCategory:
+                analysis.detectionCategory || null,
+
+            riskScore: analysis.riskScore,
+
+            riskLevel: analysis.riskLevel,
+
+            status: "completed",
+
+            summary: analysis.summary || "",
+
+            indicators: normalizeArray(
+                analysis.indicators
+            ),
+
+            detectedRules: normalizeArray(
+                analysis.detectedRules
+            ),
+
+            agents: agentResults,
+
+            analyzedAt: analysis.analyzedAt || new Date(),
+        });
+
+        // ---------------------------------------------
+        // SUCCESS RESPONSE
+        // ---------------------------------------------
+
+        return res.status(201).json({
+            success: true,
+
+            message:
+                "ScamShield AI analysis completed successfully.",
+
+            data: {
+                analysisId: savedAnalysis._id,
+
+                evidenceId: savedAnalysis.evidenceId,
+
+                agents: savedAnalysis.agents,
+
+                analysis: {
+                    fraudCategory: savedAnalysis.fraudCategory,
+
+                    detectionCategory:
+                        savedAnalysis.detectionCategory,
+
+                    riskScore: savedAnalysis.riskScore,
+
+                    riskLevel: savedAnalysis.riskLevel,
+
+                    summary: savedAnalysis.summary,
+
+                    explanation: analysis.explanation || "",
+
+                    recommendations:
+                        normalizeArray(
+                            analysis.recommendations
+                        ),
+
+                    analysisMethod:
+                        analysis.analysisMethod || null,
+
+                    aiEngineUsed:
+                        analysis.aiEngineUsed || false,
+
+                    machineLearning:
+                        analysis.machineLearning || null,
+
+                    geminiAdvisory:
+                        analysis.geminiAdvisory || null,
+
+                    analyzedAt: savedAnalysis.analyzedAt,
+                },
+
+                orchestration:
+                    analysis.orchestration || null,
+
+                verification:
+                    analysis.verification || null,
+
+                disclaimer:
+                    analysis.disclaimer || null,
+            },
+        });
+
+    } catch (error) {
+        // ---------------------------------------------
+        // INTERNAL ERROR LOGGING
+        // ---------------------------------------------
+
+        console.error(
+            "[AGENTS CONTROLLER ERROR]",
+            error.message
+        );
+
+        // ---------------------------------------------
+        // SAFE ERROR RESPONSE
+        // ---------------------------------------------
+
+        const statusCode = Number.isInteger(error.statusCode) &&
+            error.statusCode >= 400 &&
+            error.statusCode < 500
+            ? error.statusCode
+            : 500;
+
+        const message = statusCode < 500
+            ? error.message
+            : "Agent analysis could not be completed. Please try again.";
+
+        return sendError(
+            res,
+            statusCode,
+            message
+        );
+    }
+};
+
+// =====================================================
+// 4. EXPORTS
+// =====================================================
 
 module.exports = {
-  runAgents,
+    runAgents,
+    normalizeAgentResults,
 };

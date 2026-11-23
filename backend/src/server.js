@@ -1,18 +1,27 @@
+
 "use strict";
 
 // =====================================================
 // SCAMSHIELD AI
 // SERVER ENTRY POINT
 //
+// Version: 2.0.0
+//
 // Responsibilities:
 // 1. Load environment variables.
 // 2. Connect MongoDB.
 // 3. Start HTTP server.
-// 4. Handle server errors.
+// 4. Handle runtime server errors.
 // 5. Gracefully shut down resources.
+// 6. Prevent duplicate startup/shutdown.
 //
 // Express configuration and API routes are managed
 // separately inside app.js.
+// =====================================================
+
+
+// =====================================================
+// 1. IMPORT DEPENDENCIES
 // =====================================================
 
 const path = require("path");
@@ -20,301 +29,608 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const http = require("http");
 
+
 // =====================================================
-// 1. ENVIRONMENT CONFIGURATION
+// 2. ENVIRONMENT CONFIGURATION
 // =====================================================
 
 dotenv.config({
-path: path.resolve(__dirname, "../../.env"),
+    path: path.resolve(__dirname, "../../.env"),
 });
 
+
 // =====================================================
-// 2. DATABASE CONFIGURATION
+// 3. DATABASE CONFIGURATION
 // =====================================================
 
 const connectDB = require("./config/db");
 
+
 // =====================================================
-// 3. EXPRESS APPLICATION
+// 4. EXPRESS APPLICATION
 // =====================================================
 
 const app = require("./app");
 
+
 // =====================================================
-// 4. SERVER CONFIGURATION
+// 5. SERVER CONFIGURATION
 // =====================================================
 
-const PORT = Number(process.env.PORT) || 5000;
+const rawPort = process.env.PORT || "5000";
+
+const PORT = Number(rawPort);
+
 const HOST = process.env.HOST || "0.0.0.0";
 
-let server = null;
-let isStarting = false;
-let isShuttingDown = false;
+const SHUTDOWN_TIMEOUT = 10000;
+
+
+// Validate server port.
+
+if (
+    !Number.isInteger(PORT) ||
+    PORT < 0 ||
+    PORT > 65535
+) {
+    throw new Error(
+        "Invalid PORT configuration. Expected an integer between 0 and 65535."
+    );
+}
+
+if (
+    typeof HOST !== "string" ||
+    !HOST.trim()
+) {
+    throw new Error(
+        "Invalid HOST configuration."
+    );
+}
+
 
 // =====================================================
-// 5. SERVER INFORMATION
+// 6. SERVER STATE
+// =====================================================
+
+let server = null;
+
+let isStarting = false;
+
+let isShuttingDown = false;
+
+let startupPromise = null;
+
+let shutdownPromise = null;
+
+
+// =====================================================
+// 7. SERVER INFORMATION
 // =====================================================
 
 const displayServerInfo = (port) => {
-console.log("");
-console.log("================================================");
-console.log("              SCAMSHIELD AI");
-console.log("             BACKEND SERVER");
-console.log("================================================");
+    const baseURL = `http://localhost:${port}`;
 
+    console.log("");
 
-console.log(`Environment:    ${process.env.NODE_ENV || "development"}`);
-console.log(`Server:         http://localhost:${port}`);
-console.log(`Health Check:   http://localhost:${port}/api/health`);
+    console.log("================================================");
 
-console.log("");
-console.log("---------------- API MODULES ----------------");
+    console.log("              SCAMSHIELD AI");
 
-console.log(`Authentication: http://localhost:${port}/api/auth`);
-console.log(`Analysis:       http://localhost:${port}/api/analysis`);
-console.log(`Cases:          http://localhost:${port}/api/cases`);
-console.log(`Dashboard:      http://localhost:${port}/api/dashboard`);
-console.log(`Intelligence:   http://localhost:${port}/api/intelligence`);
-console.log(`Notifications:  http://localhost:${port}/api/notifications`);
-console.log(`Agents:         http://localhost:${port}/api/agents`);
+    console.log("             BACKEND SERVER");
 
-console.log("================================================");
-console.log("Backend started successfully.");
-console.log("");
+    console.log("================================================");
 
+    console.log(
+        `Environment:    ${process.env.NODE_ENV || "development"}`
+    );
 
+    console.log(
+        `Server:         ${baseURL}`
+    );
+
+    console.log(
+        `Health Check:   ${baseURL}/api/health`
+    );
+
+    console.log("");
+
+    console.log("---------------- API MODULES ----------------");
+
+    console.log(
+        `Authentication: ${baseURL}/api/auth`
+    );
+
+    console.log(
+        `Analysis:       ${baseURL}/api/analysis`
+    );
+
+    console.log(
+        `Cases:          ${baseURL}/api/cases`
+    );
+
+    console.log(
+        `Dashboard:      ${baseURL}/api/dashboard`
+    );
+
+    console.log(
+        `Intelligence:   ${baseURL}/api/intelligence`
+    );
+
+    console.log(
+        `Notifications:  ${baseURL}/api/notifications`
+    );
+
+    console.log(
+        `Agents:         ${baseURL}/api/agents`
+    );
+
+    console.log("================================================");
+
+    console.log("Backend started successfully.");
+
+    console.log("");
 };
 
+
 // =====================================================
-// 6. CLOSE DATABASE CONNECTION
+// 8. DATABASE CLEANUP
 // =====================================================
 
 const closeDatabase = async () => {
-if (mongoose.connection.readyState !== 0) {
-await mongoose.connection.close();
-console.log("MongoDB connection closed.");
-}
+    const state = mongoose.connection.readyState;
+
+    if (state !== 0) {
+        await mongoose.connection.close();
+
+        console.log(
+            "MongoDB connection closed."
+        );
+    }
 };
 
+
 // =====================================================
-// 7. START HTTP SERVER
+// 9. HTTP SERVER LISTENER
 // =====================================================
 
 const listen = (port, host) => {
-return new Promise((resolve, reject) => {
-const httpServer = http.createServer(app);
+    return new Promise((resolve, reject) => {
+        const httpServer = http.createServer(app);
 
+        const handleError = (error) => {
+            httpServer.removeListener(
+                "listening",
+                handleListening
+            );
 
-    const handleError = (error) => {
-        httpServer.removeListener("listening", handleListening);
-        reject(error);
-    };
+            reject(error);
+        };
 
-    const handleListening = () => {
-        httpServer.removeListener("error", handleError);
-        resolve(httpServer);
-    };
+        const handleListening = () => {
+            httpServer.removeListener(
+                "error",
+                handleError
+            );
 
-    httpServer.once("error", handleError);
-    httpServer.once("listening", handleListening);
+            resolve(httpServer);
+        };
 
-    httpServer.listen(port, host);
-});
+        httpServer.once(
+            "error",
+            handleError
+        );
 
+        httpServer.once(
+            "listening",
+            handleListening
+        );
 
+        httpServer.listen(port, host);
+    });
 };
 
+
 // =====================================================
-// 8. START APPLICATION
+// 10. RUNTIME SERVER ERROR HANDLER
+// =====================================================
+
+const registerServerErrorHandler = (httpServer) => {
+    httpServer.on("error", (error) => {
+        console.error(
+            "HTTP server runtime error:",
+            error.message
+        );
+
+        // A server that has failed should not continue
+        // accepting traffic as if it were healthy.
+
+        if (
+            error.code === "EADDRINUSE" ||
+            error.code === "EACCES"
+        ) {
+            console.error(
+                "Server cannot continue because of a port or permission error."
+            );
+
+            process.exitCode = 1;
+
+            shutdown("SERVER_ERROR").catch(() => {
+                process.exitCode = 1;
+            });
+        }
+    });
+};
+
+
+// =====================================================
+// 11. START APPLICATION
 // =====================================================
 
 const startServer = async () => {
-if (isStarting || server) {
-throw new Error("Server is already starting or running.");
-}
-
-
-isStarting = true;
-
-try {
-    console.log("");
-    console.log("Starting ScamShield AI Backend...");
-
-    // ---------------------------------------------
-    // STEP 1: CONNECT DATABASE
-    // ---------------------------------------------
-
-    console.log("Connecting to MongoDB...");
-
-    await connectDB();
-
-    if (mongoose.connection.readyState !== 1) {
-        throw new Error("MongoDB connection could not be established.");
+    if (isShuttingDown) {
+        throw new Error(
+            "Cannot start server during shutdown."
+        );
     }
 
-    console.log("MongoDB connected successfully.");
-
-    // ---------------------------------------------
-    // STEP 2: START HTTP SERVER
-    // ---------------------------------------------
-
-    console.log("Starting HTTP server...");
-
-    server = await listen(PORT, HOST);
-
-    // ---------------------------------------------
-    // STEP 3: DISPLAY SERVER INFORMATION
-    // ---------------------------------------------
-
-    const address = server.address();
-
-    const activePort =
-        address && typeof address === "object"
-            ? address.port
-            : PORT;
-
-    displayServerInfo(activePort);
-
-    return server;
-
-} catch (error) {
-    console.error("");
-    console.error("================================================");
-    console.error("           BACKEND STARTUP FAILED");
-    console.error("================================================");
-    console.error(error.message);
-    console.error("================================================");
-
-    // Close partially started HTTP server.
     if (server) {
-        await new Promise((resolve) => {
-            server.close(() => resolve());
-        });
-
-        server = null;
+        return server;
     }
 
-    // Release database connection after startup failure.
-    try {
-        await closeDatabase();
-    } catch (dbError) {
-        console.error("Database cleanup failed:", dbError.message);
+    if (startupPromise) {
+        return startupPromise;
     }
 
-    throw error;
+    startupPromise = (async () => {
+        isStarting = true;
 
-} finally {
-    isStarting = false;
-}
+        try {
+            console.log("");
 
+            console.log(
+                "Starting ScamShield AI Backend..."
+            );
 
+            // -----------------------------------------
+            // STEP 1: CONNECT DATABASE
+            // -----------------------------------------
+
+            console.log(
+                "Connecting to MongoDB..."
+            );
+
+            await connectDB();
+
+            if (
+                mongoose.connection.readyState !== 1
+            ) {
+                throw new Error(
+                    "MongoDB connection could not be established."
+                );
+            }
+
+            console.log(
+                "MongoDB connected successfully."
+            );
+
+            // -----------------------------------------
+            // STEP 2: CHECK SHUTDOWN STATE
+            // -----------------------------------------
+
+            if (isShuttingDown) {
+                throw new Error(
+                    "Startup cancelled because shutdown was requested."
+                );
+            }
+
+            // -----------------------------------------
+            // STEP 3: START HTTP SERVER
+            // -----------------------------------------
+
+            console.log(
+                "Starting HTTP server..."
+            );
+
+            const httpServer = await listen(
+                PORT,
+                HOST
+            );
+
+            if (isShuttingDown) {
+                await new Promise((resolve) => {
+                    httpServer.close(resolve);
+                });
+
+                throw new Error(
+                    "Startup cancelled during shutdown."
+                );
+            }
+
+            server = httpServer;
+
+            registerServerErrorHandler(server);
+
+            // -----------------------------------------
+            // STEP 4: DISPLAY SERVER INFORMATION
+            // -----------------------------------------
+
+            const address = server.address();
+
+            const activePort =
+                address &&
+                typeof address === "object"
+                    ? address.port
+                    : PORT;
+
+            displayServerInfo(activePort);
+
+            return server;
+
+        } catch (error) {
+            console.error("");
+
+            console.error(
+                "================================================"
+            );
+
+            console.error(
+                "           BACKEND STARTUP FAILED"
+            );
+
+            console.error(
+                "================================================"
+            );
+
+            console.error(error.message);
+
+            console.error(
+                "================================================"
+            );
+
+            // -----------------------------------------
+            // CLEANUP PARTIALLY STARTED SERVER
+            // -----------------------------------------
+
+            if (server) {
+                await new Promise((resolve) => {
+                    server.close(() => resolve());
+                });
+
+                server = null;
+            }
+
+            // -----------------------------------------
+            // CLEANUP DATABASE
+            // -----------------------------------------
+
+            try {
+                await closeDatabase();
+            } catch (dbError) {
+                console.error(
+                    "Database cleanup failed:",
+                    dbError.message
+                );
+            }
+
+            throw error;
+
+        } finally {
+            isStarting = false;
+            startupPromise = null;
+        }
+    })();
+
+    return startupPromise;
 };
 
+
 // =====================================================
-// 9. GRACEFUL SHUTDOWN
+// 12. CLOSE HTTP SERVER
 // =====================================================
 
-const shutdown = async (signal = "SHUTDOWN") => {
-if (isShuttingDown) {
-return;
-}
+const closeHTTPServer = async () => {
+    if (!server || !server.listening) {
+        server = null;
+        return;
+    }
 
+    const activeServer = server;
 
-isShuttingDown = true;
+    console.log(
+        "Stopping HTTP server..."
+    );
 
-console.log("");
-console.log("================================================");
-console.log(`${signal} received.`);
-console.log("Graceful shutdown initiated...");
-console.log("================================================");
+    await new Promise((resolve, reject) => {
+        let settled = false;
 
-let shutdownError = null;
+        const finish = (error) => {
+            if (settled) {
+                return;
+            }
 
-try {
-    // ---------------------------------------------
-    // STEP 1: STOP ACCEPTING NEW HTTP CONNECTIONS
-    // ---------------------------------------------
+            settled = true;
 
-    if (server && server.listening) {
-        await new Promise((resolve, reject) => {
-            server.close((error) => {
-                if (error) {
-                    return reject(error);
-                }
+            clearTimeout(timeout);
 
+            if (error) {
+                reject(error);
+            } else {
                 resolve();
-            });
+            }
+        };
+
+        const timeout = setTimeout(() => {
+            console.error(
+                "HTTP shutdown timeout reached. Closing remaining connections."
+            );
+
+            activeServer.closeAllConnections();
+
+        }, SHUTDOWN_TIMEOUT);
+
+        activeServer.close((error) => {
+            finish(error);
         });
 
-        console.log("HTTP server closed.");
-    }
+        // Close idle keep-alive connections immediately.
+        if (
+            typeof activeServer.closeIdleConnections === "function"
+        ) {
+            activeServer.closeIdleConnections();
+        }
+    });
 
     server = null;
 
-    // ---------------------------------------------
-    // STEP 2: CLOSE MONGODB CONNECTION
-    // ---------------------------------------------
-
-    await closeDatabase();
-
-    console.log("Graceful shutdown completed.");
-
-} catch (error) {
-    shutdownError = error;
-    console.error("Shutdown error:", error.message);
-
-} finally {
-    isShuttingDown = false;
-}
-
-if (shutdownError) {
-    process.exitCode = 1;
-}
-
-
+    console.log(
+        "HTTP server closed."
+    );
 };
 
+
 // =====================================================
-// 10. PROCESS SIGNAL HANDLERS
+// 13. GRACEFUL SHUTDOWN
+// =====================================================
+
+const shutdown = async (
+    signal = "SHUTDOWN"
+) => {
+    if (shutdownPromise) {
+        return shutdownPromise;
+    }
+
+    shutdownPromise = (async () => {
+        isShuttingDown = true;
+
+        console.log("");
+
+        console.log(
+            "================================================"
+        );
+
+        console.log(
+            `${signal} received.`
+        );
+
+        console.log(
+            "Graceful shutdown initiated..."
+        );
+
+        console.log(
+            "================================================"
+        );
+
+        let shutdownError = null;
+
+        try {
+            // -----------------------------------------
+            // STEP 1: WAIT FOR STARTUP TO FINISH
+            // -----------------------------------------
+
+            if (startupPromise) {
+                try {
+                    await startupPromise;
+                } catch {
+                    // Startup failure cleanup is handled
+                    // by startServer().
+                }
+            }
+
+            // -----------------------------------------
+            // STEP 2: CLOSE HTTP SERVER
+            // -----------------------------------------
+
+            await closeHTTPServer();
+
+            // -----------------------------------------
+            // STEP 3: CLOSE DATABASE
+            // -----------------------------------------
+
+            await closeDatabase();
+
+            console.log("");
+
+            console.log(
+                "Graceful shutdown completed."
+            );
+
+        } catch (error) {
+            shutdownError = error;
+
+            console.error(
+                "Shutdown error:",
+                error.message
+            );
+
+        } finally {
+            if (shutdownError) {
+                process.exitCode = 1;
+            }
+        }
+
+        return !shutdownError;
+    })();
+
+    return shutdownPromise;
+};
+
+
+// =====================================================
+// 14. PROCESS SIGNAL HANDLERS
 // =====================================================
 
 const registerProcessHandlers = () => {
-process.once("SIGINT", () => {
-shutdown("SIGINT");
-});
+    process.once(
+        "SIGINT",
+        () => {
+            shutdown("SIGINT").catch(() => {
+                process.exitCode = 1;
+            });
+        }
+    );
 
-
-process.once("SIGTERM", () => {
-    shutdown("SIGTERM");
-});
-
-
+    process.once(
+        "SIGTERM",
+        () => {
+            shutdown("SIGTERM").catch(() => {
+                process.exitCode = 1;
+            });
+        }
+    );
 };
 
+
 // =====================================================
-// 11. APPLICATION ENTRY POINT
+// 15. APPLICATION ENTRY POINT
 // =====================================================
 
 // Start the server only when this file is executed
-// directly. Importing it in tests will not start it.
+// directly.
+//
+// Importing this module in tests must not start
+// the HTTP server automatically.
 
 if (require.main === module) {
-registerProcessHandlers();
+    registerProcessHandlers();
 
-
-startServer().catch(() => {
-    process.exitCode = 1;
-});
-
-
+    startServer().catch(() => {
+        process.exitCode = 1;
+    });
 }
 
+
 // =====================================================
-// 12. EXPORTS
+// 16. EXPORTS
 // =====================================================
 
 module.exports = {
-startServer,
-shutdown,
-getServer: () => server,
+    startServer,
+
+    shutdown,
+
+    getServer: () => server,
+
+    isStarting: () => isStarting,
+
+    isShuttingDown: () => isShuttingDown,
 };

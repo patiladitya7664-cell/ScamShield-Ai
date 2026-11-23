@@ -1,10 +1,32 @@
+
 "use strict";
 
 const crypto = require("crypto");
 const axios = require("axios");
 
 // =====================================================
-// CONFIGURATION
+// SCAMSHIELD AI - PYTHON AI ENGINE SERVICE
+// Version: 4.0.0
+//
+// Flow:
+// Node.js -> Python FastAPI -> AI Pipeline
+//
+// Responsibilities:
+// 1. Evidence validation
+// 2. Python AI Engine communication
+// 3. Guardian result normalization
+// 4. Intelligence indicators
+// 5. Victim Safety recommendations
+// 6. Decoy status preservation
+// 7. Gemini advisory-only metadata
+// 8. Machine learning metadata
+//
+// Raw evidence is never returned or persisted here.
+// =====================================================
+
+
+// =====================================================
+// 1. CONFIGURATION
 // =====================================================
 
 const MAX_EVIDENCE_LENGTH = 20000;
@@ -67,11 +89,14 @@ if (
     AI_ENGINE_TIMEOUT < 1000 ||
     AI_ENGINE_TIMEOUT > 120000
 ) {
-    throw new Error("Invalid AI_ENGINE_TIMEOUT configuration.");
+    throw new Error(
+        "Invalid AI_ENGINE_TIMEOUT configuration."
+    );
 }
 
+
 // =====================================================
-// CATEGORY MAPPING
+// 2. CATEGORY MAPPING
 // =====================================================
 
 const CATEGORY_TO_MODULE = {
@@ -93,12 +118,16 @@ const CATEGORY_TO_MODULE = {
 const MODULE_ALIASES = {
     digital_arrest: "digitalArrest",
     digitalarrest: "digitalArrest",
+
     credit_card: "creditCard",
     creditcard: "creditCard",
+
+    credit_card_fraud: "creditCard",
 };
 
+
 // =====================================================
-// HELPERS
+// 3. GENERAL HELPERS
 // =====================================================
 
 const createError = (message, statusCode = 502) => {
@@ -108,9 +137,11 @@ const createError = (message, statusCode = 502) => {
 };
 
 const safeObject = (value) => {
-    return value &&
+    return (
+        value &&
         typeof value === "object" &&
         !Array.isArray(value)
+    )
         ? value
         : {};
 };
@@ -125,19 +156,46 @@ const safeString = (value, fallback = "") => {
         : fallback;
 };
 
+const firstNonEmptyArray = (...values) => {
+    for (const value of values) {
+        if (Array.isArray(value) && value.length > 0) {
+            return value;
+        }
+    }
+
+    return [];
+};
+
+const firstAvailable = (...values) => {
+    for (const value of values) {
+        if (
+            value !== undefined &&
+            value !== null
+        ) {
+            return value;
+        }
+    }
+
+    return null;
+};
+
+
 // =====================================================
-// RISK VALIDATION
+// 4. RISK VALIDATION
 // =====================================================
 
 const getExpectedRiskLevel = (score) => {
     if (score <= 24) return "low";
     if (score <= 49) return "medium";
     if (score <= 74) return "high";
+
     return "critical";
 };
 
 const normalizeRiskLevel = (value, score) => {
-    const level = String(value || "").toLowerCase();
+    const level = String(value || "")
+        .trim()
+        .toLowerCase();
 
     if (!RISK_LEVELS.includes(level)) {
         throw createError(
@@ -156,21 +214,35 @@ const normalizeRiskLevel = (value, score) => {
     return level;
 };
 
+
 // =====================================================
-// EVIDENCE VALIDATION
+// 5. EVIDENCE VALIDATION
 // =====================================================
 
-const validateEvidence = ({ evidenceType, evidence }) => {
+const validateEvidence = ({
+    evidenceType,
+    evidence,
+}) => {
     if (typeof evidenceType !== "string") {
-        throw createError("Invalid evidence type.", 400);
+        throw createError(
+            "Invalid evidence type.",
+            400
+        );
     }
 
     const normalizedType = evidenceType
         .trim()
         .toLowerCase();
 
-    if (!ALLOWED_EVIDENCE_TYPES.includes(normalizedType)) {
-        throw createError("Invalid evidence type.", 400);
+    if (
+        !ALLOWED_EVIDENCE_TYPES.includes(
+            normalizedType
+        )
+    ) {
+        throw createError(
+            "Invalid evidence type.",
+            400
+        );
     }
 
     if (typeof evidence !== "string") {
@@ -183,10 +255,16 @@ const validateEvidence = ({ evidenceType, evidence }) => {
     const normalizedEvidence = evidence.trim();
 
     if (!normalizedEvidence) {
-        throw createError("Evidence cannot be empty.", 400);
+        throw createError(
+            "Evidence cannot be empty.",
+            400
+        );
     }
 
-    if (normalizedEvidence.length > MAX_EVIDENCE_LENGTH) {
+    if (
+        normalizedEvidence.length >
+        MAX_EVIDENCE_LENGTH
+    ) {
         throw createError(
             `Evidence must not exceed ${MAX_EVIDENCE_LENGTH} characters.`,
             400
@@ -196,8 +274,9 @@ const validateEvidence = ({ evidenceType, evidence }) => {
     return normalizedEvidence;
 };
 
+
 // =====================================================
-// DETECTION CATEGORY
+// 6. DETECTION CATEGORY NORMALIZATION
 // =====================================================
 
 const normalizeDetectionCategory = (value) => {
@@ -210,21 +289,24 @@ const normalizeDetectionCategory = (value) => {
         : null;
 };
 
+
 // =====================================================
-// FRAUD MODULE
+// 7. FRAUD MODULE NORMALIZATION
 // =====================================================
 
 const normalizeFraudModule = (
     value,
     detectionCategory
 ) => {
+    if (detectionCategory) {
+        return CATEGORY_TO_MODULE[
+            detectionCategory
+        ];
+    }
+
     const category = String(value || "")
         .trim()
         .toLowerCase();
-
-    if (detectionCategory) {
-        return CATEGORY_TO_MODULE[detectionCategory];
-    }
 
     const normalized =
         MODULE_ALIASES[category] || category;
@@ -236,8 +318,9 @@ const normalizeFraudModule = (
     return "unclassified";
 };
 
+
 // =====================================================
-// INDICATORS
+// 8. INDICATOR NORMALIZATION
 // =====================================================
 
 const normalizeIndicators = (indicators) => {
@@ -260,9 +343,14 @@ const normalizeIndicators = (indicators) => {
                 ).slice(0, 30),
 
                 value: String(
-                    item.value ?? item.indicator ?? ""
-                ).trim().slice(0, 500),
+                    item.value ??
+                    item.indicator ??
+                    ""
+                )
+                    .trim()
+                    .slice(0, 500),
 
+                // Never assume an indicator is verified.
                 verified: item.verified === true,
             }))
             .filter((item) => item.value);
@@ -270,7 +358,10 @@ const normalizeIndicators = (indicators) => {
     } else {
         const source = safeObject(indicators);
 
-        for (const [type, values] of Object.entries(source)) {
+        for (
+            const [type, values]
+            of Object.entries(source)
+        ) {
             const items = Array.isArray(values)
                 ? values
                 : [values];
@@ -280,9 +371,15 @@ const normalizeIndicators = (indicators) => {
                     typeof value === "string" ||
                     typeof value === "number"
                 ) {
+                    const normalizedValue = String(value)
+                        .trim()
+                        .slice(0, 500);
+
+                    if (!normalizedValue) continue;
+
                     normalized.push({
                         type: type.slice(0, 30),
-                        value: String(value).trim().slice(0, 500),
+                        value: normalizedValue,
                         verified: false,
                     });
                 }
@@ -299,8 +396,9 @@ const normalizeIndicators = (indicators) => {
     return normalized;
 };
 
+
 // =====================================================
-// DETECTED RULES
+// 9. DETECTED RULE NORMALIZATION
 // =====================================================
 
 const normalizeDetectedRules = (rules) => {
@@ -354,13 +452,14 @@ const normalizeDetectedRules = (rules) => {
         }
 
         return {
-            category: detectionCategory || moduleCategory,
+            category:
+                detectionCategory || moduleCategory,
 
             label: safeString(
                 item.label ||
                 item.name ||
                 item.message,
-                "Suspicious indicator detected"
+                "Suspicious indicator detected."
             ).slice(0, 200),
 
             weight,
@@ -368,8 +467,9 @@ const normalizeDetectedRules = (rules) => {
     });
 };
 
+
 // =====================================================
-// SENSITIVE INFORMATION
+// 10. SENSITIVE INFORMATION NORMALIZATION
 // =====================================================
 
 const normalizeSensitiveInformation = (signals) => {
@@ -381,7 +481,8 @@ const normalizeSensitiveInformation = (signals) => {
                 !Array.isArray(item)
         )
         .filter((item) => {
-            const text = JSON.stringify(item).toLowerCase();
+            const text = JSON.stringify(item)
+                .toLowerCase();
 
             return (
                 text.includes("sensitive") ||
@@ -392,20 +493,21 @@ const normalizeSensitiveInformation = (signals) => {
                 text.includes("cvv")
             );
         })
+        .slice(0, 50)
         .map((item) => ({
             type: safeString(
                 item.type || item.code,
                 "potential_sensitive_information"
             ).slice(0, 100),
 
-            // Never copy potentially exposed credential values.
             message:
                 "Potentially sensitive information detected. Do not share passwords, PINs, OTPs or card security codes.",
         }));
 };
 
+
 // =====================================================
-// GEMINI ADVISORY
+// 11. GEMINI ADVISORY NORMALIZATION
 // =====================================================
 
 const normalizeGeminiAdvisory = (advisory) => {
@@ -416,12 +518,17 @@ const normalizeGeminiAdvisory = (advisory) => {
             available: false,
             advisory_only: true,
             status: "not_available",
+            version: "",
+            model: "",
+            summary: "",
+            recommendations: [],
         };
     }
 
     return {
         available: source.available === true,
 
+        // Gemini cannot modify Guardian classification.
         advisory_only: true,
 
         status: safeString(
@@ -444,14 +551,41 @@ const normalizeGeminiAdvisory = (advisory) => {
         recommendations: safeArray(
             source.recommendations
         )
-            .filter((item) => typeof item === "string")
+            .filter(
+                (item) => typeof item === "string"
+            )
             .slice(0, 20)
-            .map((item) => item.slice(0, 500)),
+            .map((item) => item.trim().slice(0, 500)),
     };
 };
 
+
 // =====================================================
-// PYTHON AI ENGINE REQUEST
+// 12. RECOMMENDATION NORMALIZATION
+// =====================================================
+
+const normalizeRecommendations = (
+    result,
+    victimSafety
+) => {
+    const recommendations = firstNonEmptyArray(
+        result.recommendations,
+        victimSafety.recommendations,
+        victimSafety.safety_recommendations
+    );
+
+    return recommendations
+        .filter(
+            (item) => typeof item === "string"
+        )
+        .slice(0, 30)
+        .map((item) => item.trim().slice(0, 1000))
+        .filter(Boolean);
+};
+
+
+// =====================================================
+// 13. PYTHON AI ENGINE REQUEST
 // =====================================================
 
 const callPythonAIEngine = async ({
@@ -475,7 +609,8 @@ const callPythonAIEngine = async ({
                     Accept: "application/json",
                 },
 
-                maxBodyLength: MAX_EVIDENCE_LENGTH + 10000,
+                maxBodyLength:
+                    MAX_EVIDENCE_LENGTH + 10000,
 
                 maxContentLength: MAX_RESPONSE_SIZE,
             }
@@ -519,15 +654,18 @@ const callPythonAIEngine = async ({
     return response.data;
 };
 
+
 // =====================================================
-// PYTHON RESPONSE NORMALIZATION
+// 14. PYTHON RESPONSE NORMALIZATION
 // =====================================================
 
 const normalizePythonResult = ({
     pythonResult,
     evidenceType,
 }) => {
-    const result = safeObject(pythonResult.result);
+    const result = safeObject(
+        pythonResult.result
+    );
 
     if (Object.keys(result).length === 0) {
         throw createError(
@@ -540,22 +678,29 @@ const normalizePythonResult = ({
     );
 
     const victimSafety = safeObject(
-        pythonResult.victim_safety
+        pythonResult.victim_safety ||
+        pythonResult.victimSafety
     );
 
     const agentResults = safeObject(
-        pythonResult.agent_results
+        pythonResult.agent_results ||
+        pythonResult.agentResults
     );
 
     const ml = safeObject(
-        pythonResult.machine_learning
+        pythonResult.machine_learning ||
+        pythonResult.machineLearning
     );
 
+
     // -----------------------------------------------
-    // RISK
+    // GUARDIAN RISK ASSESSMENT
     // -----------------------------------------------
 
-    const riskScore = Number(result.risk_score);
+    const riskScore = Number(
+        result.risk_score ??
+        result.riskScore
+    );
 
     if (
         !Number.isFinite(riskScore) ||
@@ -570,41 +715,61 @@ const normalizePythonResult = ({
     const normalizedRiskScore = Math.round(riskScore);
 
     const riskLevel = normalizeRiskLevel(
-        result.risk_level,
+        result.risk_level ??
+        result.riskLevel,
         normalizedRiskScore
     );
 
+
     // -----------------------------------------------
-    // CLASSIFICATION
+    // GUARDIAN CLASSIFICATION
     // -----------------------------------------------
 
+    const rawCategory =
+        result.category ??
+        result.fraud_category ??
+        result.fraudCategory;
+
     const detectionCategory =
-        normalizeDetectionCategory(result.category);
+        normalizeDetectionCategory(rawCategory);
 
     const fraudCategory =
         normalizeFraudModule(
-            result.category,
+            rawCategory,
             detectionCategory
         );
 
+
     // -----------------------------------------------
-    // INDICATORS
+    // INTELLIGENCE INDICATORS
     // -----------------------------------------------
 
-    const indicators = normalizeIndicators(
-        result.indicators || intelligence.indicators
+    const indicatorSource = firstNonEmptyArray(
+        result.indicators,
+        intelligence.indicators,
+        agentResults.intelligence?.indicators
     );
+
+    const indicators = normalizeIndicators(
+        indicatorSource
+    );
+
 
     // -----------------------------------------------
     // DETECTED RULES
     // -----------------------------------------------
 
     const detectedRules = normalizeDetectedRules(
-        result.detected_rules || []
+        firstAvailable(
+            result.detected_rules,
+            result.detectedRules,
+            []
+        )
     );
 
+
     // -----------------------------------------------
-    // SIGNALS
+    // SENSITIVE INFORMATION
     // -----------------------------------------------
 
     const sensitiveInformation =
@@ -612,26 +777,39 @@ const normalizePythonResult = ({
             result.signals
         );
 
+
     // -----------------------------------------------
-    // RECOMMENDATIONS
+    // VICTIM SAFETY RECOMMENDATIONS
     // -----------------------------------------------
 
-    const recommendations = safeArray(
-        result.recommendations
-    )
-        .filter((item) => typeof item === "string")
-        .slice(0, 30);
+    const recommendations =
+        normalizeRecommendations(
+            result,
+            victimSafety
+        );
+
 
     // -----------------------------------------------
     // EXPLANATIONS
     // -----------------------------------------------
 
-    const explanations = safeArray(
-        result.explanations
+    const rawExplanations = firstAvailable(
+        result.explanations,
+        result.explanation,
+        []
     );
 
+    const explanations = Array.isArray(
+        rawExplanations
+    )
+        ? rawExplanations
+        : typeof rawExplanations === "string"
+            ? [rawExplanations]
+            : [];
+
+
     // -----------------------------------------------
-    // AGENTS
+    // AGENT RESULTS
     // -----------------------------------------------
 
     const guardian = safeObject(
@@ -639,7 +817,8 @@ const normalizePythonResult = ({
     );
 
     const intelligenceAgent = safeObject(
-        agentResults.intelligence || intelligence
+        agentResults.intelligence ||
+        intelligence
     );
 
     const victimSafetyAgent = safeObject(
@@ -658,9 +837,11 @@ const normalizePythonResult = ({
             : {
                 status: "not_started",
                 simulationEnabled: false,
+                simulationOnly: true,
                 message:
                     "Decoy simulation requires separate user-controlled activation.",
             };
+
 
     // -----------------------------------------------
     // SUMMARY
@@ -677,12 +858,53 @@ const normalizePythonResult = ({
         );
     }
 
+
     // -----------------------------------------------
     // TIMESTAMP
     // -----------------------------------------------
 
-    // Backend records its own completion time.
     const analyzedAt = new Date();
+
+
+    // -----------------------------------------------
+    // GEMINI ADVISORY
+    // -----------------------------------------------
+
+    const geminiAdvisory =
+        normalizeGeminiAdvisory(
+            pythonResult.gemini_advisory ||
+            pythonResult.geminiAdvisory
+        );
+
+
+    // -----------------------------------------------
+    // MACHINE LEARNING METADATA
+    // -----------------------------------------------
+
+    const machineLearning = {
+        available: ml.available === true,
+
+        prediction: firstAvailable(
+            ml.prediction,
+            null
+        ),
+
+        confidence:
+            typeof ml.confidence === "number" &&
+            Number.isFinite(ml.confidence)
+                ? ml.confidence
+                : null,
+
+        method: safeString(
+            ml.method,
+            "not_available"
+        ).slice(0, 100),
+
+        probabilityCalibrated:
+            ml.probability_calibrated === true ||
+            ml.probabilityCalibrated === true,
+    };
+
 
     // -----------------------------------------------
     // FINAL NORMALIZED RESULT
@@ -693,10 +915,13 @@ const normalizePythonResult = ({
 
         evidenceType,
 
+        // Major module and individual category
+        // are intentionally separate.
         fraudCategory,
 
         detectionCategory,
 
+        // Guardian remains authoritative.
         riskScore: normalizedRiskScore,
 
         riskLevel,
@@ -720,30 +945,16 @@ const normalizePythonResult = ({
             decoy,
         },
 
-        machineLearning: {
-            available: ml.available === true,
+        machineLearning,
 
-            prediction: ml.prediction ?? null,
+        geminiAdvisory,
 
-            confidence: ml.confidence ?? null,
-
-            method: safeString(
-                ml.method,
-                "not_available"
-            ),
-
-            probabilityCalibrated:
-                ml.probability_calibrated === true,
-        },
-
-        geminiAdvisory: normalizeGeminiAdvisory(
-            pythonResult.gemini_advisory
-        ),
-
-        analysisMethod:
-            ml.available === true
+        analysisMethod: safeString(
+            ml.method,
+            ml.available
                 ? "hybrid"
-                : "python_rule_based",
+                : "python_rule_based"
+        ),
 
         aiEngineUsed: true,
 
@@ -764,8 +975,9 @@ const normalizePythonResult = ({
     };
 };
 
+
 // =====================================================
-// MAIN ANALYSIS FUNCTION
+// 15. MAIN ANALYSIS FUNCTION
 // =====================================================
 
 const analyzeEvidence = async ({
@@ -792,8 +1004,9 @@ const analyzeEvidence = async ({
     });
 };
 
+
 // =====================================================
-// LEGACY HELPERS
+// 16. DISABLED LEGACY HELPERS
 // =====================================================
 
 const classifyFraud = () => {
@@ -814,14 +1027,29 @@ const calculateRisk = () => {
     );
 };
 
+
 // =====================================================
-// EXPORTS
+// 17. EXPORTS
 // =====================================================
 
 module.exports = {
     analyzeEvidence,
+
     validateEvidence,
+
+    normalizePythonResult,
+
     classifyFraud,
+
     extractIndicators,
+
     calculateRisk,
+
+    ALLOWED_EVIDENCE_TYPES,
+
+    DETECTION_CATEGORIES,
+
+    FRAUD_MODULES,
+
+    RISK_LEVELS,
 };

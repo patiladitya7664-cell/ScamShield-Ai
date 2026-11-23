@@ -1,65 +1,73 @@
 "use strict";
 
+/*
+=========================================================
+SCAMSHIELD AI - AUTH CONTROLLER
+Version: 3.0.0
+
+Features:
+1. Secure user registration.
+2. Secure login.
+3. Automatic password hashing through User model.
+4. Centralized JWT generation.
+5. Safe user responses.
+6. Account status validation.
+7. Role escalation prevention.
+8. Authenticated user profile.
+
+SECURITY:
+- Password is never returned.
+- Password is hashed only by User model.
+- Public registration always creates USER role.
+- Login uses generic invalid credentials response.
+=========================================================
+*/
+
 const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-/* =========================================
-   CONSTANTS
-========================================= */
+const {
+    generateToken,
+} = require("../utils/generateToken");
 
-const BCRYPT_ROUNDS = 12;
+// =====================================================
+// CONSTANTS
+// =====================================================
+
 const MAX_PASSWORD_BYTES = 72;
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* =========================================
-   TOKEN GENERATOR
-========================================= */
-
-const generateToken = (userId) => {
-    const jwtSecret = process.env.JWT_SECRET;
-
-    if (!jwtSecret) {
-        const error = new Error(
-            "JWT_SECRET is missing in environment variables."
-        );
-
-        error.statusCode = 500;
-        throw error;
-    }
-
-    return jwt.sign(
-        { id: userId.toString() },
-        jwtSecret,
-        {
-            algorithm: "HS256",
-            expiresIn: process.env.JWT_EXPIRES_IN || "7d"
-        }
-    );
-};
-
-/* =========================================
-   SAFE USER RESPONSE
-========================================= */
+// =====================================================
+// SAFE USER RESPONSE
+// =====================================================
 
 const formatUser = (user) => ({
     id: user._id.toString(),
     name: user.name,
     email: user.email,
-    role: user.role
+    role: user.role,
+    isActive: user.isActive,
+    createdAt: user.createdAt,
 });
 
-/* =========================================
-   REGISTER USER
-   POST /api/auth/register
-========================================= */
+// =====================================================
+// REGISTER USER
+// POST /api/auth/register
+// =====================================================
 
 const registerUser = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body || {};
+        const {
+            name,
+            email,
+            password,
+        } = req.body || {};
 
-        // Validate input types
+        // ---------------------------------------------
+        // INPUT TYPE VALIDATION
+        // ---------------------------------------------
+
         if (
             typeof name !== "string" ||
             typeof email !== "string" ||
@@ -67,42 +75,67 @@ const registerUser = async (req, res, next) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide valid name, email and password."
+                message:
+                    "Please provide valid name, email and password.",
             });
         }
 
         const cleanName = name.trim();
         const cleanEmail = email.trim().toLowerCase();
 
-        // Required fields
-        if (!cleanName || !cleanEmail || !password) {
+        // ---------------------------------------------
+        // REQUIRED FIELDS
+        // ---------------------------------------------
+
+        if (
+            !cleanName ||
+            !cleanEmail ||
+            !password
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide name, email and password."
+                message:
+                    "Please provide name, email and password.",
             });
         }
 
-        // Name validation
-        if (cleanName.length < 2 || cleanName.length > 60) {
+        // ---------------------------------------------
+        // NAME VALIDATION
+        // ---------------------------------------------
+
+        if (
+            cleanName.length < 2 ||
+            cleanName.length > 60
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "Name must contain between 2 and 60 characters."
+                message:
+                    "Name must contain between 2 and 60 characters.",
             });
         }
 
-        // Email validation
+        // ---------------------------------------------
+        // EMAIL VALIDATION
+        // ---------------------------------------------
+
         if (
             cleanEmail.length > 254 ||
             !EMAIL_PATTERN.test(cleanEmail)
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Please enter a valid email address."
+                message: "Please enter a valid email address.",
             });
         }
 
-        // Password validation
-        const passwordBytes = Buffer.byteLength(password, "utf8");
+        // ---------------------------------------------
+        // PASSWORD VALIDATION
+        // ---------------------------------------------
+
+        const passwordBytes = Buffer.byteLength(
+            password,
+            "utf8"
+        );
 
         if (
             password.length < 8 ||
@@ -114,46 +147,61 @@ const registerUser = async (req, res, next) => {
             return res.status(400).json({
                 success: false,
                 message:
-                    "Password must contain at least 8 characters, one uppercase letter, one lowercase letter and one number. Maximum length is 72 UTF-8 bytes."
+                    "Password must contain at least 8 characters, one uppercase letter, one lowercase letter and one number. Maximum length is 72 UTF-8 bytes.",
             });
         }
 
-        // Check existing account
+        // ---------------------------------------------
+        // CHECK EXISTING USER
+        // ---------------------------------------------
+
         const existingUser = await User.findOne({
-            email: cleanEmail
+            email: cleanEmail,
         }).select("_id");
 
         if (existingUser) {
             return res.status(409).json({
                 success: false,
-                message: "An account with this email already exists."
+                message:
+                    "An account with this email already exists.",
             });
         }
 
-        // Hash password
-        const hashedPassword = await bcrypt.hash(
-            password,
-            BCRYPT_ROUNDS
-        );
+        // ---------------------------------------------
+        // CREATE USER
+        // ---------------------------------------------
+        // IMPORTANT:
+        // Do not hash password here.
+        // User.js pre-save middleware handles hashing.
+        //
+        // Never accept role from public registration.
+        // ---------------------------------------------
 
-        // Create account
         const user = await User.create({
             name: cleanName,
             email: cleanEmail,
-            password: hashedPassword
+            password,
+            role: "user",
         });
+
+        // ---------------------------------------------
+        // RESPONSE
+        // ---------------------------------------------
 
         return res.status(201).json({
             success: true,
             message: "Account created successfully.",
-            user: formatUser(user)
+            user: formatUser(user),
         });
 
     } catch (error) {
+        // Handle concurrent duplicate registration.
+
         if (error.code === 11000) {
             return res.status(409).json({
                 success: false,
-                message: "An account with this email already exists."
+                message:
+                    "An account with this email already exists.",
             });
         }
 
@@ -161,16 +209,22 @@ const registerUser = async (req, res, next) => {
     }
 };
 
-/* =========================================
-   LOGIN USER
-   POST /api/auth/login
-========================================= */
+// =====================================================
+// LOGIN USER
+// POST /api/auth/login
+// =====================================================
 
 const loginUser = async (req, res, next) => {
     try {
-        const { email, password } = req.body || {};
+        const {
+            email,
+            password,
+        } = req.body || {};
 
-        // Validate input
+        // ---------------------------------------------
+        // INPUT VALIDATION
+        // ---------------------------------------------
+
         if (
             typeof email !== "string" ||
             typeof password !== "string" ||
@@ -179,7 +233,8 @@ const loginUser = async (req, res, next) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide email and password."
+                message:
+                    "Please provide email and password.",
             });
         }
 
@@ -188,55 +243,76 @@ const loginUser = async (req, res, next) => {
         if (
             cleanEmail.length > 254 ||
             !EMAIL_PATTERN.test(cleanEmail) ||
-            Buffer.byteLength(password, "utf8") > MAX_PASSWORD_BYTES
+            Buffer.byteLength(password, "utf8") >
+                MAX_PASSWORD_BYTES
         ) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password."
+                message: "Invalid email or password.",
             });
         }
 
-        // Find account
+        // ---------------------------------------------
+        // FIND USER
+        // ---------------------------------------------
+        // Password has select:false in User.js.
+        // Explicitly include it for authentication.
+        // ---------------------------------------------
+
         const user = await User.findOne({
-            email: cleanEmail
+            email: cleanEmail,
         }).select("+password");
 
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password."
+                message: "Invalid email or password.",
             });
         }
 
-        // Check account status
+        // ---------------------------------------------
+        // ACCOUNT STATUS
+        // ---------------------------------------------
+
         if (!user.isActive) {
             return res.status(403).json({
                 success: false,
-                message: "Your account is currently inactive."
+                message:
+                    "Your account is currently inactive.",
             });
         }
 
-        // Verify password
-        const isPasswordValid = await bcrypt.compare(
-            password,
-            user.password
-        );
+        // ---------------------------------------------
+        // PASSWORD VERIFICATION
+        // ---------------------------------------------
+        // Use User model's comparePassword method.
+        // ---------------------------------------------
+
+        const isPasswordValid =
+            await user.comparePassword(password);
 
         if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password."
+                message: "Invalid email or password.",
             });
         }
 
-        // Generate authentication token
+        // ---------------------------------------------
+        // GENERATE JWT
+        // ---------------------------------------------
+
         const token = generateToken(user._id);
+
+        // ---------------------------------------------
+        // RESPONSE
+        // ---------------------------------------------
 
         return res.status(200).json({
             success: true,
             message: "Login successful.",
             token,
-            user: formatUser(user)
+            user: formatUser(user),
         });
 
     } catch (error) {
@@ -244,30 +320,25 @@ const loginUser = async (req, res, next) => {
     }
 };
 
-/* =========================================
-   GET LOGGED-IN USER
-   GET /api/auth/me
-========================================= */
+// =====================================================
+// GET LOGGED-IN USER
+// GET /api/auth/me
+// =====================================================
 
 const getMe = async (req, res, next) => {
     try {
-        if (!req.user) {
+        if (!req.user || !req.user._id) {
             return res.status(401).json({
                 success: false,
-                message: "Authentication required."
+                message: "Authentication required.",
             });
         }
 
         return res.status(200).json({
             success: true,
-            message: "User profile fetched successfully.",
-            user: {
-                id: req.user._id.toString(),
-                name: req.user.name,
-                email: req.user.email,
-                role: req.user.role,
-                createdAt: req.user.createdAt
-            }
+            message:
+                "User profile fetched successfully.",
+            user: formatUser(req.user),
         });
 
     } catch (error) {
@@ -275,12 +346,12 @@ const getMe = async (req, res, next) => {
     }
 };
 
-/* =========================================
-   EXPORT CONTROLLERS
-========================================= */
+// =====================================================
+// EXPORTS
+// =====================================================
 
 module.exports = {
     registerUser,
     loginUser,
-    getMe
+    getMe,
 };

@@ -1,19 +1,46 @@
 "use strict";
 
+// =====================================================
+// SCAMSHIELD AI - USER MODEL
+// Version: 2.0.0
+//
+// Features:
+// 1. Secure password hashing.
+// 2. Email normalization.
+// 3. Centralized role validation.
+// 4. Account status management.
+// 5. Password comparison.
+// 6. Sensitive field protection.
+// =====================================================
+
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+
+const config = require("../config/config");
+const { ROLES, ROLE_VALUES } = require("../constants/roles");
+
+// =====================================================
+// USER SCHEMA
+// =====================================================
 
 const userSchema = new mongoose.Schema(
     {
-        // User's full name
+        // ---------------------------------------------
+        // USER NAME
+        // ---------------------------------------------
+
         name: {
             type: String,
             required: [true, "Name is required"],
             trim: true,
             minlength: [2, "Name must contain at least 2 characters"],
-            maxlength: [60, "Name cannot exceed 60 characters"]
+            maxlength: [60, "Name cannot exceed 60 characters"],
         },
 
-        // Unique account email
+        // ---------------------------------------------
+        // EMAIL
+        // ---------------------------------------------
+
         email: {
             type: String,
             required: [true, "Email is required"],
@@ -23,46 +50,125 @@ const userSchema = new mongoose.Schema(
             maxlength: 254,
             match: [
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                "Please enter a valid email address"
-            ]
+                "Please enter a valid email address",
+            ],
         },
 
-        // Hashed password
+        // ---------------------------------------------
+        // PASSWORD
+        // ---------------------------------------------
+
         password: {
             type: String,
             required: [true, "Password is required"],
             minlength: 8,
             maxlength: 72,
-            select: false
+            select: false,
         },
 
-        // Account permissions
+        // ---------------------------------------------
+        // USER ROLE
+        // ---------------------------------------------
+
         role: {
             type: String,
-            enum: ["user", "analyst", "admin"],
-            default: "user",
-            required: true
+            enum: ROLE_VALUES,
+            default: ROLES.USER,
+            required: true,
         },
 
-        // Account status
+        // ---------------------------------------------
+        // ACCOUNT STATUS
+        // ---------------------------------------------
+
         isActive: {
             type: Boolean,
             default: true,
-            required: true
-        }
+            required: true,
+        },
     },
     {
         timestamps: true,
         versionKey: false,
-        strict: true
+        strict: true,
     }
 );
 
-// Explicit unique email index
+// =====================================================
+// UNIQUE EMAIL INDEX
+// =====================================================
+
 userSchema.index(
     { email: 1 },
-    { unique: true, name: "unique_user_email" }
+    {
+        unique: true,
+        name: "unique_user_email",
+    }
 );
 
-// Export User model
+// =====================================================
+// PASSWORD HASHING
+// =====================================================
+
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) {
+        return;
+    }
+
+    if (
+        typeof this.password !== "string" ||
+        this.password.length < 8 ||
+        Buffer.byteLength(this.password, "utf8") > 72
+    ) {
+        throw new Error("Password must contain 8–72 UTF-8 bytes.");
+    }
+
+    const rounds = config.security.bcryptRounds;
+
+    this.password = await bcrypt.hash(
+        this.password,
+        rounds
+    );
+});
+
+// =====================================================
+// PASSWORD COMPARISON
+// =====================================================
+
+userSchema.methods.comparePassword = async function (
+    candidatePassword
+) {
+    if (
+        typeof candidatePassword !== "string" ||
+        !this.password
+    ) {
+        return false;
+    }
+
+    return bcrypt.compare(
+        candidatePassword,
+        this.password
+    );
+};
+
+// =====================================================
+// SAFE USER OBJECT
+// =====================================================
+
+userSchema.methods.toSafeObject = function () {
+    return {
+        id: this._id,
+        name: this.name,
+        email: this.email,
+        role: this.role,
+        isActive: this.isActive,
+        createdAt: this.createdAt,
+        updatedAt: this.updatedAt,
+    };
+};
+
+// =====================================================
+// EXPORT
+// =====================================================
+
 module.exports = mongoose.model("User", userSchema);

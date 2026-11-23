@@ -1,144 +1,303 @@
+
 "use strict";
 
 // =====================================================
 // SCAMSHIELD AI - API RESPONSE UTILITY
-// Standardized API Response Handler
+// Version: 2.0.0
+//
+// Responsibilities:
+// 1. Standard success responses.
+// 2. Standard error responses.
+// 3. Paginated responses.
+// 4. Resource creation responses.
+// 5. No-content responses.
+//
+// Standard response format:
+//
+// SUCCESS:
+// {
+//   success: true,
+//   status: "success",
+//   message: "...",
+//   data: {},
+//   meta: {}
+// }
+//
+// ERROR:
+// {
+//   success: false,
+//   status: "error",
+//   message: "...",
+//   errors: []
+// }
 // =====================================================
 
-/**
- * Send a successful API response.
- *
- * @param {Object} res - Express response object
- * @param {String} message - Response message
- * @param {*} data - Response payload
- * @param {Number} statusCode - HTTP status code
- * @param {Object|null} meta - Optional metadata
- */
+
+// =====================================================
+// 1. CONSTANTS
+// =====================================================
+
+const DEFAULT_SUCCESS_MESSAGE = "Request successful.";
+
+const DEFAULT_ERROR_MESSAGE = "Something went wrong.";
+
+const DEFAULT_PAGE_LIMIT = 20;
+
+const MAX_PAGE_LIMIT = 100;
+
+
+// =====================================================
+// 2. VALIDATION HELPERS
+// =====================================================
+
+const normalizeStatusCode = (
+    statusCode,
+    fallback = 200
+) => {
+    const code = Number(statusCode);
+
+    if (
+        !Number.isInteger(code) ||
+        code < 200 ||
+        code > 599 ||
+        code === 204 ||
+        code === 304
+    ) {
+        return fallback;
+    }
+
+    return code;
+};
+
+
+const normalizeMessage = (
+    message,
+    fallback
+) => {
+    if (
+        typeof message !== "string" ||
+        !message.trim()
+    ) {
+        return fallback;
+    }
+
+    return message.trim().slice(0, 500);
+};
+
+
+const normalizePaginationNumber = (
+    value,
+    fallback,
+    maximum = Number.MAX_SAFE_INTEGER
+) => {
+    const number = Number(value);
+
+    if (
+        !Number.isSafeInteger(number) ||
+        number < 1
+    ) {
+        return fallback;
+    }
+
+    return Math.min(number, maximum);
+};
+
+
+const normalizeTotal = (value) => {
+    const number = Number(value);
+
+    if (
+        !Number.isSafeInteger(number) ||
+        number < 0
+    ) {
+        return 0;
+    }
+
+    return number;
+};
+
+
+// =====================================================
+// 3. SUCCESS RESPONSE
+// =====================================================
 
 const successResponse = (
     res,
-    message = "Request successful.",
+    message = DEFAULT_SUCCESS_MESSAGE,
     data = null,
     statusCode = 200,
     meta = null
 ) => {
     const response = {
         success: true,
+
         status: "success",
-        message,
+
+        message: normalizeMessage(
+            message,
+            DEFAULT_SUCCESS_MESSAGE
+        ),
+
         data,
     };
 
-    if (meta !== null) {
+    if (
+        meta !== null &&
+        meta !== undefined
+    ) {
         response.meta = meta;
     }
 
-    return res.status(statusCode).json(response);
+    return res
+        .status(normalizeStatusCode(statusCode))
+        .json(response);
 };
 
-/**
- * Send an error API response.
- *
- * @param {Object} res - Express response object
- * @param {String} message - Error message
- * @param {Number} statusCode - HTTP status code
- * @param {*} errors - Optional validation errors
- */
+
+// =====================================================
+// 4. ERROR RESPONSE
+// =====================================================
 
 const errorResponse = (
     res,
-    message = "Something went wrong.",
+    message = DEFAULT_ERROR_MESSAGE,
     statusCode = 500,
     errors = null
 ) => {
     const response = {
         success: false,
+
         status: "error",
-        message,
+
+        message: normalizeMessage(
+            message,
+            DEFAULT_ERROR_MESSAGE
+        ),
     };
 
-    if (errors !== null) {
+    if (
+        errors !== null &&
+        errors !== undefined
+    ) {
         response.errors = errors;
     }
 
-    return res.status(statusCode).json(response);
+    return res
+        .status(
+            normalizeStatusCode(statusCode, 500)
+        )
+        .json(response);
 };
 
-/**
- * Send a paginated API response.
- *
- * @param {Object} res - Express response object
- * @param {String} message - Response message
- * @param {Array} data - Response data
- * @param {Number} page - Current page
- * @param {Number} limit - Items per page
- * @param {Number} total - Total records
- * @param {Number} statusCode - HTTP status code
- */
+
+// =====================================================
+// 5. PAGINATED RESPONSE
+// =====================================================
 
 const paginatedResponse = (
     res,
-    message,
-    data,
-    page,
-    limit,
-    total,
+    message = DEFAULT_SUCCESS_MESSAGE,
+    data = [],
+    page = 1,
+    limit = DEFAULT_PAGE_LIMIT,
+    total = 0,
     statusCode = 200
 ) => {
-    const currentPage = Math.max(1, Number(page) || 1);
-    const pageLimit = Math.max(1, Number(limit) || 20);
-    const totalRecords = Math.max(0, Number(total) || 0);
+    const currentPage = normalizePaginationNumber(
+        page,
+        1
+    );
 
-    return res.status(statusCode).json({
-        success: true,
-        status: "success",
-        message,
-        data,
-        pagination: {
-            currentPage,
-            limit: pageLimit,
-            totalRecords,
-            totalPages: Math.ceil(totalRecords / pageLimit),
-            hasNextPage:
-                currentPage < Math.ceil(totalRecords / pageLimit),
-            hasPreviousPage: currentPage > 1,
-        },
-    });
+    const pageLimit = normalizePaginationNumber(
+        limit,
+        DEFAULT_PAGE_LIMIT,
+        MAX_PAGE_LIMIT
+    );
+
+    const totalRecords = normalizeTotal(total);
+
+    const totalPages = Math.ceil(
+        totalRecords / pageLimit
+    );
+
+    const validData = Array.isArray(data)
+        ? data
+        : [];
+
+    return res
+        .status(normalizeStatusCode(statusCode))
+        .json({
+            success: true,
+
+            status: "success",
+
+            message: normalizeMessage(
+                message,
+                DEFAULT_SUCCESS_MESSAGE
+            ),
+
+            data: validData,
+
+            pagination: {
+                currentPage,
+
+                limit: pageLimit,
+
+                totalRecords,
+
+                totalPages,
+
+                hasNextPage:
+                    currentPage < totalPages,
+
+                hasPreviousPage:
+                    currentPage > 1,
+            },
+        });
 };
 
-/**
- * Send a created resource response.
- */
+
+// =====================================================
+// 6. CREATED RESPONSE
+// =====================================================
 
 const createdResponse = (
     res,
     message = "Resource created successfully.",
-    data = null
+    data = null,
+    meta = null
 ) => {
     return successResponse(
         res,
         message,
         data,
-        201
+        201,
+        meta
     );
 };
 
-/**
- * Send a no-content response.
- */
-
-const noContentResponse = (res) => {
-    return res.status(204).send();
-};
 
 // =====================================================
-// EXPORTS
+// 7. NO CONTENT RESPONSE
+// =====================================================
+
+const noContentResponse = (res) => {
+    return res.status(204).end();
+};
+
+
+// =====================================================
+// 8. EXPORTS
 // =====================================================
 
 module.exports = {
     successResponse,
+
     errorResponse,
+
     paginatedResponse,
+
     createdResponse,
+
     noContentResponse,
 };

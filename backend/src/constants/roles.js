@@ -2,7 +2,13 @@
 
 // =====================================================
 // SCAMSHIELD AI - USER ROLES
-// Centralized role definitions and authorization helpers
+// Version: 2.0.0
+//
+// Centralized Role-Based Access Control (RBAC).
+// =====================================================
+
+// =====================================================
+// 1. ROLE DEFINITIONS
 // =====================================================
 
 const ROLES = Object.freeze({
@@ -12,7 +18,7 @@ const ROLES = Object.freeze({
 });
 
 // =====================================================
-// ROLE VALUES
+// 2. ROLE VALUES
 // =====================================================
 
 const ROLE_VALUES = Object.freeze(
@@ -20,80 +26,149 @@ const ROLE_VALUES = Object.freeze(
 );
 
 // =====================================================
-// ROLE PERMISSIONS
+// 3. PERMISSION DEFINITIONS
+// =====================================================
+
+const PERMISSIONS = Object.freeze({
+
+    // User management
+    MANAGE_USERS: "manage_users",
+    MANAGE_ROLES: "manage_roles",
+
+    // Analysis
+    CREATE_ANALYSIS: "create_analysis",
+    VIEW_ALL_ANALYSES: "view_all_analyses",
+    VIEW_OWN_ANALYSES: "view_own_analyses",
+
+    // Cases
+    MANAGE_ALL_CASES: "manage_all_cases",
+    MANAGE_CASES: "manage_cases",
+    CREATE_CASE: "create_case",
+    VIEW_OWN_CASES: "view_own_cases",
+
+    // Dashboard and analytics
+    VIEW_DASHBOARD: "view_dashboard",
+    VIEW_ANALYTICS: "view_analytics",
+
+    // Intelligence
+    MANAGE_INTELLIGENCE: "manage_intelligence",
+    VIEW_INTELLIGENCE: "view_intelligence",
+
+    // Agents
+    MANAGE_AGENTS: "manage_agents",
+    VIEW_AGENTS: "view_agents",
+
+    // Notifications
+    MANAGE_NOTIFICATIONS: "manage_notifications",
+    VIEW_OWN_NOTIFICATIONS: "view_own_notifications",
+
+    // Settings
+    MANAGE_SETTINGS: "manage_settings",
+});
+
+// =====================================================
+// 4. ROLE PERMISSIONS
 // =====================================================
 
 const ROLE_PERMISSIONS = Object.freeze({
+
     [ROLES.ADMIN]: Object.freeze([
-        "manage_users",
-        "manage_roles",
-        "view_all_analyses",
-        "manage_all_cases",
-        "view_dashboard",
-        "view_analytics",
-        "manage_intelligence",
-        "manage_agents",
-        "manage_notifications",
-        "manage_settings",
+        PERMISSIONS.MANAGE_USERS,
+        PERMISSIONS.MANAGE_ROLES,
+        PERMISSIONS.VIEW_ALL_ANALYSES,
+        PERMISSIONS.MANAGE_ALL_CASES,
+        PERMISSIONS.VIEW_DASHBOARD,
+        PERMISSIONS.VIEW_ANALYTICS,
+        PERMISSIONS.MANAGE_INTELLIGENCE,
+        PERMISSIONS.MANAGE_AGENTS,
+        PERMISSIONS.MANAGE_NOTIFICATIONS,
+        PERMISSIONS.MANAGE_SETTINGS,
     ]),
 
     [ROLES.ANALYST]: Object.freeze([
-        "view_all_analyses",
-        "create_analysis",
-        "view_dashboard",
-        "view_analytics",
-        "manage_cases",
-        "view_intelligence",
-        "view_agents",
-        "manage_notifications",
+        PERMISSIONS.VIEW_ALL_ANALYSES,
+        PERMISSIONS.CREATE_ANALYSIS,
+        PERMISSIONS.VIEW_DASHBOARD,
+        PERMISSIONS.VIEW_ANALYTICS,
+        PERMISSIONS.MANAGE_CASES,
+        PERMISSIONS.VIEW_INTELLIGENCE,
+        PERMISSIONS.VIEW_AGENTS,
+        PERMISSIONS.MANAGE_NOTIFICATIONS,
     ]),
 
     [ROLES.USER]: Object.freeze([
-        "create_analysis",
-        "view_own_analyses",
-        "create_case",
-        "view_own_cases",
-        "view_own_notifications",
+        PERMISSIONS.CREATE_ANALYSIS,
+        PERMISSIONS.VIEW_OWN_ANALYSES,
+        PERMISSIONS.CREATE_CASE,
+        PERMISSIONS.VIEW_OWN_CASES,
+        PERMISSIONS.VIEW_OWN_NOTIFICATIONS,
     ]),
 });
 
 // =====================================================
-// HELPER FUNCTIONS
+// 5. VALIDATE ROLE
 // =====================================================
 
-/**
- * Check whether a role is valid.
- */
 const isValidRole = (role) => {
-    return typeof role === "string" && ROLE_VALUES.includes(role);
+    return (
+        typeof role === "string" &&
+        ROLE_VALUES.includes(role)
+    );
 };
 
-/**
- * Check whether a user has a specific role.
- */
+// =====================================================
+// 6. VALIDATE PERMISSION
+// =====================================================
+
+const isValidPermission = (permission) => {
+    return (
+        typeof permission === "string" &&
+        Object.values(PERMISSIONS).includes(permission)
+    );
+};
+
+// =====================================================
+// 7. CHECK USER ROLE
+// =====================================================
+
 const hasRole = (userRole, allowedRoles = []) => {
-    if (!isValidRole(userRole) || !Array.isArray(allowedRoles)) {
+
+    if (
+        !isValidRole(userRole) ||
+        !Array.isArray(allowedRoles) ||
+        allowedRoles.length === 0
+    ) {
         return false;
     }
 
-    return allowedRoles.includes(userRole);
+    return (
+        allowedRoles.every(isValidRole) &&
+        allowedRoles.includes(userRole)
+    );
 };
 
-/**
- * Check whether a role has a specific permission.
- */
+// =====================================================
+// 8. CHECK ROLE PERMISSION
+// =====================================================
+
 const hasPermission = (role, permission) => {
-    if (!isValidRole(role) || typeof permission !== "string") {
+
+    if (
+        !isValidRole(role) ||
+        !isValidPermission(permission)
+    ) {
         return false;
     }
 
     return ROLE_PERMISSIONS[role].includes(permission);
 };
 
-/**
- * Get permissions assigned to a role.
- */
+// =====================================================
+// 9. GET ROLE PERMISSIONS
+// =====================================================
+
 const getRolePermissions = (role) => {
+
     if (!isValidRole(role)) {
         return [];
     }
@@ -102,14 +177,17 @@ const getRolePermissions = (role) => {
 };
 
 // =====================================================
-// EXPORTS
+// 10. EXPORTS
 // =====================================================
 
 module.exports = {
     ROLES,
     ROLE_VALUES,
+    PERMISSIONS,
     ROLE_PERMISSIONS,
+
     isValidRole,
+    isValidPermission,
     hasRole,
     hasPermission,
     getRolePermissions,

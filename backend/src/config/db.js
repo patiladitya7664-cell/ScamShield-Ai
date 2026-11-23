@@ -2,55 +2,116 @@
 
 // =====================================================
 // SCAMSHIELD AI - DATABASE CONFIGURATION
-// Version: 2.0.0
+// Version: 3.0.0
 //
 // Responsibilities:
-// 1. Validate MongoDB configuration.
+// 1. Read centralized MongoDB configuration.
 // 2. Connect to MongoDB.
 // 3. Configure connection pool.
-// 4. Handle connection errors.
-// 5. Allow server.js to manage startup failures.
+// 4. Handle connection lifecycle events.
+// 5. Propagate startup failures to server.js.
 // =====================================================
 
 const mongoose = require("mongoose");
+const config = require("./config");
+
+// =====================================================
+// CONNECTION OPTIONS
+// =====================================================
+
+const CONNECTION_OPTIONS = Object.freeze({
+    serverSelectionTimeoutMS: 10000,
+    connectTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+    maxPoolSize: 10,
+    minPoolSize: 1,
+});
+
+// =====================================================
+// CONNECTION EVENT HANDLERS
+// =====================================================
+
+let listenersRegistered = false;
+
+const registerConnectionListeners = () => {
+    if (listenersRegistered) {
+        return;
+    }
+
+    mongoose.connection.on("connected", () => {
+        console.log("[DATABASE] MongoDB connected.");
+    });
+
+    mongoose.connection.on("disconnected", () => {
+        console.warn("[DATABASE] MongoDB disconnected.");
+    });
+
+    mongoose.connection.on("error", (error) => {
+        console.error(
+            "[DATABASE] MongoDB connection error:",
+            error.message
+        );
+    });
+
+    listenersRegistered = true;
+};
 
 // =====================================================
 // DATABASE CONNECTION
 // =====================================================
 
 const connectDB = async () => {
-    const mongoURI = process.env.MONGODB_URI;
+    const mongoURI = config.database.uri;
 
     // ---------------------------------------------
-    // STEP 1: VALIDATE ENVIRONMENT VARIABLE
+    // STEP 1: VALIDATE CONFIGURATION
     // ---------------------------------------------
 
-    if (!mongoURI || !mongoURI.trim()) {
+    if (
+        typeof mongoURI !== "string" ||
+        !mongoURI.trim()
+    ) {
         throw new Error(
-            "MONGODB_URI is missing from environment configuration."
+            "MongoDB connection URI is missing."
         );
     }
 
+    // ---------------------------------------------
+    // STEP 2: PREVENT DUPLICATE CONNECTIONS
+    // ---------------------------------------------
+
+    if (mongoose.connection.readyState === 1) {
+        return mongoose;
+    }
+
+    if (mongoose.connection.readyState === 2) {
+        await mongoose.connection.asPromise();
+        return mongoose;
+    }
+
+    // ---------------------------------------------
+    // STEP 3: REGISTER CONNECTION EVENTS
+    // ---------------------------------------------
+
+    registerConnectionListeners();
+
     try {
-        // ---------------------------------------------
-        // STEP 2: CONNECT TO MONGODB
-        // ---------------------------------------------
+        // -----------------------------------------
+        // STEP 4: CONNECT TO MONGODB
+        // -----------------------------------------
 
-        const connection = await mongoose.connect(mongoURI, {
-            serverSelectionTimeoutMS: 10000,
-            connectTimeoutMS: 10000,
-            socketTimeoutMS: 45000,
-            maxPoolSize: 10,
-            minPoolSize: 1,
-        });
+        const connection = await mongoose.connect(
+            mongoURI,
+            CONNECTION_OPTIONS
+        );
 
-        // ---------------------------------------------
-        // STEP 3: CONNECTION INFORMATION
-        // ---------------------------------------------
+        // -----------------------------------------
+        // STEP 5: CONNECTION INFORMATION
+        // -----------------------------------------
 
         console.log("");
         console.log("====================================");
-        console.log("SCAMSHIELD AI - DATABASE CONNECTED");
+        console.log("SCAMSHIELD AI - DATABASE READY");
         console.log("====================================");
         console.log(
             `MongoDB Host: ${connection.connection.host}`
@@ -59,7 +120,11 @@ const connectDB = async () => {
             `Database: ${connection.connection.name}`
         );
         console.log(
-            `Connection State: ${connection.connection.readyState === 1 ? "Connected" : "Disconnected"}`
+            `Connection State: ${
+                connection.connection.readyState === 1
+                    ? "Connected"
+                    : "Disconnected"
+            }`
         );
         console.log("====================================");
         console.log("");
@@ -67,14 +132,12 @@ const connectDB = async () => {
         return connection;
 
     } catch (error) {
-        console.error("");
-        console.error("====================================");
-        console.error("SCAMSHIELD AI - DATABASE CONNECTION FAILED");
-        console.error("====================================");
-        console.error("Error:", error.message);
-        console.error("====================================");
+        console.error(
+            "[DATABASE] Initial connection failed:",
+            error.message
+        );
 
-        // Let server.js handle startup failure and cleanup.
+        // server.js handles application startup failure.
         throw error;
     }
 };

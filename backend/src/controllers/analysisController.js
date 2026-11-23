@@ -3,38 +3,38 @@
 /*
 =========================================================
 SCAMSHIELD AI - ANALYSIS CONTROLLER
-Version: 2.1.0
-=========================================================
+Version: 3.0.0
 
 Responsibilities:
-
 1. Authenticate user.
-2. Validate incoming evidence.
-3. Call Python AI Engine through aiService.
-4. Validate normalized AI results.
-5. Save analysis securely in MongoDB.
-6. Preserve fraud module and detection category.
-7. Store four AI agent results.
-8. Return structured frontend response.
+2. Validate evidence.
+3. Execute centralized analysis service.
+4. Validate AI results.
+5. Save analysis securely.
+6. Preserve four agent results.
+7. Return structured frontend response.
 
 SECURITY:
-- Raw evidence is NEVER stored in MongoDB.
+- Raw evidence is never stored.
 - User ownership is enforced.
-- AI response values are validated before persistence.
+- AI output is validated.
+- Internal errors are passed to error middleware.
 =========================================================
 */
 
 const Analysis = require("../models/analysis");
 
 const {
-    analyzeEvidence,
-} = require("../services/aiService");
+    executeAnalysis,
+} = require("../services/analysisService");
 
 // =====================================================
 // CONSTANTS
 // =====================================================
 
 const MAX_EVIDENCE_LENGTH = 20000;
+const MAX_INDICATORS = 50;
+const MAX_DETECTED_RULES = 100;
 
 const ALLOWED_EVIDENCE_TYPES = [
     "message",
@@ -70,126 +70,186 @@ const ALLOWED_DETECTION_CATEGORIES = [
     "social_media_scam",
 ];
 
-const ALLOWED_RISK_LEVELS = [
-    "low",
-    "medium",
-    "high",
-    "critical",
+const RISK_THRESHOLDS = [
+    { level: "low", min: 0, max: 24 },
+    { level: "medium", min: 25, max: 49 },
+    { level: "high", min: 50, max: 74 },
+    { level: "critical", min: 75, max: 100 },
 ];
 
-const MAX_INDICATORS = 50;
-const MAX_DETECTED_RULES = 100;
-
 // =====================================================
-// SAFE HELPERS
+// HELPERS
 // =====================================================
 
-const safeObject = (value) => {
-    return value &&
-        typeof value === "object" &&
-        !Array.isArray(value)
-        ? value
-        : {};
-};
+const isPlainObject = (value) =>
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    !(value instanceof Date);
 
-const safeNullableObject = (value) => {
-    return value &&
-        typeof value === "object" &&
-        !Array.isArray(value)
-        ? value
-        : null;
-};
+const safeObject = (value) =>
+    isPlainObject(value) ? value : {};
 
-const safeArray = (value) => {
-    return Array.isArray(value)
-        ? value
-        : [];
-};
+const safeArray = (value) =>
+    Array.isArray(value) ? value : [];
 
-const createValidationError = (message) => {
+const safeString = (value, maxLength = 2000) =>
+    typeof value === "string"
+        ? value.slice(0, maxLength)
+        : "";
+
+const createAIValidationError = (message) => {
     const error = new Error(message);
     error.statusCode = 502;
     return error;
 };
+
+// =====================================================
+// RISK VALIDATION
+// =====================================================
+
+const validateRisk = (score, level) => {
+    if (
+        typeof score !== "number" ||
+        !Number.isInteger(score) ||
+        score < 0 ||
+        score > 100
+    ) {
+        throw createAIValidationError(
+            "AI Engine returned an invalid risk score."
+        );
+    }
+
+    const expected = RISK_THRESHOLDS.find(
+        (item) =>
+            score >= item.min &&
+            score <= item.max
+    );
+
+    if (!expected || level !== expected.level) {
+        throw createAIValidationError(
+            "AI Engine returned inconsistent risk assessment."
+        );
+    }
+
+    return {
+        riskScore: score,
+        riskLevel: expected.level,
+    };
+};
+
+// =====================================================
+// INDICATOR VALIDATION
+// =====================================================
 
 const validateIndicators = (indicators) => {
     if (
         !Array.isArray(indicators) ||
         indicators.length > MAX_INDICATORS
     ) {
-        throw createValidationError(
+        throw createAIValidationError(
             "AI Engine returned invalid indicators."
         );
     }
 
-    for (const indicator of indicators) {
+    return indicators.map((indicator) => {
         if (
-            !indicator ||
-            typeof indicator !== "object" ||
+            !isPlainObject(indicator) ||
             typeof indicator.type !== "string" ||
             typeof indicator.value !== "string" ||
+            typeof indicator.verified !== "boolean" ||
             indicator.type.length > 30 ||
-            indicator.value.length > 500 ||
-            typeof indicator.verified !== "boolean"
+            indicator.value.length > 500
         ) {
-            throw createValidationError(
+            throw createAIValidationError(
                 "AI Engine returned malformed indicator data."
             );
         }
-    }
 
-    return indicators;
+        return {
+            type: indicator.type,
+            value: indicator.value,
+            verified: indicator.verified,
+        };
+    });
 };
+
+// =====================================================
+// DETECTED RULE VALIDATION
+// =====================================================
 
 const validateDetectedRules = (rules) => {
     if (
         !Array.isArray(rules) ||
         rules.length > MAX_DETECTED_RULES
     ) {
-        throw createValidationError(
-            "AI Engine returned invalid detected rules."
+        throw createAIValidationError(
+            "AI Engine returned invalid detection rules."
         );
     }
 
-    for (const rule of rules) {
+    return rules.map((rule) => {
         if (
-            !rule ||
-            typeof rule !== "object" ||
+            !isPlainObject(rule) ||
             typeof rule.category !== "string" ||
             typeof rule.label !== "string" ||
-            !Number.isFinite(Number(rule.weight)) ||
-            Number(rule.weight) < 0 ||
-            Number(rule.weight) > 100
+            !Number.isFinite(rule.weight) ||
+            rule.weight < 0 ||
+            rule.weight > 100
         ) {
-            throw createValidationError(
+            throw createAIValidationError(
                 "AI Engine returned malformed detection rules."
             );
         }
-    }
 
-    return rules.map((rule) => ({
-        category: rule.category,
-        label: rule.label,
-        weight: Number(rule.weight),
-    }));
+        return {
+            category: rule.category.slice(0, 100),
+            label: rule.label.slice(0, 200),
+            weight: rule.weight,
+        };
+    });
 };
 
+// =====================================================
+// AGENT VALIDATION
+// =====================================================
+
 const validateAgentResults = (agents) => {
-    const source = safeObject(agents);
+    if (!isPlainObject(agents)) {
+        throw createAIValidationError(
+            "AI Engine returned invalid agent results."
+        );
+    }
 
-    return {
-        guardian: safeNullableObject(source.guardian),
+    const allowedAgents = [
+        "guardian",
+        "intelligence",
+        "victimSafety",
+        "decoy",
+    ];
 
-        intelligence: safeNullableObject(
-            source.intelligence
-        ),
+    const result = {};
 
-        victimSafety: safeNullableObject(
-            source.victimSafety
-        ),
+    for (const name of allowedAgents) {
+        const agent = agents[name];
 
-        decoy: safeNullableObject(source.decoy),
-    };
+        if (agent === null || agent === undefined) {
+            result[name] = null;
+            continue;
+        }
+
+        if (!isPlainObject(agent)) {
+            throw createAIValidationError(
+                `AI Engine returned invalid ${name} agent data.`
+            );
+        }
+
+        // Agent service is responsible for producing
+        // normalized, safe agent objects.
+        result[name] = agent;
+    }
+
+    return result;
 };
 
 // =====================================================
@@ -204,9 +264,9 @@ Protected route.
 
 const analyzeUserEvidence = async (req, res, next) => {
     try {
-        // -----------------------------------------------
+        // ---------------------------------------------
         // AUTHENTICATION
-        // -----------------------------------------------
+        // ---------------------------------------------
 
         if (!req.user || !req.user._id) {
             return res.status(401).json({
@@ -215,9 +275,9 @@ const analyzeUserEvidence = async (req, res, next) => {
             });
         }
 
-        // -----------------------------------------------
+        // ---------------------------------------------
         // REQUEST VALIDATION
-        // -----------------------------------------------
+        // ---------------------------------------------
 
         const {
             evidenceType,
@@ -251,8 +311,7 @@ const analyzeUserEvidence = async (req, res, next) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Evidence must be a non-empty text value.",
+                message: "Evidence must be a non-empty text value.",
             });
         }
 
@@ -269,41 +328,38 @@ const analyzeUserEvidence = async (req, res, next) => {
             });
         }
 
-        // -----------------------------------------------
-        // PYTHON AI ENGINE
-        // -----------------------------------------------
+        // ---------------------------------------------
+        // CENTRALIZED ANALYSIS SERVICE
+        // ---------------------------------------------
 
-        const analysisResult = await analyzeEvidence({
+        const analysisResult = await executeAnalysis({
             evidenceType: normalizedEvidenceType,
             evidence: normalizedEvidence,
         });
 
-        if (
-            !analysisResult ||
-            typeof analysisResult !== "object"
-        ) {
-            throw createValidationError(
-                "AI Engine returned an invalid response."
+        if (!isPlainObject(analysisResult)) {
+            throw createAIValidationError(
+                "Analysis service returned an invalid response."
             );
         }
 
-        // -----------------------------------------------
-        // EVIDENCE ID VALIDATION
-        // -----------------------------------------------
+        // ---------------------------------------------
+        // EVIDENCE ID
+        // ---------------------------------------------
 
         if (
             typeof analysisResult.evidenceId !== "string" ||
             !analysisResult.evidenceId.trim() ||
             analysisResult.evidenceId.length > 100
         ) {
-            throw createValidationError(
-                "AI Engine returned an invalid evidence identifier."
+            throw createAIValidationError(
+                "Analysis service returned an invalid evidence identifier."
             );
         }
 
-        // -----------------------------------------------
-        // FRAUD CLASSIFICATION VALIDATION
-        // -----------------------------------------------
+        // ---------------------------------------------
+        // FRAUD CLASSIFICATION
+        // ---------------------------------------------
 
         const fraudCategory =
             analysisResult.fraudCategory;
@@ -312,12 +368,10 @@ const analyzeUserEvidence = async (req, res, next) => {
             analysisResult.detectionCategory ?? null;
 
         if (
-            !ALLOWED_FRAUD_MODULES.includes(
-                fraudCategory
-            )
+            !ALLOWED_FRAUD_MODULES.includes(fraudCategory)
         ) {
-            throw createValidationError(
-                "AI Engine returned an invalid fraud module."
+            throw createAIValidationError(
+                "Analysis service returned an invalid fraud module."
             );
         }
 
@@ -327,112 +381,81 @@ const analyzeUserEvidence = async (req, res, next) => {
                 detectionCategory
             )
         ) {
-            throw createValidationError(
-                "AI Engine returned an invalid detection category."
+            throw createAIValidationError(
+                "Analysis service returned an invalid detection category."
             );
         }
 
-        // -----------------------------------------------
+        // ---------------------------------------------
         // RISK VALIDATION
-        // -----------------------------------------------
+        // ---------------------------------------------
 
-        const riskScore = Number(
-            analysisResult.riskScore
+        const risk = validateRisk(
+            analysisResult.riskScore,
+            analysisResult.riskLevel
         );
 
-        const riskLevel = String(
-            analysisResult.riskLevel || ""
-        ).toLowerCase();
+        // ---------------------------------------------
+        // SUMMARY
+        // ---------------------------------------------
 
-        if (
-            !Number.isFinite(riskScore) ||
-            riskScore < 0 ||
-            riskScore > 100
-        ) {
-            throw createValidationError(
-                "AI Engine returned an invalid risk score."
-            );
-        }
+        const summary = safeString(
+            analysisResult.summary,
+            2000
+        );
 
-        if (
-            !ALLOWED_RISK_LEVELS.includes(riskLevel)
-        ) {
-            throw createValidationError(
-                "AI Engine returned an invalid risk level."
-            );
-        }
-
-        // -----------------------------------------------
-        // SUMMARY VALIDATION
-        // -----------------------------------------------
-
-        const summary =
-            typeof analysisResult.summary === "string"
-                ? analysisResult.summary
-                : "";
-
-        if (summary.length > 2000) {
-            throw createValidationError(
-                "AI Engine returned an oversized summary."
-            );
-        }
-
-        // -----------------------------------------------
+        // ---------------------------------------------
         // INDICATORS AND RULES
-        // -----------------------------------------------
+        // ---------------------------------------------
 
         const indicators = validateIndicators(
-            safeArray(analysisResult.indicators)
+            analysisResult.indicators
         );
 
         const detectedRules = validateDetectedRules(
-            safeArray(analysisResult.detectedRules)
+            analysisResult.detectedRules
         );
 
-        // -----------------------------------------------
-        // AGENT RESULTS
-        // -----------------------------------------------
+        // ---------------------------------------------
+        // AGENTS
+        // ---------------------------------------------
 
         const agents = validateAgentResults(
             analysisResult.agents
         );
 
-        // -----------------------------------------------
-        // TIMESTAMP VALIDATION
-        // -----------------------------------------------
+        // ---------------------------------------------
+        // TIMESTAMP
+        // ---------------------------------------------
 
         const analyzedAt = analysisResult.analyzedAt
             ? new Date(analysisResult.analyzedAt)
             : new Date();
 
         if (Number.isNaN(analyzedAt.getTime())) {
-            throw createValidationError(
-                "AI Engine returned an invalid analysis timestamp."
+            throw createAIValidationError(
+                "Analysis service returned an invalid timestamp."
             );
         }
 
-        // -----------------------------------------------
-        // SAVE ANALYSIS
-        // -----------------------------------------------
+        // ---------------------------------------------
+        // PERSISTENCE
+        // ---------------------------------------------
 
         const savedAnalysis = await Analysis.create({
             user: req.user._id,
 
-            evidenceId:
-                analysisResult.evidenceId.trim(),
+            evidenceId: analysisResult.evidenceId.trim(),
 
-            // Always use the validated request type.
             evidenceType: normalizedEvidenceType,
 
-            // Major fraud module.
             fraudCategory,
 
-            // Individual detection category.
             detectionCategory,
 
-            // Risk assessment.
-            riskScore: Math.round(riskScore),
-            riskLevel,
+            riskScore: risk.riskScore,
+
+            riskLevel: risk.riskLevel,
 
             status: "completed",
 
@@ -442,15 +465,23 @@ const analyzeUserEvidence = async (req, res, next) => {
 
             detectedRules,
 
-            // Guardian, Intelligence, Victim Safety, Decoy.
             agents,
 
             analyzedAt,
         });
 
-        // -----------------------------------------------
+        // ---------------------------------------------
         // FRONTEND RESPONSE
-        // -----------------------------------------------
+        // ---------------------------------------------
+
+        const explanations = safeArray(
+            analysisResult.explanations ||
+            analysisResult.explanation
+        );
+
+        const recommendations = safeArray(
+            analysisResult.recommendations
+        );
 
         return res.status(201).json({
             success: true,
@@ -461,65 +492,47 @@ const analyzeUserEvidence = async (req, res, next) => {
             result: {
                 id: savedAnalysis._id,
 
-                evidenceId:
-                    savedAnalysis.evidenceId,
+                evidenceId: savedAnalysis.evidenceId,
 
-                evidenceType:
-                    savedAnalysis.evidenceType,
+                evidenceType: savedAnalysis.evidenceType,
 
-                // Fraud classification.
-                fraudCategory:
-                    savedAnalysis.fraudCategory,
+                fraudCategory: savedAnalysis.fraudCategory,
 
                 detectionCategory:
                     savedAnalysis.detectionCategory,
 
-                // Risk assessment.
-                riskScore:
-                    savedAnalysis.riskScore,
+                riskScore: savedAnalysis.riskScore,
 
-                riskLevel:
-                    savedAnalysis.riskLevel,
+                riskLevel: savedAnalysis.riskLevel,
 
-                riskDescription:
-                    savedAnalysis.summary,
+                riskDescription: savedAnalysis.summary,
 
-                explanation: safeArray(
-                    analysisResult.explanation
-                ),
+                explanation: explanations,
 
-                // Intelligence.
-                indicators:
-                    savedAnalysis.indicators,
+                indicators: savedAnalysis.indicators,
 
-                sensitiveInformation: safeArray(
-                    analysisResult.sensitiveInformation
-                ),
+                detectedRules: savedAnalysis.detectedRules,
 
-                detectedRules:
-                    savedAnalysis.detectedRules,
+                recommendations,
 
-                recommendations: safeArray(
-                    analysisResult.recommendations
-                ),
+                agents: savedAnalysis.agents,
 
-                // Four AI agents.
-                agents:
-                    savedAnalysis.agents,
-
-                // Machine learning.
                 machineLearning: safeObject(
                     analysisResult.machineLearning
                 ),
 
-                analysisMethod:
-                    analysisResult.analysisMethod ||
-                    "unknown",
+                geminiAdvisory: safeObject(
+                    analysisResult.geminiAdvisory
+                ),
+
+                analysisMethod: safeString(
+                    analysisResult.analysisMethod,
+                    100
+                ) || "unknown",
 
                 aiEngineUsed:
                     analysisResult.aiEngineUsed === true,
 
-                // Additional metadata.
                 orchestration: safeObject(
                     analysisResult.orchestration
                 ),
@@ -528,18 +541,17 @@ const analyzeUserEvidence = async (req, res, next) => {
                     analysisResult.verification
                 ),
 
-                disclaimer:
-                    typeof analysisResult.disclaimer === "string"
-                        ? analysisResult.disclaimer
-                        : "Automated analysis is advisory and does not independently prove fraud.",
+                disclaimer: safeString(
+                    analysisResult.disclaimer,
+                    1000
+                ) || "Automated analysis is advisory and does not independently prove fraud.",
 
-                analyzedAt:
-                    savedAnalysis.analyzedAt,
+                analyzedAt: savedAnalysis.analyzedAt,
             },
         });
 
     } catch (error) {
-        // Never log raw evidence or credentials.
+        // Do not log evidence, passwords or tokens.
 
         console.error(
             "Evidence Analysis Controller Error:",
