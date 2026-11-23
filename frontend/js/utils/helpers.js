@@ -1,9 +1,9 @@
-
 "use strict";
 
 /* =====================================================
    SCAMSHIELD AI - HELPER UTILITIES
-   Version: 2.0.0
+
+   Version: 2.1.0
 
    Responsibilities:
    1. HTML escaping
@@ -16,9 +16,19 @@
    8. Toast notifications
    9. Email and URL validation
    10. Risk score utilities
+
+   SECURITY:
+   - Never store passwords, OTPs or authentication secrets
+     using these generic storage helpers.
+   - Toast content is rendered as plain text.
 ===================================================== */
 
 (function (window, document) {
+    "use strict";
+
+    if (window.ScamShieldHelpers) {
+        return;
+    }
 
     const ScamShieldHelpers = {
 
@@ -27,7 +37,6 @@
         ================================================ */
 
         escapeHTML(value = "") {
-
             const entities = {
                 "&": "&amp;",
                 "<": "&lt;",
@@ -38,7 +47,7 @@
 
             return String(value).replace(
                 /[&<>"']/g,
-                character => entities[character]
+                (character) => entities[character]
             );
         },
 
@@ -47,40 +56,47 @@
         ================================================ */
 
         formatDate(date, options = {}) {
-
             const parsedDate = new Date(date);
 
             if (Number.isNaN(parsedDate.getTime())) {
                 return "Invalid date";
             }
 
-            return parsedDate.toLocaleDateString("en-IN", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                ...options
-            });
+            try {
+                return parsedDate.toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    ...options
+                });
+            } catch {
+                return "Invalid date";
+            }
         },
 
         /* ================================================
            DATE AND TIME FORMATTING
         ================================================ */
 
-        formatDateTime(date) {
-
+        formatDateTime(date, options = {}) {
             const parsedDate = new Date(date);
 
             if (Number.isNaN(parsedDate.getTime())) {
                 return "Invalid date";
             }
 
-            return parsedDate.toLocaleString("en-IN", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
-            });
+            try {
+                return parsedDate.toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    ...options
+                });
+            } catch {
+                return "Invalid date";
+            }
         },
 
         /* ================================================
@@ -88,7 +104,6 @@
         ================================================ */
 
         timeAgo(date) {
-
             const parsedDate = new Date(date);
 
             if (Number.isNaN(parsedDate.getTime())) {
@@ -99,20 +114,30 @@
                 (Date.now() - parsedDate.getTime()) / 1000
             );
 
+            if (seconds < 0) {
+                return "In the future";
+            }
+
             if (seconds < 60) {
                 return "Just now";
             }
 
             if (seconds < 3600) {
-                return `${Math.floor(seconds / 60)} min ago`;
+                const minutes = Math.floor(seconds / 60);
+
+                return `${minutes} min ago`;
             }
 
             if (seconds < 86400) {
-                return `${Math.floor(seconds / 3600)} hours ago`;
+                const hours = Math.floor(seconds / 3600);
+
+                return `${hours} hours ago`;
             }
 
             if (seconds < 604800) {
-                return `${Math.floor(seconds / 86400)} days ago`;
+                const days = Math.floor(seconds / 86400);
+
+                return `${days} days ago`;
             }
 
             return this.formatDate(parsedDate);
@@ -123,9 +148,13 @@
         ================================================ */
 
         truncateText(text = "", maxLength = 100) {
-
             const value = String(text);
-            const limit = Math.max(0, Number(maxLength) || 0);
+
+            const numericLimit = Number(maxLength);
+
+            const limit = Number.isFinite(numericLimit)
+                ? Math.max(0, Math.floor(numericLimit))
+                : 100;
 
             if (value.length <= limit) {
                 return value;
@@ -135,7 +164,9 @@
                 return ".".repeat(limit);
             }
 
-            return value.substring(0, limit - 3).trimEnd() + "...";
+            return (
+                value.substring(0, limit - 3).trimEnd() + "..."
+            );
         },
 
         /* ================================================
@@ -143,13 +174,12 @@
         ================================================ */
 
         getInitials(name = "") {
-
             return String(name)
                 .trim()
                 .split(/\s+/)
                 .filter(Boolean)
                 .slice(0, 2)
-                .map(word => word.charAt(0).toUpperCase())
+                .map((word) => word.charAt(0).toUpperCase())
                 .join("");
         },
 
@@ -158,24 +188,32 @@
         ================================================ */
 
         debounce(callback, delay = 300) {
-
             if (typeof callback !== "function") {
                 throw new TypeError(
                     "Debounce callback must be a function."
                 );
             }
 
-            let timer;
+            let timer = null;
+
+            const numericDelay = Number(delay);
+
+            const safeDelay = Number.isFinite(numericDelay)
+                ? Math.max(0, numericDelay)
+                : 300;
 
             return function (...args) {
-
-                clearTimeout(timer);
+                if (timer !== null) {
+                    clearTimeout(timer);
+                }
 
                 const context = this;
 
                 timer = setTimeout(() => {
+                    timer = null;
+
                     callback.apply(context, args);
-                }, Math.max(0, Number(delay) || 0));
+                }, safeDelay);
             };
         },
 
@@ -184,38 +222,42 @@
         ================================================ */
 
         setStorage(key, value) {
-
             try {
-
-                if (!key) return false;
+                if (
+                    typeof key !== "string" ||
+                    !key.trim()
+                ) {
+                    return false;
+                }
 
                 const serialized = JSON.stringify(value);
 
-                localStorage.setItem(
-                    String(key),
+                if (serialized === undefined) {
+                    return false;
+                }
+
+                window.localStorage.setItem(
+                    key,
                     serialized
                 );
 
                 return true;
 
-            } catch (error) {
-
-                console.error(
-                    "ScamShield Storage Error:",
-                    error
-                );
-
+            } catch {
                 return false;
             }
         },
 
         getStorage(key, defaultValue = null) {
-
             try {
+                if (
+                    typeof key !== "string" ||
+                    !key.trim()
+                ) {
+                    return defaultValue;
+                }
 
-                if (!key) return defaultValue;
-
-                const value = localStorage.getItem(String(key));
+                const value = window.localStorage.getItem(key);
 
                 if (value === null) {
                     return defaultValue;
@@ -223,34 +265,25 @@
 
                 return JSON.parse(value);
 
-            } catch (error) {
-
-                console.error(
-                    "ScamShield Storage Read Error:",
-                    error
-                );
-
+            } catch {
                 return defaultValue;
             }
         },
 
         removeStorage(key) {
-
             try {
+                if (
+                    typeof key !== "string" ||
+                    !key.trim()
+                ) {
+                    return false;
+                }
 
-                if (!key) return false;
-
-                localStorage.removeItem(String(key));
+                window.localStorage.removeItem(key);
 
                 return true;
 
-            } catch (error) {
-
-                console.error(
-                    "ScamShield Storage Remove Error:",
-                    error
-                );
-
+            } catch {
                 return false;
             }
         },
@@ -260,7 +293,6 @@
         ================================================ */
 
         getToastContainer() {
-
             let container = document.getElementById(
                 "toast-container"
             );
@@ -278,7 +310,6 @@
             container.setAttribute("aria-atomic", "false");
 
             Object.assign(container.style, {
-
                 position: "fixed",
                 top: "20px",
                 right: "20px",
@@ -289,8 +320,8 @@
                 gap: "10px",
 
                 width: "min(360px, calc(100vw - 40px))",
-                pointerEvents: "none"
 
+                pointerEvents: "none"
             });
 
             document.body.appendChild(container);
@@ -303,17 +334,17 @@
         ================================================ */
 
         showToast(message, type = "info", duration = 3000) {
-
             const colors = {
-
                 success: "#16a34a",
                 error: "#dc2626",
                 warning: "#d97706",
                 info: "#2563eb"
-
             };
 
-            const safeType = Object.hasOwn(colors, type)
+            const safeType = Object.prototype.hasOwnProperty.call(
+                colors,
+                type
+            )
                 ? type
                 : "info";
 
@@ -323,13 +354,19 @@
 
             toast.className = `scamshield-toast toast-${safeType}`;
 
+            // Never interpret notification content as HTML.
             toast.textContent = String(message);
 
-            toast.setAttribute("role", "status");
+            toast.setAttribute(
+                "role",
+                safeType === "error" ? "alert" : "status"
+            );
+
+            toast.setAttribute("aria-atomic", "true");
 
             Object.assign(toast.style, {
-
                 padding: "13px 18px",
+
                 color: "#ffffff",
                 background: colors[safeType],
 
@@ -347,40 +384,53 @@
 
                 transition: "opacity 0.25s ease, transform 0.25s ease",
 
-                pointerEvents: "auto"
-
+                pointerEvents: "auto",
+                cursor: "pointer"
             });
 
             container.appendChild(toast);
 
             const prefersReducedMotion =
-                window.matchMedia &&
-                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                typeof window.matchMedia === "function" &&
+                window.matchMedia(
+                    "(prefers-reduced-motion: reduce)"
+                ).matches;
+
+            if (prefersReducedMotion) {
+                toast.style.transition = "none";
+            }
 
             requestAnimationFrame(() => {
-
                 toast.style.opacity = "1";
-
                 toast.style.transform = "translateY(0)";
-
-                if (prefersReducedMotion) {
-                    toast.style.transition = "none";
-                }
-
             });
 
-            const safeDuration = Math.max(
-                0,
-                Number(duration) || 0
-            );
+            const numericDuration = Number(duration);
+
+            const safeDuration = Number.isFinite(numericDuration)
+                ? Math.max(0, numericDuration)
+                : 3000;
+
+            let removed = false;
+
+            let timer = null;
 
             const removeToast = () => {
+                if (removed) {
+                    return;
+                }
+
+                removed = true;
+
+                if (timer !== null) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
 
                 toast.style.opacity = "0";
                 toast.style.transform = "translateY(-8px)";
 
                 const cleanup = () => {
-
                     toast.remove();
 
                     if (
@@ -389,29 +439,44 @@
                     ) {
                         container.remove();
                     }
-
                 };
 
                 if (prefersReducedMotion) {
                     cleanup();
                 } else {
-                    setTimeout(cleanup, 250);
+                    window.setTimeout(cleanup, 250);
                 }
             };
 
-            const timer = setTimeout(
+            timer = window.setTimeout(
                 removeToast,
                 safeDuration
             );
 
-            // Allow users to dismiss a toast by clicking it.
-            toast.addEventListener("click", () => {
+            toast.addEventListener(
+                "click",
+                removeToast
+            );
 
-                clearTimeout(timer);
+            toast.addEventListener(
+                "keydown",
+                (event) => {
+                    if (
+                        event.key === "Enter" ||
+                        event.key === " "
+                    ) {
+                        event.preventDefault();
+                        removeToast();
+                    }
+                }
+            );
 
-                removeToast();
+            toast.setAttribute("tabindex", "0");
 
-            });
+            toast.setAttribute(
+                "aria-label",
+                `${safeType} notification. Activate to dismiss.`
+            );
 
             return toast;
         },
@@ -421,10 +486,12 @@
         ================================================ */
 
         isValidEmail(email = "") {
-
             const value = String(email).trim();
 
-            if (value.length > 254) {
+            if (
+                !value ||
+                value.length > 254
+            ) {
                 return false;
             }
 
@@ -436,20 +503,21 @@
         ================================================ */
 
         isValidURL(value = "") {
-
             try {
+                const input = String(value).trim();
 
-                const url = new URL(
-                    String(value).trim()
-                );
+                if (!input) {
+                    return false;
+                }
+
+                const url = new URL(input);
 
                 return (
                     url.protocol === "http:" ||
                     url.protocol === "https:"
-                );
+                ) && Boolean(url.hostname);
 
             } catch {
-
                 return false;
             }
         },
@@ -459,6 +527,13 @@
         ================================================ */
 
         getRiskLevel(score) {
+            if (
+                score === null ||
+                score === undefined ||
+                score === ""
+            ) {
+                return "Unknown";
+            }
 
             const value = Number(score);
 
@@ -484,6 +559,13 @@
         ================================================ */
 
         formatRiskScore(score) {
+            if (
+                score === null ||
+                score === undefined ||
+                score === ""
+            ) {
+                return "N/A";
+            }
 
             const value = Number(score);
 
@@ -504,6 +586,8 @@
        GLOBAL ACCESS
     ================================================ */
 
-    window.ScamShieldHelpers = ScamShieldHelpers;
+    window.ScamShieldHelpers = Object.freeze(
+        ScamShieldHelpers
+    );
 
 })(window, document);

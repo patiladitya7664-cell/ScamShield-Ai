@@ -1,9 +1,8 @@
-
 "use strict";
 
 /* =====================================================
    SCAMSHIELD AI - NOTIFICATION MANAGER
-   Version: 2.0.0
+   Version: 2.1.0
 
    Features:
    1. Local notification storage.
@@ -11,14 +10,20 @@
    3. Mark as read / Mark all as read.
    4. Delete individual notifications.
    5. Clear all notifications.
-   6. Secure HTML rendering.
+   6. Safe DOM rendering.
    7. Cross-tab synchronization.
+   8. Dynamic SPA container support.
+
+   IMPORTANT:
+   This version uses browser localStorage.
+   It does NOT provide MongoDB/backend synchronization.
 ===================================================== */
 
 (function (window, document) {
-
     const STORAGE_KEY = "scamshield_notifications";
+
     const MAX_NOTIFICATIONS = 100;
+    const MAX_ID_LENGTH = 120;
     const MAX_TITLE_LENGTH = 120;
     const MAX_MESSAGE_LENGTH = 1000;
 
@@ -32,7 +37,6 @@
     ];
 
     const Notifications = {
-
         items: [],
         initialized: false,
         eventsBound: false,
@@ -42,17 +46,42 @@
         ================================================ */
 
         init() {
-
-            if (this.initialized) return;
+            if (this.initialized) {
+                this.render();
+                return;
+            }
 
             this.initialized = true;
 
             this.load();
             this.bindEvents();
-            this.render();
             this.bindStorageSync();
+            this.bindScreenChanges();
 
-            console.info("ScamShield Notifications initialized.");
+            this.render();
+
+            console.info(
+                "ScamShield Notifications initialized."
+            );
+        },
+
+        /* ================================================
+           GENERATE UNIQUE ID
+        ================================================ */
+
+        generateId() {
+            if (
+                window.crypto &&
+                typeof window.crypto.randomUUID === "function"
+            ) {
+                return window.crypto.randomUUID();
+            }
+
+            return (
+                Date.now().toString(36) +
+                "-" +
+                Math.random().toString(36).slice(2)
+            );
         },
 
         /* ================================================
@@ -60,37 +89,64 @@
         ================================================ */
 
         validateNotification(notification = {}) {
+            if (
+                !notification ||
+                typeof notification !== "object" ||
+                Array.isArray(notification)
+            ) {
+                notification = {};
+            }
 
-            const type = ALLOWED_TYPES.includes(notification.type)
+            const rawId =
+                typeof notification.id === "string" ||
+                typeof notification.id === "number"
+                    ? String(notification.id)
+                    : "";
+
+            const id = (
+                rawId.trim().slice(0, MAX_ID_LENGTH) ||
+                this.generateId()
+            );
+
+            const rawTitle =
+                typeof notification.title === "string"
+                    ? notification.title
+                    : "New Notification";
+
+            const rawMessage =
+                typeof notification.message === "string"
+                    ? notification.message
+                    : "";
+
+            const type = ALLOWED_TYPES.includes(
+                notification.type
+            )
                 ? notification.type
                 : "info";
 
+            const timestamp = new Date(
+                notification.createdAt
+            );
+
+            const createdAt =
+                notification.createdAt &&
+                !Number.isNaN(timestamp.getTime())
+                    ? timestamp.toISOString()
+                    : new Date().toISOString();
+
             return {
+                id,
+                title: rawTitle
+                    .trim()
+                    .slice(0, MAX_TITLE_LENGTH),
 
-                id: String(
-                    notification.id ||
-                    window.crypto?.randomUUID?.() ||
-                    `${Date.now()}-${Math.random().toString(16).slice(2)}`
-                ),
-
-                title: String(
-                    notification.title || "New Notification"
-                ).slice(0, MAX_TITLE_LENGTH),
-
-                message: String(
-                    notification.message || ""
-                ).slice(0, MAX_MESSAGE_LENGTH),
+                message: rawMessage
+                    .trim()
+                    .slice(0, MAX_MESSAGE_LENGTH),
 
                 type,
-
-                read: Boolean(notification.read),
-
-                createdAt: notification.createdAt &&
-                    !Number.isNaN(
-                        new Date(notification.createdAt).getTime()
-                    )
-                    ? new Date(notification.createdAt).toISOString()
-                    : new Date().toISOString()
+                read: notification.read === true,
+                createdAt
             };
         },
 
@@ -99,14 +155,17 @@
         ================================================ */
 
         load() {
-
             try {
+                const saved = window.localStorage.getItem(
+                    STORAGE_KEY
+                );
 
-                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) {
+                    this.items = [];
+                    return;
+                }
 
-                const parsed = saved
-                    ? JSON.parse(saved)
-                    : [];
+                const parsed = JSON.parse(saved);
 
                 if (!Array.isArray(parsed)) {
                     this.items = [];
@@ -114,16 +173,17 @@
                 }
 
                 this.items = parsed
+                    .slice(0, MAX_NOTIFICATIONS)
                     .filter(item =>
                         item &&
                         typeof item === "object" &&
                         !Array.isArray(item)
                     )
-                    .map(item => this.validateNotification(item))
-                    .slice(0, MAX_NOTIFICATIONS);
+                    .map(item =>
+                        this.validateNotification(item)
+                    );
 
             } catch (error) {
-
                 console.error(
                     "ScamShield Notification Load Error:",
                     error
@@ -138,10 +198,8 @@
         ================================================ */
 
         save() {
-
             try {
-
-                localStorage.setItem(
+                window.localStorage.setItem(
                     STORAGE_KEY,
                     JSON.stringify(
                         this.items.slice(0, MAX_NOTIFICATIONS)
@@ -151,7 +209,6 @@
                 return true;
 
             } catch (error) {
-
                 console.error(
                     "ScamShield Notification Save Error:",
                     error
@@ -166,32 +223,35 @@
         ================================================ */
 
         add(notification = {}) {
+            const item = this.validateNotification(
+                notification
+            );
 
-            const item = this.validateNotification(notification);
-
-            // Prevent duplicate notification IDs.
             this.items = this.items.filter(
                 existing => existing.id !== item.id
             );
 
             this.items.unshift(item);
 
-            // Keep the latest notifications.
-            this.items = this.items.slice(0, MAX_NOTIFICATIONS);
+            this.items = this.items.slice(
+                0,
+                MAX_NOTIFICATIONS
+            );
 
             this.save();
             this.render();
 
-            return item;
+            return { ...item };
         },
 
         /* ================================================
-           GET NOTIFICATIONS
+           GET ALL NOTIFICATIONS
         ================================================ */
 
         getAll() {
-
-            return this.items.map(item => ({ ...item }));
+            return this.items.map(item => ({
+                ...item
+            }));
         },
 
         /* ================================================
@@ -199,7 +259,6 @@
         ================================================ */
 
         getUnreadCount() {
-
             return this.items.filter(
                 item => !item.read
             ).length;
@@ -210,17 +269,19 @@
         ================================================ */
 
         markAsRead(id) {
-
             const item = this.items.find(
-                notification => notification.id === String(id)
+                notification =>
+                    notification.id === String(id)
             );
 
-            if (!item || item.read) return;
+            if (!item || item.read) return false;
 
             item.read = true;
 
             this.save();
             this.render();
+
+            return true;
         },
 
         /* ================================================
@@ -228,14 +289,19 @@
         ================================================ */
 
         markAllAsRead() {
+            let changed = false;
 
-            this.items = this.items.map(item => ({
-                ...item,
-                read: true
-            }));
+            this.items.forEach(item => {
+                if (!item.read) {
+                    item.read = true;
+                    changed = true;
+                }
+            });
 
-            this.save();
-            this.render();
+            if (changed) {
+                this.save();
+                this.render();
+            }
         },
 
         /* ================================================
@@ -243,13 +309,20 @@
         ================================================ */
 
         remove(id) {
+            const previousLength = this.items.length;
 
             this.items = this.items.filter(
                 item => item.id !== String(id)
             );
 
+            if (this.items.length === previousLength) {
+                return false;
+            }
+
             this.save();
             this.render();
+
+            return true;
         },
 
         /* ================================================
@@ -257,6 +330,7 @@
         ================================================ */
 
         clearAll() {
+            if (this.items.length === 0) return;
 
             this.items = [];
 
@@ -269,7 +343,6 @@
         ================================================ */
 
         formatTime(date) {
-
             const parsed = new Date(date);
 
             if (Number.isNaN(parsed.getTime())) {
@@ -278,30 +351,168 @@
 
             if (
                 window.ScamShieldHelpers &&
-                typeof window.ScamShieldHelpers.timeAgo === "function"
+                typeof window.ScamShieldHelpers.timeAgo ===
+                    "function"
             ) {
-                return window.ScamShieldHelpers.timeAgo(parsed);
+                return window.ScamShieldHelpers.timeAgo(
+                    parsed
+                );
             }
 
             return parsed.toLocaleString("en-IN");
         },
 
         /* ================================================
-           ESCAPE HTML
+           CREATE ELEMENT
         ================================================ */
 
-        escapeHTML(value) {
+        createElement(tag, className, text) {
+            const element = document.createElement(tag);
 
-            return String(value).replace(
-                /[&<>"']/g,
-                character => ({
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#039;"
-                })[character]
+            if (className) {
+                element.className = className;
+            }
+
+            if (text !== undefined) {
+                element.textContent = String(text);
+            }
+
+            return element;
+        },
+
+        /* ================================================
+           GET NOTIFICATION CONTAINER
+        ================================================ */
+
+        getContainer() {
+            return document.querySelector(
+                "#notification-list, [data-notification-list]"
             );
+        },
+
+        /* ================================================
+           UPDATE BADGE
+        ================================================ */
+
+        updateBadge() {
+            const badge = document.querySelector(
+                "#notification-count, .notification-count, [data-notification-count]"
+            );
+
+            if (!badge) return;
+
+            const count = this.getUnreadCount();
+
+            badge.textContent =
+                count > 99 ? "99+" : String(count);
+
+            badge.hidden = count === 0;
+
+            badge.setAttribute(
+                "aria-label",
+                `${count} unread notifications`
+            );
+        },
+
+        /* ================================================
+           UPDATE EMPTY STATE
+        ================================================ */
+
+        updateEmptyState() {
+            const emptyState = document.querySelector(
+                "#notification-empty, [data-notification-empty]"
+            );
+
+            if (emptyState) {
+                emptyState.hidden = this.items.length > 0;
+            }
+        },
+
+        /* ================================================
+           RENDER ONE NOTIFICATION
+        ================================================ */
+
+        createNotificationCard(item) {
+            const article = this.createElement(
+                "article",
+                [
+                    "notification-item",
+                    item.read ? "read" : "unread",
+                    `notification-${item.type}`
+                ].join(" ")
+            );
+
+            article.dataset.notificationId = item.id;
+
+            const content = this.createElement(
+                "div",
+                "notification-content"
+            );
+
+            const title = this.createElement(
+                "h4",
+                "",
+                item.title
+            );
+
+            const message = this.createElement(
+                "p",
+                "",
+                item.message
+            );
+
+            const time = this.createElement(
+                "small",
+                "",
+                this.formatTime(item.createdAt)
+            );
+
+            content.append(title, message, time);
+
+            const actions = this.createElement(
+                "div",
+                "notification-actions"
+            );
+
+            if (!item.read) {
+                const readButton = this.createElement(
+                    "button",
+                    "",
+                    "Mark read"
+                );
+
+                readButton.type = "button";
+                readButton.dataset.action = "read";
+                readButton.dataset.id = item.id;
+
+                readButton.setAttribute(
+                    "aria-label",
+                    `Mark ${item.title} as read`
+                );
+
+                actions.appendChild(readButton);
+            }
+
+            const deleteButton = this.createElement(
+                "button",
+                "",
+                "Delete"
+            );
+
+            deleteButton.type = "button";
+            deleteButton.dataset.action = "delete";
+            deleteButton.dataset.id = item.id;
+
+            deleteButton.setAttribute(
+                "aria-label",
+                `Delete ${item.title}`
+            );
+
+            actions.appendChild(deleteButton);
+
+            article.append(content, actions);
+
+            return article;
         },
 
         /* ================================================
@@ -309,113 +520,88 @@
         ================================================ */
 
         render() {
+            this.updateBadge();
+            this.updateEmptyState();
 
-            const container = document.querySelector(
-                "#notification-list, [data-notification-list]"
-            );
-
-            const badge = document.querySelector(
-                "#notification-count, .notification-count, [data-notification-count]"
-            );
-
-            const emptyState = document.querySelector(
-                "#notification-empty, [data-notification-empty]"
-            );
-
-            const unreadCount = this.getUnreadCount();
-
-            // Update unread badge.
-            if (badge) {
-
-                badge.textContent =
-                    unreadCount > 99
-                        ? "99+"
-                        : String(unreadCount);
-
-                badge.hidden = unreadCount === 0;
-
-                badge.setAttribute(
-                    "aria-label",
-                    `${unreadCount} unread notifications`
-                );
-            }
-
-            // Update empty state.
-            if (emptyState) {
-                emptyState.hidden = this.items.length > 0;
-            }
+            const container = this.getContainer();
 
             if (!container) return;
 
-            if (this.items.length === 0) {
+            const fragment = document.createDocumentFragment();
 
-                container.innerHTML = "";
+            this.items.forEach(item => {
+                fragment.appendChild(
+                    this.createNotificationCard(item)
+                );
+            });
+
+            container.replaceChildren(fragment);
+        },
+
+        /* ================================================
+           HANDLE NOTIFICATION ACTIONS
+        ================================================ */
+
+        handleAction(event) {
+            const target = event.target;
+
+            if (!(target instanceof Element)) {
                 return;
             }
 
-            container.innerHTML = this.items.map(item => {
+            const button = target.closest(
+                "button[data-action]"
+            );
 
-                const safeId = this.escapeHTML(item.id);
-                const safeTitle = this.escapeHTML(item.title);
-                const safeMessage = this.escapeHTML(item.message);
-                const safeTime = this.escapeHTML(
-                    this.formatTime(item.createdAt)
-                );
+            if (!button) return;
 
-                const safeType = ALLOWED_TYPES.includes(item.type)
-                    ? item.type
-                    : "info";
+            const action = button.dataset.action;
+            const id = button.dataset.id;
 
-                return `
+            if (!id) return;
 
-                    <article
-                        class="notification-item ${item.read ? "read" : "unread"} notification-${safeType}"
-                        data-notification-id="${safeId}"
-                    >
+            if (action === "read") {
+                this.markAsRead(id);
+            }
 
-                        <div class="notification-content">
+            if (action === "delete") {
+                this.remove(id);
+            }
+        },
 
-                            <h4>${safeTitle}</h4>
+        /* ================================================
+           HANDLE GLOBAL ACTION BUTTONS
+        ================================================ */
 
-                            <p>${safeMessage}</p>
+        handleGlobalAction(event) {
+            const target = event.target;
 
-                            <small>${safeTime}</small>
+            if (!(target instanceof Element)) {
+                return;
+            }
 
-                        </div>
+            const markAllButton = target.closest(
+                "#mark-all-read, [data-mark-all-read]"
+            );
 
-                        <div class="notification-actions">
+            if (markAllButton) {
+                this.markAllAsRead();
+                return;
+            }
 
-                            ${
-                                !item.read
-                                    ? `
-                                        <button
-                                            type="button"
-                                            data-action="read"
-                                            data-id="${safeId}"
-                                            aria-label="Mark ${safeTitle} as read"
-                                        >
-                                            Mark read
-                                        </button>
-                                    `
-                                    : ""
-                            }
+            const clearButton = target.closest(
+                "#clear-notifications, [data-clear-notifications]"
+            );
 
-                            <button
-                                type="button"
-                                data-action="delete"
-                                data-id="${safeId}"
-                                aria-label="Delete ${safeTitle}"
-                            >
-                                Delete
-                            </button>
+            if (!clearButton) return;
 
-                        </div>
+            const confirmed = window.confirm(
+                "Are you sure you want to clear all notifications?"
+            );
 
-                    </article>
-
-                `;
-
-            }).join("");
+            if (confirmed) {
+                this.clearAll();
+            }
         },
 
         /* ================================================
@@ -423,64 +609,14 @@
         ================================================ */
 
         bindEvents() {
-
             if (this.eventsBound) return;
 
             this.eventsBound = true;
 
-            // Notification actions.
-            const container = document.querySelector(
-                "#notification-list, [data-notification-list]"
-            );
-
-            container?.addEventListener("click", event => {
-
-                const button = event.target.closest(
-                    "button[data-action]"
-                );
-
-                if (!button || !container.contains(button)) return;
-
-                const id = button.dataset.id;
-                const action = button.dataset.action;
-
-                if (action === "read") {
-                    this.markAsRead(id);
-                }
-
-                if (action === "delete") {
-                    this.remove(id);
-                }
-            });
-
-            // Mark all as read.
-            document.querySelectorAll(
-                "#mark-all-read, [data-mark-all-read]"
-            ).forEach(button => {
-
-                button.addEventListener("click", () => {
-                    this.markAllAsRead();
-                });
-
-            });
-
-            // Clear all notifications.
-            document.querySelectorAll(
-                "#clear-notifications, [data-clear-notifications]"
-            ).forEach(button => {
-
-                button.addEventListener("click", () => {
-
-                    if (
-                        window.confirm(
-                            "Are you sure you want to clear all notifications?"
-                        )
-                    ) {
-                        this.clearAll();
-                    }
-
-                });
-
+            // Delegation supports dynamically loaded containers.
+            document.addEventListener("click", event => {
+                this.handleAction(event);
+                this.handleGlobalAction(event);
             });
         },
 
@@ -489,17 +625,31 @@
         ================================================ */
 
         bindStorageSync() {
-
             window.addEventListener("storage", event => {
-
-                if (event.key !== STORAGE_KEY) return;
+                if (
+                    event.key !== STORAGE_KEY &&
+                    event.key !== null
+                ) {
+                    return;
+                }
 
                 this.load();
                 this.render();
-
             });
-        }
+        },
 
+        /* ================================================
+           SPA SCREEN CHANGE
+        ================================================ */
+
+        bindScreenChanges() {
+            document.addEventListener(
+                "scamshield:screenchange",
+                () => {
+                    this.render();
+                }
+            );
+        }
     };
 
     /* ================================================
@@ -513,15 +663,12 @@
     ================================================ */
 
     if (document.readyState === "loading") {
-
         document.addEventListener(
             "DOMContentLoaded",
             () => Notifications.init(),
             { once: true }
         );
-
     } else {
-
         Notifications.init();
     }
 

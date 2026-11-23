@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="theme-color" content="#07111f">
-    <meta name="description" content="Analyze suspicious messages, links, calls and transactions with ScamShield AI.">
+    <meta name="description" content="Analyze suspicious messages, links, calls, emails, screenshots and transactions with ScamShield AI.">
 
     <title>Evidence Analysis | ScamShield AI</title>
 
@@ -55,9 +56,11 @@
     ====================================================== -->
 
     <header class="navbar">
+
         <div class="container nav-content">
 
             <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
+
                 <span class="logo-icon">
                     <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
                 </span>
@@ -65,6 +68,7 @@
                 <span class="logo-text">
                     ScamShield <span>AI</span>
                 </span>
+
             </a>
 
             <nav
@@ -72,6 +76,7 @@
                 id="navLinks"
                 aria-label="Main navigation"
             >
+
                 <a href="dashboard.html">Dashboard</a>
                 <a href="detection.html">Detection</a>
                 <a href="analysis.html" aria-current="page">Analysis</a>
@@ -79,13 +84,19 @@
                 <a href="intelligence.html">Intelligence</a>
                 <a href="analytics.html">Analytics</a>
                 <a href="reports.html">Reports</a>
+
             </nav>
 
             <div class="nav-actions">
+
                 <a href="settings.html" class="btn btn-secondary">
+
                     <i class="fa-solid fa-gear" aria-hidden="true"></i>
+
                     <span>Settings</span>
+
                 </a>
+
             </div>
 
             <button
@@ -96,11 +107,15 @@
                 aria-expanded="false"
                 aria-controls="navLinks"
             >
+
                 <i class="fa-solid fa-bars" aria-hidden="true"></i>
+
             </button>
 
         </div>
+
     </header>
+
 
     <!-- =====================================================
          MAIN CONTENT
@@ -117,8 +132,11 @@
                 <div>
 
                     <div class="eyebrow">
+
                         <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+
                         AI SECURITY INTELLIGENCE
+
                     </div>
 
                     <h1>
@@ -133,56 +151,80 @@
                 </div>
 
                 <div class="analysis-badge">
+
                     <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+
                     Multi-Agent Engine
+
                 </div>
 
             </section>
 
-            <!-- QUICK INFORMATION -->
+
+            <!-- =================================================
+                 QUICK INFORMATION
+            ================================================== -->
 
             <section class="info-grid" aria-label="Analysis capabilities">
 
                 <div class="info-card">
 
                     <div class="info-icon purple">
+
                         <i class="fa-solid fa-brain" aria-hidden="true"></i>
+
                     </div>
 
                     <div>
+
                         <h3>4 AI Agents</h3>
+
                         <p>Coordinated analysis</p>
+
                     </div>
 
                 </div>
+
 
                 <div class="info-card">
 
                     <div class="info-icon blue">
+
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+
                     </div>
 
                     <div>
+
                         <h3>Evidence Detection</h3>
+
                         <p>Suspicious patterns</p>
+
                     </div>
 
                 </div>
 
+
                 <div class="info-card">
 
                     <div class="info-icon green">
+
                         <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+
                     </div>
 
                     <div>
+
                         <h3>Victim Safety</h3>
+
                         <p>Actionable guidance</p>
+
                     </div>
 
                 </div>
 
             </section>
+
 
             <!-- =================================================
                  ANALYSIS FORM AND INFORMATION
@@ -197,20 +239,27 @@
                     <div class="panel-heading">
 
                         <div>
-                            <div class="section-label">INVESTIGATION</div>
+
+                            <div class="section-label">
+                                INVESTIGATION
+                            </div>
 
                             <h2>Submit Evidence</h2>
 
                             <p>
                                 Provide suspicious content for analysis.
                             </p>
+
                         </div>
 
                         <div class="heading-icon">
+
                             <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
+
                         </div>
 
                     </div>
+
 
                     <form id="analysisForm">
 
@@ -219,8 +268,11 @@
                         <div class="form-group">
 
                             <label for="evidenceType">
+
                                 Evidence Type
+
                                 <span aria-hidden="true">*</span>
+
                             </label>
 
                             <div class="select-wrapper">
@@ -232,6 +284,7 @@
                                     name="evidenceType"
                                     required
                                 >
+
                                     <option value="message">
                                         Suspicious Message
                                     </option>
@@ -241,7 +294,7 @@
                                     </option>
 
                                     <option value="call">
-                                        Phone Call
+                                        Phone Call / Transcript
                                     </option>
 
                                     <option value="transaction">
@@ -249,12 +302,13 @@
                                     </option>
 
                                     <option value="screenshot">
-                                        Screenshot Details
+                                        Screenshot Details / Extracted Text
                                     </option>
 
                                     <option value="email">
                                         Suspicious Email
                                     </option>
+
                                 </select>
 
                                 <i
@@ -266,6 +320,7 @@
 
                         </div>
 
+
                         <!-- EVIDENCE CONTENT -->
 
                         <div class="form-group">
@@ -273,8 +328,11 @@
                             <div class="label-row">
 
                                 <label for="evidenceInput">
+
                                     Evidence Content
+
                                     <span aria-hidden="true">*</span>
+
                                 </label>
 
                                 <span class="character-limit">
@@ -288,7 +346,7 @@
                                 name="evidence"
                                 maxlength="20000"
                                 rows="9"
-                                placeholder="Paste suspicious message, URL, email content, transaction details or other evidence here..."
+                                placeholder="Paste suspicious message, URL, email content, call transcript, extracted screenshot text or transaction details here..."
                                 aria-describedby="evidenceHelp characterCount"
                                 required
                             ></textarea>
@@ -296,8 +354,11 @@
                             <div class="textarea-footer">
 
                                 <span id="evidenceHelp">
+
                                     <i class="fa-solid fa-lock" aria-hidden="true"></i>
+
                                     Your evidence is processed securely.
+
                                 </span>
 
                                 <span
@@ -310,6 +371,7 @@
                             </div>
 
                         </div>
+
 
                         <!-- SECURITY NOTICE -->
 
@@ -328,6 +390,7 @@
                             </p>
 
                         </div>
+
 
                         <!-- SUBMIT BUTTON -->
 
@@ -353,6 +416,7 @@
 
                     </form>
 
+
                     <!-- ANALYSIS STATUS -->
 
                     <div
@@ -365,6 +429,7 @@
 
                 </section>
 
+
                 <!-- RIGHT INFORMATION -->
 
                 <aside class="right-column">
@@ -376,11 +441,17 @@
                         <div class="panel-heading compact">
 
                             <div>
-                                <div class="section-label">HOW IT WORKS</div>
+
+                                <div class="section-label">
+                                    HOW IT WORKS
+                                </div>
+
                                 <h2>Analysis Pipeline</h2>
+
                             </div>
 
                         </div>
+
 
                         <div class="pipeline">
 
@@ -389,47 +460,73 @@
                                 <div class="pipeline-number">01</div>
 
                                 <div>
+
                                     <h4>Evidence Collection</h4>
-                                    <p>Submit suspicious digital evidence.</p>
+
+                                    <p>
+                                        Submit suspicious digital evidence.
+                                    </p>
+
                                 </div>
 
                             </div>
 
+
                             <div class="pipeline-line"></div>
+
 
                             <div class="pipeline-item">
 
                                 <div class="pipeline-number">02</div>
 
                                 <div>
+
                                     <h4>AI Investigation</h4>
-                                    <p>Analyze patterns and suspicious indicators.</p>
+
+                                    <p>
+                                        Analyze patterns and suspicious indicators.
+                                    </p>
+
                                 </div>
 
                             </div>
 
+
                             <div class="pipeline-line"></div>
+
 
                             <div class="pipeline-item">
 
                                 <div class="pipeline-number">03</div>
 
                                 <div>
+
                                     <h4>Risk Assessment</h4>
-                                    <p>Evaluate the potential threat level.</p>
+
+                                    <p>
+                                        Evaluate the potential threat level.
+                                    </p>
+
                                 </div>
 
                             </div>
 
+
                             <div class="pipeline-line"></div>
+
 
                             <div class="pipeline-item">
 
                                 <div class="pipeline-number">04</div>
 
                                 <div>
+
                                     <h4>Safety Recommendations</h4>
-                                    <p>Receive guidance based on analysis.</p>
+
+                                    <p>
+                                        Receive guidance based on analysis.
+                                    </p>
+
                                 </div>
 
                             </div>
@@ -437,6 +534,7 @@
                         </div>
 
                     </section>
+
 
                     <!-- AGENT OVERVIEW -->
 
@@ -448,54 +546,78 @@
 
                         <h2>Four Specialized Agents</h2>
 
+
                         <div class="mini-agent">
 
                             <span class="mini-agent-icon guardian">
+
                                 <i class="fa-solid fa-shield" aria-hidden="true"></i>
+
                             </span>
 
                             <div>
+
                                 <strong>Guardian</strong>
+
                                 <small>Threat assessment</small>
+
                             </div>
 
                         </div>
+
 
                         <div class="mini-agent">
 
                             <span class="mini-agent-icon intelligence">
+
                                 <i class="fa-solid fa-brain" aria-hidden="true"></i>
+
                             </span>
 
                             <div>
+
                                 <strong>Intelligence</strong>
+
                                 <small>Indicator investigation</small>
+
                             </div>
 
                         </div>
+
 
                         <div class="mini-agent">
 
                             <span class="mini-agent-icon safety">
+
                                 <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+
                             </span>
 
                             <div>
+
                                 <strong>Victim Safety</strong>
+
                                 <small>Protection recommendations</small>
+
                             </div>
 
                         </div>
 
+
                         <div class="mini-agent">
 
                             <span class="mini-agent-icon decoy">
+
                                 <i class="fa-solid fa-mask" aria-hidden="true"></i>
+
                             </span>
 
                             <div>
+
                                 <strong>Decoy</strong>
+
                                 <small>Controlled simulation status</small>
+
                             </div>
 
                         </div>
@@ -505,6 +627,7 @@
                 </aside>
 
             </section>
+
 
             <!-- =================================================
                  ANALYSIS RESULTS
@@ -523,21 +646,31 @@
                 <div class="results-heading">
 
                     <div>
-                        <div class="section-label">INVESTIGATION REPORT</div>
 
-                        <h2 id="resultsTitle">Analysis Results</h2>
+                        <div class="section-label">
+                            INVESTIGATION REPORT
+                        </div>
+
+                        <h2 id="resultsTitle">
+                            Analysis Results
+                        </h2>
 
                         <p>
                             Review the findings generated by ScamShield AI.
                         </p>
+
                     </div>
 
                     <div class="report-badge">
+
                         <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+
                         Analysis Completed
+
                     </div>
 
                 </div>
+
 
                 <!-- RESULT CARDS -->
 
@@ -546,8 +679,11 @@
                     <div class="result-card score-card">
 
                         <div class="result-card-heading">
+
                             <span>Risk Score</span>
+
                             <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+
                         </div>
 
                         <div
@@ -563,11 +699,15 @@
 
                     </div>
 
+
                     <div class="result-card">
 
                         <div class="result-card-heading">
+
                             <span>Risk Level</span>
+
                             <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+
                         </div>
 
                         <div
@@ -583,11 +723,15 @@
 
                     </div>
 
+
                     <div class="result-card">
 
                         <div class="result-card-heading">
+
                             <span>Fraud Category</span>
+
                             <i class="fa-solid fa-tags" aria-hidden="true"></i>
+
                         </div>
 
                         <div
@@ -605,15 +749,21 @@
 
                 </div>
 
+
                 <!-- ANALYSIS SUMMARY -->
 
                 <div class="panel summary-panel">
 
-                    <div class="section-label">AI FINDINGS</div>
+                    <div class="section-label">
+                        AI FINDINGS
+                    </div>
 
                     <h3>
+
                         <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+
                         Analysis Summary
+
                     </h3>
 
                     <p id="analysisSummary">
@@ -621,11 +771,15 @@
                     </p>
 
                     <div class="analysis-id">
+
                         Analysis ID:
+
                         <strong id="analysisId">--</strong>
+
                     </div>
 
                 </div>
+
 
                 <!-- EXPLANATION AND INDICATORS -->
 
@@ -633,41 +787,57 @@
 
                     <section class="panel">
 
-                        <div class="section-label">DETECTION DETAILS</div>
+                        <div class="section-label">
+                            DETECTION DETAILS
+                        </div>
 
                         <h3>
+
                             <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+
                             Analysis Explanation
+
                         </h3>
 
                         <div
                             id="analysisExplanation"
                             class="details-content"
                         >
+
                             <p>No explanation available.</p>
+
                         </div>
 
                     </section>
 
+
                     <section class="panel">
 
-                        <div class="section-label">THREAT INTELLIGENCE</div>
+                        <div class="section-label">
+                            THREAT INTELLIGENCE
+                        </div>
 
                         <h3>
+
                             <i class="fa-solid fa-crosshairs" aria-hidden="true"></i>
+
                             Detected Indicators
+
                         </h3>
 
                         <div
                             id="analysisIndicators"
                             class="details-content"
                         >
+
                             <p>No indicators detected.</p>
+
                         </div>
 
                     </section>
 
                 </div>
+
 
                 <!-- FOUR AGENT REPORTS -->
 
@@ -683,6 +853,7 @@
                         Individual findings from the four specialized agents.
                     </p>
 
+
                     <div class="agent-results-grid">
 
                         <!-- GUARDIAN -->
@@ -692,12 +863,17 @@
                             <div class="agent-panel-heading">
 
                                 <div class="agent-icon guardian">
+
                                     <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+
                                 </div>
 
                                 <div>
+
                                     <h3>Guardian Agent</h3>
+
                                     <p>Threat Detection</p>
+
                                 </div>
 
                             </div>
@@ -706,10 +882,13 @@
                                 id="guardianResults"
                                 class="agent-output"
                             >
+
                                 <p>Awaiting analysis...</p>
+
                             </div>
 
                         </article>
+
 
                         <!-- INTELLIGENCE -->
 
@@ -718,12 +897,17 @@
                             <div class="agent-panel-heading">
 
                                 <div class="agent-icon intelligence">
+
                                     <i class="fa-solid fa-brain" aria-hidden="true"></i>
+
                                 </div>
 
                                 <div>
+
                                     <h3>Intelligence Agent</h3>
+
                                     <p>Indicator Investigation</p>
+
                                 </div>
 
                             </div>
@@ -732,10 +916,13 @@
                                 id="intelligenceResults"
                                 class="agent-output"
                             >
+
                                 <p>Awaiting analysis...</p>
+
                             </div>
 
                         </article>
+
 
                         <!-- VICTIM SAFETY -->
 
@@ -744,12 +931,17 @@
                             <div class="agent-panel-heading">
 
                                 <div class="agent-icon safety">
+
                                     <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+
                                 </div>
 
                                 <div>
+
                                     <h3>Victim Safety Agent</h3>
+
                                     <p>Protection Guidance</p>
+
                                 </div>
 
                             </div>
@@ -758,10 +950,13 @@
                                 id="victimSafetyResults"
                                 class="agent-output"
                             >
+
                                 <p>Awaiting analysis...</p>
+
                             </div>
 
                         </article>
+
 
                         <!-- DECOY -->
 
@@ -770,12 +965,17 @@
                             <div class="agent-panel-heading">
 
                                 <div class="agent-icon decoy">
+
                                     <i class="fa-solid fa-mask" aria-hidden="true"></i>
+
                                 </div>
 
                                 <div>
+
                                     <h3>Decoy Agent</h3>
+
                                     <p>Simulation Status</p>
+
                                 </div>
 
                             </div>
@@ -784,7 +984,9 @@
                                 id="decoyResults"
                                 class="agent-output"
                             >
+
                                 <p>Awaiting analysis...</p>
+
                             </div>
 
                         </article>
@@ -793,6 +995,7 @@
 
                 </section>
 
+
                 <!-- DISCLAIMER -->
 
                 <div class="disclaimer-box" role="note">
@@ -800,6 +1003,7 @@
                     <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
 
                     <div>
+
                         <strong>Important Disclaimer</strong>
 
                         <p id="analysisDisclaimer">
@@ -807,11 +1011,13 @@
                             Results are not proof of fraud and should not replace
                             official verification or professional advice.
                         </p>
+
                     </div>
 
                 </div>
 
             </section>
+
 
             <!-- =================================================
                  EMERGENCY HELP
@@ -820,23 +1026,32 @@
             <section class="analysis-emergency">
 
                 <div>
+
                     <h2>
+
                         <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
+
                         Need Help with Financial Cyber Fraud?
+
                     </h2>
 
                     <p>
                         If you have lost money due to cyber fraud,
                         contact the official cybercrime helpline immediately.
                     </p>
+
                 </div>
 
                 <a href="tel:1930" class="emergency-call-button">
+
                     <i class="fa-solid fa-phone" aria-hidden="true"></i>
+
                     Call 1930
+
                 </a>
 
             </section>
+
 
             <!-- FOOTER -->
 
@@ -856,24 +1071,6 @@
 
     </main>
 
-    <!-- CURRENT YEAR -->
-    <script>
-        const currentYearElement = document.getElementById("currentYear");
-
-        if (currentYearElement) {
-            currentYearElement.textContent = new Date().getFullYear();
-        }
-    </script>
-<!-- SHARED JAVASCRIPT -->
-    <script defer src="../js/services/api.js"></script>
-    <script defer src="../js/utils/helpers.js"></script>
-    <script defer src="../js/components/navigation.js"></script>
-    <script defer src="../js/components/sidebar.js"></script>
-    <script defer src="../js/components/notifications.js"></script>
-    <script defer src="../js/main.js"></script>
-
-    <!-- PAGE JAVASCRIPT -->
-    <script defer src="../js/analysis.js"></script>
-</head>
 </body>
+
 </html>

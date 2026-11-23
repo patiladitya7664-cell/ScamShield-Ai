@@ -1,147 +1,313 @@
 "use strict";
 
 /**
- * Online shopping offer, seller message ya listing mein common scam signs check karta hai.
- * Yeh seller, product ya website ko independently verify nahi karta.
+ * =========================================================
+ * SCAMSHIELD AI
+ * E-COMMERCE FRAUD INDICATOR ANALYZER
+ *
+ * Version: 3.0.0
+ *
+ * Detects potential indicators:
+ * 1. Unrealistic discounts
+ * 2. Off-platform payment requests
+ * 3. Suspicious advance fees
+ * 4. Unexpected delivery links
+ * 5. OTP / PIN / CVV requests
+ * 6. Urgent purchase pressure
+ * 7. Fake refund requests
+ *
+ * IMPORTANT:
+ * - Local rule-based indicator analysis only.
+ * - Does not verify sellers or products.
+ * - Does not verify marketplace accounts.
+ * - Does not verify website reputation.
+ * - Guardian Agent controls final classification.
+ * =========================================================
  */
+
+const MAX_ECOMMERCE_INPUT_LENGTH = 15000;
 
 const ECOMMERCE_RULES = [
-  {
-    id: "unrealistic_discount",
-    label: "Bahut zyada discount ya asambhav roop se kam price",
-    points: 22,
-    patterns: [
-      /\b(up to )?(90|95|99)\s*%\s*(off|discount)\b/i,
-      /\b(too good to be true|lowest price ever|almost free|unbelievable deal)\b/i,
-      /\b(90|95|99)\s*%\s*(chhoot|discount)\b/i
-    ]
-  },
-  {
-    id: "off_platform_payment",
-    label: "Marketplace ke bahar payment bhejne ko kaha gaya hai",
-    points: 28,
-    patterns: [
-      /\b(pay|transfer|send)\b.{0,45}\b(outside the platform|directly to my account|personal account|personal upi)\b/i,
-      /\b(whatsapp|telegram)\b.{0,40}\b(payment|pay|transfer|order)\b/i,
-      /\b(platform ke bahar|personal upi|direct account)\b.{0,40}\b(payment|paise|bhejo)\b/i
-    ]
-  },
-  {
-    id: "advance_fee",
-    label: "Delivery se pehle extra fee, customs ya insurance maangi gayi hai",
-    points: 22,
-    patterns: [
-      /\b(pay|send|transfer)\b.{0,40}\b(delivery fee|customs fee|insurance fee|release fee|parcel charge)\b/i,
-      /\b(delivery|parcel|package)\b.{0,40}\b(customs|insurance|release)\b.{0,30}\b(fee|payment|charge)\b/i
-    ]
-  },
-  {
-    id: "fake_delivery_link",
-    label: "Delivery ya parcel update ke liye unexpected link diya gaya hai",
-    points: 16,
-    patterns: [
-      /\b(delivery|parcel|package|shipment)\b.{0,45}\b(track|reschedule|confirm address|delivery fee)\b/i,
-      /https?:\/\/[^\s<>()]+/i
-    ]
-  },
-  {
-    id: "payment_or_otp_request",
-    label: "OTP, card PIN ya CVV maanga gaya hai",
-    points: 32,
-    patterns: [
-      /\b(otp|one.time.password|cvv|card pin|upi pin)\b.{0,45}\b(share|send|tell|confirm|provide)\b/i,
-      /\b(share|send|tell|confirm|provide)\b.{0,45}\b(otp|one.time.password|cvv|card pin|upi pin)\b/i
-    ]
-  },
-  {
-    id: "urgent_offer",
-    label: "Turant payment ya order karne ka pressure",
-    points: 15,
-    patterns: [
-      /\b(only today|limited time|pay now|last chance|offer expires soon|hurry)\b/i,
-      /\b(sirf aaj|abhi order|jaldi payment|offer khatam)\b/i
-    ]
-  },
-  {
-    id: "fake_refund",
-    label: "Refund claim karne ke liye payment ya bank details maangi gayi hain",
-    points: 25,
-    patterns: [
-      /\b(refund|cashback)\b.{0,45}\b(pay|fee|otp|pin|cvv|bank details|click)\b/i,
-      /\b(pay|share|enter)\b.{0,40}\b(refund|cashback)\b/i
-    ]
-  }
+    {
+        id: "unrealistic_discount",
+        label: "Unusually large discount or unrealistic price claim",
+        severity: "medium",
+        patterns: [
+            /\b(up to )?(90|95|99)\s*%\s*(off|discount)\b/i,
+
+            /\b(too good to be true|lowest price ever|almost free|unbelievable deal)\b/i,
+
+            /\b(90|95|99)\s*%\s*(chhoot|discount)\b/i
+        ]
+    },
+
+    {
+        id: "off_platform_payment",
+        label: "Request to make payment outside the marketplace",
+        severity: "high",
+        patterns: [
+            /\b(pay|transfer|send)\b.{0,45}\b(outside the platform|directly to my account|personal account|personal upi)\b/i,
+
+            /\b(platform ke bahar|personal upi|direct account)\b.{0,40}\b(payment|paise|bhejo)\b/i,
+
+            /\b(whatsapp|telegram)\b.{0,40}\b(send payment|pay me|transfer money|personal upi)\b/i
+        ]
+    },
+
+    {
+        id: "advance_fee",
+        label: "Unexpected additional delivery, customs or insurance fee",
+        severity: "high",
+        patterns: [
+            /\b(pay|send|transfer)\b.{0,40}\b(delivery fee|customs fee|insurance fee|release fee|parcel charge)\b/i,
+
+            /\b(delivery|parcel|package)\b.{0,40}\b(customs|insurance|release)\b.{0,30}\b(fee|payment|charge)\b/i
+        ]
+    },
+
+    {
+        id: "fake_delivery_link",
+        label: "Unexpected delivery or parcel confirmation request",
+        severity: "medium",
+        patterns: [
+            /\b(delivery|parcel|package|shipment)\b.{0,45}\b(track|reschedule|confirm address|delivery fee)\b/i,
+
+            /\b(click|open|visit)\b.{0,35}\b(delivery link|parcel link|tracking link)\b/i,
+
+            /\b(address confirmation|parcel release|delivery confirmation)\b.{0,40}\b(link|payment|otp)\b/i
+        ]
+    },
+
+    {
+        id: "payment_or_otp_request",
+        label: "OTP, card PIN, CVV or UPI PIN disclosure request",
+        severity: "critical",
+        patterns: [
+            /\b(otp|one.time.password|cvv|card pin|upi pin)\b.{0,45}\b(share|send|tell|confirm|provide)\b/i,
+
+            /\b(share|send|tell|confirm|provide)\b.{0,45}\b(otp|one.time.password|cvv|card pin|upi pin)\b/i,
+
+            /\b(otp|upi pin|cvv)\b.{0,35}\b(batao|bhejo|share karo)\b/i
+        ]
+    },
+
+    {
+        id: "urgent_offer",
+        label: "Pressure to order or make payment immediately",
+        severity: "medium",
+        patterns: [
+            /\b(only today|limited time|pay now|last chance|offer expires soon|hurry)\b/i,
+
+            /\b(sirf aaj|abhi order|jaldi payment|offer khatam)\b/i
+        ]
+    },
+
+    {
+        id: "fake_refund",
+        label: "Payment or banking details requested for a refund",
+        severity: "high",
+        patterns: [
+            /\b(refund|cashback)\b.{0,45}\b(pay|fee|otp|pin|cvv|bank details|click)\b/i,
+
+            /\b(pay|share|enter)\b.{0,40}\b(refund|cashback)\b/i,
+
+            /\b(refund|cashback)\b.{0,45}\b(upi pin|card pin|password)\b/i
+        ]
+    }
 ];
 
-function getRiskLevel(score) {
-  if (score >= 50) return "high";
-  if (score >= 25) return "medium";
-  return "low";
+/* =========================================================
+   INPUT NORMALIZATION
+========================================================= */
+
+function normalizeEcommerceInput(input) {
+    if (typeof input === "string") {
+        return input.trim();
+    }
+
+    if (input && typeof input === "object") {
+        return [
+            input.message,
+            input.listing,
+            input.details
+        ]
+            .filter((part) => typeof part === "string")
+            .join("\n")
+            .trim();
+    }
+
+    return "";
 }
+
+/* =========================================================
+   EVIDENCE EXTRACTION
+========================================================= */
+
+function extractEcommerceEvidence(text, patterns) {
+    for (const pattern of patterns) {
+        const match = text.match(pattern);
+
+        if (match) {
+            return match[0].trim().slice(0, 300);
+        }
+    }
+
+    return null;
+}
+
+/* =========================================================
+   SAFETY RECOMMENDATIONS
+========================================================= */
+
+function generateEcommerceAdvice(findings) {
+    const ids = new Set(
+        findings.map((finding) => finding.id)
+    );
+
+    const advice = [
+        "Make payments through the marketplace's official checkout whenever possible.",
+        "Independently review seller information, reviews and return policies.",
+        "Never share OTP, UPI PIN, card PIN or CVV with a seller or delivery agent."
+    ];
+
+    if (ids.has("off_platform_payment")) {
+        advice.push(
+            "Avoid transferring money outside the marketplace because buyer protection may not apply."
+        );
+    }
+
+    if (ids.has("fake_delivery_link")) {
+        advice.push(
+            "Check parcel status directly through the courier's official website or application."
+        );
+    }
+
+    if (ids.has("advance_fee")) {
+        advice.push(
+            "Verify unexpected customs, insurance or parcel charges directly with the official courier."
+        );
+    }
+
+    if (ids.has("fake_refund")) {
+        advice.push(
+            "A refund should not require disclosing your OTP, UPI PIN or card security credentials."
+        );
+    }
+
+    if (ids.has("payment_or_otp_request")) {
+        advice.push(
+            "Stop the transaction if someone requests confidential banking credentials."
+        );
+    }
+
+    return advice;
+}
+
+/* =========================================================
+   MAIN E-COMMERCE INDICATOR ANALYZER
+========================================================= */
 
 /**
- * @param {string|{message?: string, listing?: string, details?: string}} input
+ * Analyze a product listing or seller message.
+ *
+ * @param {string|object} input
+ * @returns {Object}
  */
 function scanEcommerce(input) {
-  let text = "";
+    const text = normalizeEcommerceInput(input);
 
-  if (typeof input === "string") {
-    text = input.trim();
-  } else if (input && typeof input === "object") {
-    text = [input.message, input.listing, input.details]
-      .filter((part) => typeof part === "string")
-      .join("\n")
-      .trim();
-  }
-
-  if (!text) {
-    throw new TypeError("Scan karne ke liye product listing ya seller message enter karein.");
-  }
-
-  const findings = [];
-
-  for (const rule of ECOMMERCE_RULES) {
-    if (rule.patterns.some((pattern) => pattern.test(text))) {
-      findings.push({
-        id: rule.id,
-        label: rule.label,
-        points: rule.points
-      });
+    if (!text) {
+        throw new TypeError(
+            "Product listing ya seller message enter karein."
+        );
     }
-  }
 
-  const score = Math.min(
-    findings.reduce((total, finding) => total + finding.points, 0),
-    100
-  );
+    if (text.length > MAX_ECOMMERCE_INPUT_LENGTH) {
+        throw new RangeError(
+            `Input maximum ${MAX_ECOMMERCE_INPUT_LENGTH} characters ka ho sakta hai.`
+        );
+    }
 
-  const advice = [
-    "Payment platform ke official checkout ke andar hi karein.",
-    "Seller reviews, return policy aur official contact details independently check karein.",
-    "OTP, UPI PIN, card PIN ya CVV seller ya delivery agent ko na batayein."
-  ];
+    const findings = [];
 
-  if (findings.some((finding) => finding.id === "off_platform_payment")) {
-    advice.push("Marketplace ke bahar payment karne se buyer protection khatam ho sakti hai.");
-  }
+    for (const rule of ECOMMERCE_RULES) {
+        const evidence = extractEcommerceEvidence(
+            text,
+            rule.patterns
+        );
 
-  if (findings.some((finding) => finding.id === "fake_delivery_link")) {
-    advice.push("Parcel status courier ki official website ya app par khud check karein.");
-  }
+        if (!evidence) {
+            continue;
+        }
 
-  return {
-    type: "ecommerce",
-    score,
-    risk: getRiskLevel(score),
-    findings,
-    advice
-  };
+        findings.push({
+            id: rule.id,
+            label: rule.label,
+            severity: rule.severity,
+            evidence
+        });
+    }
+
+    return {
+        type: "indicator_analysis",
+
+        categoryHint: "ecommerce_scam",
+
+        detected: findings.length > 0,
+
+        findings,
+
+        totalFindings: findings.length,
+
+        summary: findings.length > 0
+            ? `${findings.length} potential e-commerce fraud indicators identified.`
+            : "No matching e-commerce fraud indicators identified.",
+
+        advice: generateEcommerceAdvice(findings),
+
+        classification: {
+            authoritative: false,
+            finalCategory: null,
+            riskScore: null,
+            riskLevel: null,
+            authority: "Guardian Agent"
+        },
+
+        metadata: {
+            detector: "ScamShield E-commerce Fraud Indicator Analyzer",
+            version: "3.0.0",
+            detectionMethod: "rule_based",
+            evidenceType: "product_listing_or_seller_message",
+            rulesChecked: ECOMMERCE_RULES.length,
+            sellerVerified: false,
+            productVerified: false,
+            websiteReputationVerified: false,
+            analyzedAt: new Date().toISOString()
+        }
+    };
 }
 
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = { scanEcommerce };
+/* =========================================================
+   EXPORTS
+========================================================= */
+
+if (
+    typeof module !== "undefined" &&
+    module.exports
+) {
+    module.exports = {
+        scanEcommerce,
+        normalizeEcommerceInput,
+        extractEcommerceEvidence,
+        generateEcommerceAdvice
+    };
 }
 
 if (typeof window !== "undefined") {
-  window.ScamShieldEcommerceScanner = { scanEcommerce };
+    window.ScamShieldEcommerceScanner = {
+        scanEcommerce,
+        normalizeEcommerceInput,
+        extractEcommerceEvidence,
+        generateEcommerceAdvice
+    };
 }

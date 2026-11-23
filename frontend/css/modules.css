@@ -1,4 +1,10 @@
-/* ScamShield feature modules: scanner forms, results, and reusable module cards. */
+/* =====================================================
+   SCAMSHIELD AI
+   MODULES & DETECTION COMPONENTS
+   Version: 2.0.0
+===================================================== */
+
+/* ================= MODULE LAYOUT ================= */
 
 .module-page {
   width: min(100% - 2rem, 1180px);
@@ -25,6 +31,7 @@
   color: #f4f7fb;
   font-size: clamp(2rem, 5vw, 3.25rem);
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
 .module-heading p {
@@ -34,9 +41,10 @@
   line-height: 1.65;
 }
 
-/* Scanner input panel */
+/* ================= SCANNER PANEL ================= */
 
 .scanner-panel {
+  min-width: 0;
   padding: clamp(1.1rem, 3vw, 1.75rem);
   border: 1px solid #26364c;
   border-radius: 16px;
@@ -80,7 +88,8 @@
 
 .scanner-form textarea::placeholder,
 .scanner-form input::placeholder {
-  color: #7e8ca2;
+  color: #9aa8bb;
+  opacity: 1;
 }
 
 .scanner-form textarea:focus,
@@ -93,10 +102,12 @@
 .scanner-help,
 .field-hint {
   margin: 0;
-  color: #93a1b6;
+  color: #a5b1c4;
   font-size: 0.82rem;
   line-height: 1.5;
 }
+
+/* ================= SCANNER ACTIONS ================= */
 
 .scanner-actions {
   display: flex;
@@ -109,7 +120,7 @@
 .scanner-button,
 .scanner-secondary-button {
   display: inline-flex;
-  min-height: 44px;
+  min-height: 46px;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -120,7 +131,10 @@
   font-weight: 750;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
 }
 
 .scanner-button {
@@ -128,13 +142,13 @@
   color: #082019;
 }
 
-.scanner-button:hover {
+.scanner-button:hover:not(:disabled) {
   background: #80edcc;
   transform: translateY(-1px);
 }
 
 .scanner-button:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.65;
   transform: none;
 }
@@ -152,11 +166,11 @@
 
 .scanner-button:focus-visible,
 .scanner-secondary-button:focus-visible {
-  outline: 3px solid rgb(101 224 187 / 55%);
-  outline-offset: 2px;
+  outline: 3px solid rgb(101 224 187 / 65%);
+  outline-offset: 3px;
 }
 
-/* Scan result */
+/* ================= SCAN RESULTS ================= */
 
 .scanner-result {
   margin-top: 1.25rem;
@@ -167,7 +181,7 @@
 }
 
 .scanner-result[hidden] {
-  display: none;
+  display: none !important;
 }
 
 .scanner-result-header {
@@ -186,16 +200,20 @@
 
 .scanner-result-summary {
   margin: 0.75rem 0 0;
-  color: #a5b1c4;
-  line-height: 1.55;
+  color: #b6c2d3;
+  line-height: 1.6;
 }
 
-.risk-badge {
+/* ================= RISK BADGES ================= */
+
+/* Scoped to scanner results to avoid affecting dashboard previews. */
+
+.scanner-result .risk-badge {
   display: inline-flex;
-  min-height: 30px;
+  min-height: 32px;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.3rem 0.65rem;
+  padding: 0.3rem 0.7rem;
   border: 1px solid currentColor;
   border-radius: 999px;
   font-size: 0.76rem;
@@ -204,29 +222,37 @@
   text-transform: uppercase;
 }
 
-.risk-badge--low {
+.scanner-result .risk-badge--low {
   border-color: #3dc99e;
   background: rgb(61 201 158 / 10%);
   color: #70e4bd;
 }
 
-.risk-badge--medium {
+.scanner-result .risk-badge--medium {
   border-color: #e5b64f;
   background: rgb(229 182 79 / 10%);
   color: #f2ca70;
 }
 
-.risk-badge--high {
+.scanner-result .risk-badge--high {
   border-color: #ef7777;
   background: rgb(239 119 119 / 10%);
   color: #ff9696;
 }
 
-.risk-score {
+.scanner-result .risk-badge--critical {
+  border-color: #ff626f;
+  background: rgb(255 98 111 / 13%);
+  color: #ff8993;
+}
+
+.scanner-result .risk-score {
   color: #f4f7fb;
   font-size: 1.15rem;
   font-weight: 800;
 }
+
+/* ================= FINDINGS & SAFETY ADVICE ================= */
 
 .finding-list,
 .advice-list {
@@ -244,7 +270,8 @@
   gap: 0.65rem;
   color: #d6deea;
   font-size: 0.9rem;
-  line-height: 1.5;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .finding-item::before {
@@ -263,32 +290,37 @@
 
 .advice-item::before {
   content: "✓";
+  flex: 0 0 auto;
   color: #65e0bb;
   font-weight: 900;
 }
+
+/* ================= DISCLAIMER ================= */
 
 .scanner-disclaimer {
   margin: 1rem 0 0;
   padding-top: 0.85rem;
   border-top: 1px solid #26364c;
-  color: #93a1b6;
-  font-size: 0.78rem;
-  line-height: 1.5;
+  color: #a5b1c4;
+  font-size: 0.8rem;
+  line-height: 1.6;
 }
 
 .scanner-error {
   margin: 0;
   color: #ff9696;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .scanner-status {
-  min-height: 1.4rem;
-  color: #a5b1c4;
-  font-size: 0.85rem;
+  min-height: 1.5rem;
+  color: #b6c2d3;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
-/* Feature cards, useful on module and dashboard pages */
+/* ================= MODULE CARDS ================= */
 
 .module-card-grid {
   display: grid;
@@ -297,10 +329,19 @@
 }
 
 .module-card {
+  min-width: 0;
   padding: 1.25rem;
   border: 1px solid #26364c;
   border-radius: 14px;
   background: #101a2c;
+  transition:
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.module-card:hover {
+  border-color: rgb(101 224 187 / 45%);
+  transform: translateY(-2px);
 }
 
 .module-card h2,
@@ -308,20 +349,23 @@
   margin: 0;
   color: #f4f7fb;
   font-size: 1.08rem;
+  line-height: 1.4;
 }
 
 .module-card p {
   margin: 0.65rem 0 0;
-  color: #a5b1c4;
+  color: #b6c2d3;
   font-size: 0.9rem;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .module-card-link {
   display: inline-flex;
-  margin-top: 1rem;
+  min-height: 40px;
+  align-items: center;
+  margin-top: 0.75rem;
   color: #65e0bb;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 750;
   text-decoration: none;
 }
@@ -331,23 +375,115 @@
   text-underline-offset: 3px;
 }
 
-/* Accessible live announcements */
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  clip-path: inset(50%);
+.module-card-link:focus-visible {
+  outline: 2px solid #65e0bb;
+  outline-offset: 4px;
 }
 
-/* Responsive layout */
+/* ================= ACCESSIBLE HIDDEN TEXT ================= */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+}
+
+/* =====================================================
+   FRAUD CATEGORY GRID
+   12 FRAUD CATEGORIES — NOT EVIDENCE TYPES
+===================================================== */
+
+/* Semantic class for future HTML updates. */
+
+.category-grid,
+.evidence-types {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+.category-card,
+.evidence-type {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 105px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #34445d;
+  border-radius: 13px;
+  background: #101a2c;
+  color: #f4f7fb;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.category-card i,
+.evidence-type i {
+  color: #65e0bb;
+  font-size: 25px;
+}
+
+.category-card span,
+.evidence-type span {
+  color: #eaf0f8;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.category-card:hover,
+.evidence-type:hover {
+  border-color: #65e0bb;
+  background: #17283a;
+}
+
+.category-card.active,
+.evidence-type.active,
+.category-card[aria-pressed="true"],
+.evidence-type[aria-pressed="true"] {
+  border: 2px solid #65e0bb;
+  background: #19372f;
+  box-shadow: 0 0 0 3px rgb(101 224 187 / 12%);
+}
+
+.category-card.active i,
+.evidence-type.active i {
+  color: #80edcc;
+}
+
+.category-card:focus-visible,
+.evidence-type:focus-visible {
+  outline: 3px solid #65e0bb;
+  outline-offset: 3px;
+}
+
+/* ================= RESPONSIVE ================= */
 
 @media (max-width: 850px) {
   .module-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .category-grid,
+  .evidence-types {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
   }
 }
 
@@ -374,95 +510,34 @@
     align-items: flex-start;
     flex-direction: column;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .scanner-button,
-  .scanner-secondary-button {
-    transition: none;
-  }
-}
-/* =====================================================
-   SCAMSHIELD AI — 12 DETECTION CATEGORIES
-===================================================== */
-
-.evidence-types {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  width: 100%;
-}
-
-.evidence-type {
-  box-sizing: border-box;
-  min-height: 105px;
-  padding: 15px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: 1px solid #34445d;
-  border-radius: 13px;
-  background: #101a2c;
-  color: #f4f7fb;
-  text-align: center;
-  cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
-}
-
-.evidence-type i {
-  color: #65e0bb;
-  font-size: 25px;
-}
-
-.evidence-type span {
-  color: #eaf0f8;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.evidence-type:hover {
-  border-color: #65e0bb;
-  background: #17283a;
-}
-
-.evidence-type.active {
-  border: 2px solid #65e0bb;
-  background: #19372f;
-  box-shadow: 0 0 0 3px rgb(101 224 187 / 12%);
-}
-
-.evidence-type.active i {
-  color: #80edcc;
-}
-
-.evidence-type:focus-visible {
-  outline: 3px solid #65e0bb;
-  outline-offset: 3px;
-}
-
-@media (max-width: 850px) {
-  .evidence-types {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 11px;
+  .category-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 380px) {
-  .evidence-type {
+  .evidence-type,
+  .category-card {
     min-height: 95px;
     padding: 12px 7px;
   }
 
-  .evidence-type span {
+  .evidence-type span,
+  .category-card span {
     font-size: 12px;
   }
 }
 
+/* ================= REDUCED MOTION ================= */
+
 @media (prefers-reduced-motion: reduce) {
+  .scanner-button,
+  .scanner-secondary-button,
+  .module-card,
+  .category-card,
   .evidence-type {
-    transition: none;
+    transition: none !important;
+    transform: none !important;
   }
 }

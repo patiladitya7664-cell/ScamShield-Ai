@@ -1,21 +1,60 @@
+
 /* =========================================================
-SCAMSHIELD AI - SETTINGS PAGE
-Premium Dark UI | Glassmorphism | Responsive
+   SCAMSHIELD AI — SETTINGS PAGE
+   Version: 3.0.0
+   Premium Dark UI | Glassmorphism | Responsive
+   Dark / Light / System Theme Support
 ========================================================= */
 
 /* =========================================================
+   1. THEME VARIABLES
+========================================================= */
 
-1. GLOBAL SETTINGS
-   ========================================================= */
+:root {
+  color-scheme: dark;
+
+  --theme-bg: #07110d;
+  --theme-card: #101d17;
+  --theme-card-secondary: #14251c;
+  --theme-text: #f1f8f3;
+  --theme-muted: #9aafa1;
+  --theme-border: rgba(255, 255, 255, 0.09);
+  --theme-input: #0b1711;
+  --theme-hover: #1b3023;
+  --theme-accent: #55d98a;
+  --theme-accent-text: #168344;
+  --theme-danger: #ff9292;
+  --theme-shadow: rgba(0, 0, 0, 0.15);
+}
+
+html[data-active-theme="light"] {
+  color-scheme: light;
+
+  --theme-bg: #f3f7f4;
+  --theme-card: #ffffff;
+  --theme-card-secondary: #edf4ef;
+  --theme-text: #17251c;
+  --theme-muted: #647568;
+  --theme-border: rgba(20, 60, 35, 0.13);
+  --theme-input: #f8fbf9;
+  --theme-hover: #e7f1e9;
+  --theme-shadow: rgba(20, 60, 35, 0.06);
+}
+
+/* =========================================================
+   2. GLOBAL SETTINGS
+========================================================= */
 
 .settings-page {
   position: relative;
   min-height: 100vh;
   padding-bottom: 70px;
-  color: #e8f1ec;
+  color: var(--theme-text);
 }
 
-.settings-page * {
+.settings-page *,
+.settings-page *::before,
+.settings-page *::after {
   box-sizing: border-box;
 }
 
@@ -29,8 +68,17 @@ Premium Dark UI | Glassmorphism | Responsive
   cursor: pointer;
 }
 
+.settings-page button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.settings-page a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* =========================================================
-2. SETTINGS HERO
+   3. SETTINGS HERO
 ========================================================= */
 
 .settings-hero {
@@ -96,13 +144,13 @@ Premium Dark UI | Glassmorphism | Responsive
 .settings-status-dot {
   width: 8px;
   height: 8px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: #55d98a;
-  box-shadow: 0 0 12px rgba(85, 217, 138, 0.7);
 }
 
 /* =========================================================
-3. SETTINGS LAYOUT
+   4. SETTINGS LAYOUT
 ========================================================= */
 
 .settings-content {
@@ -117,12 +165,13 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-4. SETTINGS SIDEBAR
+   5. SETTINGS SIDEBAR
 ========================================================= */
 
 .settings-sidebar {
   position: sticky;
   top: 100px;
+  min-width: 0;
   padding: 20px 14px;
   border: 1px solid rgba(120, 160, 135, 0.14);
   border-radius: 16px;
@@ -154,6 +203,7 @@ Premium Dark UI | Glassmorphism | Responsive
   display: flex;
   align-items: center;
   gap: 12px;
+  min-height: 44px;
   margin-top: 7px;
   padding: 13px 11px;
   border-radius: 9px;
@@ -161,11 +211,12 @@ Premium Dark UI | Glassmorphism | Responsive
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
-  transition: 0.25s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .settings-nav-link > i:first-child {
   width: 18px;
+  flex-shrink: 0;
   font-size: 14px;
 }
 
@@ -214,7 +265,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-5. SETTINGS MAIN
+   6. SETTINGS MAIN
 ========================================================= */
 
 .settings-main {
@@ -225,12 +276,13 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-6. SETTINGS CARDS
+   7. SETTINGS CARDS
 ========================================================= */
 
 .settings-card {
-  scroll-margin-top: 100px;
+  min-width: 0;
   padding: 25px;
+  scroll-margin-top: 110px;
   border: 1px solid rgba(120, 160, 135, 0.15);
   border-radius: 16px;
   background: linear-gradient(
@@ -278,7 +330,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-7. PROFILE SECTION
+   8. PROFILE SECTION
 ========================================================= */
 
 .settings-profile {
@@ -341,11 +393,12 @@ Premium Dark UI | Glassmorphism | Responsive
 .settings-divider {
   height: 1px;
   margin: 23px 0;
+  border: 0;
   background: rgba(120, 160, 135, 0.13);
 }
 
 /* =========================================================
-8. INPUT FIELDS
+   9. INPUT FIELDS
 ========================================================= */
 
 .settings-field-grid {
@@ -372,17 +425,17 @@ Premium Dark UI | Glassmorphism | Responsive
   width: 100%;
   min-height: 45px;
   padding: 11px 13px;
-  outline: none;
   border: 1px solid rgba(120, 160, 135, 0.2);
   border-radius: 8px;
+  outline: none;
   background: rgba(5, 18, 12, 0.65);
   color: #e8f1ec;
-  font-size: 13px;
-  transition: 0.25s ease;
+  font-size: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .settings-field input::placeholder {
-  color: #62796c;
+  color: #829488;
 }
 
 .settings-field input:focus,
@@ -397,7 +450,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-9. BUTTONS
+   10. BUTTONS
 ========================================================= */
 
 .settings-outline-btn,
@@ -407,12 +460,14 @@ Premium Dark UI | Glassmorphism | Responsive
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 10px 15px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
-  transition: 0.25s ease;
+  text-align: center;
+  transition: background 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .settings-outline-btn {
@@ -461,10 +516,11 @@ Premium Dark UI | Glassmorphism | Responsive
 #settingsSaveMessage {
   color: #70e6a0;
   font-size: 12px;
+  line-height: 1.6;
 }
 
 /* =========================================================
-10. TOGGLE OPTIONS
+   11. TOGGLE OPTIONS
 ========================================================= */
 
 .settings-option-list {
@@ -503,21 +559,23 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-11. CUSTOM TOGGLE SWITCH
+   12. CUSTOM TOGGLE SWITCH
 ========================================================= */
 
 .settings-toggle {
   position: relative;
   display: inline-block;
   width: 43px;
-  height: 23px;
+  height: 25px;
   flex-shrink: 0;
   cursor: pointer;
 }
 
 .settings-toggle input {
-  width: 0;
-  height: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
   opacity: 0;
 }
 
@@ -527,19 +585,19 @@ Premium Dark UI | Glassmorphism | Responsive
   border: 1px solid rgba(150, 180, 160, 0.22);
   border-radius: 30px;
   background: #27372e;
-  transition: 0.25s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .toggle-slider::before {
   position: absolute;
-  top: 3px;
+  top: 4px;
   left: 3px;
   width: 15px;
   height: 15px;
   border-radius: 50%;
   background: #a4b5a9;
   content: "";
-  transition: 0.25s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .settings-toggle input:checked + .toggle-slider {
@@ -550,7 +608,6 @@ Premium Dark UI | Glassmorphism | Responsive
 .settings-toggle input:checked + .toggle-slider::before {
   transform: translateX(19px);
   background: #65e99c;
-  box-shadow: 0 0 8px rgba(85, 217, 138, 0.4);
 }
 
 .settings-toggle input:focus-visible + .toggle-slider {
@@ -559,7 +616,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-12. SECURITY INFORMATION
+   13. SECURITY INFORMATION
 ========================================================= */
 
 .settings-security-info {
@@ -595,7 +652,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-13. SYSTEM INFORMATION
+   14. SYSTEM INFORMATION
 ========================================================= */
 
 .settings-system-grid {
@@ -608,6 +665,7 @@ Premium Dark UI | Glassmorphism | Responsive
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
   padding: 15px;
   border: 1px solid rgba(120, 160, 135, 0.12);
   border-radius: 9px;
@@ -623,10 +681,11 @@ Premium Dark UI | Glassmorphism | Responsive
   color: #dff7e7;
   font-size: 13px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 /* =========================================================
-14. BOTTOM SAVE ACTIONS
+   15. BOTTOM SAVE ACTIONS
 ========================================================= */
 
 .settings-bottom-actions {
@@ -648,15 +707,128 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-15. ACTIVE NAV SCROLL
+   16. KEYBOARD ACCESSIBILITY
 ========================================================= */
 
-.settings-card {
-  scroll-margin-top: 110px;
+.settings-page button:focus-visible,
+.settings-page a:focus-visible,
+.settings-page input:focus-visible,
+.settings-page select:focus-visible {
+  outline: 2px solid #55d98a;
+  outline-offset: 3px;
 }
 
 /* =========================================================
-16. RESPONSIVE - TABLET
+   17. LIGHT THEME
+========================================================= */
+
+html[data-active-theme="light"] body {
+  background: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+html[data-active-theme="light"] .settings-page {
+  color: var(--theme-text);
+}
+
+html[data-active-theme="light"] .settings-sidebar {
+  background: var(--theme-card);
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-sidebar-heading {
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-sidebar-heading h3,
+html[data-active-theme="light"] .settings-card-header h2,
+html[data-active-theme="light"] .settings-profile-info h3,
+html[data-active-theme="light"] .settings-option h3,
+html[data-active-theme="light"] .settings-action-row h3,
+html[data-active-theme="light"] .system-info-item strong {
+  color: var(--theme-text);
+}
+
+html[data-active-theme="light"] .settings-sidebar-note,
+html[data-active-theme="light"] .settings-security-info {
+  background: #edf8f0;
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-sidebar-note p,
+html[data-active-theme="light"] .settings-security-info p {
+  color: var(--theme-muted);
+}
+
+html[data-active-theme="light"] .settings-card,
+html[data-active-theme="light"] .reports-stat-card {
+  background: var(--theme-card);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+  box-shadow: 0 5px 20px var(--theme-shadow);
+}
+
+html[data-active-theme="light"] .settings-card-header p,
+html[data-active-theme="light"] .settings-profile-info p,
+html[data-active-theme="light"] .settings-option p,
+html[data-active-theme="light"] .settings-action-row p,
+html[data-active-theme="light"] .system-info-item span,
+html[data-active-theme="light"] .settings-bottom-actions p {
+  color: var(--theme-muted);
+}
+
+html[data-active-theme="light"] .settings-profile,
+html[data-active-theme="light"] .system-info-item {
+  background: var(--theme-card-secondary);
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-field label {
+  color: var(--theme-text);
+}
+
+html[data-active-theme="light"] .settings-field input,
+html[data-active-theme="light"] .settings-field select {
+  background: var(--theme-input);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-field input::placeholder {
+  color: var(--theme-muted);
+}
+
+html[data-active-theme="light"] .settings-field select option {
+  background: #ffffff;
+  color: #17251c;
+}
+
+html[data-active-theme="light"] .settings-divider,
+html[data-active-theme="light"] .settings-option {
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-nav-link {
+  color: var(--theme-muted);
+}
+
+html[data-active-theme="light"] .settings-nav-link:hover,
+html[data-active-theme="light"] .settings-nav-link.active {
+  background: var(--theme-hover);
+  color: #168344;
+}
+
+html[data-active-theme="light"] .settings-bottom-actions {
+  background: var(--theme-card-secondary);
+  border-color: var(--theme-border);
+}
+
+html[data-active-theme="light"] .settings-profile-info .account-status {
+  color: #168344;
+}
+
+/* =========================================================
+   18. RESPONSIVE — TABLET
 ========================================================= */
 
 @media (max-width: 1000px) {
@@ -681,7 +853,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-17. RESPONSIVE - MOBILE
+   19. RESPONSIVE — MOBILE
 ========================================================= */
 
 @media (max-width: 760px) {
@@ -708,8 +880,13 @@ Premium Dark UI | Glassmorphism | Responsive
 
   .settings-sidebar {
     position: static;
+    display: flex;
+    align-items: center;
+    gap: 7px;
     overflow-x: auto;
     padding: 12px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
   }
 
   .settings-sidebar-heading,
@@ -717,18 +894,13 @@ Premium Dark UI | Glassmorphism | Responsive
     display: none;
   }
 
-  .settings-sidebar {
-    display: flex;
-    gap: 7px;
-    align-items: center;
-  }
-
   .settings-nav-link {
     flex-shrink: 0;
     margin: 0;
-    padding: 10px 12px;
+    padding: 11px 13px;
     border-radius: 8px;
-    font-size: 11px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 
   .settings-nav-link > i:last-child {
@@ -766,7 +938,7 @@ Premium Dark UI | Glassmorphism | Responsive
 
   .settings-action-row,
   .settings-bottom-actions {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
   }
 
@@ -776,7 +948,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-18. RESPONSIVE - SMALL MOBILE
+   20. RESPONSIVE — SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 480px) {
@@ -820,7 +992,7 @@ Premium Dark UI | Glassmorphism | Responsive
 
   .settings-option p,
   .settings-action-row p {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .settings-system-grid {
@@ -843,7 +1015,7 @@ Premium Dark UI | Glassmorphism | Responsive
 }
 
 /* =========================================================
-19. REDUCED MOTION
+   21. REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -852,140 +1024,11 @@ Premium Dark UI | Glassmorphism | Responsive
   .settings-page *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
+
 /* =========================================================
-SCAMSHIELD AI — THEME SUPPORT
-Append at the END of setting.css
+   END OF SETTINGS STYLESHEET
 ========================================================= */
-
-/* ---------- DARK THEME ---------- */
-
-:root {
-  color-scheme: dark;
-
-  --theme-bg: #07110d;
-  --theme-card: #101d17;
-  --theme-card-secondary: #14251c;
-  --theme-text: #f1f8f3;
-  --theme-muted: #9aafa1;
-  --theme-border: rgba(255, 255, 255, 0.09);
-  --theme-input: #0b1711;
-  --theme-hover: #1b3023;
-}
-
-/* ---------- LIGHT THEME ---------- */
-
-:root {
-  color-scheme: light;
-
-  --theme-bg: #f3f7f4;
-  --theme-card: #ffffff;
-  --theme-card-secondary: #edf4ef;
-  --theme-text: #17251c;
-  --theme-muted: #647568;
-  --theme-border: rgba(20, 60, 35, 0.13);
-  --theme-input: #f8fbf9;
-  --theme-hover: #e7f1e9;
-}
-
-/* ---------- PAGE BACKGROUND ---------- */
-
-html[data-active-theme="light"] body {
-  background: var(--theme-bg);
-  color: var(--theme-text);
-}
-
-/* ---------- SETTINGS CARDS ---------- */
-
-html[data-active-theme="light"] .settings-card,
-html[data-active-theme="light"] .reports-stat-card {
-  background: var(--theme-card);
-  color: var(--theme-text);
-  border-color: var(--theme-border);
-  box-shadow: 0 5px 20px rgba(20, 60, 35, 0.05);
-}
-
-/* ---------- HEADINGS AND TEXT ---------- */
-
-html[data-active-theme="light"] .settings-card h1,
-html[data-active-theme="light"] .settings-card h2,
-html[data-active-theme="light"] .settings-card h3,
-html[data-active-theme="light"] .settings-card h4,
-html[data-active-theme="light"] .settings-card p,
-html[data-active-theme="light"] .settings-card label {
-  color: var(--theme-text);
-}
-
-html[data-active-theme="light"] .settings-card small,
-html[data-active-theme="light"] .settings-card .description,
-html[data-active-theme="light"] .settings-card .subtitle {
-  color: var(--theme-muted);
-}
-
-/* ---------- INPUTS ---------- */
-
-html[data-active-theme="light"] .settings-card input:not([type="checkbox"]),
-html[data-active-theme="light"] .settings-card select,
-html[data-active-theme="light"] .settings-card textarea {
-  background: var(--theme-input);
-  color: var(--theme-text);
-  border-color: var(--theme-border);
-}
-
-html[data-active-theme="light"] .settings-card input::placeholder,
-html[data-active-theme="light"] .settings-card textarea::placeholder {
-  color: var(--theme-muted);
-}
-
-/* ---------- NAVIGATION ---------- */
-
-html[data-active-theme="light"] .settings-nav-link {
-  color: var(--theme-muted);
-}
-
-html[data-active-theme="light"] .settings-nav-link:hover,
-html[data-active-theme="light"] .settings-nav-link.active {
-  background: var(--theme-hover);
-  color: #168344;
-}
-
-/* ---------- BUTTONS ---------- */
-
-html[data-active-theme="light"] .settings-card button:not(.primary-btn) {
-  border-color: var(--theme-border);
-}
-
-/* ---------- BORDERS ---------- */
-
-html[data-active-theme="light"] .settings-card,
-html[data-active-theme="light"] .settings-nav,
-html[data-active-theme="light"] .settings-section {
-  border-color: var(--theme-border);
-}
-
-/* ---------- REDUCE ANIMATIONS ---------- */
-
-html.reduce-motion *,
-html.reduce-motion *::before,
-html.reduce-motion *::after {
-  scroll-behavior: auto !important;
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-}
-
-/* ---------- SYSTEM THEME ---------- */
-
-@media (prefers-color-scheme: light) {
-  html[data-theme="system"][data-active-theme="light"] {
-    color-scheme: light;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  html[data-theme="system"][data-active-theme="dark"] {
-    color-scheme: dark;
-  }
-}

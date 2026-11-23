@@ -1,6 +1,26 @@
+"""
+=========================================================
+SCAMSHIELD AI - GEMINI CONNECTION TEST
+=========================================================
+
+Purpose:
+- Verify Gemini API connectivity.
+- Test configured primary model.
+- Test fallback models if required.
+- Enforce network timeout.
+- Validate JSON response.
+- Report genuine pytest failures.
+
+Run:
+python -m pytest test_gemini_connection.py -v --import-mode=importlib
+=========================================================
+"""
+
 import os
 import json
 from pathlib import Path
+
+import pytest
 
 from dotenv import load_dotenv
 from google import genai
@@ -8,7 +28,7 @@ from google.genai import types
 
 
 # =========================================================
-# SCAMSHIELD AI - GEMINI CONNECTION TEST
+# CONFIGURATION
 # =========================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -16,13 +36,24 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(PROJECT_ROOT / ".env", override=True)
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-PRIMARY_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+
+PRIMARY_MODEL = os.getenv(
+    "GEMINI_MODEL",
+    "gemini-3.5-flash"
+)
 
 FALLBACK_MODELS = [
-    "gemini-3.7-flash",
-    "gemini-3.6-flash",
     "gemini-3.5-flash",
 ]
+
+REQUEST_TIMEOUT_MS = 15000
+
+MAX_OUTPUT_TOKENS = 1000
+
+
+# =========================================================
+# TEST PROMPT
+# =========================================================
 
 TEST_PROMPT = """
 Analyze this suspicious message for fraud indicators:
@@ -41,98 +72,138 @@ Return valid JSON with:
 """
 
 
-def normalize_model_name(name):
-    """Remove models/ prefix if present."""
-    return name.replace("models/", "", 1)
+# =========================================================
+# MODEL NORMALIZATION
+# =========================================================
 
+def normalize_model_name(name):
+
+    if not isinstance(name, str):
+        raise ValueError("Model name must be a string.")
+
+    return name.removeprefix("models/").strip()
+
+
+# =========================================================
+# JSON VALIDATION
+# =========================================================
+
+def validate_response(response_text):
+
+    if not response_text:
+        raise ValueError("Gemini returned an empty response.")
+
+    try:
+        parsed = json.loads(response_text)
+
+    except json.JSONDecodeError as error:
+        raise ValueError(
+            f"Gemini returned invalid JSON: {error}"
+        ) from error
+
+    if not isinstance(parsed, dict):
+        raise ValueError("Gemini response must be a JSON object.")
+
+    required_fields = {
+        "is_suspicious",
+        "risk_level",
+        "fraud_category",
+        "signals",
+        "explanation"
+    }
+
+    missing_fields = required_fields - set(parsed.keys())
+
+    if missing_fields:
+        raise ValueError(
+            f"Missing response fields: {sorted(missing_fields)}"
+        )
+
+    if not isinstance(parsed["is_suspicious"], bool):
+        raise ValueError("is_suspicious must be boolean.")
+
+    if not isinstance(parsed["signals"], list):
+        raise ValueError("signals must be a list.")
+
+    return parsed
+
+
+# =========================================================
+# GEMINI CONNECTION TEST
+# =========================================================
 
 def test_gemini():
 
     print("\n========== SCAMSHIELD GEMINI TEST ==========\n")
 
-    # STEP 1: API KEY CHECK
+    # -----------------------------------------------------
+    # STEP 1: API KEY VALIDATION
+    # -----------------------------------------------------
+
     if not API_KEY:
-        print("FAILED: GEMINI_API_KEY not found in root .env")
-        return
+
+        pytest.fail(
+            "GEMINI_API_KEY not found in project root .env"
+        )
 
     print("STEP 1: API key found.")
 
+    # -----------------------------------------------------
     # STEP 2: SDK INITIALIZATION
-    try:
-        client = genai.Client(api_key=API_KEY)
-        print("STEP 2: Gemini SDK initialized successfully.")
-
-    except Exception as error:
-        print("FAILED: SDK initialization error.")
-        print(type(error).__name__, str(error))
-        return
-
-    # STEP 3: FETCH AVAILABLE MODELS
-    print("\nSTEP 3: Checking available Gemini models...")
-
-    available_models = []
+    # -----------------------------------------------------
 
     try:
-        for model in client.models.list():
 
-            model_name = normalize_model_name(model.name)
+        client = genai.Client(
+            api_key=API_KEY,
+            http_options=types.HttpOptions(
+                timeout=REQUEST_TIMEOUT_MS
+            )
+        )
 
-            supported_actions = getattr(
-                model,
-                "supported_actions",
-                []
-            ) or []
-
-            if "generateContent" in supported_actions:
-                available_models.append(model_name)
-
-        print("\nModels supporting generateContent:")
-
-        for model in available_models:
-            print(" -", model)
+        print("STEP 2: Gemini SDK initialized.")
 
     except Exception as error:
-        print("Model listing unavailable:")
-        print(type(error).__name__, str(error))
 
-    # STEP 4: BUILD MODEL TEST ORDER
+        pytest.fail(
+            f"Gemini SDK initialization failed: "
+            f"{type(error).__name__}: {error}"
+        )
+
+    # -----------------------------------------------------
+    # STEP 3: BUILD MODEL TEST ORDER
+    # -----------------------------------------------------
+
     models_to_test = []
 
-    if PRIMARY_MODEL:
-        models_to_test.append(PRIMARY_MODEL)
+    primary = normalize_model_name(PRIMARY_MODEL)
+
+    models_to_test.append(primary)
 
     for model in FALLBACK_MODELS:
+
+        model = normalize_model_name(model)
+
         if model not in models_to_test:
             models_to_test.append(model)
 
-    if available_models:
+    print("\nModels scheduled for testing:")
 
-        models_to_test = [
-            model
-            for model in models_to_test
-            if normalize_model_name(model) in available_models
-        ]
+    for model in models_to_test:
+        print(" -", model)
 
-        # Add other available Flash models as additional candidates.
-        for model in available_models:
-            if "flash" in model.lower() and model not in models_to_test:
-                models_to_test.append(model)
-
-    if not models_to_test:
-        print("\nFAILED: No compatible Gemini models found.")
-        return
-
-    # STEP 5: TEST MODEL CONNECTION
-    print("\nSTEP 4: Testing Gemini API...\n")
+    # -----------------------------------------------------
+    # STEP 4: TEST API CONNECTION
+    # -----------------------------------------------------
 
     successful_model = None
     successful_response = None
 
+    errors = []
+
     for model_name in models_to_test:
 
-        model_name = normalize_model_name(model_name)
-
-        print(f"Testing model: {model_name}")
+        print(f"\nTesting model: {model_name}")
 
         try:
 
@@ -141,57 +212,62 @@ def test_gemini():
                 contents=TEST_PROMPT,
                 config=types.GenerateContentConfig(
                     temperature=0.2,
-                    max_output_tokens=1000,
+                    max_output_tokens=MAX_OUTPUT_TOKENS,
                     response_mime_type="application/json"
                 )
             )
 
             response_text = response.text
 
-            if not response_text:
-                print("FAILED: Empty response received.\n")
-                continue
-
-            parsed_response = json.loads(response_text)
+            parsed_response = validate_response(
+                response_text
+            )
 
             successful_model = model_name
             successful_response = parsed_response
 
-            print("\nSUCCESS: Gemini API responded!")
+            print("SUCCESS: Gemini API responded.")
+
             break
 
         except Exception as error:
 
-            print(
-                f"FAILED: {type(error).__name__}: {error}\n"
+            error_message = (
+                f"{model_name}: "
+                f"{type(error).__name__}: {error}"
             )
 
-    # STEP 6: FINAL RESULT
+            errors.append(error_message)
+
+            print("FAILED:", error_message)
+
+    # -----------------------------------------------------
+    # STEP 5: FINAL VALIDATION
+    # -----------------------------------------------------
+
     print("\n========== FINAL RESULT ==========\n")
 
-    if successful_model:
+    if not successful_model:
 
-        print("STATUS: SUCCESS")
-        print("Working Model:", successful_model)
-
-        print("\nGemini Analysis Result:\n")
-
-        print(
-            json.dumps(
-                successful_response,
-                indent=4,
-                ensure_ascii=False
-            )
+        pytest.fail(
+            "All Gemini models failed.\n"
+            + "\n".join(errors)
         )
 
-    else:
+    print("STATUS: SUCCESS")
+    print("Working Model:", successful_model)
 
-        print("STATUS: FAILED")
-        print("No tested model returned a valid JSON response.")
-        print("Check API availability and model access.")
+    print("\nGemini Analysis Result:\n")
+
+    print(
+        json.dumps(
+            successful_response,
+            indent=4,
+            ensure_ascii=False
+        )
+    )
 
     print("\n==================================\n")
 
-
-if __name__ == "__main__":
-    test_gemini()
+    assert successful_model is not None
+    assert successful_response is not None

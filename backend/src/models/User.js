@@ -18,7 +18,6 @@ const bcrypt = require("bcryptjs");
 
 const config = require("../config/config");
 const { ROLES, ROLE_VALUES } = require("../constants/roles");
-
 // =====================================================
 // USER SCHEMA
 // =====================================================

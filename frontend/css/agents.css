@@ -1,1206 +1,2074 @@
+/* =========================================================
+   SCAMSHIELD AI — AGENTS PAGE STYLESHEET
+   Version: 2.1.0
 
-/* =====================================================
-   SCAMSHIELD AI - AGENTS PAGE
-   Accessible | Elderly Friendly | Mobile First
-===================================================== */
+   Compatible with:
+   - agents.html
+   - agents.js v2.0.0
+   - Shared style.css
+   - Shared responsive.css
+
+   Sections:
+   1. Global page styles
+   2. Hero and overview
+   3. Architecture
+   4. Universal input layer
+   5. Five detection modules
+   6. Twelve fraud categories
+   7. Four AI agents
+   8. Interactive agent demo
+   9. Gemini advisory
+   10. Risk classification
+   11. Agent orchestration
+   12. Threat intelligence
+   13. Security and emergency support
+   14. Footer
+   15. Responsive layouts
+========================================================= */
+
+
+/* =========================================================
+   1. PAGE VARIABLES AND GLOBAL STYLES
+========================================================= */
 
 :root {
-    --agent-green: #22c55e;
-    --agent-blue: #38bdf8;
-    --agent-purple: #a78bfa;
-    --agent-orange: #fb923c;
+    --agents-bg: #080f1d;
+    --agents-bg-secondary: #0c1628;
+    --agents-surface: #101d32;
+    --agents-surface-light: #14243b;
 
-    --agent-border: rgba(148, 163, 184, 0.2);
-    --agent-card-bg: rgba(15, 23, 42, 0.82);
+    --agents-border: rgba(148, 163, 184, 0.14);
+    --agents-border-hover: rgba(96, 165, 250, 0.4);
 
-    --agent-text: #f1f5f9;
-    --agent-muted: #c0cede;
-    --agent-secondary: #aebed0;
+    --agents-text: #f1f5f9;
+    --agents-text-secondary: #c1ccdc;
+    --agents-muted: #94a3b8;
 
-    --agent-radius: 18px;
-    --agent-touch: 48px;
+    --agents-primary: #38bdf8;
+    --agents-primary-dark: #0284c7;
+
+    --agents-green: #34d399;
+    --agents-blue: #60a5fa;
+    --agents-purple: #a78bfa;
+    --agents-orange: #fb923c;
+    --agents-red: #f87171;
+    --agents-pink: #f472b6;
+
+    --agents-radius-sm: 10px;
+    --agents-radius-md: 16px;
+    --agents-radius-lg: 22px;
+    --agents-radius-xl: 28px;
+
+    --agents-transition: 0.25s ease;
+
+    --agents-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.22);
+
+    --agents-shadow-hover:
+        0 20px 45px rgba(0, 0, 0, 0.3);
 }
 
-/* =====================================================
-   BASE & ACCESSIBILITY
-===================================================== */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
 
-.agents-hero *,
-.agent-directory *,
-.agent-collaboration *,
-.agent-demo-panel *,
-.agent-safety-box *,
-.agent-emergency-section * {
+body.agents-page {
+    min-height: 100vh;
+    background: var(--agents-bg);
+    color: var(--agents-text);
+    font-family: "DM Sans", sans-serif;
+    overflow-x: hidden;
+}
+
+.agents-page *,
+.agents-page *::before,
+.agents-page *::after {
     box-sizing: border-box;
 }
 
-.agents-hero,
-.agent-directory,
-.agent-collaboration,
-.agent-live-demo,
-.agent-safety-section,
-.agent-emergency-section {
-    min-width: 0;
+.agents-page h1,
+.agents-page h2,
+.agents-page h3,
+.agents-page h4 {
+    font-family: "Space Grotesk", sans-serif;
+    color: var(--agents-text);
 }
 
-.agent-directory p,
-.agent-collaboration p,
-.agent-live-demo p,
-.agent-safety-section p {
-    overflow-wrap: anywhere;
+.agents-page p {
+    color: var(--agents-text-secondary);
+    line-height: 1.75;
 }
 
-.skip-link {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 99999;
-    padding: 13px 18px;
-    color: #06111f;
-    background: #7dd3fc;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 800;
+.agents-page a {
     text-decoration: none;
-    transform: translateY(-150%);
 }
 
-.skip-link:focus {
-    transform: translateY(0);
-    outline: 3px solid #ffffff;
-    outline-offset: 3px;
+.agents-page button,
+.agents-page input,
+.agents-page textarea,
+.agents-page select {
+    font: inherit;
 }
 
-.agent-action:focus-visible,
-.agents-hero-content .btn:focus-visible,
-.agent-demo-panel button:focus-visible,
-.agent-demo-panel select:focus-visible,
-.agent-demo-panel textarea:focus-visible,
-.agent-demo-panel a:focus-visible,
-.agent-emergency-box a:focus-visible {
-    outline: 3px solid #7dd3fc;
+.agents-page button:focus-visible,
+.agents-page a:focus-visible,
+.agents-page input:focus-visible,
+.agents-page textarea:focus-visible,
+.agents-page select:focus-visible {
+    outline: 3px solid var(--agents-primary);
     outline-offset: 4px;
 }
 
-.agent-demo-panel button,
-.agent-demo-panel select,
-.agent-demo-panel textarea {
-    font-family: inherit;
-}
-
-.agent-demo-panel button,
-.agent-demo-panel select {
-    min-height: var(--agent-touch);
-}
-
-.agent-demo-panel button {
-    cursor: pointer;
-}
-
-/* =====================================================
-   HERO SECTION
-===================================================== */
-
-.agents-hero {
+.agents-page section {
     position: relative;
-    padding: 145px 0 75px;
-    overflow: hidden;
 }
 
-.agents-hero-content {
-    width: min(100% - 32px, 850px);
-    margin: 0 auto;
+.agents-page .section {
+    padding: 95px 0;
+}
+
+.agents-page .container {
+    width: min(1200px, calc(100% - 48px));
+    margin-inline: auto;
+}
+
+.agents-page .section-heading {
+    max-width: 760px;
+    margin: 0 auto 52px;
     text-align: center;
 }
 
-.agents-hero-content .section-tag {
-    justify-content: center;
-    margin-bottom: 24px;
-}
-
-.agents-hero-content h1 {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: clamp(36px, 6vw, 68px);
+.agents-page .section-heading h2 {
+    margin: 16px 0;
+    font-size: clamp(30px, 4vw, 43px);
+    line-height: 1.2;
     font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -1.5px;
-    color: #f8fafc;
-    margin-bottom: 22px;
-    overflow-wrap: anywhere;
+    letter-spacing: -1.3px;
 }
 
-.agents-hero-content h1 span {
-    display: block;
-    background: linear-gradient(90deg, #38bdf8, #22c55e);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+.agents-page .section-heading h2 span,
+.agents-page .agents-hero h1 span {
+    color: var(--agents-primary);
 }
 
-.agents-hero-content > p {
-    max-width: 690px;
-    margin: 0 auto 32px;
-    color: var(--agent-muted);
-    font-size: 17px;
+.agents-page .section-heading > p {
+    max-width: 680px;
+    margin: 0 auto;
+    color: var(--agents-muted);
+    font-size: 16px;
     line-height: 1.8;
 }
 
-.agents-hero-content .btn {
+.agents-page .section-tag {
     display: inline-flex;
-    min-height: 52px;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 13px 24px;
+    gap: 10px;
+    color: var(--agents-primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
 }
 
-/* =====================================================
-   AGENT OVERVIEW
-===================================================== */
+.agents-page .section-tag > span {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--agents-green);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+}
 
-.agent-overview {
+.agents-page .section-eyebrow {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--agents-primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.agents-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 12px 21px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        transform var(--agents-transition),
+        background var(--agents-transition),
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
+}
+
+.agents-page .btn:hover {
+    transform: translateY(-2px);
+}
+
+.agents-page .btn-primary {
+    color: #061322;
+    background: var(--agents-primary);
+    border-color: var(--agents-primary);
+    box-shadow: 0 7px 22px rgba(56, 189, 248, 0.16);
+}
+
+.agents-page .btn-primary:hover {
+    background: #7dd3fc;
+    border-color: #7dd3fc;
+    box-shadow: 0 10px 28px rgba(56, 189, 248, 0.25);
+}
+
+.agents-page .btn-outline {
+    color: var(--agents-text);
+    background: rgba(255, 255, 255, 0.035);
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.agents-page .btn-outline:hover {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--agents-primary);
+}
+
+.agents-page .btn-secondary {
+    color: var(--agents-text);
+    background: #1e2d43;
+    border-color: var(--agents-border);
+}
+
+.agents-page .btn-secondary:hover {
+    background: #293b54;
+}
+
+.agents-page .btn-danger {
+    color: #fff;
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+.agents-page .btn-danger:hover {
+    background: #ef4444;
+}
+
+
+/* =========================================================
+   2. NAVIGATION
+========================================================= */
+
+.agents-page .dashboard-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(8, 15, 29, 0.94);
+    border-bottom: 1px solid var(--agents-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.agents-page .dashboard-navbar .nav-link {
+    transition: color var(--agents-transition);
+}
+
+.agents-page .dashboard-navbar .nav-link.active {
+    color: var(--agents-primary);
+}
+
+.agents-page .dashboard-navbar .nav-link.active i {
+    color: var(--agents-primary);
+}
+
+.agents-page .mobile-menu-toggle {
+    color: var(--agents-text);
+}
+
+
+/* =========================================================
+   3. HERO SECTION
+========================================================= */
+
+.agents-page .agents-hero {
+    position: relative;
+    padding: 105px 0 85px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            ellipse at 15% 15%,
+            rgba(14, 165, 233, 0.13),
+            transparent 38%
+        ),
+        radial-gradient(
+            ellipse at 90% 70%,
+            rgba(124, 58, 237, 0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #080f1d,
+            #0b172a 55%,
+            #0b1424
+        );
+}
+
+.agents-page .agents-hero::before {
+    position: absolute;
+    top: -160px;
+    right: -100px;
+    width: 430px;
+    height: 430px;
+    border: 1px solid rgba(56, 189, 248, 0.1);
+    border-radius: 50%;
+    content: "";
+    pointer-events: none;
+}
+
+.agents-page .agents-hero::after {
+    position: absolute;
+    top: -95px;
+    right: -35px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(56, 189, 248, 0.08);
+    border-radius: 50%;
+    content: "";
+    pointer-events: none;
+}
+
+.agents-page .agents-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 850px;
+    margin: 0 auto 65px;
+    text-align: center;
+}
+
+.agents-page .agents-hero h1 {
+    margin: 23px 0;
+    font-size: clamp(38px, 6vw, 64px);
+    line-height: 1.13;
+    letter-spacing: -2.4px;
+    font-weight: 800;
+}
+
+.agents-page .agents-hero-content > p {
+    max-width: 720px;
+    margin: 0 auto;
+    color: var(--agents-text-secondary);
+    font-size: 17px;
+    line-height: 1.85;
+}
+
+.agents-page .agent-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 32px;
+}
+
+.agents-page .agent-hero-actions .btn {
+    min-width: 185px;
+    min-height: 50px;
+}
+
+
+/* Agent Overview */
+
+.agents-page .agent-overview {
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin-top: 75px;
+    gap: 15px;
 }
 
-.overview-item {
+.agents-page .overview-item {
     display: flex;
     align-items: center;
     gap: 15px;
     min-width: 0;
-    padding: 22px;
-    border: 1px solid var(--agent-border);
-    background: var(--agent-card-bg);
-    border-radius: 16px;
-    transition: transform 0.25s ease, border-color 0.25s ease;
+    padding: 21px 18px;
+    background: rgba(16, 29, 50, 0.85);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-md);
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        background var(--agents-transition);
 }
 
-.overview-item:hover {
+.agents-page .overview-item:hover {
     transform: translateY(-4px);
-    border-color: rgba(56, 189, 248, 0.5);
-    background: rgba(30, 41, 59, 0.9);
+    background: #14243b;
+    border-color: var(--agents-border-hover);
 }
 
-.overview-icon {
-    width: 50px;
-    height: 50px;
-    flex-shrink: 0;
+.agents-page .overview-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
     border-radius: 13px;
+    font-size: 20px;
+}
+
+.agents-page .overview-green {
+    color: var(--agents-green);
+    background: rgba(52, 211, 153, 0.12);
+}
+
+.agents-page .overview-blue {
+    color: var(--agents-blue);
+    background: rgba(96, 165, 250, 0.12);
+}
+
+.agents-page .overview-purple {
+    color: var(--agents-purple);
+    background: rgba(167, 139, 250, 0.12);
+}
+
+.agents-page .overview-orange {
+    color: var(--agents-orange);
+    background: rgba(251, 146, 60, 0.12);
+}
+
+.agents-page .overview-item h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+}
+
+.agents-page .overview-item p {
+    margin: 0;
+    color: var(--agents-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   4. ARCHITECTURE SECTION
+========================================================= */
+
+.agents-page .agent-architecture {
+    background: var(--agents-bg);
+}
+
+.agents-page .agent-architecture-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.agents-page .architecture-card {
+    position: relative;
+    min-height: 255px;
+    padding: 30px 24px;
+    overflow: hidden;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-lg);
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
+}
+
+.agents-page .architecture-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--agents-border-hover);
+    box-shadow: var(--agents-shadow);
+}
+
+.agents-page .architecture-number {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    color: rgba(148, 163, 184, 0.16);
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.agents-page .architecture-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 23px;
+    color: var(--agents-primary);
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.13);
+    border-radius: 15px;
+    font-size: 22px;
+}
+
+.agents-page .architecture-card h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+}
+
+.agents-page .architecture-card p {
+    min-height: 76px;
+    margin: 0 0 17px;
+    color: var(--agents-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.agents-page .architecture-meta {
+    display: inline-flex;
+    padding: 7px 11px;
+    color: var(--agents-primary);
+    background: rgba(56, 189, 248, 0.09);
+    border: 1px solid rgba(56, 189, 248, 0.13);
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.agents-page .collaboration-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-top: 30px;
+    padding: 18px 21px;
+    background: rgba(56, 189, 248, 0.055);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: var(--agents-radius-md);
+}
+
+.agents-page .collaboration-note > i {
+    margin-top: 4px;
+    color: var(--agents-primary);
+    font-size: 18px;
+}
+
+.agents-page .collaboration-note p {
+    margin: 0;
+    color: var(--agents-text-secondary);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   5. UNIVERSAL INPUT LAYER
+========================================================= */
+
+.agents-page .agent-input-section {
+    background: var(--agents-bg-secondary);
+}
+
+.agents-page .input-types-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.agents-page .input-type-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 245px;
+    padding: 27px;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-lg);
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
+}
+
+.agents-page .input-type-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--agents-border-hover);
+    box-shadow: var(--agents-shadow);
+}
+
+.agents-page .input-type-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 51px;
+    height: 51px;
+    margin-bottom: 20px;
+    color: var(--agents-primary);
+    background: rgba(56, 189, 248, 0.1);
+    border-radius: 14px;
     font-size: 21px;
 }
 
-.overview-green {
-    color: var(--agent-green);
-    background: rgba(34, 197, 94, 0.14);
+.agents-page .input-type-card h3 {
+    margin: 0 0 10px;
+    font-size: 19px;
 }
 
-.overview-blue {
-    color: var(--agent-blue);
-    background: rgba(56, 189, 248, 0.14);
+.agents-page .input-type-card p {
+    flex-grow: 1;
+    margin: 0 0 20px;
+    color: var(--agents-muted);
+    font-size: 13px;
+    line-height: 1.75;
 }
 
-.overview-purple {
-    color: var(--agent-purple);
-    background: rgba(167, 139, 250, 0.14);
+.agents-page .input-type-card a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    align-self: flex-start;
+    color: var(--agents-primary);
+    font-size: 13px;
+    font-weight: 700;
+    transition: gap var(--agents-transition);
 }
 
-.overview-orange {
-    color: var(--agent-orange);
-    background: rgba(251, 146, 60, 0.14);
+.agents-page .input-type-card a:hover {
+    gap: 14px;
 }
 
-.overview-item h3 {
-    color: var(--agent-text);
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 17px;
-    line-height: 1.4;
-    margin-bottom: 6px;
+.agents-page .dashboard-info-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-top: 28px;
+    padding: 19px 21px;
+    background: rgba(56, 189, 248, 0.055);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: var(--agents-radius-md);
 }
 
-.overview-item p {
-    color: var(--agent-muted);
-    font-size: 15px;
-    line-height: 1.55;
+.agents-page .dashboard-info-note > i {
+    margin-top: 4px;
+    color: var(--agents-primary);
+    font-size: 18px;
 }
 
-/* =====================================================
-   AGENT DIRECTORY
-===================================================== */
-
-.agent-directory {
-    padding-top: 80px;
+.agents-page .dashboard-info-note p {
+    margin: 0;
+    color: var(--agents-text-secondary);
+    font-size: 13px;
+    line-height: 1.75;
 }
 
-.agent-directory-grid {
+
+/* =========================================================
+   6. FIVE DETECTION MODULES
+========================================================= */
+
+.agents-page .agent-modules-section {
+    background: var(--agents-bg);
+}
+
+.agents-page .detection-modules-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.agents-page .module-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 340px;
+    padding: 30px;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-lg);
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
+}
+
+.agents-page .module-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--agents-border-hover);
+    box-shadow: var(--agents-shadow);
+}
+
+.agents-page .module-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 53px;
+    height: 53px;
+    margin-bottom: 19px;
+    border-radius: 14px;
+    font-size: 22px;
+}
+
+.agents-page .module-card-icon.purple {
+    color: #c4b5fd;
+    background: rgba(167, 139, 250, 0.13);
+}
+
+.agents-page .module-card-icon.red {
+    color: #fca5a5;
+    background: rgba(248, 113, 113, 0.13);
+}
+
+.agents-page .module-card-icon.orange {
+    color: #fdba74;
+    background: rgba(251, 146, 60, 0.13);
+}
+
+.agents-page .module-card-icon.pink {
+    color: #f9a8d4;
+    background: rgba(244, 114, 182, 0.13);
+}
+
+.agents-page .module-card-icon.green {
+    color: #86efac;
+    background: rgba(52, 211, 153, 0.13);
+}
+
+.agents-page .module-number {
+    margin-bottom: 9px;
+    color: var(--agents-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.agents-page .module-card h3 {
+    margin: 0 0 12px;
+    font-size: 21px;
+}
+
+.agents-page .module-card > p {
+    flex-grow: 1;
+    margin: 0 0 19px;
+    color: var(--agents-muted);
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.agents-page .module-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.agents-page .module-tags span {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    color: var(--agents-text-secondary);
+    background: rgba(148, 163, 184, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.11);
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.agents-page .module-card > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    align-self: flex-start;
+    color: var(--agents-primary);
+    font-size: 13px;
+    font-weight: 700;
+    transition: gap var(--agents-transition);
+}
+
+.agents-page .module-card > a:hover {
+    gap: 14px;
+}
+
+
+/* =========================================================
+   7. TWELVE FRAUD CATEGORIES
+========================================================= */
+
+.agents-page .agent-categories-section {
+    background: var(--agents-bg-secondary);
+}
+
+.agents-page .category-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.agents-page .category-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 66px;
+    padding: 15px 18px;
+    color: var(--agents-text);
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: 12px;
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        background var(--agents-transition);
+}
+
+.agents-page .category-row:hover {
+    transform: translateY(-3px);
+    background: var(--agents-surface-light);
+    border-color: var(--agents-border-hover);
+}
+
+.agents-page .category-row > span {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.agents-page .category-row > span i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    flex-shrink: 0;
+    color: var(--agents-primary);
+    background: rgba(56, 189, 248, 0.1);
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+.agents-page .category-row > i {
+    color: var(--agents-muted);
+    font-size: 12px;
+    transition:
+        color var(--agents-transition),
+        transform var(--agents-transition);
+}
+
+.agents-page .category-row:hover > i {
+    color: var(--agents-primary);
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   8. FOUR AI AGENT DIRECTORY
+========================================================= */
+
+.agents-page .agent-directory {
+    background: var(--agents-bg);
+}
+
+.agents-page .agent-directory-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
-    margin-top: 48px;
 }
 
-.agent-detail-card {
+.agents-page .agent-detail-card {
     position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 540px;
-    padding: 30px;
-    background: var(--agent-card-bg);
-    border: 1px solid var(--agent-border);
-    border-radius: 22px;
-    overflow: hidden;
-    transition: transform 0.25s ease, border-color 0.25s ease;
+    padding: 31px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 36, 59, 0.98),
+            rgba(13, 25, 43, 0.98)
+        );
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-xl);
+    box-shadow: var(--agents-shadow);
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
 }
 
-.agent-detail-card::before {
-    content: "";
+.agents-page .agent-detail-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--agents-border-hover);
+    box-shadow: var(--agents-shadow-hover);
+}
+
+.agents-page .agent-detail-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.agents-page .agent-detail-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    border-radius: 17px;
+    font-size: 25px;
+}
+
+.agents-page .agent-green {
+    color: var(--agents-green);
+    background: rgba(52, 211, 153, 0.13);
+}
+
+.agents-page .agent-blue {
+    color: var(--agents-blue);
+    background: rgba(96, 165, 250, 0.13);
+}
+
+.agents-page .agent-purple {
+    color: var(--agents-purple);
+    background: rgba(167, 139, 250, 0.13);
+}
+
+.agents-page .agent-orange {
+    color: var(--agents-orange);
+    background: rgba(251, 146, 60, 0.13);
+}
+
+.agents-page .agent-number {
+    padding: 7px 11px;
+    color: var(--agents-muted);
+    background: rgba(148, 163, 184, 0.08);
+    border: 1px solid var(--agents-border);
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.agents-page .agent-category {
+    margin-bottom: 9px;
+    color: var(--agents-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.agents-page .agent-detail-card h2 {
+    margin: 0 0 14px;
+    font-size: 27px;
+    line-height: 1.25;
+}
+
+.agents-page .agent-description {
+    min-height: 100px;
+    margin: 0 0 25px;
+    color: var(--agents-text-secondary);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.agents-page .agent-detail-card h4 {
+    margin: 0 0 15px;
+    font-size: 15px;
+}
+
+.agents-page .agent-responsibilities {
+    display: grid;
+    gap: 13px;
+    margin: 0 0 25px;
+    padding: 0;
+    list-style: none;
+}
+
+.agents-page .agent-responsibilities li {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    color: var(--agents-text-secondary);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.agents-page .agent-responsibilities li i {
+    margin-top: 4px;
+    color: var(--agents-green);
+    font-size: 12px;
+}
+
+.agents-page .agent-responsibilities li span {
+    min-width: 0;
+}
+
+.agents-page .agent-output {
+    margin-top: auto;
+    margin-bottom: 17px;
+    padding: 17px;
+    background: rgba(56, 189, 248, 0.055);
+    border: 1px solid rgba(56, 189, 248, 0.13);
+    border-radius: 12px;
+}
+
+.agents-page .agent-output > span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--agents-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.agents-page .agent-output p {
+    margin: 0;
+    color: var(--agents-text-secondary);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.agents-page .agent-intelligence-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 17px;
+    padding: 13px;
+    color: #fcd34d;
+    background: rgba(245, 158, 11, 0.07);
+    border: 1px solid rgba(245, 158, 11, 0.17);
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.agents-page .agent-intelligence-notice > i {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.agents-page .agent-intelligence-notice span {
+    color: var(--agents-text-secondary);
+}
+
+.agents-page .agent-decoy-notice {
+    margin-bottom: 18px;
+    padding: 15px;
+    color: var(--agents-text-secondary);
+    background: rgba(251, 146, 60, 0.07);
+    border: 1px solid rgba(251, 146, 60, 0.18);
+    border-radius: 11px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.agents-page .agent-decoy-notice strong {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--agents-orange);
+    font-size: 12px;
+}
+
+.agents-page .agent-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    align-self: flex-start;
+    margin-top: 7px;
+    color: var(--agents-primary);
+    font-size: 13px;
+    font-weight: 700;
+    transition: gap var(--agents-transition);
+}
+
+.agents-page .agent-action:hover {
+    gap: 14px;
+}
+
+
+/* =========================================================
+   9. LIVE AGENT DEMONSTRATION
+========================================================= */
+
+.agents-page .agent-live-demo {
+    background:
+        radial-gradient(
+            ellipse at 50% 0%,
+            rgba(56, 189, 248, 0.08),
+            transparent 50%
+        ),
+        var(--agents-bg-secondary);
+}
+
+.agents-page .agent-demo-panel {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 35px;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-xl);
+    box-shadow: var(--agents-shadow);
+}
+
+.agents-page .agent-demo-heading {
+    margin-bottom: 28px;
+    padding-bottom: 23px;
+    border-bottom: 1px solid var(--agents-border);
+}
+
+.agents-page .agent-demo-heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 9px;
+    font-size: 22px;
+}
+
+.agents-page .agent-demo-heading h2 i {
+    color: var(--agents-primary);
+}
+
+.agents-page .agent-demo-heading p {
+    margin: 0;
+    color: var(--agents-muted);
+    font-size: 13px;
+}
+
+.agents-page .agent-demo-form {
+    display: grid;
+    gap: 22px;
+}
+
+.agents-page .demo-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.agents-page .demo-field label {
+    color: var(--agents-text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.agents-page .demo-field select,
+.agents-page .demo-field textarea {
+    width: 100%;
+    color: var(--agents-text);
+    background: #0a1424;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 11px;
+    transition:
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
+}
+
+.agents-page .demo-field select {
+    min-height: 51px;
+    padding: 12px 15px;
+    cursor: pointer;
+}
+
+.agents-page .demo-field select option {
+    color: var(--agents-text);
+    background: #0a1424;
+}
+
+.agents-page .demo-field textarea {
+    min-height: 155px;
+    padding: 16px;
+    resize: vertical;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.agents-page .demo-field textarea::placeholder {
+    color: #718096;
+}
+
+.agents-page .demo-field select:hover,
+.agents-page .demo-field textarea:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+.agents-page .demo-field select:focus,
+.agents-page .demo-field textarea:focus {
+    border-color: var(--agents-primary);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    outline: none;
+}
+
+.agents-page .agent-demo-local-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0;
+    color: var(--agents-muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.agents-page .agent-demo-local-note i {
+    margin-top: 3px;
+    color: var(--agents-primary);
+}
+
+.agents-page .agent-demo-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+.agents-page .agent-demo-actions button {
+    min-width: 155px;
+}
+
+.agents-page .agent-demo-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.agents-page .agent-demo-status {
+    margin-top: 23px;
+    padding: 15px 17px;
+    color: var(--agents-text-secondary);
+    background: rgba(148, 163, 184, 0.07);
+    border: 1px solid var(--agents-border);
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.agents-page .agent-demo-status:empty {
+    display: none;
+}
+
+.agents-page .agent-demo-results {
+    margin-top: 23px;
+    padding: 22px;
+    background: #0a1424;
+    border: 1px solid var(--agents-border);
+    border-radius: 13px;
+}
+
+.agents-page .agent-demo-results[hidden] {
+    display: none !important;
+}
+
+.agents-page .agent-demo-results > *:first-child {
+    margin-top: 0;
+}
+
+.agents-page .agent-demo-results > *:last-child {
+    margin-bottom: 0;
+}
+
+.agents-page .agent-demo-results h3,
+.agents-page .agent-demo-results h4 {
+    color: var(--agents-text);
+}
+
+.agents-page .agent-demo-results p {
+    color: var(--agents-text-secondary);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.agents-page .agent-demo-results ul,
+.agents-page .agent-demo-results ol {
+    padding-left: 22px;
+    color: var(--agents-text-secondary);
+    line-height: 1.8;
+}
+
+.agents-page .agent-demo-results li {
+    margin-bottom: 7px;
+    font-size: 13px;
+}
+
+.agents-page .agent-demo-results button {
+    cursor: pointer;
+}
+
+.agents-page .agent-demo-disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 22px 0 0;
+    padding-top: 18px;
+    color: var(--agents-muted);
+    border-top: 1px solid var(--agents-border);
+    font-size: 12px;
+    line-height: 1.75;
+}
+
+.agents-page .agent-demo-disclaimer i {
+    margin-top: 4px;
+    flex-shrink: 0;
+    color: var(--agents-orange);
+}
+
+
+/* =========================================================
+   10. GEMINI ADVISORY AND RESPONSIBLE AI BOXES
+========================================================= */
+
+.agents-page .agent-safety-section {
+    background: var(--agents-bg);
+}
+
+.agents-page .agent-safety-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 23px;
+    padding: 30px;
+    background:
+        linear-gradient(
+            120deg,
+            rgba(56, 189, 248, 0.09),
+            rgba(167, 139, 250, 0.07)
+        );
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: var(--agents-radius-lg);
+}
+
+.agents-page .safety-notice-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    color: var(--agents-primary);
+    background: rgba(56, 189, 248, 0.13);
+    border-radius: 16px;
+    font-size: 24px;
+}
+
+.agents-page .safety-notice-content {
+    min-width: 0;
+}
+
+.agents-page .safety-notice-content h3 {
+    margin: 0 0 12px;
+    font-size: 23px;
+}
+
+.agents-page .safety-notice-content > p {
+    margin: 0 0 18px;
+    color: var(--agents-text-secondary);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.agents-page .safety-notice-content .module-tags {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   11. RISK CLASSIFICATION
+========================================================= */
+
+.agents-page .agent-risk-section {
+    background: var(--agents-bg-secondary);
+}
+
+.agents-page .risk-level-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.agents-page .risk-level-card {
+    position: relative;
+    padding: 25px 21px;
+    overflow: hidden;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-md);
+    transition:
+        transform var(--agents-transition),
+        box-shadow var(--agents-transition);
+}
+
+.agents-page .risk-level-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--agents-shadow);
+}
+
+.agents-page .risk-level-card::before {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 3px;
-    opacity: 0.9;
+    content: "";
 }
 
-.guardian-card::before {
-    background: linear-gradient(90deg, #22c55e, transparent);
+.agents-page .risk-level-card.low::before {
+    background: var(--agents-green);
 }
 
-.intelligence-card::before {
-    background: linear-gradient(90deg, #38bdf8, transparent);
+.agents-page .risk-level-card.medium::before {
+    background: #facc15;
 }
 
-.safety-card::before {
-    background: linear-gradient(90deg, #a78bfa, transparent);
+.agents-page .risk-level-card.high::before {
+    background: var(--agents-orange);
 }
 
-.decoy-card::before {
-    background: linear-gradient(90deg, #fb923c, transparent);
+.agents-page .risk-level-card.critical::before {
+    background: var(--agents-red);
 }
 
-.agent-detail-card:hover {
-    transform: translateY(-4px);
-}
-
-.guardian-card:hover {
-    border-color: rgba(34, 197, 94, 0.5);
-}
-
-.intelligence-card:hover {
-    border-color: rgba(56, 189, 248, 0.5);
-}
-
-.safety-card:hover {
-    border-color: rgba(167, 139, 250, 0.5);
-}
-
-.decoy-card:hover {
-    border-color: rgba(251, 146, 60, 0.5);
-}
-
-.agent-detail-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 24px;
-}
-
-.agent-detail-icon {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 16px;
-    font-size: 25px;
-}
-
-.agent-number {
-    padding: 9px 12px;
-    color: #d1dbe8;
-    background: rgba(148, 163, 184, 0.1);
-    border: 1px solid var(--agent-border);
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.7px;
-}
-
-.agent-category {
-    color: #b0bfd0;
-    font-size: 13px;
+.agents-page .risk-level-label {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 1px;
-    line-height: 1.5;
-    margin-bottom: 12px;
 }
 
-.agent-detail-card h2 {
-    color: #f8fafc;
-    font-family: "Space Grotesk", sans-serif;
-    font-size: clamp(23px, 3vw, 28px);
-    line-height: 1.3;
-    margin-bottom: 15px;
+.agents-page .risk-level-card.low .risk-level-label {
+    color: var(--agents-green);
 }
 
-.agent-description {
-    color: var(--agent-muted);
-    font-size: 16px;
-    line-height: 1.8;
-    margin-bottom: 25px;
+.agents-page .risk-level-card.medium .risk-level-label {
+    color: #facc15;
 }
 
-.agent-detail-card h4 {
-    color: #f1f5f9;
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 15px;
+.agents-page .risk-level-card.high .risk-level-label {
+    color: var(--agents-orange);
 }
 
-.agent-responsibilities {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 26px;
-    padding: 0;
+.agents-page .risk-level-card.critical .risk-level-label {
+    color: var(--agents-red);
 }
 
-.agent-responsibilities li {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    color: var(--agent-muted);
-    font-size: 15px;
-    line-height: 1.7;
+.agents-page .risk-level-card h3 {
+    margin: 0 0 10px;
+    font-size: 35px;
+    letter-spacing: -1px;
 }
 
-.agent-responsibilities li i {
-    flex-shrink: 0;
-    color: #4ade80;
-    font-size: 15px;
-    margin-top: 5px;
-}
-
-.agent-output {
-    padding: 18px;
-    background: rgba(148, 163, 184, 0.08);
-    border: 1px solid var(--agent-border);
-    border-radius: 13px;
-    margin-top: auto;
-    margin-bottom: 22px;
-}
-
-.agent-output span {
-    display: block;
-    color: #b5c4d6;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    margin-bottom: 9px;
-}
-
-.agent-output p {
-    color: #e2eaf4;
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-.agent-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    min-height: 44px;
-    color: #7dd3fc;
-    font-size: 15px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.agent-action:hover {
-    color: #bae6fd;
-}
-
-/* =====================================================
-   COLLABORATION SECTION
-===================================================== */
-
-.agent-collaboration {
-    background: rgba(15, 23, 42, 0.4);
-    border-top: 1px solid rgba(148, 163, 184, 0.1);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-
-.collaboration-flow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 48px;
-}
-
-.flow-card {
-    width: 190px;
-    min-width: 0;
-    min-height: 175px;
-    padding: 22px 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: var(--agent-card-bg);
-    border: 1px solid var(--agent-border);
-    border-radius: 17px;
-    transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.flow-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(56, 189, 248, 0.5);
-}
-
-.flow-icon {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 14px;
-    font-size: 21px;
-    margin-bottom: 14px;
-}
-
-.flow-card h3 {
-    color: var(--agent-text);
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 16px;
-    line-height: 1.4;
-    margin-bottom: 7px;
-}
-
-.flow-card p {
-    color: var(--agent-muted);
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.flow-connector {
-    color: #94a3b8;
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-.collaboration-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 13px;
-    max-width: 800px;
-    margin: 32px auto 0;
-    padding: 19px 20px;
-    color: var(--agent-muted);
-    background: rgba(56, 189, 248, 0.08);
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    border-radius: 13px;
-    font-size: 15px;
-    line-height: 1.75;
-}
-
-.collaboration-note i {
-    flex-shrink: 0;
-    color: #7dd3fc;
-    margin-top: 5px;
-}
-
-/* =====================================================
-   LIVE AGENT DEMO
-===================================================== */
-
-.agent-live-demo {
-    min-width: 0;
-}
-
-.agent-demo-panel {
-    width: 100%;
-    min-width: 0;
-    padding: clamp(20px, 4vw, 42px);
-    border: 1px solid rgba(56, 189, 248, 0.38);
-    border-radius: 24px;
-    background: linear-gradient(
-        145deg,
-        rgba(12, 31, 55, 0.98),
-        rgba(14, 19, 43, 0.98)
-    );
-    box-shadow:
-        0 0 40px rgba(34, 211, 238, 0.08),
-        inset 0 1px rgba(255, 255, 255, 0.06);
-}
-
-.agent-demo-heading {
-    margin-bottom: 25px;
-}
-
-.agent-demo-heading h2 {
-    color: #f8fafc;
-    font-size: clamp(23px, 4vw, 30px);
-    line-height: 1.35;
-    margin-bottom: 12px;
-}
-
-.agent-demo-heading p {
-    color: var(--agent-muted);
-    font-size: 16px;
-    line-height: 1.75;
-}
-
-.agent-demo-form {
-    display: grid;
-    gap: 17px;
-}
-
-.demo-field {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    min-width: 0;
-}
-
-.demo-field label,
-.agent-demo-form label {
-    color: #e2efff;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.5;
-}
-
-.agent-demo-form select,
-.agent-demo-form textarea {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    min-height: 54px;
-    padding: 14px 16px;
-    border: 1px solid rgba(125, 167, 204, 0.4);
-    border-radius: 12px;
-    background: #08172a;
-    color: #f1f7ff;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-.agent-demo-form select {
-    cursor: pointer;
-}
-
-.agent-demo-form textarea {
-    min-height: 150px;
-    resize: vertical;
-}
-
-.agent-demo-form select:focus-visible,
-.agent-demo-form textarea:focus-visible {
-    outline: 3px solid #38bdf8;
-    outline-offset: 2px;
-    border-color: #38bdf8;
-}
-
-.agent-demo-form select:disabled,
-.agent-demo-form textarea:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-}
-
-.agent-demo-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 5px;
-}
-
-.agent-demo-actions button {
-    min-height: 52px;
-    padding: 12px 22px;
-    border-radius: 11px;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.agent-demo-actions button:disabled {
-    cursor: wait;
-    opacity: 0.65;
-}
-
-.agent-demo-local-note,
-.agent-demo-status {
-    color: var(--agent-muted);
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-.agent-demo-local-note i {
-    color: #34d399;
-    margin-right: 7px;
-}
-
-.agent-demo-status {
-    min-height: 25px;
-    margin: 18px 0 0;
-}
-
-.agent-demo-status a {
-    color: #7dd3fc;
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.agent-demo-results {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 15px;
-    margin-top: 22px;
-}
-
-.agent-demo-results[hidden] {
-    display: none;
-}
-
-.agent-demo-result-card {
-    min-width: 0;
-    padding: 20px;
-    border: 1px solid rgba(125, 167, 204, 0.25);
-    border-radius: 16px;
-    background: rgba(4, 12, 27, 0.8);
-}
-
-.agent-demo-result-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 13px;
-}
-
-.agent-demo-result-heading h3 {
+.agents-page .risk-level-card p {
     margin: 0;
-    color: #f0f7ff;
-    font-size: 18px;
-    line-height: 1.4;
-}
-
-.agent-demo-result-card p,
-.agent-demo-result-card li {
-    color: #d0ddeb;
-    font-size: 15px;
-    line-height: 1.7;
-    overflow-wrap: anywhere;
-}
-
-.agent-demo-result-card ul {
-    margin: 12px 0 0;
-    padding-left: 22px;
-}
-
-.agent-demo-result-card li {
-    margin-bottom: 7px;
-}
-
-.agent-demo-result-card h4 {
-    margin: 16px 0 7px;
-    color: #d8efff;
-    font-size: 15px;
-    line-height: 1.5;
-}
-
-.agent-demo-risk {
-    color: #fcd34d !important;
-    font-weight: 800;
-    text-transform: capitalize;
-}
-
-.agent-demo-state {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    min-height: 30px;
-    padding: 5px 11px;
-    border-radius: 999px;
+    color: var(--agents-muted);
     font-size: 12px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.agent-demo-state.is-complete {
-    color: #a7f3d0;
-    background: rgba(16, 185, 129, 0.17);
-}
-
-.agent-demo-state.is-pending {
-    color: #fde68a;
-    background: rgba(245, 158, 11, 0.17);
-}
-
-.agent-demo-state.is-unavailable {
-    color: #fecaca;
-    background: rgba(239, 68, 68, 0.16);
-}
-
-.agent-demo-disclaimer {
-    grid-column: 1 / -1;
-    margin: 0;
-    color: #b5c5d8;
-    font-size: 14px;
     line-height: 1.7;
 }
 
-/* =====================================================
-   SAFETY NOTICE
-===================================================== */
 
-.agent-safety-box {
-    display: flex;
-    align-items: flex-start;
-    gap: 22px;
-    padding: 30px;
-    background: rgba(34, 197, 94, 0.08);
-    border: 1px solid rgba(34, 197, 94, 0.25);
-    border-radius: 18px;
+/* =========================================================
+   12. AGENT ORCHESTRATION
+========================================================= */
+
+.agents-page .agent-collaboration {
+    background: var(--agents-bg);
 }
 
-.safety-notice-icon {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
+.agents-page .collaboration-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 15px;
+}
+
+.agents-page .flow-card {
+    min-width: 0;
+    padding: 25px 20px;
+    text-align: center;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-md);
+    transition:
+        transform var(--agents-transition),
+        border-color var(--agents-transition);
+}
+
+.agents-page .flow-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--agents-border-hover);
+}
+
+.agents-page .flow-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #4ade80;
-    background: rgba(34, 197, 94, 0.15);
-    border-radius: 14px;
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 17px;
+    border-radius: 15px;
     font-size: 23px;
 }
 
-.safety-notice-content {
-    min-width: 0;
+.agents-page .flow-card h3 {
+    margin: 0 0 9px;
+    font-size: 17px;
 }
 
-.safety-notice-content h3 {
-    color: #f1f5f9;
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 21px;
-    line-height: 1.4;
-    margin-bottom: 12px;
-}
-
-.safety-notice-content p {
-    color: var(--agent-muted);
-    font-size: 16px;
-    line-height: 1.8;
-}
-
-/* =====================================================
-   EMERGENCY CYBERCRIME HELPLINE
-===================================================== */
-
-.agent-emergency-section {
-    width: 100%;
-}
-
-.agent-emergency-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 25px;
-    background: rgba(127, 29, 29, 0.2);
-    border: 1px solid rgba(248, 113, 113, 0.35);
-    border-radius: 18px;
-}
-
-.agent-emergency-box h2,
-.agent-emergency-box h3 {
-    color: #fee2e2;
-    font-size: 21px;
-    line-height: 1.4;
-    margin-bottom: 8px;
-}
-
-.agent-emergency-box p {
-    color: #fecaca;
-    font-size: 16px;
+.agents-page .flow-card p {
+    margin: 0;
+    color: var(--agents-muted);
+    font-size: 12px;
     line-height: 1.7;
 }
 
-.agent-emergency-box a {
-    display: inline-flex;
+.agents-page .flow-connector {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-width: 150px;
-    min-height: 54px;
-    padding: 12px 22px;
-    color: #ffffff;
-    background: #b91c1c;
-    border: 1px solid #f87171;
-    border-radius: 12px;
+    color: var(--agents-primary);
     font-size: 20px;
-    font-weight: 800;
-    text-decoration: none;
 }
 
-.agent-emergency-box a:hover {
-    background: #991b1b;
+.agents-page .agent-decoy-isolated {
+    max-width: 420px;
+    margin: 32px auto 0;
+    background: rgba(251, 146, 60, 0.045);
+    border-color: rgba(251, 146, 60, 0.2);
 }
 
-/* =====================================================
-   AGENT REVEAL ANIMATION
-===================================================== */
+.agents-page .agent-decoy-isolated .flow-icon {
+    color: var(--agents-orange);
+    background: rgba(251, 146, 60, 0.12);
+}
 
-.agent-reveal {
-    opacity: 0;
-    transform: translateY(18px);
+.agents-page .agent-decoy-isolated .agent-action {
+    justify-content: center;
+    margin-top: 17px;
+}
+
+
+/* =========================================================
+   13. THREAT INTELLIGENCE
+========================================================= */
+
+.agents-page .agent-intelligence-section {
+    background: var(--agents-bg-secondary);
+}
+
+.agents-page .protection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.agents-page .protection-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 245px;
+    padding: 27px;
+    background: var(--agents-surface);
+    border: 1px solid var(--agents-border);
+    border-radius: var(--agents-radius-lg);
     transition:
-        opacity 0.45s ease,
-        transform 0.45s ease;
+        transform var(--agents-transition),
+        border-color var(--agents-transition),
+        box-shadow var(--agents-transition);
 }
 
-.agent-reveal.agent-visible {
-    opacity: 1;
-    transform: translateY(0);
+.agents-page .protection-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--agents-border-hover);
+    box-shadow: var(--agents-shadow);
 }
 
-/* =====================================================
-   RESPONSIVE: TABLETS & SMALL LAPTOPS
-===================================================== */
+.agents-page .protection-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 51px;
+    height: 51px;
+    margin-bottom: 20px;
+    color: var(--agents-primary);
+    background: rgba(56, 189, 248, 0.1);
+    border-radius: 14px;
+    font-size: 21px;
+}
+
+.agents-page .protection-card h3 {
+    margin: 0 0 10px;
+    font-size: 19px;
+}
+
+.agents-page .protection-card p {
+    flex-grow: 1;
+    margin: 0 0 18px;
+    color: var(--agents-muted);
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.agents-page .protection-card a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    align-self: flex-start;
+    color: var(--agents-primary);
+    font-size: 13px;
+    font-weight: 700;
+    transition: gap var(--agents-transition);
+}
+
+.agents-page .protection-card a:hover {
+    gap: 14px;
+}
+
+
+/* =========================================================
+   14. EMERGENCY CYBER SUPPORT
+========================================================= */
+
+.agents-page .agent-emergency-section {
+    padding-top: 65px;
+    padding-bottom: 85px;
+    background: var(--agents-bg);
+}
+
+.agents-page .agent-emergency-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 35px;
+    background:
+        linear-gradient(
+            120deg,
+            rgba(127, 29, 29, 0.24),
+            rgba(30, 41, 59, 0.85)
+        );
+    border: 1px solid rgba(248, 113, 113, 0.22);
+    border-radius: var(--agents-radius-xl);
+}
+
+.agents-page .agent-emergency-box > div:first-child {
+    max-width: 650px;
+}
+
+.agents-page .agent-emergency-box h3 {
+    margin: 8px 0 11px;
+    font-size: 27px;
+}
+
+.agents-page .agent-emergency-box p {
+    margin: 0;
+    color: var(--agents-text-secondary);
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.agents-page .emergency-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   15. FOOTER
+========================================================= */
+
+.agents-page .dashboard-footer {
+    background: #060c17;
+    border-top: 1px solid var(--agents-border);
+}
+
+.agents-page .dashboard-footer .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 35px;
+    padding-top: 60px;
+    padding-bottom: 45px;
+}
+
+.agents-page .footer-about > p {
+    max-width: 340px;
+    margin-top: 18px;
+    color: var(--agents-muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.agents-page .footer-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+}
+
+.agents-page .footer-column h4 {
+    margin: 0 0 6px;
+    font-size: 15px;
+}
+
+.agents-page .footer-column a {
+    color: var(--agents-muted);
+    font-size: 13px;
+    transition: color var(--agents-transition);
+}
+
+.agents-page .footer-column a:hover {
+    color: var(--agents-primary);
+}
+
+.agents-page .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 21px 0;
+    border-top: 1px solid var(--agents-border);
+}
+
+.agents-page .footer-bottom p {
+    margin: 0;
+    color: var(--agents-muted);
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   16. RESPONSIVE — LARGE TABLETS
+========================================================= */
 
 @media (max-width: 1100px) {
-    .agent-overview {
+
+    .agents-page .agent-overview {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .collaboration-flow {
-        display: grid;
+    .agents-page .agent-architecture-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-width: 650px;
-        margin-left: auto;
-        margin-right: auto;
-        gap: 18px;
     }
 
-    .flow-card {
+    .agents-page .risk-level-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agents-page .category-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agents-page .dashboard-footer .footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   17. RESPONSIVE — TABLETS
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .agents-page .section {
+        padding: 75px 0;
+    }
+
+    .agents-page .agents-hero {
+        padding: 80px 0 65px;
+    }
+
+    .agents-page .input-types-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agents-page .protection-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .agents-page .collaboration-flow {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .agents-page .flow-connector {
+        transform: rotate(90deg);
+    }
+
+    .agents-page .flow-card {
         width: 100%;
-        min-height: 165px;
     }
 
-    .flow-connector {
-        display: none;
+    .agents-page .agent-emergency-box {
+        align-items: flex-start;
+        flex-direction: column;
     }
+
 }
 
-@media (max-width: 900px) {
-    .agents-hero {
-        padding-top: 125px;
+
+/* =========================================================
+   18. RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .agents-page .container {
+        width: calc(100% - 32px);
     }
 
-    .agent-directory-grid {
-        gap: 18px;
+    .agents-page .section {
+        padding: 62px 0;
     }
 
-    .agent-detail-card {
-        padding: 24px;
-        min-height: 0;
+    .agents-page .section-heading {
+        margin-bottom: 35px;
     }
 
-    .agent-safety-box {
-        padding: 24px;
-    }
-}
-
-/* =====================================================
-   RESPONSIVE: MOBILE
-===================================================== */
-
-@media (max-width: 700px) {
-    .agents-hero {
-        padding: 110px 0 55px;
-    }
-
-    .agents-hero-content {
-        width: min(100% - 28px, 850px);
-    }
-
-    .agents-hero-content h1 {
-        font-size: clamp(34px, 9vw, 46px);
+    .agents-page .section-heading h2 {
+        font-size: 29px;
         letter-spacing: -0.8px;
     }
 
-    .agents-hero-content > p {
-        font-size: 16px;
-        line-height: 1.75;
+    .agents-page .section-heading > p {
+        font-size: 14px;
     }
 
-    .agents-hero-content .btn {
-        width: 100%;
-        max-width: 340px;
-        min-height: 54px;
+    .agents-page .agents-hero {
+        padding: 65px 0 55px;
     }
 
-    .agent-overview {
-        grid-template-columns: 1fr;
-        gap: 13px;
-        margin-top: 45px;
+    .agents-page .agents-hero-content {
+        margin-bottom: 40px;
     }
 
-    .overview-item {
-        padding: 18px;
+    .agents-page .agents-hero h1 {
+        font-size: clamp(35px, 9vw, 46px);
+        letter-spacing: -1.5px;
     }
 
-    .overview-item h3 {
-        font-size: 17px;
+    .agents-page .agents-hero-content > p {
+        font-size: 14px;
     }
 
-    .overview-item p {
-        font-size: 15px;
-    }
-
-    .agent-directory {
-        padding-top: 55px;
-    }
-
-    .agent-directory-grid {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        margin-top: 32px;
-    }
-
-    .agent-detail-card {
-        padding: 23px;
-        border-radius: 18px;
-    }
-
-    .agent-detail-card h2 {
-        font-size: 25px;
-    }
-
-    .agent-description {
-        font-size: 16px;
-    }
-
-    .agent-responsibilities li {
-        font-size: 15px;
-    }
-
-    .agent-output p {
-        font-size: 15px;
-    }
-
-    .collaboration-flow {
-        grid-template-columns: 1fr;
-        max-width: 420px;
-        gap: 14px;
-        margin-top: 32px;
-    }
-
-    .flow-card {
-        min-height: 145px;
-        padding: 20px;
-    }
-
-    .collaboration-note {
-        padding: 16px;
-        font-size: 15px;
-    }
-
-    .agent-demo-panel {
-        padding: 22px 18px;
-        border-radius: 18px;
-    }
-
-    .agent-demo-form {
-        gap: 15px;
-    }
-
-    .agent-demo-form select,
-    .agent-demo-form textarea {
-        font-size: 16px;
-    }
-
-    .agent-demo-actions {
+    .agents-page .agent-hero-actions {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .agent-demo-actions button {
+    .agents-page .agent-hero-actions .btn {
         width: 100%;
-        min-height: 54px;
     }
 
-    .agent-demo-results {
+    .agents-page .agent-overview {
         grid-template-columns: 1fr;
-        gap: 13px;
+        gap: 11px;
     }
 
-    .agent-demo-disclaimer {
-        grid-column: auto;
+    .agents-page .overview-item {
+        padding: 16px;
     }
 
-    .agent-safety-box {
+    .agents-page .agent-architecture-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-page .architecture-card {
+        min-height: auto;
+        padding: 24px;
+    }
+
+    .agents-page .architecture-card p {
+        min-height: auto;
+    }
+
+    .agents-page .input-types-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-page .input-type-card {
+        min-height: auto;
+        padding: 23px;
+    }
+
+    .agents-page .detection-modules-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-page .module-card {
+        min-height: auto;
+        padding: 24px;
+    }
+
+    .agents-page .category-list {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-page .category-row {
+        min-height: 60px;
+    }
+
+    .agents-page .agent-directory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-page .agent-detail-card {
+        padding: 24px;
+    }
+
+    .agents-page .agent-detail-card h2 {
+        font-size: 24px;
+    }
+
+    .agents-page .agent-description {
+        min-height: auto;
+    }
+
+    .agents-page .agent-demo-panel {
+        padding: 22px 17px;
+    }
+
+    .agents-page .agent-demo-heading h2 {
+        align-items: flex-start;
+        font-size: 19px;
+        line-height: 1.4;
+    }
+
+    .agents-page .agent-demo-actions {
         flex-direction: column;
-        gap: 16px;
+    }
+
+    .agents-page .agent-demo-actions button {
+        width: 100%;
+    }
+
+    .agents-page .agent-safety-box {
+        flex-direction: column;
+        padding: 24px;
+    }
+
+    .agents-page .safety-notice-content h3 {
+        font-size: 21px;
+    }
+
+    .agents-page .risk-level-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-page .risk-level-card {
         padding: 22px;
     }
 
-    .safety-notice-content h3 {
-        font-size: 20px;
+    .agents-page .protection-grid {
+        grid-template-columns: 1fr;
     }
 
-    .safety-notice-content p {
-        font-size: 16px;
+    .agents-page .protection-card {
+        min-height: auto;
     }
 
-    .agent-emergency-box {
-        align-items: stretch;
-        flex-direction: column;
-        padding: 21px;
+    .agents-page .agent-emergency-box {
+        padding: 25px 20px;
     }
 
-    .agent-emergency-box a {
-        width: 100%;
-    }
-}
-
-/* =====================================================
-   RESPONSIVE: SMALL PHONES
-===================================================== */
-
-@media (max-width: 400px) {
-    .agents-hero {
-        padding-top: 100px;
-    }
-
-    .agents-hero-content h1 {
-        font-size: 32px;
-    }
-
-    .overview-item {
-        gap: 12px;
-        padding: 15px;
-    }
-
-    .overview-icon {
-        width: 46px;
-        height: 46px;
-        font-size: 19px;
-    }
-
-    .agent-detail-card {
-        padding: 19px;
-    }
-
-    .agent-detail-card h2 {
+    .agents-page .agent-emergency-box h3 {
         font-size: 23px;
     }
 
-    .agent-number {
-        font-size: 12px;
-        padding: 7px 9px;
-    }
-
-    .agent-demo-panel {
-        padding: 18px 14px;
-    }
-
-    .agent-demo-result-card {
-        padding: 16px;
-    }
-
-    .agent-demo-result-heading {
+    .agents-page .emergency-actions {
+        width: 100%;
         flex-direction: column;
     }
 
-    .agent-safety-box {
-        padding: 18px;
+    .agents-page .emergency-actions .btn {
+        width: 100%;
     }
 
-    .agent-emergency-box {
-        padding: 18px;
+    .agents-page .dashboard-footer .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-top: 42px;
     }
+
+    .agents-page .footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 9px;
+    }
+
 }
 
-/* =====================================================
-   VERY SMALL SCREENS
-===================================================== */
 
-@media (max-width: 340px) {
-    .agents-hero-content h1 {
-        font-size: 29px;
+/* =========================================================
+   19. SMALL MOBILE DEVICES
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .agents-page .container {
+        width: calc(100% - 26px);
     }
 
-    .agent-detail-card {
-        padding: 16px;
+    .agents-page .agents-hero h1 {
+        font-size: 33px;
     }
 
-    .agent-demo-panel {
-        padding: 15px 12px;
+    .agents-page .section-heading h2 {
+        font-size: 26px;
     }
 
-    .agent-demo-form select,
-    .agent-demo-form textarea {
-        padding: 12px;
+    .agents-page .agent-detail-card,
+    .agents-page .module-card,
+    .agents-page .architecture-card {
+        padding: 20px;
     }
 
-    .agent-demo-actions button {
-        padding: 12px;
-        font-size: 15px;
+    .agents-page .agent-demo-panel {
+        padding: 18px 13px;
     }
 
-    .agent-emergency-box h2,
-    .agent-emergency-box h3 {
-        font-size: 19px;
+    .agents-page .agent-number {
+        font-size: 9px;
     }
+
 }
 
-/* =====================================================
-   REDUCED MOTION
-===================================================== */
+
+/* =========================================================
+   20. ACCESSIBILITY AND MOTION
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+
+    .agents-page *,
+    .agents-page *::before,
+    .agents-page *::after {
         scroll-behavior: auto !important;
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
 
-    .agent-reveal,
-    .agent-reveal.agent-visible {
-        opacity: 1;
-        transform: none;
-    }
-
-    .overview-item:hover,
-    .agent-detail-card:hover,
-    .flow-card:hover {
-        transform: none;
-    }
 }
 
-/* =====================================================
-   END AGENTS PAGE CSS
-===================================================== */
+@media (prefers-contrast: more) {
+
+    .agents-page {
+        --agents-border: rgba(203, 213, 225, 0.4);
+        --agents-muted: #cbd5e1;
+        --agents-text-secondary: #e2e8f0;
+    }
+
+    .agents-page .category-row,
+    .agents-page .architecture-card,
+    .agents-page .module-card,
+    .agents-page .agent-detail-card,
+    .agents-page .input-type-card,
+    .agents-page .protection-card {
+        border-width: 2px;
+    }
+
+}
+
+
+/* =========================================================
+   END OF SCAMSHIELD AI AGENTS STYLESHEET
+========================================================= */

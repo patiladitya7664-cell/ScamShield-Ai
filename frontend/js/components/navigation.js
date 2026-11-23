@@ -1,14 +1,15 @@
-
 "use strict";
 
 /* =====================================================
    SCAMSHIELD AI - NAVIGATION MANAGER
-   Version: 2.0.0
+   Version: 2.1.0
 
    Responsibilities:
    1. Active navigation link management.
    2. Dropdown menu management.
    3. SPA and multi-page navigation support.
+   4. Dynamic navigation refresh.
+   5. Keyboard accessibility.
 
    Mobile navigation: main.js
    Logout handling: app.js
@@ -17,16 +18,17 @@
 (function (window, document) {
     const Navigation = {
         initialized: false,
+        dropdownGlobalListenersInitialized: false,
 
         init() {
-            if (this.initialized) return;
+            if (this.initialized) {
+                this.refresh();
+                return;
+            }
 
             this.initialized = true;
 
-            this.setActiveLink();
-            this.initMobileMenu();
-            this.initLogout();
-            this.initDropdowns();
+            this.refresh();
 
             window.addEventListener("hashchange", () => {
                 this.setActiveLink();
@@ -36,9 +38,16 @@
                 this.setActiveLink();
             });
 
-            document.addEventListener("scamshield:screenchange", () => {
+            window.addEventListener("pageshow", () => {
                 this.setActiveLink();
             });
+
+            document.addEventListener(
+                "scamshield:screenchange",
+                () => {
+                    this.refresh();
+                }
+            );
         },
 
         /* ================================================
@@ -48,12 +57,48 @@
         normalizeRoute(value) {
             if (!value) return "";
 
-            return String(value)
-                .replace(/^#\/?/, "")
-                .replace(/^\/+|\/+$/g, "")
-                .split("?")[0]
-                .replace(/\.html$/i, "")
-                .toLowerCase();
+            let route = String(value).trim();
+
+            if (!route || route === "#") {
+                return "";
+            }
+
+            // Handle SPA hash routes.
+            if (route.startsWith("#")) {
+                route = route.replace(/^#\/?/, "");
+            }
+
+            // Remove query parameters.
+            route = route.split("?")[0];
+
+            // Ignore external URLs.
+            if (/^[a-z][a-z0-9+.-]*:\/\//i.test(route)) {
+                try {
+                    const url = new URL(route);
+
+                    if (url.origin !== window.location.origin) {
+                        return "";
+                    }
+
+                    route = url.pathname;
+                } catch {
+                    return "";
+                }
+            }
+
+            // Normalize relative and absolute paths.
+            route = route.replace(/\\/g, "/");
+
+            // Remove trailing slash.
+            route = route.replace(/\/+$/, "");
+
+            // Get the final path segment.
+            route = route.split("/").pop() || "";
+
+            // Remove HTML extension.
+            route = route.replace(/\.html$/i, "");
+
+            return route.toLowerCase();
         },
 
         /* ================================================
@@ -69,13 +114,11 @@
                 return hashRoute;
             }
 
-            const currentPath = window.location.pathname
-                .split("/")
-                .pop()
-                .replace(/\.html$/i, "")
-                .toLowerCase();
+            const currentPath = window.location.pathname;
 
-            return currentPath || "dashboard";
+            const page = this.normalizeRoute(currentPath);
+
+            return page || "dashboard";
         },
 
         /* ================================================
@@ -84,6 +127,8 @@
 
         setActiveLink() {
             const currentPage = this.getCurrentPage();
+
+            if (!currentPage) return;
 
             document.querySelectorAll(
                 ".nav-links a, [data-nav-link]"
@@ -97,13 +142,15 @@
 
                 const linkPage = this.normalizeRoute(route);
 
+                if (!linkPage) {
+                    link.classList.remove("active");
+                    link.removeAttribute("aria-current");
+                    return;
+                }
+
                 const isActive =
                     linkPage === currentPage ||
-                    (
-                        currentPage &&
-                        linkPage &&
-                        currentPage.startsWith(linkPage + "/")
-                    );
+                    currentPage.startsWith(linkPage + "/");
 
                 link.classList.toggle("active", isActive);
 
@@ -116,10 +163,19 @@
         },
 
         /* ================================================
-           MOBILE NAVIGATION
+           REFRESH NAVIGATION
+        ================================================ */
 
+        refresh() {
+            this.setActiveLink();
+            this.initDropdowns();
+        },
+
+        /* ================================================
+           MOBILE NAVIGATION
+           
            Managed by main.js.
-           No duplicate event listeners here.
+           No duplicate event listeners.
         ================================================ */
 
         initMobileMenu() {
@@ -130,7 +186,7 @@
            LOGOUT
 
            Managed by app.js.
-           No duplicate logout listeners here.
+           No duplicate event listeners.
         ================================================ */
 
         initLogout() {
@@ -147,24 +203,31 @@
             );
 
             dropdownButtons.forEach((button) => {
-                if (button.dataset.dropdownInitialized === "true") {
+                if (
+                    button.dataset.dropdownInitialized === "true"
+                ) {
                     return;
                 }
-
-                button.dataset.dropdownInitialized = "true";
 
                 const targetId = button.getAttribute(
                     "data-dropdown-toggle"
                 );
 
+                if (!targetId) return;
+
                 const dropdown = document.getElementById(targetId);
 
+                // Do not mark initialized until target exists.
                 if (!dropdown) return;
+
+                button.dataset.dropdownInitialized = "true";
 
                 button.setAttribute(
                     "aria-expanded",
                     String(dropdown.classList.contains("show"))
                 );
+
+                button.setAttribute("aria-controls", targetId);
 
                 button.addEventListener("click", (event) => {
                     event.preventDefault();
@@ -177,30 +240,57 @@
 
                     if (!isCurrentlyOpen) {
                         dropdown.classList.add("show");
-                        button.setAttribute("aria-expanded", "true");
+
+                        button.setAttribute(
+                            "aria-expanded",
+                            "true"
+                        );
                     }
                 });
             });
 
-            if (!this.dropdownGlobalListenersInitialized) {
-                this.dropdownGlobalListenersInitialized = true;
+            this.initDropdownGlobalListeners();
+        },
 
-                document.addEventListener("click", (event) => {
-                    const clickedInsideDropdown =
-                        event.target.closest("[data-dropdown-toggle]") ||
-                        event.target.closest(".dropdown");
+        /* ================================================
+           GLOBAL DROPDOWN LISTENERS
+        ================================================ */
 
-                    if (!clickedInsideDropdown) {
-                        this.closeAllDropdowns();
-                    }
-                });
-
-                document.addEventListener("keydown", (event) => {
-                    if (event.key === "Escape") {
-                        this.closeAllDropdowns();
-                    }
-                });
+        initDropdownGlobalListeners() {
+            if (this.dropdownGlobalListenersInitialized) {
+                return;
             }
+
+            this.dropdownGlobalListenersInitialized = true;
+
+            document.addEventListener("click", (event) => {
+                const target = event.target;
+
+                if (!(target instanceof Element)) {
+                    return;
+                }
+
+                const clickedInsideDropdown =
+                    target.closest("[data-dropdown-toggle]") ||
+                    target.closest(".dropdown");
+
+                if (!clickedInsideDropdown) {
+                    this.closeAllDropdowns();
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key !== "Escape") return;
+
+                const openButton = document.querySelector(
+                    '[data-dropdown-toggle][aria-expanded="true"]'
+                );
+
+                if (openButton) {
+                    this.closeAllDropdowns();
+                    openButton.focus();
+                }
+            });
         },
 
         /* ================================================
@@ -215,16 +305,22 @@
                     "data-dropdown-toggle"
                 );
 
+                if (!targetId) return;
+
                 const dropdown = document.getElementById(targetId);
 
-                if (!dropdown) return;
-
-                dropdown.classList.remove("show");
-
                 button.setAttribute("aria-expanded", "false");
+
+                if (dropdown) {
+                    dropdown.classList.remove("show");
+                }
             });
         }
     };
+
+    /* ================================================
+       GLOBAL API
+    ================================================ */
 
     window.ScamShieldNavigation = Navigation;
 

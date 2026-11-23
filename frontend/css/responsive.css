@@ -1,9 +1,13 @@
+
 /* =====================================================
    SCAMSHIELD AI
    RESPONSIVE STYLESHEET
+   Version: 3.0.0
 ===================================================== */
 
-/* ================= LARGE LAPTOP ================= */
+/* =====================================================
+   LARGE LAPTOP
+===================================================== */
 
 @media (max-width: 1200px) {
   .container {
@@ -15,42 +19,56 @@
   }
 
   .hero-content h1 {
-    font-size: 55px;
+    font-size: clamp(42px, 5vw, 55px);
+  }
+
+  .nav-links {
+    gap: 17px;
   }
 
   .agents-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .workflow {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .footer-grid {
     gap: 30px;
   }
+
+  .diagram-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-/* ================= TABLET ================= */
+/* =====================================================
+   TABLET
+===================================================== */
 
 @media (max-width: 992px) {
   /* NAVBAR */
 
   .nav-content {
-    height: 75px;
+    min-height: 75px;
   }
 
   .nav-links {
-    gap: 20px;
+    gap: 13px;
   }
 
   .nav-links a {
     font-size: 12px;
   }
 
+  .nav-actions {
+    gap: 7px;
+  }
+
   .nav-actions .btn {
-    padding: 10px 13px;
-    font-size: 11px;
+    padding: 9px 11px;
+    font-size: 12px;
   }
 
   /* HERO */
@@ -61,20 +79,21 @@
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 65px;
+    gap: 55px;
   }
 
   .hero-content {
     text-align: center;
+    max-width: 750px;
+    margin-inline: auto;
   }
 
   .hero-content h1 {
-    font-size: 58px;
+    font-size: clamp(44px, 7vw, 58px);
   }
 
   .hero-description {
-    margin-left: auto;
-    margin-right: auto;
+    margin-inline: auto;
   }
 
   .hero-buttons {
@@ -86,50 +105,100 @@
   }
 
   .hero-visual {
-    width: 85%;
-    max-width: 600px;
-    margin: auto;
+    width: min(90%, 650px);
+    margin-inline: auto;
   }
 
-  /* FRAUD CARDS */
+  /* FRAUD */
 
   .fraud-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   /* AGENTS */
 
   .agents-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* WORKFLOW */
+
+  .workflow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* DIAGRAM */
+
+  .diagram-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* INPUT AND CATEGORY GRIDS */
+
+  .input-grid,
+  .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* TECHNOLOGY */
+
+  .stack-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   /* FOOTER */
 
   .footer-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* AGENTS PAGE */
+
+  .agent-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .agent-directory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .collaboration-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+  }
+
+  .flow-connector {
+    display: none;
+  }
+
+  .agent-detail-card {
+    padding: 25px;
   }
 }
 
-/* ================= MOBILE NAVBAR ================= */
+/* =====================================================
+   MOBILE NAVBAR AND TABLET LAYOUT
+===================================================== */
 
 @media (max-width: 768px) {
   .container {
     width: 90%;
   }
 
+  /* NAVBAR */
+
   .navbar {
     position: sticky;
+    top: 0;
   }
 
   .nav-content {
-    height: 70px;
+    min-height: 70px;
   }
 
   .logo-text {
     font-size: 19px;
   }
-
-  /* MOBILE MENU */
 
   .menu-toggle {
     display: grid;
@@ -138,50 +207,68 @@
 
   .nav-links {
     position: absolute;
-
-    top: 70px;
+    top: 100%;
     left: 0;
-
+    right: 0;
     width: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
-
     gap: 0;
 
-    padding: 10px 5% 20px;
+    padding: 10px 5% 18px;
 
     background: rgba(8, 14, 28, 0.98);
 
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
 
-    border-bottom: 1px solid var(--border);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
 
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
 
-    transform: translateY(-10px);
+    transform: translateY(-8px);
 
-    transition: all 0.3s ease;
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease,
+      transform 0.25s ease;
   }
 
-  .nav-links.active {
+  .nav-links.active,
+  .nav-links.open {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
     transform: translateY(0);
   }
 
   .nav-links a {
-    padding: 14px 5px;
-
+    display: block;
+    width: 100%;
+    padding: 13px 8px;
     font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  .nav-links a:last-child {
+    border-bottom: none;
   }
 
   .nav-actions {
-    display: none;
+    display: flex;
+    gap: 7px;
+  }
+
+  .nav-actions .btn {
+    min-height: 40px;
+    padding: 8px 11px;
+    font-size: 12px;
   }
 
   /* HERO */
@@ -191,16 +278,16 @@
   }
 
   .hero-grid {
-    gap: 55px;
+    gap: 45px;
   }
 
   .hero-content h1 {
-    font-size: 47px;
+    font-size: clamp(38px, 7vw, 47px);
     letter-spacing: -1.8px;
   }
 
   .hero-description {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .hero-visual {
@@ -216,16 +303,16 @@
     left: -5px;
   }
 
-  /* TRUST STRIP */
+  /* TRUST */
 
   .trust-content {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
   }
 
   .trust-item {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   /* SECTIONS */
@@ -243,7 +330,7 @@
   }
 
   .section-heading p {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   /* FRAUD */
@@ -257,7 +344,7 @@
   }
 
   .fraud-card h3 {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   /* WORKFLOW */
@@ -270,18 +357,127 @@
     padding: 22px 18px;
   }
 
+  /* DIAGRAM */
+
+  .diagram-section {
+    padding: 55px 0;
+  }
+
+  /* ASSISTANT */
+
+  .assistant-banner {
+    gap: 17px;
+    padding: 23px;
+  }
+
   /* FOOTER */
 
   .footer {
     padding-top: 50px;
   }
+
+  /* AGENTS PAGE */
+
+  .agents-hero {
+    padding: 65px 0;
+  }
+
+  .agents-hero-content {
+    text-align: center;
+  }
+
+  .agent-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+  }
+
+  .overview-item {
+    padding: 18px;
+  }
+
+  .agent-directory-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .agent-detail-card {
+    padding: 23px;
+  }
+
+  .agent-detail-top {
+    gap: 15px;
+  }
+
+  .agent-detail-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .agent-description {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .agent-responsibilities {
+    padding-left: 18px;
+  }
+
+  .collaboration-flow {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .flow-card {
+    padding: 22px;
+  }
+
+  .collaboration-note {
+    padding: 20px;
+  }
+
+  .agent-safety-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 22px;
+  }
 }
 
-/* ================= SMALL MOBILE ================= */
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
 
 @media (max-width: 576px) {
   .container {
     width: 91%;
+  }
+
+  /* NAVBAR */
+
+  .nav-content {
+    min-height: 66px;
+    gap: 8px;
+  }
+
+  .logo-text {
+    font-size: 17px;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nav-actions .btn {
+    min-height: 38px;
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
   }
 
   /* HERO */
@@ -296,12 +492,12 @@
   }
 
   .hero-content h1 {
-    font-size: 39px;
+    font-size: clamp(35px, 9vw, 41px);
     letter-spacing: -1.5px;
   }
 
   .hero-description {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.8;
   }
 
@@ -315,7 +511,8 @@
   }
 
   .hero-note {
-    font-size: 10px;
+    font-size: 11px;
+    align-items: flex-start;
   }
 
   /* DASHBOARD PREVIEW */
@@ -357,15 +554,15 @@
   }
 
   .score-info h3 {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .score-info p {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .risk-badge {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .preview-agent {
@@ -374,32 +571,21 @@
   }
 
   .agent-icon {
-    width: 33px;
-    height: 33px;
+    width: 35px;
+    height: 35px;
     font-size: 13px;
   }
 
   .agent-details h4 {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .agent-details p {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .floating-label {
-    font-size: 8px;
-    padding: 9px;
-  }
-
-  .floating-one {
-    right: -2px;
-    top: -18px;
-  }
-
-  .floating-two {
-    left: -2px;
-    bottom: -18px;
+    display: none;
   }
 
   /* TRUST */
@@ -409,7 +595,7 @@
   }
 
   .trust-item {
-    font-size: 9px;
+    font-size: 10px;
     gap: 7px;
   }
 
@@ -417,7 +603,7 @@
     font-size: 14px;
   }
 
-  /* SECTION */
+  /* SECTIONS */
 
   .section {
     padding: 65px 0;
@@ -427,11 +613,15 @@
     font-size: 28px;
   }
 
+  .section-heading p {
+    font-size: 13px;
+  }
+
   .section-tag {
     font-size: 9px;
   }
 
-  /* FRAUD CARDS */
+  /* FRAUD */
 
   .fraud-grid {
     grid-template-columns: 1fr;
@@ -455,7 +645,7 @@
   }
 
   .fraud-card p {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   /* AGENTS */
@@ -481,7 +671,7 @@
 
   .ai-card p {
     min-height: auto;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   /* WORKFLOW */
@@ -496,7 +686,51 @@
   }
 
   .workflow-card p {
-    font-size: 12px;
+    font-size: 13px;
+  }
+
+  /* DIAGRAM AND INPUTS */
+
+  .diagram-grid,
+  .input-grid,
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .diagram-card {
+    padding: 21px;
+  }
+
+  .input-item,
+  .category-item {
+    padding: 14px;
+  }
+
+  /* ASSISTANT */
+
+  .assistant-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .assistant-banner h3 {
+    font-size: 19px;
+  }
+
+  .capability-list {
+    grid-template-columns: 1fr;
+  }
+
+  /* TECHNOLOGY */
+
+  .stack-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stack-item {
+    min-height: 100px;
+    padding: 13px;
   }
 
   /* CTA */
@@ -511,18 +745,17 @@
   }
 
   .cta-box p {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .cta-box .btn {
     width: 100%;
-    font-size: 11px;
   }
 
   /* FOOTER */
 
   .footer-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 35px 20px;
   }
 
@@ -531,15 +764,15 @@
   }
 
   .footer-about p {
-    font-size: 11px;
-  }
-
-  .footer-column h4 {
     font-size: 12px;
   }
 
+  .footer-column h4 {
+    font-size: 13px;
+  }
+
   .footer-column a {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .footer-bottom {
@@ -549,160 +782,11 @@
   }
 
   .footer-bottom p {
-    font-size: 9px;
-  }
-}
-
-/* ================= EXTRA SMALL DEVICES ================= */
-
-@media (max-width: 360px) {
-  .hero-content h1 {
-    font-size: 34px;
+    font-size: 11px;
   }
 
-  .logo-text {
-    font-size: 17px;
-  }
+  /* AGENTS PAGE */
 
-  .preview-score {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .preview-header {
-    gap: 8px;
-  }
-
-  .preview-status {
-    font-size: 7px;
-  }
-
-  .section-heading h2 {
-    font-size: 25px;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-about {
-    grid-column: auto;
-  }
-}
-
-/* ================= REDUCED MOTION ================= */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-/* =====================================================
-   SCAMSHIELD AI - AGENTS PAGE RESPONSIVENESS
-===================================================== */
-
-/* ================= TABLET ================= */
-
-@media (max-width: 992px) {
-  .agent-overview {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .agent-directory-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .collaboration-flow {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-  }
-
-  .flow-connector {
-    display: none;
-  }
-
-  .agent-detail-card {
-    padding: 25px;
-  }
-}
-
-/* ================= MOBILE ================= */
-
-@media (max-width: 768px) {
-  .agents-hero {
-    padding: 65px 0;
-  }
-
-  .agents-hero-content {
-    text-align: center;
-  }
-
-  .agent-overview {
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-  }
-
-  .overview-item {
-    padding: 18px;
-  }
-
-  .agent-directory-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .agent-detail-card {
-    padding: 23px;
-  }
-
-  .agent-detail-top {
-    gap: 15px;
-  }
-
-  .agent-detail-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-
-  .agent-description {
-    font-size: 13px;
-    line-height: 1.7;
-  }
-
-  .agent-responsibilities {
-    padding-left: 18px;
-  }
-
-  .collaboration-flow {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .flow-card {
-    padding: 22px;
-  }
-
-  .collaboration-note {
-    padding: 20px;
-  }
-
-  .agent-safety-box {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-    padding: 22px;
-  }
-}
-
-/* ================= SMALL MOBILE ================= */
-
-@media (max-width: 576px) {
   .agents-hero {
     padding: 50px 0;
   }
@@ -744,11 +828,11 @@
   }
 
   .agent-description {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .agent-responsibilities {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.8;
   }
 
@@ -770,14 +854,61 @@
   }
 
   .safety-notice-content {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.7;
   }
 }
 
-/* ================= EXTRA SMALL DEVICES ================= */
+/* =====================================================
+   EXTRA SMALL DEVICES
+===================================================== */
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
+  .container {
+    width: 92%;
+  }
+
+  .hero-content h1 {
+    font-size: 34px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .nav-actions .btn {
+    padding: 7px;
+    font-size: 10px;
+  }
+
+  .preview-score {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .preview-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .preview-status {
+    font-size: 8px;
+  }
+
+  .section-heading h2 {
+    font-size: 25px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-about {
+    grid-column: auto;
+  }
+
   .agent-detail-card {
     padding: 16px;
   }
@@ -787,7 +918,7 @@
   }
 
   .agent-description {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .overview-item {
@@ -798,3 +929,20 @@
     padding: 17px;
   }
 }
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ================= END ================= */

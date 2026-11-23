@@ -1,4 +1,3 @@
-
 """
 =========================================================
 SCAMSHIELD AI - CENTRAL AI PIPELINE
@@ -25,6 +24,7 @@ IMPORTANT:
 """
 
 import math
+import re
 import time
 import uuid
 
@@ -48,6 +48,57 @@ class AIPipeline:
     }
 
     MAX_EVIDENCE_LENGTH = 20000
+    MAX_METADATA_DEPTH = 10
+
+    # =================================================
+    # GEMINI STRICT RESPONSE ALLOWLIST
+    # =================================================
+
+    GEMINI_ALLOWED_FIELDS = {
+        "available",
+        "status",
+        "version",
+        "model",
+        "advisory_only",
+        "reason",
+        "scam_intent",
+        "social_engineering_tactics",
+        "contextual_indicators",
+        "explanation",
+        "supporting_evidence",
+        "alternative_interpretations",
+        "advisory_confidence",
+        "safety_notes",
+    }
+
+    GEMINI_STRING_LIMITS = {
+        "scam_intent": 1000,
+        "explanation": 2000,
+        "reason": 500,
+        "version": 100,
+        "model": 150,
+    }
+
+    GEMINI_LIST_LIMITS = {
+        "social_engineering_tactics": 10,
+        "contextual_indicators": 10,
+        "supporting_evidence": 10,
+        "alternative_interpretations": 10,
+        "safety_notes": 10,
+    }
+
+    GEMINI_LIST_ITEM_MAX_LENGTH = 500
+
+    GEMINI_ALLOWED_STATUSES = {
+        "success",
+        "unavailable",
+    }
+
+    GEMINI_ALLOWED_CONFIDENCE = {
+        "low",
+        "medium",
+        "high",
+    }
 
     VERSION = "1.3.0"
 
@@ -290,10 +341,10 @@ class AIPipeline:
 
         Gemini is strictly advisory.
 
-        Guardian remains authoritative.
+        Only explicitly approved response fields
+        are allowed into the pipeline.
 
-        Gemini failures must never interrupt
-        deterministic fraud analysis.
+        Guardian remains authoritative.
         """
 
         try:
@@ -323,65 +374,37 @@ class AIPipeline:
 
             )
 
+            # =========================================
+            # RESPONSE TYPE VALIDATION
+            # =========================================
+
             if not isinstance(gemini_result, dict):
 
                 logger.warning(
-                    "Gemini returned an invalid response."
+                    "Gemini returned a non-dictionary response."
                 )
 
                 return self._gemini_unavailable_result(
                     "Gemini returned an invalid response."
                 )
 
-            normalized_result = dict(gemini_result)
-
             # =========================================
-            # ENFORCE ADVISORY-ONLY STATUS
+            # STRICT ALLOWLIST
             # =========================================
 
-            normalized_result["advisory_only"] = True
-
-            # Gemini cannot modify authoritative
-            # deterministic risk information.
-
-            normalized_result.pop(
-                "risk_score",
-                None,
+            normalized_result = self._normalize_gemini_advisory(
+                gemini_result
             )
 
-            normalized_result.pop(
-                "fraud_category",
-                None,
-            )
+            if normalized_result is None:
 
-            normalized_result.pop(
-                "category",
-                None,
-            )
-
-            normalized_result.pop(
-                "risk_level",
-                None,
-            )
-
-            # =========================================
-            # NORMALIZE AVAILABILITY
-            # =========================================
-
-            if normalized_result.get("available") is not True:
-
-                normalized_result["available"] = False
-
-                normalized_result["status"] = (
-                    normalized_result.get(
-                        "status",
-                        "unavailable",
-                    )
+                logger.warning(
+                    "Gemini response rejected by strict allowlist."
                 )
 
-            else:
-
-                normalized_result["status"] = "success"
+                return self._gemini_unavailable_result(
+                    "Gemini response failed strict validation."
+                )
 
             logger.info(
                 "Gemini advisory analysis completed | status=%s",
@@ -399,6 +422,317 @@ class AIPipeline:
             return self._gemini_unavailable_result(
                 "Gemini service execution failed."
             )
+
+    # =================================================
+    # GEMINI RESPONSE NORMALIZATION
+    # =================================================
+
+    def _normalize_gemini_advisory(
+        self,
+        data,
+    ):
+        """
+        Strictly normalize Gemini response.
+
+        Unknown fields are discarded.
+
+        Authoritative fraud information is never
+        accepted from Gemini.
+        """
+
+        if not isinstance(data, dict):
+
+            return None
+
+        # =============================================
+        # ONLY ALLOW EXPLICITLY APPROVED FIELDS
+        # =============================================
+
+        allowed_data = {
+
+            key: value
+
+            for key, value in data.items()
+
+            if (
+                isinstance(key, str)
+                and key in self.GEMINI_ALLOWED_FIELDS
+            )
+
+        }
+
+        # =============================================
+        # AVAILABILITY VALIDATION
+        # =============================================
+
+        available = allowed_data.get(
+            "available"
+        )
+
+        if not isinstance(available, bool):
+
+            return None
+
+        # =============================================
+        # STATUS CONSISTENCY VALIDATION
+        # =============================================
+
+        incoming_status = allowed_data.get(
+            "status"
+        )
+
+        if incoming_status not in self.GEMINI_ALLOWED_STATUSES:
+
+            return None
+
+        expected_status = (
+            "success"
+            if available is True
+            else "unavailable"
+        )
+
+        if incoming_status != expected_status:
+
+            return None
+
+        # =============================================
+        # COMMON RESPONSE METADATA
+        # =============================================
+
+        version = allowed_data.get(
+            "version",
+            "unknown",
+        )
+
+        model = allowed_data.get(
+            "model",
+            "unknown",
+        )
+
+        if not isinstance(version, str):
+            version = "unknown"
+
+        if not isinstance(model, str):
+            model = "unknown"
+
+        version = version.strip()[:100] or "unknown"
+
+        model = model.strip()[:150] or "unknown"
+
+        # =============================================
+        # UNAVAILABLE RESPONSE
+        # =============================================
+
+        if available is False:
+
+            reason = allowed_data.get(
+                "reason",
+                "Gemini advisory analysis is unavailable.",
+            )
+
+            if not isinstance(reason, str):
+
+                reason = (
+                    "Gemini advisory analysis is unavailable."
+                )
+
+            reason = (
+                reason.strip()[:500]
+                or "Gemini advisory analysis is unavailable."
+            )
+
+            return {
+
+                "available": False,
+
+                "status": "unavailable",
+
+                "version": version,
+
+                "model": model,
+
+                "advisory_only": True,
+
+                "reason": reason,
+
+                "scam_intent": "",
+
+                "social_engineering_tactics": [],
+
+                "contextual_indicators": [],
+
+                "explanation": "",
+
+                "supporting_evidence": [],
+
+                "alternative_interpretations": [],
+
+                "advisory_confidence": "low",
+
+                "safety_notes": [],
+
+            }
+
+        # =============================================
+        # SUCCESS RESPONSE VALIDATION
+        # =============================================
+
+        required_fields = {
+
+            "scam_intent",
+
+            "social_engineering_tactics",
+
+            "contextual_indicators",
+
+            "explanation",
+
+            "supporting_evidence",
+
+            "alternative_interpretations",
+
+            "advisory_confidence",
+
+            "safety_notes",
+
+        }
+
+        if not required_fields.issubset(
+            allowed_data.keys()
+        ):
+
+            return None
+
+        # =============================================
+        # STRING FIELD VALIDATION
+        # =============================================
+
+        normalized_strings = {}
+
+        for field, max_length in self.GEMINI_STRING_LIMITS.items():
+
+            if field not in allowed_data:
+                continue
+
+            value = allowed_data[field]
+
+            if not isinstance(value, str):
+
+                return None
+
+            normalized_strings[field] = (
+                value.strip()[:max_length]
+            )
+
+        # =============================================
+        # LIST FIELD VALIDATION
+        # =============================================
+
+        normalized_lists = {}
+
+        for field, max_items in self.GEMINI_LIST_LIMITS.items():
+
+            if field not in allowed_data:
+                continue
+
+            value = allowed_data[field]
+
+            if not isinstance(value, list):
+
+                return None
+
+            if not all(
+                isinstance(item, str)
+                for item in value
+            ):
+
+                return None
+
+            normalized_lists[field] = [
+
+                item.strip()[
+                    :self.GEMINI_LIST_ITEM_MAX_LENGTH
+                ]
+
+                for item in value[:max_items]
+
+                if item.strip()
+
+            ]
+
+        # =============================================
+        # CONFIDENCE VALIDATION
+        # =============================================
+
+        confidence = allowed_data.get(
+            "advisory_confidence"
+        )
+
+        if not isinstance(confidence, str):
+
+            return None
+
+        confidence = confidence.strip().lower()
+
+        if confidence not in self.GEMINI_ALLOWED_CONFIDENCE:
+
+            return None
+
+        # =============================================
+        # FINAL STRICT RESPONSE
+        # =============================================
+
+        return {
+
+            "available": True,
+
+            "status": "success",
+
+            "version": version,
+
+            "model": model,
+
+            # Gemini cannot control this value.
+            "advisory_only": True,
+
+            "scam_intent": normalized_strings.get(
+                "scam_intent",
+                "",
+            ),
+
+            "social_engineering_tactics": normalized_lists.get(
+                "social_engineering_tactics",
+                [],
+            ),
+
+            "contextual_indicators": normalized_lists.get(
+                "contextual_indicators",
+                [],
+            ),
+
+            "explanation": normalized_strings.get(
+                "explanation",
+                "",
+            ),
+
+            "supporting_evidence": normalized_lists.get(
+                "supporting_evidence",
+                [],
+            ),
+
+            "alternative_interpretations": normalized_lists.get(
+                "alternative_interpretations",
+                [],
+            ),
+
+            "advisory_confidence": confidence,
+
+            "safety_notes": normalized_lists.get(
+                "safety_notes",
+                [],
+            ),
+
+        }
 
     # =================================================
     # ORCHESTRATION STATUS
@@ -585,55 +919,126 @@ class AIPipeline:
 
     @staticmethod
     def _filter_safe_metadata(metadata):
+        """
+        Recursively filter sensitive metadata.
+
+        Only safe primitive values and nested containers
+        are retained.
+
+        Unsupported objects, non-finite numbers,
+        and excessive nesting are rejected.
+        """
 
         if not isinstance(metadata, dict):
             return {}
 
         sensitive_keys = {
-
             "evidence",
             "message",
             "password",
             "otp",
             "token",
             "authorization",
-            "bank_details",
-            "phone_number",
+            "bankdetails",
+            "phonenumber",
             "email",
-            "account_number",
-            "card_number",
-            "upi_id",
+            "accountnumber",
+            "cardnumber",
+            "upiid",
             "cvv",
             "pin",
             "secret",
-
         }
 
-        safe_context = {}
+        def sanitize(value, depth=0):
 
-        for key, value in metadata.items():
+            if depth > AIPipeline.MAX_METADATA_DEPTH:
+                return None
 
-            if not isinstance(key, str):
-                continue
+            # =========================================
+            # NESTED DICTIONARIES
+            # =========================================
 
-            normalized_key = key.strip().lower()
+            if isinstance(value, dict):
 
-            if normalized_key in sensitive_keys:
-                continue
+                safe_data = {}
 
-            if isinstance(
-                value,
-                (str, int, float, bool, type(None)),
-            ):
+                for key, item in value.items():
 
-                if isinstance(value, float):
-
-                    if not math.isfinite(value):
+                    if not isinstance(key, str):
                         continue
 
-                safe_context[key] = value
+                    normalized_key = re.sub(
+                        r"[_\-\s]",
+                        "",
+                        key.strip().lower(),
+                    )
 
-        return safe_context
+                    if any(
+                        sensitive in normalized_key
+                        for sensitive in sensitive_keys
+                    ):
+                        continue
+
+                    sanitized_value = sanitize(
+                        item,
+                        depth + 1,
+                    )
+
+                    if sanitized_value is not None:
+
+                        safe_data[key] = sanitized_value
+
+                return safe_data
+
+            # =========================================
+            # NESTED LISTS
+            # =========================================
+
+            if isinstance(value, list):
+
+                safe_list = []
+
+                for item in value:
+
+                    sanitized = sanitize(
+                        item,
+                        depth + 1,
+                    )
+
+                    if sanitized is not None:
+
+                        safe_list.append(sanitized)
+
+                return safe_list
+
+            # =========================================
+            # FLOAT VALIDATION
+            # =========================================
+
+            if isinstance(value, float):
+
+                return (
+                    value
+                    if math.isfinite(value)
+                    else None
+                )
+
+            # =========================================
+            # SAFE PRIMITIVE VALUES
+            # =========================================
+
+            if isinstance(value, (str, int, bool)):
+
+                return value
+
+            # =========================================
+            # REJECT NONE AND UNSUPPORTED OBJECTS
+            # =========================================
+
+            return None
+
+        return sanitize(metadata)
 
     # =================================================
     # AGENT EXECUTION SUMMARY

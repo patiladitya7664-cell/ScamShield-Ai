@@ -1,509 +1,802 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Security Reports | ScamShield AI</title>
+  <meta name="theme-color" content="#080e1c" />
 
-    <meta
-      name="description"
-      content="View fraud detection reports, investigation records and security analysis from ScamShield AI."
-    />
+  <meta
+    name="description"
+    content="View fraud detection reports, investigation records and security analysis from ScamShield AI."
+  />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <title>Security Reports | ScamShield AI</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
-    <!-- Shared CSS -->
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
 
-    <!-- Reports CSS -->
-    <link rel="stylesheet" href="../css/reports.css" />
-  </head>
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
 
-  <body>
-    <!-- Background Effects -->
-    <div class="background-glow glow-one"></div>
-    <div class="background-glow glow-two"></div>
+  <!-- Reports CSS -->
+  <link rel="stylesheet" href="../css/reports.css" />
+</head>
 
-    <!-- ======================================================
-     NAVBAR
-     Authenticated navigation: Dashboard is the main page.
-======================================================= -->
+<body>
 
-    <header class="navbar">
-      <div class="container nav-content">
-        <!-- LOGO: Redirects to Dashboard -->
-        <a href="dashboard.html" class="logo">
-          <span class="logo-icon">
-            <i class="fa-solid fa-shield-halved"></i>
-          </span>
+  <a href="#main-content" class="skip-link">
+    Skip to main content
+  </a>
 
-          <span class="logo-text"> ScamShield <span>AI</span> </span>
+  <!-- Background Effects -->
+  <div class="background-glow glow-one" aria-hidden="true"></div>
+  <div class="background-glow glow-two" aria-hidden="true"></div>
+
+
+  <!-- ================= NAVBAR ================= -->
+
+  <header class="navbar">
+
+    <div class="container nav-content">
+
+      <a
+        href="dashboard.html"
+        class="logo"
+        aria-label="ScamShield AI dashboard"
+      >
+        <span class="logo-icon" aria-hidden="true">
+          <i class="fa-solid fa-shield-halved"></i>
+        </span>
+
+        <span class="logo-text">
+          ScamShield <span>AI</span>
+        </span>
+      </a>
+
+
+      <nav
+        class="nav-links"
+        id="navLinks"
+        aria-label="Main navigation"
+      >
+        <a href="dashboard.html">Dashboard</a>
+        <a href="detection.html">Detection</a>
+        <a href="agents.html">AI Agents</a>
+        <a href="intelligence.html">Intelligence</a>
+        <a href="analytics.html">Analytics</a>
+
+        <a
+          href="reports.html"
+          class="active"
+          aria-current="page"
+        >
+          Reports
+        </a>
+      </nav>
+
+
+      <div class="nav-actions">
+
+        <a href="settings.html" class="btn btn-secondary">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+          Settings
         </a>
 
-        <!-- MAIN NAVIGATION -->
-        <nav class="nav-links" id="navLinks">
-          <a href="dashboard.html">Dashboard</a>
-          <a href="detection.html">Detection</a>
-          <a href="agents.html">AI Agents</a>
-          <a href="intelligence.html">Intelligence</a>
-          <a href="analytics.html">Analytics</a>
-          <a href="reports.html" class="active">Reports</a>
-        </nav>
-
-        <!-- NAVIGATION ACTIONS -->
-        <div class="nav-actions">
-          <a href="settings.html" class="btn btn-secondary">
-            <i class="fa-solid fa-gear"></i>
-            Settings
-          </a>
-        </div>
-
-        <!-- MOBILE MENU -->
-        <button
-          class="menu-toggle"
-          id="menuToggle"
-          aria-label="Toggle navigation"
-          aria-expanded="false"
-        >
-          <i class="fa-solid fa-bars"></i>
-        </button>
       </div>
-    </header>
 
-    <main class="reports-page">
-      <!-- =================================================
-             PAGE HEADER
-        ================================================== -->
 
-      <section class="reports-hero">
-        <div class="container">
-          <div class="reports-heading">
-            <div>
-              <div class="section-tag">
-                <i class="fa-solid fa-file-shield"></i>
-                SECURITY DOCUMENTATION
-              </div>
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
 
-              <h1>Investigation <span>Reports</span></h1>
+    </div>
 
-              <p>
-                Access your fraud analysis records, review risk assessments and
-                monitor investigation progress from one centralized workspace.
-              </p>
+  </header>
+
+
+  <!-- ================= MAIN CONTENT ================= -->
+
+  <main class="reports-page" id="main-content">
+
+
+    <!-- ================= PAGE HEADER ================= -->
+
+    <section class="reports-hero">
+
+      <div class="container">
+
+        <div class="reports-heading">
+
+          <div>
+
+            <div class="section-tag">
+              <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
+              SECURITY DOCUMENTATION
             </div>
 
-            <div class="reports-header-actions">
-              <div class="reports-record-status">
-                <span class="record-status-dot"></span>
-                Report Records
-              </div>
+            <h1>
+              Investigation <span>Reports</span>
+            </h1>
 
-              <button
-                class="reports-refresh-btn"
-                id="refreshReports"
-                type="button"
-              >
-                <i class="fa-solid fa-rotate"></i>
-                Refresh
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+            <p>
+              Access your fraud analysis records, review risk assessments
+              and monitor investigation progress from one centralized workspace.
+            </p>
 
-      <!-- =================================================
-             MAIN CONTENT
-        ================================================== -->
-
-      <section class="reports-content">
-        <div class="container">
-          <!-- API Status -->
-          <div class="reports-notice" id="reportsNotice">
-            <div class="reports-notice-icon">
-              <i class="fa-solid fa-circle-info"></i>
-            </div>
-
-            <div>
-              <strong>Report service status</strong>
-
-              <p id="reportsStatusMessage">
-                Waiting for report records from the backend.
-              </p>
-            </div>
           </div>
 
-          <!-- =================================================
-                     REPORT STATISTICS
-                ================================================== -->
 
-          <div class="reports-section-heading">
-            <div>
-              <h2>Report Overview</h2>
+          <div class="reports-header-actions">
 
-              <p>Summary of available investigation records.</p>
-            </div>
-          </div>
-
-          <div class="reports-stats-grid">
-            <article class="report-stat-card">
-              <div class="report-stat-top">
-                <span class="report-stat-icon blue">
-                  <i class="fa-solid fa-file-lines"></i>
-                </span>
-
-                <span>Total Reports</span>
-              </div>
-
-              <h3 id="totalReports">--</h3>
-
-              <p>All recorded analyses</p>
-            </article>
-
-            <article class="report-stat-card">
-              <div class="report-stat-top">
-                <span class="report-stat-icon red">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                </span>
-
-                <span>High Risk</span>
-              </div>
-
-              <h3 id="highRiskReports">--</h3>
-
-              <p>High-risk assessments</p>
-            </article>
-
-            <article class="report-stat-card">
-              <div class="report-stat-top">
-                <span class="report-stat-icon orange">
-                  <i class="fa-solid fa-hourglass-half"></i>
-                </span>
-
-                <span>Under Review</span>
-              </div>
-
-              <h3 id="reviewReports">--</h3>
-
-              <p>Records requiring review</p>
-            </article>
-
-            <article class="report-stat-card">
-              <div class="report-stat-top">
-                <span class="report-stat-icon green">
-                  <i class="fa-solid fa-circle-check"></i>
-                </span>
-
-                <span>Completed</span>
-              </div>
-
-              <h3 id="completedReports">--</h3>
-
-              <p>Completed assessments</p>
-            </article>
-          </div>
-
-          <!-- =================================================
-                     REPORT FILTERS
-                ================================================== -->
-
-          <div class="reports-section-heading">
-            <div>
-              <h2>All Reports</h2>
-
-              <p>Search and filter your security analysis records.</p>
-            </div>
-          </div>
-
-          <div class="reports-filter-panel">
-            <div class="reports-search-box">
-              <i class="fa-solid fa-magnifying-glass"></i>
-
-              <input
-                type="search"
-                id="reportSearch"
-                placeholder="Search by report ID or category..."
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="reports-filter-controls">
-              <div class="report-filter-group">
-                <label for="riskFilter"> Risk Level </label>
-
-                <select id="riskFilter">
-                  <option value="all">All Risk Levels</option>
-
-                  <option value="low">Low</option>
-
-                  <option value="medium">Medium</option>
-
-                  <option value="high">High</option>
-
-                  <option value="critical">Critical</option>
-                </select>
-              </div>
-
-              <div class="report-filter-group">
-                <label for="categoryFilter"> Fraud Category </label>
-
-                <select id="categoryFilter">
-                  <option value="all">All Categories</option>
-
-                  <option value="investment">Investment Scam</option>
-
-                  <option value="digital-arrest">Digital Arrest</option>
-
-                  <option value="credit-card">Credit Card Fraud</option>
-
-                  <option value="sextortion">Sextortion</option>
-
-                  <option value="ecommerce">E-commerce Fraud</option>
-                </select>
-              </div>
-
-              <div class="report-filter-group">
-                <label for="dateFilter"> Date Range </label>
-
-                <select id="dateFilter">
-                  <option value="all">All Time</option>
-
-                  <option value="today">Today</option>
-
-                  <option value="7days">Last 7 Days</option>
-
-                  <option value="30days">Last 30 Days</option>
-                </select>
-              </div>
+            <div class="reports-record-status">
+              <span class="record-status-dot" aria-hidden="true"></span>
+              Report Records
             </div>
 
             <button
-              class="reports-clear-btn"
-              id="clearReportFilters"
+              class="reports-refresh-btn"
+              id="refreshReports"
               type="button"
             >
-              <i class="fa-solid fa-filter-circle-xmark"></i>
-              Clear Filters
+              <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+              Refresh
             </button>
+
           </div>
 
-          <!-- =================================================
-                     REPORT TABLE
-                ================================================== -->
+        </div>
 
-          <article class="reports-table-panel">
-            <div class="reports-table-header">
-              <div>
-                <h3>Analysis Records</h3>
+      </div>
 
-                <p id="reportResultCount">Waiting for report records...</p>
-              </div>
+    </section>
 
-              <button
-                class="reports-export-btn"
-                id="exportReports"
-                type="button"
-                disabled
-              >
-                <i class="fa-solid fa-download"></i>
-                Export Reports
-              </button>
+
+    <!-- ================= REPORT CONTENT ================= -->
+
+    <section class="reports-content">
+
+      <div class="container">
+
+
+        <!-- ================= API STATUS ================= -->
+
+        <div
+          class="reports-notice"
+          id="reportsNotice"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+
+          <div class="reports-notice-icon">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          </div>
+
+          <div>
+
+            <strong>Report service status</strong>
+
+            <p id="reportsStatusMessage">
+              Waiting for report records from the backend.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- ================= REPORT STATISTICS ================= -->
+
+        <div class="reports-section-heading">
+
+          <div>
+            <h2>Report Overview</h2>
+
+            <p>
+              Summary of available investigation records.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="reports-stats-grid">
+
+
+          <!-- Total Reports -->
+
+          <article class="report-stat-card">
+
+            <div class="report-stat-top">
+
+              <span class="report-stat-icon blue" aria-hidden="true">
+                <i class="fa-solid fa-file-lines"></i>
+              </span>
+
+              <span>Total Reports</span>
+
             </div>
 
-            <div class="reports-table-wrapper">
-              <table class="reports-table">
-                <thead>
-                  <tr>
-                    <th>Report ID</th>
+            <h3 id="totalReports">--</h3>
 
-                    <th>Evidence Type</th>
+            <p>All recorded analyses</p>
 
-                    <th>Fraud Category</th>
-
-                    <th>Risk Score</th>
-
-                    <th>Risk Level</th>
-
-                    <th>Status</th>
-
-                    <th>Date</th>
-
-                    <th>Action</th>
-                  </tr>
-                </thead>
-
-                <tbody id="reportsTableBody">
-                  <tr>
-                    <td colspan="8">
-                      <div class="reports-empty-state">
-                        <i class="fa-solid fa-folder-open"></i>
-
-                        <h4>No reports available</h4>
-
-                        <p>
-                          Your investigation records will appear here when
-                          available.
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Pagination -->
-
-            <div class="reports-pagination" id="reportsPagination">
-              <span id="paginationInfo"> No records </span>
-
-              <div class="pagination-controls">
-                <button
-                  id="previousPage"
-                  type="button"
-                  disabled
-                  aria-label="Previous page"
-                >
-                  <i class="fa-solid fa-chevron-left"></i>
-                </button>
-
-                <span id="currentPage">1</span>
-
-                <button
-                  id="nextPage"
-                  type="button"
-                  disabled
-                  aria-label="Next page"
-                >
-                  <i class="fa-solid fa-chevron-right"></i>
-                </button>
-              </div>
-            </div>
           </article>
 
-          <!-- =================================================
-                     REPORT DETAILS MODAL
-                ================================================== -->
 
-          <div class="report-modal" id="reportDetailsModal" aria-hidden="true">
-            <div class="report-modal-overlay" id="closeModalOverlay"></div>
+          <!-- High Risk -->
 
-            <div
-              class="report-modal-content"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="reportModalTitle"
-            >
-              <div class="report-modal-header">
-                <div>
-                  <span class="modal-eyebrow"> SECURITY INVESTIGATION </span>
+          <article class="report-stat-card">
 
-                  <h2 id="reportModalTitle">Report Details</h2>
-                </div>
+            <div class="report-stat-top">
 
-                <button
-                  type="button"
-                  class="report-modal-close"
-                  id="closeReportModal"
-                  aria-label="Close report details"
-                >
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
-              </div>
+              <span class="report-stat-icon red" aria-hidden="true">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </span>
 
-              <div class="report-modal-body" id="reportDetailsContent">
-                <div class="report-modal-empty">
-                  <i class="fa-solid fa-file-shield"></i>
+              <span>High Risk</span>
 
-                  <p>Select a report to view its details.</p>
-                </div>
-              </div>
-
-              <div class="report-modal-footer">
-                <button
-                  type="button"
-                  class="report-modal-secondary"
-                  id="closeReportDetails"
-                >
-                  Close
-                </button>
-
-                <button
-                  type="button"
-                  class="report-modal-primary"
-                  id="downloadSingleReport"
-                  disabled
-                >
-                  <i class="fa-solid fa-download"></i>
-                  Print / Save as PDF
-                </button>
-              </div>
             </div>
+
+            <h3 id="highRiskReports">--</h3>
+
+            <p>High-risk assessments</p>
+
+          </article>
+
+
+          <!-- Under Review -->
+
+          <article class="report-stat-card">
+
+            <div class="report-stat-top">
+
+              <span class="report-stat-icon orange" aria-hidden="true">
+                <i class="fa-solid fa-hourglass-half"></i>
+              </span>
+
+              <span>Under Review</span>
+
+            </div>
+
+            <h3 id="reviewReports">--</h3>
+
+            <p>Records requiring review</p>
+
+          </article>
+
+
+          <!-- Completed -->
+
+          <article class="report-stat-card">
+
+            <div class="report-stat-top">
+
+              <span class="report-stat-icon green" aria-hidden="true">
+                <i class="fa-solid fa-circle-check"></i>
+              </span>
+
+              <span>Completed</span>
+
+            </div>
+
+            <h3 id="completedReports">--</h3>
+
+            <p>Completed assessments</p>
+
+          </article>
+
+        </div>
+
+
+        <!-- ================= REPORT FILTERS ================= -->
+
+        <div class="reports-section-heading">
+
+          <div>
+            <h2>All Reports</h2>
+
+            <p>
+              Search and filter your security analysis records.
+            </p>
           </div>
 
-          <!-- =================================================
-                     SECURITY INFORMATION
-                ================================================== -->
+        </div>
 
-          <div class="reports-security-note">
-            <div class="security-note-icon">
-              <i class="fa-solid fa-shield-halved"></i>
+
+        <div class="reports-filter-panel">
+
+
+          <!-- Search -->
+
+          <div class="reports-search-box">
+
+            <i
+              class="fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+
+            <input
+              type="search"
+              id="reportSearch"
+              placeholder="Search by report ID or category..."
+              autocomplete="off"
+              maxlength="120"
+              aria-label="Search reports by ID or category"
+            />
+
+          </div>
+
+
+          <!-- Filter Controls -->
+
+          <div class="reports-filter-controls">
+
+
+            <!-- Risk Filter -->
+
+            <div class="report-filter-group">
+
+              <label for="riskFilter">
+                Risk Level
+              </label>
+
+              <select id="riskFilter">
+
+                <option value="all">All Risk Levels</option>
+
+                <option value="low">Low</option>
+
+                <option value="medium">Medium</option>
+
+                <option value="high">High</option>
+
+                <option value="critical">Critical</option>
+
+              </select>
+
             </div>
+
+
+            <!-- Category Filter -->
+
+            <div class="report-filter-group">
+
+              <label for="categoryFilter">
+                Fraud Category
+              </label>
+
+              <select id="categoryFilter">
+
+                <option value="all">All Categories</option>
+
+                <optgroup label="Five Major Detection Modules">
+
+                  <option value="investment_scam">
+                    Investment Scam
+                  </option>
+
+                  <option value="digital_arrest">
+                    Digital Arrest
+                  </option>
+
+                  <option value="card_fraud">
+                    Credit Card Fraud
+                  </option>
+
+                  <option value="sextortion_blackmail">
+                    Sextortion
+                  </option>
+
+                  <option value="ecommerce_scam">
+                    E-commerce Fraud
+                  </option>
+
+                </optgroup>
+
+                <optgroup label="Additional Fraud Categories">
+
+                  <option value="fraud_message">
+                    Fraud Message
+                  </option>
+
+                  <option value="fraud_call">
+                    Fraud Call
+                  </option>
+
+                  <option value="url_phishing">
+                    URL Phishing
+                  </option>
+
+                  <option value="email_scam">
+                    Email Scam
+                  </option>
+
+                  <option value="upi_banking_fraud">
+                    UPI / Banking Fraud
+                  </option>
+
+                  <option value="job_loan_scam">
+                    Job / Loan Scam
+                  </option>
+
+                  <option value="social_media_scam">
+                    Social Media Scam
+                  </option>
+
+                </optgroup>
+
+              </select>
+
+            </div>
+
+
+            <!-- Date Filter -->
+
+            <div class="report-filter-group">
+
+              <label for="dateFilter">
+                Date Range
+              </label>
+
+              <select id="dateFilter">
+
+                <option value="all">All Time</option>
+
+                <option value="today">Today</option>
+
+                <option value="7days">Last 7 Days</option>
+
+                <option value="30days">Last 30 Days</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <!-- Clear Filters -->
+
+          <button
+            class="reports-clear-btn"
+            id="clearReportFilters"
+            type="button"
+          >
+            <i
+              class="fa-solid fa-filter-circle-xmark"
+              aria-hidden="true"
+            ></i>
+
+            Clear Filters
+          </button>
+
+        </div>
+
+
+        <!-- ================= REPORT TABLE ================= -->
+
+        <article class="reports-table-panel">
+
+
+          <div class="reports-table-header">
 
             <div>
-              <h4>Report Security & Privacy</h4>
 
-              <p>
-                Investigation reports may contain sensitive evidence and
-                security-related information. Never share OTPs, PINs, passwords,
-                CVVs or complete card credentials. Risk assessments are
-                indicators for further investigation, not definitive proof of
-                fraud.
+              <h3>Analysis Records</h3>
+
+              <p id="reportResultCount" aria-live="polite">
+                Waiting for report records...
               </p>
+
             </div>
+
+
+            <button
+              class="reports-export-btn"
+              id="exportReports"
+              type="button"
+              disabled
+            >
+              <i class="fa-solid fa-download" aria-hidden="true"></i>
+              Export Reports
+            </button>
+
           </div>
-        </div>
-      </section>
-    </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-bottom">
-          <p>
-            © <span id="currentYear"></span>
-            ScamShield AI. All rights reserved.
-          </p>
 
-          <p>Intelligent Fraud Detection & Victim Protection</p>
+          <!-- Table -->
+
+          <div class="reports-table-wrapper">
+
+            <table class="reports-table">
+
+              <caption class="sr-only">
+                ScamShield AI investigation and fraud analysis records.
+              </caption>
+
+              <thead>
+
+                <tr>
+                  <th scope="col">Report ID</th>
+                  <th scope="col">Evidence Type</th>
+                  <th scope="col">Fraud Category</th>
+                  <th scope="col">Risk Score</th>
+                  <th scope="col">Risk Level</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Action</th>
+                </tr>
+
+              </thead>
+
+
+              <tbody id="reportsTableBody">
+
+                <tr>
+
+                  <td colspan="8">
+
+                    <div class="reports-empty-state">
+
+                      <i
+                        class="fa-solid fa-hourglass-half"
+                        aria-hidden="true"
+                      ></i>
+
+                      <h4>Loading report records</h4>
+
+                      <p>
+                        Your investigation records will appear here
+                        after the backend responds.
+                      </p>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+          <!-- Pagination -->
+
+          <div class="reports-pagination" id="reportsPagination">
+
+            <span id="paginationInfo">
+              Waiting for records
+            </span>
+
+            <div class="pagination-controls">
+
+              <button
+                id="previousPage"
+                type="button"
+                disabled
+                aria-label="Previous page"
+              >
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+              </button>
+
+              <span id="currentPage" aria-live="polite">
+                1
+              </span>
+
+              <button
+                id="nextPage"
+                type="button"
+                disabled
+                aria-label="Next page"
+              >
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- ================= REPORT DETAILS MODAL ================= -->
+
+        <div
+          class="report-modal"
+          id="reportDetailsModal"
+          aria-hidden="true"
+        >
+
+          <div
+            class="report-modal-overlay"
+            id="closeModalOverlay"
+          ></div>
+
+
+          <div
+            class="report-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reportModalTitle"
+            aria-describedby="reportDetailsContent"
+            tabindex="-1"
+          >
+
+            <div class="report-modal-header">
+
+              <div>
+
+                <span class="modal-eyebrow">
+                  SECURITY INVESTIGATION
+                </span>
+
+                <h2 id="reportModalTitle">
+                  Report Details
+                </h2>
+
+              </div>
+
+
+              <button
+                type="button"
+                class="report-modal-close"
+                id="closeReportModal"
+                aria-label="Close report details"
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+
+            </div>
+
+
+            <div
+              class="report-modal-body"
+              id="reportDetailsContent"
+            >
+
+              <div class="report-modal-empty">
+
+                <i
+                  class="fa-solid fa-file-shield"
+                  aria-hidden="true"
+                ></i>
+
+                <p>
+                  Select a report to view its details.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="report-modal-footer">
+
+              <button
+                type="button"
+                class="report-modal-secondary"
+                id="closeReportDetails"
+              >
+                Close
+              </button>
+
+
+              <button
+                type="button"
+                class="report-modal-primary"
+                id="downloadSingleReport"
+                disabled
+              >
+                <i class="fa-solid fa-download" aria-hidden="true"></i>
+                Print / Save as PDF
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
+
+
+        <!-- ================= SECURITY INFORMATION ================= -->
+
+        <div class="reports-security-note">
+
+          <div class="security-note-icon">
+            <i
+              class="fa-solid fa-shield-halved"
+              aria-hidden="true"
+            ></i>
+          </div>
+
+          <div>
+
+            <h4>Report Security & Privacy</h4>
+
+            <p>
+              Investigation reports may contain sensitive evidence and
+              security-related information. Never share OTPs, PINs,
+              passwords, CVVs or complete card credentials.
+              Risk assessments are indicators for further investigation,
+              not definitive proof of fraud.
+            </p>
+
+          </div>
+
+        </div>
+
       </div>
-    </footer>
 
-    <!-- Core Dependencies -->
-    <script src="../js/services/api.js" defer></script>
-    <script src="../js/utils/helpers.js" defer></script>
+    </section>
 
-    <!-- UI Components -->
-    <script src="../js/components/sidebar.js" defer></script>
-    <script src="../js/components/navigation.js" defer></script>
-    <script src="../js/components/notifications.js" defer></script>
+  </main>
 
-    <!-- Main & Reports -->
-    <script src="../js/main.js" defer></script>
-    <script src="../js/reports.js" defer></script>
-  </body>
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer class="footer">
+
+    <div class="container">
+
+      <div class="footer-bottom">
+
+        <p>
+          © <span id="currentYear"></span>
+          ScamShield AI. All rights reserved.
+        </p>
+
+        <p>
+          Intelligent Fraud Detection & Victim Protection
+        </p>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- ================= JAVASCRIPT ================= -->
+
+  <!-- Core Dependencies -->
+  <script src="../js/services/api.js" defer></script>
+  <script src="../js/utils/helpers.js" defer></script>
+
+  <!-- UI Components -->
+  <script src="../js/components/sidebar.js" defer></script>
+  <script src="../js/components/navigation.js" defer></script>
+  <script src="../js/components/notifications.js" defer></script>
+
+  <!-- Main Application -->
+  <script src="../js/main.js" defer></script>
+
+  <!-- Reports Module -->
+  <script src="../js/reports.js" defer></script>
+
+</body>
 </html>

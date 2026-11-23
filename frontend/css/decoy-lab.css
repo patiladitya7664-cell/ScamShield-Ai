@@ -1,7 +1,9 @@
 
 /* =========================================================
    SCAMSHIELD AI - DECOY LAB
+   Version: 2.0.0
    Accessible | Elderly-Friendly | Fully Responsive
+   Five Major Fraud Modules | Controlled Simulation UI
 ========================================================= */
 
 .decoy-page {
@@ -14,6 +16,8 @@
   --decoy-green: #22c55e;
   --decoy-green-light: #4ade80;
   --decoy-blue: #3b82f6;
+  --decoy-warning: #fbbf24;
+  --decoy-danger: #f87171;
 
   width: 100%;
   min-width: 0;
@@ -65,11 +69,16 @@
   display: none !important;
 }
 
+.decoy-page button,
+.decoy-page a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* =========================================================
    SKIP LINK
 ========================================================= */
 
-.skip-link {
+.decoy-page .skip-link {
   position: absolute;
   z-index: 9999;
   top: 10px;
@@ -80,10 +89,11 @@
   color: #052e16;
   font-size: 1rem;
   font-weight: 700;
+  text-decoration: none;
   transform: translateY(-150%);
 }
 
-.skip-link:focus {
+.decoy-page .skip-link:focus {
   transform: translateY(0);
 }
 
@@ -97,13 +107,21 @@
   padding: 75px 0 65px;
   border-bottom: 1px solid var(--decoy-border);
   background:
-    radial-gradient(circle at 85% 40%, rgba(34,197,94,.09), transparent 30%),
-    radial-gradient(circle at 10% 20%, rgba(59,130,246,.08), transparent 35%);
+    radial-gradient(
+      circle at 85% 40%,
+      rgba(34, 197, 94, 0.09),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(59, 130, 246, 0.08),
+      transparent 35%
+    );
 }
 
 .decoy-hero-content {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   align-items: center;
   gap: 55px;
 }
@@ -121,7 +139,7 @@
   color: #86efac;
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: .7px;
+  letter-spacing: 0.7px;
 }
 
 .decoy-live-dot {
@@ -207,7 +225,7 @@
   border: 1px solid var(--decoy-border);
   border-radius: 19px;
   background: linear-gradient(145deg, #172840, #0d192b);
-  box-shadow: 0 25px 65px rgba(0,0,0,.25);
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.25);
 }
 
 .decoy-visual-header {
@@ -222,7 +240,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--decoy-muted);
-  font-size: .95rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
@@ -238,16 +256,17 @@
   align-items: center;
   gap: 8px;
   padding: 9px 12px;
-  border: 1px solid rgba(34,197,94,.3);
+  border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 30px;
-  background: rgba(34,197,94,.08);
+  background: rgba(34, 197, 94, 0.08);
   color: #86efac;
-  font-size: .95rem;
+  font-size: 0.95rem;
 }
 
 .decoy-status span {
   width: 9px;
   height: 9px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--decoy-green);
 }
@@ -258,9 +277,9 @@
   height: 110px;
   place-items: center;
   margin: 28px auto;
-  border: 1px solid rgba(34,197,94,.25);
+  border: 1px solid rgba(34, 197, 94, 0.25);
   border-radius: 30px;
-  background: rgba(34,197,94,.12);
+  background: rgba(34, 197, 94, 0.12);
   color: var(--decoy-green-light);
   font-size: 3rem;
 }
@@ -321,7 +340,7 @@
   color: var(--decoy-green-light);
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: .8px;
+  letter-spacing: 0.8px;
 }
 
 .decoy-section-heading h2 {
@@ -339,7 +358,7 @@
 }
 
 /* =========================================================
-   SCENARIO CARDS
+   FIVE MAJOR FRAUD MODULE SCENARIOS
 ========================================================= */
 
 .decoy-scenario-grid {
@@ -355,13 +374,19 @@
   padding: 25px;
   border: 1px solid var(--decoy-border);
   border-radius: 15px;
-  background: linear-gradient(145deg, var(--decoy-card-light), var(--decoy-card));
-  transition: border-color .2s ease, transform .2s ease;
+  background: linear-gradient(
+    145deg,
+    var(--decoy-card-light),
+    var(--decoy-card)
+  );
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .decoy-scenario-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(34,197,94,.45);
+  border-color: rgba(34, 197, 94, 0.45);
 }
 
 .scenario-icon {
@@ -375,34 +400,34 @@
 }
 
 .scenario-icon.red {
-  background: rgba(239,68,68,.14);
+  background: rgba(239, 68, 68, 0.14);
   color: #fca5a5;
 }
 
 .scenario-icon.orange {
-  background: rgba(249,115,22,.14);
+  background: rgba(249, 115, 22, 0.14);
   color: #fdba74;
 }
 
 .scenario-icon.blue {
-  background: rgba(59,130,246,.14);
+  background: rgba(59, 130, 246, 0.14);
   color: #93c5fd;
 }
 
 .scenario-icon.purple {
-  background: rgba(167,139,250,.14);
+  background: rgba(167, 139, 250, 0.14);
   color: #c4b5fd;
 }
 
 .scenario-icon.green {
-  background: rgba(34,197,94,.14);
+  background: rgba(34, 197, 94, 0.14);
   color: #86efac;
 }
 
 .scenario-tag {
   margin-bottom: 10px;
   color: var(--decoy-green-light);
-  font-size: .95rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
@@ -430,7 +455,7 @@
   padding: 12px 15px;
   border: 1px solid var(--decoy-border);
   border-radius: 9px;
-  background: rgba(34,197,94,.07);
+  background: rgba(34, 197, 94, 0.07);
   color: #86efac;
   font-size: 1rem;
   font-weight: 700;
@@ -438,17 +463,17 @@
 
 .scenario-select-btn:hover {
   border-color: var(--decoy-green);
-  background: rgba(34,197,94,.14);
+  background: rgba(34, 197, 94, 0.14);
 }
 
 /* =========================================================
-   WORKSPACE
+   SIMULATION WORKSPACE
 ========================================================= */
 
 .decoy-simulation-section {
   border-top: 1px solid var(--decoy-border);
   border-bottom: 1px solid var(--decoy-border);
-  background: rgba(15,23,42,.22);
+  background: rgba(15, 23, 42, 0.22);
 }
 
 .decoy-workspace {
@@ -464,7 +489,7 @@
   min-width: 0;
   padding: 22px 14px;
   border-right: 1px solid var(--decoy-border);
-  background: rgba(8,15,29,.65);
+  background: rgba(8, 15, 29, 0.65);
 }
 
 .workspace-sidebar-heading {
@@ -514,8 +539,8 @@
 
 .workspace-scenario:hover,
 .workspace-scenario.active {
-  border-color: rgba(34,197,94,.25);
-  background: rgba(34,197,94,.1);
+  border-color: rgba(34, 197, 94, 0.25);
+  background: rgba(34, 197, 94, 0.1);
   color: #86efac;
 }
 
@@ -530,14 +555,14 @@
   padding: 13px 10px;
   margin-top: 24px;
   border-radius: 9px;
-  background: rgba(59,130,246,.08);
+  background: rgba(59, 130, 246, 0.08);
   color: #93c5fd;
 }
 
 .workspace-sidebar-note p {
   margin: 0;
   color: var(--decoy-muted);
-  font-size: .95rem;
+  font-size: 0.95rem;
   line-height: 1.7;
 }
 
@@ -590,7 +615,7 @@
   flex-shrink: 0;
   place-items: center;
   border-radius: 50%;
-  background: rgba(148,163,184,.12);
+  background: rgba(148, 163, 184, 0.12);
   color: var(--decoy-muted);
 }
 
@@ -608,7 +633,7 @@
 
 .simulation-message-header span {
   color: var(--decoy-muted);
-  font-size: .95rem;
+  font-size: 0.95rem;
 }
 
 .simulation-message-body {
@@ -617,7 +642,7 @@
 
 .message-time {
   color: #b6c4d5;
-  font-size: .95rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
@@ -634,16 +659,16 @@
   align-items: center;
   gap: 9px;
   padding: 10px 13px;
-  border: 1px solid rgba(245,158,11,.3);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 7px;
-  background: rgba(245,158,11,.08);
+  background: rgba(245, 158, 11, 0.08);
   color: #fcd34d;
-  font-size: .95rem;
+  font-size: 0.95rem;
   line-height: 1.5;
 }
 
 /* =========================================================
-   ANALYSIS OPTIONS
+   LEARNING EXERCISE OPTIONS
 ========================================================= */
 
 .simulation-analysis {
@@ -691,15 +716,17 @@
   padding: 16px;
   border: 1px solid var(--decoy-border);
   border-radius: 10px;
-  background: rgba(8,15,29,.5);
+  background: rgba(8, 15, 29, 0.5);
   cursor: pointer;
-  transition: border-color .2s ease, background .2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .simulation-option:hover,
 .simulation-option.selected {
-  border-color: rgba(34,197,94,.5);
-  background: rgba(34,197,94,.07);
+  border-color: rgba(34, 197, 94, 0.5);
+  background: rgba(34, 197, 94, 0.07);
 }
 
 .simulation-option input {
@@ -726,29 +753,23 @@
 
 .simulation-option small {
   color: var(--decoy-muted);
-  font-size: .95rem;
+  font-size: 0.95rem;
   line-height: 1.6;
 }
 
-/* Correctly identified */
-
 .simulation-option.correct {
-  border: 2px solid #22c55e;
-  background: rgba(34,197,94,.13);
+  border: 2px solid var(--decoy-green);
+  background: rgba(34, 197, 94, 0.13);
 }
-
-/* Incorrect selection */
 
 .simulation-option.incorrect {
-  border: 2px solid #f87171;
-  background: rgba(248,113,113,.12);
+  border: 2px solid var(--decoy-danger);
+  background: rgba(248, 113, 113, 0.12);
 }
 
-/* Expected warning sign that was missed */
-
 .simulation-option.missed {
-  border: 2px dashed #fbbf24;
-  background: rgba(251,191,36,.09);
+  border: 2px dashed var(--decoy-warning);
+  background: rgba(251, 191, 36, 0.09);
 }
 
 /* =========================================================
@@ -798,7 +819,7 @@
 }
 
 /* =========================================================
-   RESULTS
+   QUIZ RESULTS
 ========================================================= */
 
 .simulation-result {
@@ -807,9 +828,9 @@
   gap: 15px;
   padding: 20px;
   margin-top: 22px;
-  border: 1px solid rgba(34,197,94,.3);
+  border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 12px;
-  background: rgba(34,197,94,.08);
+  background: rgba(34, 197, 94, 0.08);
 }
 
 .simulation-result[hidden] {
@@ -817,18 +838,18 @@
 }
 
 .simulation-result[data-result="success"] {
-  border-color: #22c55e;
-  background: rgba(34,197,94,.1);
+  border-color: var(--decoy-green);
+  background: rgba(34, 197, 94, 0.1);
 }
 
 .simulation-result[data-result="warning"] {
-  border-color: #fbbf24;
-  background: rgba(251,191,36,.09);
+  border-color: var(--decoy-warning);
+  background: rgba(251, 191, 36, 0.09);
 }
 
 .simulation-result[data-result="danger"] {
-  border-color: #f87171;
-  background: rgba(248,113,113,.1);
+  border-color: var(--decoy-danger);
+  background: rgba(248, 113, 113, 0.1);
 }
 
 .simulation-result-icon {
@@ -838,18 +859,18 @@
   flex-shrink: 0;
   place-items: center;
   border-radius: 11px;
-  background: rgba(34,197,94,.15);
+  background: rgba(34, 197, 94, 0.15);
   color: #4ade80;
   font-size: 1.3rem;
 }
 
 .simulation-result[data-result="warning"] .simulation-result-icon {
-  background: rgba(251,191,36,.14);
+  background: rgba(251, 191, 36, 0.14);
   color: #fcd34d;
 }
 
 .simulation-result[data-result="danger"] .simulation-result-icon {
-  background: rgba(248,113,113,.14);
+  background: rgba(248, 113, 113, 0.14);
   color: #fca5a5;
 }
 
@@ -883,7 +904,7 @@
   gap: 15px;
   margin-top: 15px;
   padding-top: 13px;
-  border-top: 1px solid rgba(34,197,94,.2);
+  border-top: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .simulation-score span {
@@ -898,14 +919,14 @@
 }
 
 /* =========================================================
-   CHAT PANEL
+   CONTROLLED DECOY CHAT PANEL
 ========================================================= */
 
 .decoy-chat-panel {
   min-width: 0;
   padding: 24px;
   margin: 22px 0;
-  border: 1px solid rgba(78,194,231,.3);
+  border: 1px solid rgba(78, 194, 231, 0.3);
   border-radius: 14px;
   background: linear-gradient(145deg, #0c1c2f, #081220);
 }
@@ -955,7 +976,7 @@
   overflow-y: auto;
   padding: 16px;
   margin: 16px 0;
-  border: 1px solid rgba(132,166,198,.25);
+  border: 1px solid rgba(132, 166, 198, 0.25);
   border-radius: 10px;
   background: #071321;
   overscroll-behavior: contain;
@@ -983,21 +1004,21 @@
   display: block;
   margin-bottom: 7px;
   color: #a5dce8;
-  font-size: .9rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: .03em;
+  letter-spacing: 0.03em;
 }
 
 .decoy-chat-message.scammer {
   align-self: flex-start;
-  border: 1px solid rgba(255,177,91,.3);
-  background: rgba(255,177,91,.09);
+  border: 1px solid rgba(255, 177, 91, 0.3);
+  background: rgba(255, 177, 91, 0.09);
 }
 
 .decoy-chat-message.agent {
   align-self: flex-end;
-  border: 1px solid rgba(89,211,184,.3);
-  background: rgba(57,177,151,.12);
+  border: 1px solid rgba(89, 211, 184, 0.3);
+  background: rgba(57, 177, 151, 0.12);
 }
 
 .decoy-chat-controls textarea {
@@ -1005,7 +1026,7 @@
   min-height: 120px;
   resize: vertical;
   padding: 15px;
-  border: 1px solid rgba(132,166,198,.35);
+  border: 1px solid rgba(132, 166, 198, 0.35);
   border-radius: 9px;
   background: #0b1a2b;
   color: #eef6ff;
@@ -1018,7 +1039,7 @@
 }
 
 .decoy-chat-controls textarea:disabled {
-  opacity: .65;
+  opacity: 0.65;
   cursor: not-allowed;
 }
 
@@ -1037,15 +1058,15 @@
 
 .decoy-chat-buttons button:disabled {
   cursor: not-allowed;
-  opacity: .55;
+  opacity: 0.55;
 }
 
 .decoy-extracted {
   padding: 15px;
   margin-top: 16px;
-  border: 1px solid rgba(99,220,168,.3);
+  border: 1px solid rgba(99, 220, 168, 0.3);
   border-radius: 9px;
-  background: rgba(54,169,122,.08);
+  background: rgba(54, 169, 122, 0.08);
   color: #e0f7eb;
   font-size: 1rem;
 }
@@ -1060,17 +1081,17 @@
 .decoy-extracted span {
   max-width: 100%;
   padding: 8px 11px;
-  border: 1px solid rgba(99,220,168,.3);
+  border: 1px solid rgba(99, 220, 168, 0.3);
   border-radius: 6px;
   color: #c7f2db;
-  font-size: .95rem;
+  font-size: 0.95rem;
   overflow-wrap: anywhere;
 }
 
 .decoy-extracted small,
 .decoy-chat-status {
   color: #c1ccda;
-  font-size: .95rem;
+  font-size: 0.95rem;
   line-height: 1.7;
 }
 
@@ -1095,12 +1116,14 @@
   border: 1px solid var(--decoy-border);
   border-radius: 13px;
   background: var(--decoy-card);
-  transition: border-color .2s ease, transform .2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .decoy-learning-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(34,197,94,.35);
+  border-color: rgba(34, 197, 94, 0.35);
 }
 
 .decoy-learning-card > i {
@@ -1110,7 +1133,7 @@
   place-items: center;
   margin-bottom: 17px;
   border-radius: 11px;
-  background: rgba(34,197,94,.12);
+  background: rgba(34, 197, 94, 0.12);
   color: #4ade80;
   font-size: 1.3rem;
 }
@@ -1142,9 +1165,13 @@
   grid-template-columns: 80px minmax(0, 1fr);
   gap: 25px;
   padding: 35px;
-  border: 1px solid rgba(34,197,94,.25);
+  border: 1px solid rgba(34, 197, 94, 0.25);
   border-radius: 17px;
-  background: linear-gradient(120deg, rgba(34,197,94,.07), var(--decoy-card));
+  background: linear-gradient(
+    120deg,
+    rgba(34, 197, 94, 0.07),
+    var(--decoy-card)
+  );
 }
 
 .decoy-safety-icon {
@@ -1152,9 +1179,9 @@
   width: 72px;
   height: 72px;
   place-items: center;
-  border: 1px solid rgba(34,197,94,.25);
+  border: 1px solid rgba(34, 197, 94, 0.25);
   border-radius: 20px;
-  background: rgba(34,197,94,.1);
+  background: rgba(34, 197, 94, 0.1);
   color: #4ade80;
   font-size: 2rem;
 }
@@ -1198,7 +1225,7 @@
 }
 
 /* =========================================================
-   EMERGENCY
+   EMERGENCY SUPPORT
 ========================================================= */
 
 .decoy-emergency {
@@ -1211,10 +1238,14 @@
   justify-content: space-between;
   gap: 25px;
   padding: 32px;
-  border: 1px solid rgba(34,197,94,.25);
+  border: 1px solid rgba(34, 197, 94, 0.25);
   border-radius: 16px;
   background:
-    radial-gradient(circle at 90% 10%, rgba(34,197,94,.1), transparent 35%),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(34, 197, 94, 0.1),
+      transparent 35%
+    ),
     var(--decoy-card);
 }
 
@@ -1486,8 +1517,8 @@
   .decoy-page *::before,
   .decoy-page *::after {
     scroll-behavior: auto !important;
-    animation-duration: .01ms !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -1,801 +1,1947 @@
 <!doctype html>
-
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#080e1c" />
+    <meta name="theme-color" content="#080f1d" />
 
     <meta
-      name="description"
-      content="Explore ScamShield AI's four specialized agents for fraud detection, threat intelligence, victim safety and controlled simulations."
+        name="description"
+        content="Explore ScamShield AI's four specialized agents, five fraud detection modules, twelve fraud categories, universal evidence analysis and responsible AI architecture."
     />
 
     <meta name="robots" content="noindex, nofollow" />
 
     <title>AI Agents | ScamShield AI</title>
 
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
     />
 
-    <!-- Font Awesome -->
+    <!-- Icons -->
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     />
 
-    <!-- Shared CSS -->
+    <!-- Shared Styles -->
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/responsive.css" />
 
-    <!-- Agents CSS -->
+    <!-- Page Styles -->
     <link rel="stylesheet" href="../css/agents.css" />
-  </head>
+</head>
 
-  <body>
-    <a href="#main-content" class="skip-link"> Skip to main content </a>
+<body class="agents-page">
 
-    <!-- Background Effects -->
-    <div class="background-glow glow-one" aria-hidden="true"></div>
-    <div class="background-glow glow-two" aria-hidden="true"></div>
+    <!-- =========================================
+         APPLICATION NAVIGATION
+    ========================================== -->
 
-    <!-- =====================================================
-     NAVIGATION
-====================================================== -->
+    <header class="navbar dashboard-navbar">
+        <div class="container navbar-container">
 
-    <header class="navbar">
-      <div class="container nav-content">
-        <a
-          href="dashboard.html"
-          class="logo"
-          aria-label="ScamShield AI Dashboard"
-        >
-          <span class="logo-icon" aria-hidden="true">
-            <i class="fa-solid fa-shield-halved"></i>
-          </span>
+            <a
+                href="../index.html"
+                class="logo"
+                aria-label="ScamShield AI Home"
+            >
+                <span class="logo-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </span>
 
-          <span class="logo-text"> ScamShield <span>AI</span> </span>
-        </a>
+                <span class="logo-text">
+                    ScamShield<span>AI</span>
+                </span>
+            </a>
 
-        <nav class="nav-links" id="navLinks" aria-label="Main navigation">
-          <a href="dashboard.html">Dashboard</a>
-          <a href="detection.html">Detection</a>
-          <a href="agents.html" class="active" aria-current="page">
-            AI Agents
-          </a>
-          <a href="intelligence.html">Intelligence</a>
-          <a href="analytics.html">Analytics</a>
-          <a href="reports.html">Reports</a>
-        </nav>
+            <button
+                class="mobile-menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="navLinks"
+            >
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
-        <div class="nav-actions">
-          <a href="settings.html" class="btn btn-secondary">
-            <i class="fa-solid fa-gear" aria-hidden="true"></i>
-            <span>Settings</span>
-          </a>
+            <nav
+                class="nav-links"
+                id="navLinks"
+                aria-label="Main navigation"
+            >
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    Dashboard
+                </a>
+
+                <a href="detection.html" class="nav-link">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    Detection
+                </a>
+
+                <a
+                    href="agents.html"
+                    class="nav-link active"
+                    aria-current="page"
+                >
+                    <i class="fa-solid fa-robot"></i>
+                    AI Agents
+                </a>
+
+                <a href="intelligence.html" class="nav-link">
+                    <i class="fa-solid fa-brain"></i>
+                    Intelligence
+                </a>
+
+                <a href="analytics.html" class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Analytics
+                </a>
+
+                <a href="reports.html" class="nav-link">
+                    <i class="fa-solid fa-file-shield"></i>
+                    Reports
+                </a>
+
+                <a href="settings.html" class="nav-link">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
+                </a>
+
+                <button
+                    class="btn btn-outline btn-sm"
+                    type="button"
+                    data-logout
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </button>
+            </nav>
+
         </div>
-
-        <button
-          type="button"
-          class="menu-toggle"
-          id="menuToggle"
-          aria-label="Open navigation menu"
-          aria-controls="navLinks"
-          aria-expanded="false"
-        >
-          <i class="fa-solid fa-bars" aria-hidden="true"></i>
-        </button>
-      </div>
     </header>
 
     <main id="main-content">
-      <!-- =====================================================
-         HERO SECTION
-    ====================================================== -->
 
-      <section class="agents-hero">
-        <div class="container">
-          <div class="agents-hero-content">
-            <div class="section-tag">
-              <span aria-hidden="true"></span>
-              MULTI-AGENT AI ARCHITECTURE
-            </div>
+        <!-- =========================================
+             1. HERO SECTION
+        ========================================== -->
 
-            <h1>
-              Meet Your Digital
-              <span>Security Team.</span>
-            </h1>
+        <section class="agents-hero">
+            <div class="container">
 
-            <p>
-              Four specialized agents working across fraud analysis, threat
-              intelligence, victim protection and controlled cybersecurity
-              simulations.
-            </p>
+                <div class="agents-hero-content">
 
-            <a href="#agent-directory" class="btn btn-primary">
-              Explore AI Agents
-              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-            </a>
-          </div>
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        SCAMSHIELD MULTI-AGENT AI SYSTEM
+                    </div>
 
-          <!-- Agent Overview -->
+                    <h1>
+                        Intelligent Agents.
+                        <span>Unified Cyber Protection.</span>
+                    </h1>
 
-          <div class="agent-overview">
-            <div class="overview-item">
-              <div class="overview-icon overview-green" aria-hidden="true">
-                <i class="fa-solid fa-shield-halved"></i>
-              </div>
+                    <p>
+                        Discover how four specialized AI agents work
+                        alongside ScamShield's fraud detection engine
+                        to analyze suspicious evidence, identify
+                        threat indicators and provide victim-first
+                        safety recommendations.
+                    </p>
 
-              <div>
-                <h3>Guardian</h3>
-                <p>Analyze &amp; Detect</p>
-              </div>
-            </div>
+                    <div class="agent-hero-actions">
 
-            <div class="overview-item">
-              <div class="overview-icon overview-blue" aria-hidden="true">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-              </div>
+                        <a
+                            href="#agent-directory"
+                            class="btn btn-primary"
+                        >
+                            Explore AI Agents
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
 
-              <div>
-                <h3>Intelligence</h3>
-                <p>Extract &amp; Correlate</p>
-              </div>
-            </div>
+                        <a
+                            href="#agent-demo"
+                            class="btn btn-outline"
+                        >
+                            Try Agent Demo
+                            <i class="fa-solid fa-flask"></i>
+                        </a>
 
-            <div class="overview-item">
-              <div class="overview-icon overview-purple" aria-hidden="true">
-                <i class="fa-solid fa-user-shield"></i>
-              </div>
+                    </div>
 
-              <div>
-                <h3>Victim Safety</h3>
-                <p>Guide &amp; Protect</p>
-              </div>
-            </div>
-
-            <div class="overview-item">
-              <div class="overview-icon overview-orange" aria-hidden="true">
-                <i class="fa-solid fa-robot"></i>
-              </div>
-
-              <div>
-                <h3>Decoy</h3>
-                <p>Safe Simulations</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-         AGENT DIRECTORY
-    ====================================================== -->
-
-      <section class="section agent-directory" id="agent-directory">
-        <div class="container">
-          <div class="section-heading">
-            <div class="section-tag">
-              <span aria-hidden="true"></span>
-              AGENT DIRECTORY
-            </div>
-
-            <h2>
-              Specialized Intelligence.
-              <span>Unified Protection.</span>
-            </h2>
-
-            <p>
-              Each agent has a dedicated responsibility within the ScamShield AI
-              ecosystem.
-            </p>
-          </div>
-
-          <div class="agent-directory-grid">
-            <!-- Guardian Agent -->
-
-            <article class="agent-detail-card guardian-card">
-              <div class="agent-detail-top">
-                <div class="agent-detail-icon agent-green" aria-hidden="true">
-                  <i class="fa-solid fa-shield-halved"></i>
                 </div>
 
-                <span class="agent-number">AGENT 01</span>
-              </div>
+                <!-- Agent Overview -->
 
-              <div class="agent-category">FRAUD DETECTION</div>
+                <div class="agent-overview">
 
-              <h2>Guardian Agent</h2>
+                    <div class="overview-item">
+                        <div
+                            class="overview-icon overview-green"
+                            aria-hidden="true"
+                        >
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
 
-              <p class="agent-description">
-                The primary fraud analysis agent. Guardian examines submitted
-                evidence, identifies suspicious patterns and generates
-                explainable risk assessments.
-              </p>
+                        <div>
+                            <h3>Guardian</h3>
+                            <p>Authoritative Fraud Detection</p>
+                        </div>
+                    </div>
 
-              <h4>Core Responsibilities</h4>
+                    <div class="overview-item">
+                        <div
+                            class="overview-icon overview-blue"
+                            aria-hidden="true"
+                        >
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
 
-              <ul class="agent-responsibilities">
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Analyze suspicious messages and evidence.</span>
-                </li>
+                        <div>
+                            <h3>Intelligence</h3>
+                            <p>Threat Indicator Extraction</p>
+                        </div>
+                    </div>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Identify potential fraud indicators.</span>
-                </li>
+                    <div class="overview-item">
+                        <div
+                            class="overview-icon overview-purple"
+                            aria-hidden="true"
+                        >
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Classify potential fraud categories.</span>
-                </li>
+                        <div>
+                            <h3>Victim Safety</h3>
+                            <p>Victim Protection Guidance</p>
+                        </div>
+                    </div>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Explain risk scores and warning signals.</span>
-                </li>
-              </ul>
+                    <div class="overview-item">
+                        <div
+                            class="overview-icon overview-orange"
+                            aria-hidden="true"
+                        >
+                            <i class="fa-solid fa-user-secret"></i>
+                        </div>
 
-              <div class="agent-output">
-                <span>EXPECTED OUTPUT</span>
+                        <div>
+                            <h3>Decoy</h3>
+                            <p>Controlled Simulations</p>
+                        </div>
+                    </div>
 
-                <p>Fraud category, risk assessment and explainable findings.</p>
-              </div>
-
-              <a href="detection.html" class="agent-action">
-                Explore Fraud Detection
-                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-              </a>
-            </article>
-
-            <!-- Intelligence Agent -->
-
-            <article class="agent-detail-card intelligence-card">
-              <div class="agent-detail-top">
-                <div class="agent-detail-icon agent-blue" aria-hidden="true">
-                  <i class="fa-solid fa-magnifying-glass-chart"></i>
                 </div>
 
-                <span class="agent-number">AGENT 02</span>
-              </div>
+            </div>
+        </section>
 
-              <div class="agent-category">THREAT INTELLIGENCE</div>
+        <!-- =========================================
+             2. PLATFORM ARCHITECTURE OVERVIEW
+        ========================================== -->
 
-              <h2>Intelligence Agent</h2>
+        <section class="section agent-architecture">
+            <div class="container">
 
-              <p class="agent-description">
-                The evidence intelligence agent extracts useful indicators from
-                submitted evidence and organizes them for further investigation.
-              </p>
+                <div class="section-heading">
 
-              <h4>Core Responsibilities</h4>
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        SYSTEM ARCHITECTURE
+                    </div>
 
-              <ul class="agent-responsibilities">
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Extract phone numbers and URLs.</span>
-                </li>
+                    <h2>
+                        One Platform.
+                        <span>Multiple Layers of Protection.</span>
+                    </h2>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Identify UPI IDs and related indicators.</span>
-                </li>
+                    <p>
+                        ScamShield AI combines universal evidence input,
+                        specialized fraud detection modules, multi-agent
+                        analysis and supplementary AI assistance.
+                    </p>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Organize extracted evidence.</span>
-                </li>
-
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span
-                    >Identify possible relationships between indicators.</span
-                  >
-                </li>
-              </ul>
-
-              <div class="agent-output">
-                <span>EXPECTED OUTPUT</span>
-
-                <p>
-                  Structured indicators and evidence intelligence for review.
-                </p>
-              </div>
-
-              <a href="intelligence.html" class="agent-action">
-                Explore Intelligence
-                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-              </a>
-            </article>
-
-            <!-- Victim Safety Agent -->
-
-            <article class="agent-detail-card safety-card">
-              <div class="agent-detail-top">
-                <div class="agent-detail-icon agent-purple" aria-hidden="true">
-                  <i class="fa-solid fa-user-shield"></i>
                 </div>
 
-                <span class="agent-number">AGENT 03</span>
-              </div>
+                <div class="agent-architecture-grid">
 
-              <div class="agent-category">VICTIM PROTECTION</div>
+                    <article class="architecture-card">
+                        <span class="architecture-number">01</span>
 
-              <h2>Victim Safety Agent</h2>
+                        <div class="architecture-icon">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
 
-              <p class="agent-description">
-                A victim-first assistance agent that provides practical guidance
-                to people facing suspected cyber fraud or financial scams.
-              </p>
+                        <h3>Universal Input Layer</h3>
 
-              <h4>Core Responsibilities</h4>
+                        <p>
+                            Accepts different forms of digital evidence
+                            for analysis.
+                        </p>
 
-              <ul class="agent-responsibilities">
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Provide immediate safety recommendations.</span>
-                </li>
+                        <span class="architecture-meta">
+                            6 Evidence Types
+                        </span>
+                    </article>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Guide users to preserve digital evidence.</span>
-                </li>
+                    <article class="architecture-card">
+                        <span class="architecture-number">02</span>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Recommend contacting the bank when relevant.</span>
-                </li>
+                        <div class="architecture-icon">
+                            <i class="fa-solid fa-shield-virus"></i>
+                        </div>
 
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Explain official cybercrime reporting options.</span>
-                </li>
-              </ul>
+                        <h3>Fraud Detection Engine</h3>
 
-              <div class="agent-output">
-                <span>EXPECTED OUTPUT</span>
+                        <p>
+                            Uses specialized detection modules and
+                            fraud classification logic.
+                        </p>
 
-                <p>Actionable safety steps and reporting guidance.</p>
-              </div>
+                        <span class="architecture-meta">
+                            5 Major Modules
+                        </span>
+                    </article>
 
-              <a href="detection.html" class="agent-action">
-                Explore Safety Support
-                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-              </a>
-            </article>
+                    <article class="architecture-card">
+                        <span class="architecture-number">03</span>
 
-            <!-- Decoy Agent -->
+                        <div class="architecture-icon">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
 
-            <article class="agent-detail-card decoy-card">
-              <div class="agent-detail-top">
-                <div class="agent-detail-icon agent-orange" aria-hidden="true">
-                  <i class="fa-solid fa-robot"></i>
+                        <h3>Multi-Agent System</h3>
+
+                        <p>
+                            Coordinates detection, intelligence
+                            extraction and victim safety guidance.
+                        </p>
+
+                        <span class="architecture-meta">
+                            4 Specialized Agents
+                        </span>
+                    </article>
+
+                    <article class="architecture-card">
+                        <span class="architecture-number">04</span>
+
+                        <div class="architecture-icon">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+
+                        <h3>Gemini Advisory Layer</h3>
+
+                        <p>
+                            Provides supplementary AI explanations
+                            without overriding Guardian's assessment.
+                        </p>
+
+                        <span class="architecture-meta">
+                            Advisory Only
+                        </span>
+                    </article>
+
                 </div>
 
-                <span class="agent-number">AGENT 04</span>
-              </div>
+                <div class="collaboration-note">
+                    <i class="fa-solid fa-circle-info"></i>
 
-              <div class="agent-category">SAFE SIMULATION</div>
+                    <p>
+                        These layers represent the intended platform
+                        architecture. Actual availability depends on
+                        the connected services and current integration
+                        status.
+                    </p>
+                </div>
 
-              <h2>Decoy Agent</h2>
-
-              <p class="agent-description">
-                A controlled simulation agent designed for cybersecurity
-                awareness and research using synthetic scam scenarios.
-              </p>
-
-              <h4>Core Responsibilities</h4>
-
-              <ul class="agent-responsibilities">
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Generate controlled scam scenarios.</span>
-                </li>
-
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Demonstrate common scam techniques.</span>
-                </li>
-
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Support awareness and research activities.</span>
-                </li>
-
-                <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>Keep simulations isolated and safe.</span>
-                </li>
-              </ul>
-
-              <div class="agent-output">
-                <span>EXPECTED OUTPUT</span>
-
-                <p>Synthetic scenarios and educational simulation results.</p>
-              </div>
-
-              <a href="decoy-lab.html" class="agent-action">
-                Explore Decoy Lab
-                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-              </a>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-         LIVE AGENT DEMO
-    ====================================================== -->
-
-      <section class="section agent-live-demo" id="agent-demo">
-        <div class="container">
-          <div class="section-heading">
-            <div class="section-tag">
-              <span aria-hidden="true"></span>
-              INTERACTIVE DEMONSTRATION
             </div>
+        </section>
 
-            <h2>
-              Experience the
-              <span>AI Agent Workflow.</span>
-            </h2>
+        <!-- =========================================
+             3. UNIVERSAL INPUT LAYER
+        ========================================== -->
 
-            <p>
-              Try a sample suspicious message and see how the available
-              ScamShield AI agents analyze it.
-            </p>
-          </div>
+        <section class="section agent-input-section">
+            <div class="container">
 
-          <div class="agent-demo-panel">
-            <div class="agent-demo-heading">
-              <h3>
-                <i class="fa-solid fa-flask" aria-hidden="true"></i>
-                Try AI Agents with Demo Data
-              </h3>
+                <div class="section-heading">
 
-              <p>
-                Select a sample scenario or enter your own non-sensitive test
-                evidence.
-              </p>
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        UNIVERSAL INPUT LAYER
+                    </div>
+
+                    <h2>
+                        Analyze Different Types
+                        <span>of Digital Evidence.</span>
+                    </h2>
+
+                    <p>
+                        ScamShield AI supports multiple evidence
+                        formats to help identify suspicious activity
+                        across digital interactions.
+                    </p>
+
+                </div>
+
+                <div class="input-types-grid">
+
+                    <article class="input-type-card">
+                        <span class="input-type-icon">
+                            <i class="fa-solid fa-comment-sms"></i>
+                        </span>
+
+                        <h3>Messages</h3>
+
+                        <p>
+                            Analyze suspicious SMS messages,
+                            messaging content and fraudulent requests.
+                        </p>
+
+                        <a href="detection.html?type=message">
+                            Analyze Messages
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="input-type-card">
+                        <span class="input-type-icon">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+
+                        <h3>Call Transcripts</h3>
+
+                        <p>
+                            Examine supplied call transcripts
+                            for impersonation, intimidation and
+                            scam-related language.
+                        </p>
+
+                        <a href="detection.html?type=call">
+                            Analyze Call Text
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="input-type-card">
+                        <span class="input-type-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+
+                        <h3>Emails</h3>
+
+                        <p>
+                            Inspect supplied email content for
+                            phishing indicators and suspicious
+                            communication patterns.
+                        </p>
+
+                        <a href="detection.html?type=email">
+                            Analyze Email
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="input-type-card">
+                        <span class="input-type-icon">
+                            <i class="fa-solid fa-link"></i>
+                        </span>
+
+                        <h3>URLs & Links</h3>
+
+                        <p>
+                            Examine suspicious web addresses
+                            and potential phishing patterns.
+                        </p>
+
+                        <a href="detection.html?type=url">
+                            Analyze URL
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="input-type-card">
+                        <span class="input-type-icon">
+                            <i class="fa-solid fa-image"></i>
+                        </span>
+
+                        <h3>Screenshots</h3>
+
+                        <p>
+                            Analyze extracted text from screenshots
+                            containing suspicious messages or offers.
+                        </p>
+
+                        <a href="detection.html?type=screenshot">
+                            Analyze Screenshot
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="input-type-card">
+                        <span class="input-type-icon">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </span>
+
+                        <h3>Transactions</h3>
+
+                        <p>
+                            Examine supplied UPI and card transaction
+                            details for suspicious payment patterns.
+                        </p>
+
+                        <a href="detection.html?type=transaction">
+                            Analyze Transaction
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                </div>
+
+                <div class="dashboard-info-note">
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <p>
+                        Call analysis currently depends on supplied
+                        transcript or text. Screenshot analysis
+                        depends on extracted text. Automatic call
+                        transcription, live-call monitoring and
+                        automatic OCR are not claimed as active
+                        capabilities.
+                    </p>
+                </div>
+
             </div>
+        </section>
 
-            <form id="agentsDemoForm" class="agent-demo-form">
-              <!-- Sample Scenario -->
+        <!-- =========================================
+             4. FIVE MAJOR DETECTION MODULES
+        ========================================== -->
 
-              <div class="demo-field">
-                <label for="agentsDemoSample"> Choose a Demo Scenario </label>
+        <section class="section agent-modules-section">
+            <div class="container">
 
-                <select id="agentsDemoSample">
-                  <option value="bank-kyc">Fake Bank KYC Message</option>
+                <div class="section-heading">
 
-                  <option value="lottery">Lottery Winning Scam</option>
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        FRAUD DETECTION ENGINE
+                    </div>
 
-                  <option value="suspicious-url">Suspicious Payment URL</option>
+                    <h2>
+                        Five Major
+                        <span>Detection Modules.</span>
+                    </h2>
 
-                  <option value="fake-call">Fake Customer Care Call</option>
+                    <p>
+                        Specialized detection areas designed to
+                        identify common forms of digital and
+                        financial fraud.
+                    </p>
 
-                  <option value="upi-scam">Suspicious UPI Transaction</option>
-                </select>
-              </div>
+                </div>
 
-              <!-- Evidence Type -->
+                <div class="detection-modules-grid">
 
-              <div class="demo-field">
-                <label for="agentsDemoType"> Evidence Type </label>
+                    <article class="module-card">
+                        <div class="module-card-icon purple">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
 
-                <select id="agentsDemoType" required>
-                  <option value="message">Text Message</option>
+                        <span class="module-number">MODULE 01</span>
 
-                  <option value="url">Website URL</option>
+                        <h3>Investment Scam Detection</h3>
 
-                  <option value="call">Call Transcript</option>
+                        <p>
+                            Identifies suspicious investment offers,
+                            fake trading platforms, Ponzi schemes
+                            and unrealistic financial returns.
+                        </p>
 
-                  <option value="transaction">Transaction Details</option>
-                </select>
-              </div>
+                        <div class="module-tags">
+                            <span>Fake Trading</span>
+                            <span>Ponzi Schemes</span>
+                            <span>Investment Fraud</span>
+                        </div>
 
-              <!-- Evidence Input -->
+                        <a href="detection.html?category=investment_scam">
+                            Explore Detection
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
 
-              <div class="demo-field">
-                <label for="agentsDemoEvidence"> Sample Evidence </label>
+                    <article class="module-card">
+                        <div class="module-card-icon red">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
 
-                <textarea
-                  id="agentsDemoEvidence"
-                  rows="6"
-                  maxlength="20000"
-                  placeholder="Select a demo scenario or enter sample suspicious evidence here..."
-                  required
-                >
-URGENT: Your bank account will be blocked today. Complete your KYC immediately using this link: http://example-scam.test/verify. Share your OTP to complete verification.</textarea
-                >
+                        <span class="module-number">MODULE 02</span>
 
-                <p class="agent-demo-local-note">
-                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                  Use synthetic test data only. Never enter real OTPs,
-                  passwords, PINs, CVVs or complete payment credentials.
-                </p>
-              </div>
+                        <h3>Digital Arrest Protection</h3>
 
-              <!-- Demo Actions -->
+                        <p>
+                            Identifies impersonation of police,
+                            CBI and government authorities,
+                            including intimidation and coercion.
+                        </p>
 
-              <div class="agent-demo-actions">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  id="agentsDemoRun"
-                >
-                  <i class="fa-solid fa-play" aria-hidden="true"></i>
-                  Run AI Agents
-                </button>
+                        <div class="module-tags">
+                            <span>Fake Authorities</span>
+                            <span>Threat Calls</span>
+                            <span>Digital Arrest</span>
+                        </div>
 
-                <button type="reset" class="btn btn-secondary">
-                  <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-                  Reset
-                </button>
-              </div>
-            </form>
+                        <a href="detection.html?category=digital_arrest">
+                            Explore Detection
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
 
-            <!-- Live Status -->
+                    <article class="module-card">
+                        <div class="module-card-icon orange">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
 
-            <div
-              id="agentsDemoStatus"
-              class="agent-demo-status"
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              Select a scenario and run the demonstration.
+                        <span class="module-number">MODULE 03</span>
+
+                        <h3>Credit Card Fraud Detection</h3>
+
+                        <p>
+                            Identifies suspicious card-related
+                            requests, phishing attempts and
+                            deceptive payment activities.
+                        </p>
+
+                        <div class="module-tags">
+                            <span>Card Phishing</span>
+                            <span>Payment Fraud</span>
+                            <span>Card Misuse</span>
+                        </div>
+
+                        <a href="detection.html?category=card_fraud">
+                            Explore Detection
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="module-card">
+                        <div class="module-card-icon pink">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+
+                        <span class="module-number">MODULE 04</span>
+
+                        <h3>Sextortion Protection</h3>
+
+                        <p>
+                            Identifies blackmail, coercion,
+                            intimate-image threats and suspicious
+                            extortion communications.
+                        </p>
+
+                        <div class="module-tags">
+                            <span>Blackmail</span>
+                            <span>Extortion</span>
+                            <span>Coercion</span>
+                        </div>
+
+                        <a href="detection.html?category=sextortion_blackmail">
+                            Explore Detection
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="module-card">
+                        <div class="module-card-icon green">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+
+                        <span class="module-number">MODULE 05</span>
+
+                        <h3>E-commerce Fraud Detection</h3>
+
+                        <p>
+                            Identifies suspicious shopping offers,
+                            deceptive sellers, fake stores and
+                            potential online shopping scams.
+                        </p>
+
+                        <div class="module-tags">
+                            <span>Fake Stores</span>
+                            <span>Shopping Fraud</span>
+                            <span>Fake Offers</span>
+                        </div>
+
+                        <a href="detection.html?category=ecommerce_scam">
+                            Explore Detection
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                </div>
+
             </div>
+        </section>
 
-            <!-- Agent Results -->
+        <!-- =========================================
+             5. TWELVE FRAUD CATEGORIES
+        ========================================== -->
 
-            <div
-              id="agentsDemoResults"
-              class="agent-demo-results"
-              aria-live="polite"
-              aria-label="AI agent analysis results"
-              hidden
-            ></div>
+        <section class="section agent-categories-section">
+            <div class="container">
 
-            <p class="agent-demo-disclaimer">
-              <i
-                class="fa-solid fa-triangle-exclamation"
-                aria-hidden="true"
-              ></i>
-              Demonstration results are informational and depend on the
-              connected backend. Risk assessments are not proof of fraud.
-              Extracted indicators are not independently verified.
-            </p>
-          </div>
-        </div>
-      </section>
+                <div class="section-heading">
 
-      <!-- =====================================================
-         COLLABORATION SECTION
-    ====================================================== -->
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        FRAUD CLASSIFICATION
+                    </div>
 
-      <section class="section agent-collaboration">
-        <div class="container">
-          <div class="section-heading">
-            <div class="section-tag">
-              <span aria-hidden="true"></span>
-              COLLABORATIVE INTELLIGENCE
+                    <h2>
+                        Twelve Supported
+                        <span>Fraud Categories.</span>
+                    </h2>
+
+                    <p>
+                        The detection engine classifies suspicious
+                        evidence into supported fraud categories.
+                        These categories are not limited to the
+                        five primary detection modules.
+                    </p>
+
+                </div>
+
+                <div class="category-list">
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=fraud_message"
+                    >
+                        <span>
+                            <i class="fa-solid fa-comment-dots"></i>
+                            Fraud Messages
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=fraud_call"
+                    >
+                        <span>
+                            <i class="fa-solid fa-phone-volume"></i>
+                            Fraud Calls
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=url_phishing"
+                    >
+                        <span>
+                            <i class="fa-solid fa-link"></i>
+                            URL Phishing
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=email_scam"
+                    >
+                        <span>
+                            <i class="fa-solid fa-envelope"></i>
+                            Email Scams
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=investment_scam"
+                    >
+                        <span>
+                            <i class="fa-solid fa-chart-line"></i>
+                            Investment Scams
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=digital_arrest"
+                    >
+                        <span>
+                            <i class="fa-solid fa-user-shield"></i>
+                            Digital Arrest
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=upi_banking_fraud"
+                    >
+                        <span>
+                            <i class="fa-solid fa-building-columns"></i>
+                            UPI & Banking Fraud
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=card_fraud"
+                    >
+                        <span>
+                            <i class="fa-solid fa-credit-card"></i>
+                            Credit Card Fraud
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=ecommerce_scam"
+                    >
+                        <span>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            E-commerce Scams
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=job_loan_scam"
+                    >
+                        <span>
+                            <i class="fa-solid fa-briefcase"></i>
+                            Job & Loan Scams
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=sextortion_blackmail"
+                    >
+                        <span>
+                            <i class="fa-solid fa-lock"></i>
+                            Sextortion & Blackmail
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                    <a
+                        class="category-row"
+                        href="detection.html?category=social_media_scam"
+                    >
+                        <span>
+                            <i class="fa-solid fa-users"></i>
+                            Social Media Scams
+                        </span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
             </div>
+        </section>
 
-            <h2>
-              One Platform.
-              <span>Four Areas of Expertise.</span>
-            </h2>
+        <!-- =========================================
+             6. FOUR AI AGENTS
+        ========================================== -->
 
-            <p>
-              The agents represent different responsibilities in a structured
-              cyber safety workflow.
-            </p>
-          </div>
+        <section
+            class="section agent-directory"
+            id="agent-directory"
+        >
+            <div class="container">
 
-          <div class="collaboration-flow">
-            <div class="flow-card">
-              <div class="flow-icon agent-green" aria-hidden="true">
-                <i class="fa-solid fa-shield-halved"></i>
-              </div>
+                <div class="section-heading">
 
-              <h3>Guardian</h3>
-              <p>Analyzes evidence</p>
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        MULTI-AGENT AI SYSTEM
+                    </div>
+
+                    <h2>
+                        Meet Your Four
+                        <span>Specialized AI Agents.</span>
+                    </h2>
+
+                    <p>
+                        Each agent has a distinct responsibility.
+                        The core analysis agents contribute to
+                        normal evidence analysis, while Decoy
+                        remains separately initiated.
+                    </p>
+
+                </div>
+
+                <div class="agent-directory-grid">
+
+                    <!-- GUARDIAN -->
+
+                    <article
+                        class="agent-detail-card guardian-card"
+                        id="guardian-agent"
+                    >
+
+                        <div class="agent-detail-top">
+
+                            <div class="agent-detail-icon agent-green">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+
+                            <span class="agent-number">AGENT 01</span>
+
+                        </div>
+
+                        <div class="agent-category">
+                            AUTHORITATIVE FRAUD DETECTION
+                        </div>
+
+                        <h2>Guardian Agent</h2>
+
+                        <p class="agent-description">
+                            Guardian is the primary fraud detection
+                            agent. It analyzes submitted evidence,
+                            identifies suspicious patterns and
+                            produces the authoritative fraud
+                            assessment.
+                        </p>
+
+                        <h4>Core Responsibilities</h4>
+
+                        <ul class="agent-responsibilities">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Analyze submitted digital evidence.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Identify suspicious patterns and signals.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Classify supported fraud categories.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Generate explainable risk assessments.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Preserve deterministic assessment authority.</span>
+                            </li>
+                        </ul>
+
+                        <div class="agent-output">
+                            <span>AUTHORITATIVE OUTPUT</span>
+
+                            <p>
+                                Fraud category, risk score, risk level,
+                                explanation and detection findings.
+                            </p>
+                        </div>
+
+                        <a href="detection.html" class="agent-action">
+                            Explore Fraud Detection
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+                    <!-- INTELLIGENCE -->
+
+                    <article
+                        class="agent-detail-card intelligence-card"
+                        id="intelligence-agent"
+                    >
+
+                        <div class="agent-detail-top">
+
+                            <div class="agent-detail-icon agent-blue">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+
+                            <span class="agent-number">AGENT 02</span>
+
+                        </div>
+
+                        <div class="agent-category">
+                            THREAT INTELLIGENCE
+                        </div>
+
+                        <h2>Intelligence Agent</h2>
+
+                        <p class="agent-description">
+                            Intelligence extracts and organizes
+                            useful indicators from submitted
+                            evidence to support investigation
+                            and further review.
+                        </p>
+
+                        <h4>Core Responsibilities</h4>
+
+                        <ul class="agent-responsibilities">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Extract phone numbers and URLs.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Identify UPI and email indicators.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Organize extracted evidence.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Identify possible indicator relationships.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Provide structured intelligence output.</span>
+                            </li>
+                        </ul>
+
+                        <div class="agent-output">
+                            <span>PRIMARY OUTPUT</span>
+
+                            <p>
+                                Structured indicators for investigation,
+                                review and threat intelligence.
+                            </p>
+                        </div>
+
+                        <div class="agent-intelligence-notice">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                            <span>
+                                Extracted indicators are unverified.
+                                Their presence alone does not establish
+                                that a person, phone number, email or
+                                URL is fraudulent.
+                            </span>
+                        </div>
+
+                        <a href="intelligence.html" class="agent-action">
+                            Explore Intelligence
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+                    <!-- VICTIM SAFETY -->
+
+                    <article
+                        class="agent-detail-card safety-card"
+                        id="victim-safety-agent"
+                    >
+
+                        <div class="agent-detail-top">
+
+                            <div class="agent-detail-icon agent-purple">
+                                <i class="fa-solid fa-hand-holding-heart"></i>
+                            </div>
+
+                            <span class="agent-number">AGENT 03</span>
+
+                        </div>
+
+                        <div class="agent-category">
+                            VICTIM PROTECTION
+                        </div>
+
+                        <h2>Victim Safety Agent</h2>
+
+                        <p class="agent-description">
+                            A victim-first assistance agent that
+                            provides contextual safety recommendations
+                            for people facing suspected cyber fraud
+                            or financial scams.
+                        </p>
+
+                        <h4>Core Responsibilities</h4>
+
+                        <ul class="agent-responsibilities">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Provide immediate safety guidance.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Identify reported information exposure.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Recommend preserving digital evidence.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Guide users toward relevant bank support.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Explain official cybercrime reporting options.</span>
+                            </li>
+                        </ul>
+
+                        <div class="agent-output">
+                            <span>PRIMARY OUTPUT</span>
+
+                            <p>
+                                Contextual safety recommendations,
+                                exposure awareness and reporting guidance.
+                            </p>
+                        </div>
+
+                        <div class="agent-intelligence-notice">
+                            <i class="fa-solid fa-circle-info"></i>
+
+                            <span>
+                                Recommendations are informational.
+                                ScamShield AI does not automatically
+                                contact banks, police or authorities.
+                            </span>
+                        </div>
+
+                        <a href="detection.html" class="agent-action">
+                            Explore Safety Support
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+                    <!-- DECOY -->
+
+                    <article
+                        class="agent-detail-card decoy-card"
+                        id="decoy-agent"
+                    >
+
+                        <div class="agent-detail-top">
+
+                            <div class="agent-detail-icon agent-orange">
+                                <i class="fa-solid fa-user-secret"></i>
+                            </div>
+
+                            <span class="agent-number">AGENT 04</span>
+
+                        </div>
+
+                        <div class="agent-category">
+                            CONTROLLED CYBERSECURITY SIMULATION
+                        </div>
+
+                        <h2>Decoy Agent</h2>
+
+                        <p class="agent-description">
+                            A controlled simulation agent designed
+                            for cybersecurity awareness and research
+                            through synthetic scam scenarios.
+                        </p>
+
+                        <h4>Core Responsibilities</h4>
+
+                        <ul class="agent-responsibilities">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Run controlled synthetic scenarios.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Demonstrate common scam techniques.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Support security awareness and research.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Manage isolated simulation sessions.</span>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Keep simulations separate from normal analysis.</span>
+                            </li>
+                        </ul>
+
+                        <div class="agent-output">
+                            <span>SIMULATION OUTPUT</span>
+
+                            <p>
+                                Synthetic scenarios and controlled
+                                simulation results.
+                            </p>
+                        </div>
+
+                        <div class="agent-decoy-notice">
+                            <strong>
+                                <i class="fa-solid fa-lock"></i>
+                                Separate Simulation
+                            </strong>
+
+                            Decoy is not automatically executed
+                            during normal fraud analysis. It requires
+                            an explicitly initiated simulation.
+                        </div>
+
+                        <a href="decoy-lab.html" class="agent-action">
+                            Explore Decoy Lab
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </article>
+
+                </div>
             </div>
+        </section>
 
-            <div class="flow-connector" aria-hidden="true">
-              <i class="fa-solid fa-arrow-right"></i>
+        <!-- =========================================
+             7. LIVE AGENT DEMONSTRATION
+        ========================================== -->
+
+        <section
+            class="section agent-live-demo"
+            id="agent-demo"
+        >
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        INTERACTIVE DEMONSTRATION
+                    </div>
+
+                    <h2>
+                        Experience the
+                        <span>AI Agent Workflow.</span>
+                    </h2>
+
+                    <p>
+                        Submit synthetic evidence to explore the
+                        available Guardian, Intelligence and
+                        Victim Safety analysis results.
+                    </p>
+
+                </div>
+
+                <div class="agent-demo-panel">
+
+                    <div class="agent-demo-heading">
+
+                        <h2>
+                            <i class="fa-solid fa-flask"></i>
+                            Try AI Agents with Demo Data
+                        </h2>
+
+                        <p>
+                            Choose a sample scenario or enter
+                            non-sensitive test evidence.
+                        </p>
+
+                    </div>
+
+                    <form
+                        id="agentsDemoForm"
+                        class="agent-demo-form"
+                    >
+
+                        <div class="demo-field">
+
+                            <label for="agentsDemoSample">
+                                Choose a Demo Scenario
+                            </label>
+
+                            <select
+                                id="agentsDemoSample"
+                                name="sample"
+                            >
+                                <option value="bank-kyc">
+                                    Fake Bank KYC Message
+                                </option>
+
+                                <option value="lottery">
+                                    Lottery Winning Scam
+                                </option>
+
+                                <option value="suspicious-url">
+                                    Suspicious Payment URL
+                                </option>
+
+                                <option value="fake-call">
+                                    Fake Customer Care Call
+                                </option>
+
+                                <option value="upi-scam">
+                                    Suspicious UPI Transaction
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="demo-field">
+
+                            <label for="agentsDemoType">
+                                Evidence Type
+                            </label>
+
+                            <select
+                                id="agentsDemoType"
+                                name="evidenceType"
+                                required
+                            >
+                                <option value="message">
+                                    Text Message
+                                </option>
+
+                                <option value="url">
+                                    Website URL
+                                </option>
+
+                                <option value="call">
+                                    Call Transcript
+                                </option>
+
+                                <option value="transaction">
+                                    Transaction Details
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="demo-field">
+
+                            <label for="agentsDemoEvidence">
+                                Sample Evidence
+                            </label>
+
+                            <textarea
+                                id="agentsDemoEvidence"
+                                name="evidence"
+                                rows="6"
+                                maxlength="20000"
+                                placeholder="Select a demo scenario or enter synthetic suspicious evidence..."
+                                aria-describedby="agentsDemoInputHelp"
+                                required
+                            >URGENT: Your bank account will be blocked today. Complete your KYC immediately using this link: http://example-scam.test/verify. Share your OTP to complete verification.</textarea>
+
+                            <p
+                                class="agent-demo-local-note"
+                                id="agentsDemoInputHelp"
+                            >
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                Use synthetic test data only.
+                                Never enter real OTPs, passwords,
+                                PINs, CVVs or complete payment credentials.
+                            </p>
+
+                        </div>
+
+                        <div class="agent-demo-actions">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                id="agentsDemoRun"
+                            >
+                                <i class="fa-solid fa-play"></i>
+                                Run AI Agents
+                            </button>
+
+                            <button
+                                type="reset"
+                                class="btn btn-secondary"
+                            >
+                                <i class="fa-solid fa-rotate-left"></i>
+                                Reset
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <div
+                        id="agentsDemoStatus"
+                        class="agent-demo-status"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                    >
+                        Select a scenario and run the demonstration.
+                    </div>
+
+                    <div
+                        id="agentsDemoResults"
+                        class="agent-demo-results"
+                        aria-live="polite"
+                        aria-label="AI agent analysis results"
+                        hidden
+                    ></div>
+
+                    <p class="agent-demo-disclaimer">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        Demonstration results are informational
+                        and depend on connected services.
+                        Risk assessments are not proof of fraud.
+                        Extracted indicators are not independently
+                        verified. Decoy does not run automatically.
+                        Gemini, when available, provides advisory
+                        information only.
+                    </p>
+
+                </div>
             </div>
+        </section>
 
-            <div class="flow-card">
-              <div class="flow-icon agent-blue" aria-hidden="true">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-              </div>
+        <!-- =========================================
+             8. GEMINI ADVISORY LAYER
+        ========================================== -->
 
-              <h3>Intelligence</h3>
-              <p>Extracts indicators</p>
+        <section class="section agent-safety-section">
+            <div class="container">
+
+                <div class="agent-safety-box">
+
+                    <div class="safety-notice-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+
+                    <div class="safety-notice-content">
+
+                        <span class="section-eyebrow">
+                            SUPPLEMENTARY AI INTELLIGENCE
+                        </span>
+
+                        <h3>Gemini AI — Advisory Intelligence</h3>
+
+                        <p>
+                            Gemini can provide supplementary explanations,
+                            contextual insights and advisory information.
+                            It does not make the final fraud decision.
+                            Guardian remains authoritative for the
+                            fraud category, risk score and risk level.
+                            Gemini availability depends on configuration
+                            and service availability.
+                        </p>
+
+                        <div class="module-tags">
+                            <span>Advisory Only</span>
+                            <span>Optional Service</span>
+                            <span>Guardian Authority Preserved</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
+        </section>
 
-            <div class="flow-connector" aria-hidden="true">
-              <i class="fa-solid fa-arrow-right"></i>
+        <!-- =========================================
+             9. RISK SCORING AND ML
+        ========================================== -->
+
+        <section class="section agent-risk-section">
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        RISK ASSESSMENT
+                    </div>
+
+                    <h2>
+                        Transparent
+                        <span>Risk Classification.</span>
+                    </h2>
+
+                    <p>
+                        Guardian produces a risk score and
+                        corresponding risk classification
+                        using the configured detection logic.
+                    </p>
+
+                </div>
+
+                <div class="risk-level-grid">
+
+                    <article class="risk-level-card low">
+                        <span class="risk-level-label">LOW RISK</span>
+                        <h3>0–24</h3>
+                        <p>Lower detected risk indicators.</p>
+                    </article>
+
+                    <article class="risk-level-card medium">
+                        <span class="risk-level-label">MEDIUM RISK</span>
+                        <h3>25–49</h3>
+                        <p>Some suspicious indicators detected.</p>
+                    </article>
+
+                    <article class="risk-level-card high">
+                        <span class="risk-level-label">HIGH RISK</span>
+                        <h3>50–74</h3>
+                        <p>Significant suspicious indicators detected.</p>
+                    </article>
+
+                    <article class="risk-level-card critical">
+                        <span class="risk-level-label">CRITICAL RISK</span>
+                        <h3>75–100</h3>
+                        <p>Strong risk indicators detected.</p>
+                    </article>
+
+                </div>
+
+                <div class="dashboard-info-note">
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <p>
+                        Risk scores are heuristic assessments,
+                        not calibrated probabilities or legal
+                        determinations. Machine-learning output
+                        availability depends on the configured
+                        model and runtime environment.
+                    </p>
+                </div>
+
             </div>
+        </section>
 
-            <div class="flow-card">
-              <div class="flow-icon agent-purple" aria-hidden="true">
-                <i class="fa-solid fa-user-shield"></i>
-              </div>
+        <!-- =========================================
+             10. AGENT ORCHESTRATION
+        ========================================== -->
 
-              <h3>Victim Safety</h3>
-              <p>Provides guidance</p>
+        <section class="section agent-collaboration">
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        AGENT ORCHESTRATION
+                    </div>
+
+                    <h2>
+                        Coordinated Analysis.
+                        <span>Independent Simulation.</span>
+                    </h2>
+
+                    <p>
+                        The core agents participate in normal
+                        evidence analysis. Decoy operates separately
+                        through explicitly initiated simulations.
+                    </p>
+
+                </div>
+
+                <div class="collaboration-flow">
+
+                    <div class="flow-card">
+
+                        <div class="flow-icon agent-green">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+
+                        <h3>Guardian</h3>
+
+                        <p>
+                            Authoritative fraud assessment.
+                        </p>
+
+                    </div>
+
+                    <div class="flow-connector" aria-hidden="true">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                    <div class="flow-card">
+
+                        <div class="flow-icon agent-blue">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+
+                        <h3>Intelligence</h3>
+
+                        <p>
+                            Evidence indicator extraction.
+                        </p>
+
+                    </div>
+
+                    <div class="flow-connector" aria-hidden="true">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                    <div class="flow-card">
+
+                        <div class="flow-icon agent-purple">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
+
+                        <h3>Victim Safety</h3>
+
+                        <p>
+                            Contextual safety recommendations.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="flow-card agent-decoy-isolated">
+
+                    <div class="flow-icon agent-orange">
+                        <i class="fa-solid fa-user-secret"></i>
+                    </div>
+
+                    <h3>Decoy Agent</h3>
+
+                    <p>
+                        Separately initiated controlled
+                        cybersecurity simulations.
+                    </p>
+
+                    <a href="decoy-lab.html" class="agent-action">
+                        Open Decoy Lab
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+                <div class="collaboration-note">
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <p>
+                        This is a conceptual architecture overview.
+                        Actual agent execution and returned results
+                        depend on the connected backend and AI services.
+                        Decoy is not part of the automatic analysis sequence.
+                    </p>
+                </div>
+
             </div>
+        </section>
 
-            <div class="flow-connector" aria-hidden="true">
-              <i class="fa-solid fa-arrow-right"></i>
+        <!-- =========================================
+             11. THREAT INTELLIGENCE
+        ========================================== -->
+
+        <section class="section agent-intelligence-section">
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        <span aria-hidden="true"></span>
+                        THREAT INTELLIGENCE
+                    </div>
+
+                    <h2>
+                        Extracted Indicators.
+                        <span>Structured Investigation.</span>
+                    </h2>
+
+                    <p>
+                        Intelligence outputs can help organize
+                        potentially suspicious information
+                        found in submitted evidence.
+                    </p>
+
+                </div>
+
+                <div class="protection-grid">
+
+                    <article class="protection-card">
+                        <div class="protection-icon">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+
+                        <h3>URL Indicators</h3>
+
+                        <p>
+                            Review extracted web addresses
+                            and suspicious link patterns.
+                        </p>
+
+                        <a href="intelligence.html">
+                            Explore Indicators
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="protection-card">
+                        <div class="protection-icon">
+                            <i class="fa-solid fa-address-card"></i>
+                        </div>
+
+                        <h3>Contact Indicators</h3>
+
+                        <p>
+                            Review extracted phone numbers,
+                            email addresses and UPI identifiers.
+                        </p>
+
+                        <a href="intelligence.html">
+                            Explore Intelligence
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="protection-card">
+                        <div class="protection-icon">
+                            <i class="fa-solid fa-file-shield"></i>
+                        </div>
+
+                        <h3>Analysis Reports</h3>
+
+                        <p>
+                            Access available analysis history,
+                            findings and case information.
+                        </p>
+
+                        <a href="reports.html">
+                            View Reports
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                </div>
+
             </div>
+        </section>
 
-            <div class="flow-card">
-              <div class="flow-icon agent-orange" aria-hidden="true">
-                <i class="fa-solid fa-robot"></i>
-              </div>
+        <!-- =========================================
+             12. SECURITY AND RESPONSIBLE AI
+        ========================================== -->
 
-              <h3>Decoy</h3>
-              <p>Safe simulations</p>
+        <section class="section agent-safety-section">
+            <div class="container">
+
+                <div class="agent-safety-box">
+
+                    <div class="safety-notice-icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+
+                    <div class="safety-notice-content">
+
+                        <h3>Security, Privacy and Responsible AI</h3>
+
+                        <p>
+                            ScamShield AI provides decision-support
+                            information for cybersecurity awareness.
+                            Risk assessments are indicators, not
+                            proof of fraud. Extracted intelligence
+                            is not independently verified.
+                            Never share OTPs, UPI PINs, passwords,
+                            CVVs or complete payment credentials.
+                            Avoid submitting sensitive personal
+                            or banking information as demo evidence.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
-          </div>
+        </section>
 
-          <div class="collaboration-note">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <!-- =========================================
+             13. EMERGENCY CYBER SUPPORT
+        ========================================== -->
 
-            <p>
-              This diagram describes the intended agent workflow. Actual
-              execution and available capabilities depend on the connected
-              backend and AI services.
-            </p>
-          </div>
-        </div>
-      </section>
+        <section class="section agent-emergency-section">
+            <div class="container">
 
-      <!-- =====================================================
-         SECURITY NOTICE
-    ====================================================== -->
+                <div class="agent-emergency-box">
 
-      <section class="section agent-safety-section">
-        <div class="container">
-          <div class="agent-safety-box">
-            <div class="safety-notice-icon" aria-hidden="true">
-              <i class="fa-solid fa-lock"></i>
+                    <div>
+                        <span class="section-eyebrow">
+                            INDIA CYBERCRIME SUPPORT
+                        </span>
+
+                        <h3>Lost Money in an Online Fraud?</h3>
+
+                        <p>
+                            Contact the official cybercrime helpline
+                            immediately if you have lost money
+                            through suspected online financial fraud.
+                        </p>
+                    </div>
+
+                    <div class="emergency-actions">
+
+                        <a href="tel:1930" class="btn btn-danger">
+                            <i class="fa-solid fa-phone"></i>
+                            Call 1930
+                        </a>
+
+                        <a
+                            href="https://cybercrime.gov.in/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-outline"
+                        >
+                            Report Cybercrime
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
             </div>
+        </section>
 
-            <div class="safety-notice-content">
-              <h3>Security and Responsible AI</h3>
-
-              <p>
-                ScamShield AI is designed to support safer digital interactions.
-                Risk assessments are indicators, not proof of fraud. Never share
-                OTPs, UPI PINs, passwords, CVVs or complete payment credentials.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-         EMERGENCY CYBER SAFETY
-    ====================================================== -->
-
-      <section class="section agent-emergency-section">
-        <div class="container">
-          <div class="agent-emergency-box">
-            <div>
-              <h3>Lost Money in a Cyber Fraud?</h3>
-
-              <p>Contact the official cybercrime helpline immediately.</p>
-            </div>
-
-            <a href="tel:1930" class="btn btn-primary">
-              <i class="fa-solid fa-phone" aria-hidden="true"></i>
-              Call 1930
-            </a>
-          </div>
-        </div>
-      </section>
     </main>
 
-    <!-- =====================================================
-     FOOTER
-====================================================== -->
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
 
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-about">
-            <a href="../index.html" class="logo">
-              <span class="logo-icon" aria-hidden="true">
-                <i class="fa-solid fa-shield-halved"></i>
-              </span>
+    <footer class="footer dashboard-footer">
+        <div class="container">
 
-              <span class="logo-text"> ScamShield <span>AI</span> </span>
-            </a>
+            <div class="footer-grid">
 
-            <p>
-              An intelligent cybersecurity platform focused on fraud awareness,
-              evidence intelligence and victim safety.
-            </p>
-          </div>
+                <div class="footer-about">
 
-          <div class="footer-column">
-            <h4>Platform</h4>
+                    <a href="../index.html" class="logo">
+                        <span class="logo-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </span>
 
-            <a href="dashboard.html">Dashboard</a>
-            <a href="detection.html">Fraud Detection</a>
-            <a href="intelligence.html">Intelligence</a>
-            <a href="decoy-lab.html">Decoy Lab</a>
-          </div>
+                        <span class="logo-text">
+                            ScamShield<span>AI</span>
+                        </span>
+                    </a>
 
-          <div class="footer-column">
-            <h4>Explore</h4>
+                    <p>
+                        An intelligent cybersecurity platform
+                        focused on fraud detection, threat intelligence,
+                        evidence analysis and victim safety.
+                    </p>
 
-            <a href="../index.html#protection">Threat Coverage</a>
-            <a href="../index.html#agents">AI Agents</a>
-            <a href="../index.html#how-it-works">How It Works</a>
-          </div>
+                </div>
 
-          <div class="footer-column">
-            <h4>Safety Resources</h4>
+                <div class="footer-column">
 
-            <a
-              href="https://cybercrime.gov.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Cyber Crime Portal
-            </a>
+                    <h4>Platform</h4>
 
-            <a href="tel:1930"> Cyber Helpline: 1930 </a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="detection.html">Fraud Detection</a>
+                    <a href="agents.html">AI Agents</a>
+                    <a href="intelligence.html">Intelligence</a>
 
-            <a
-              href="https://www.rbi.org.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Reserve Bank of India
-            </a>
-          </div>
+                </div>
+
+                <div class="footer-column">
+
+                    <h4>Explore</h4>
+
+                    <a href="analytics.html">Analytics</a>
+                    <a href="reports.html">Reports</a>
+                    <a href="decoy-lab.html">Decoy Lab</a>
+                    <a href="settings.html">Settings</a>
+
+                </div>
+
+                <div class="footer-column">
+
+                    <h4>Safety Resources</h4>
+
+                    <a
+                        href="https://cybercrime.gov.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Cyber Crime Portal
+                    </a>
+
+                    <a href="tel:1930">
+                        Cyber Helpline: 1930
+                    </a>
+
+                    <a
+                        href="https://www.rbi.org.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Reserve Bank of India
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="footer-bottom">
+
+                <p>
+                    &copy;
+                    <span data-current-year>2026</span>
+                    ScamShield AI. All rights reserved.
+                </p>
+
+                <p>
+                    Intelligent Fraud Detection & Cyber Protection
+                </p>
+
+            </div>
+
         </div>
-
-        <div class="footer-bottom">
-          <p>
-            © <span data-current-year>2026</span>
-            ScamShield AI. All rights reserved.
-          </p>
-
-          <p>Built for a safer digital future.</p>
-        </div>
-      </div>
     </footer>
 
-    <!-- API Service -->
-    <script src="../js/services/api.js" defer></script>
+    <!-- =========================================
+         APPLICATION SCRIPTS
+    ========================================== -->
 
-    <!-- Helper Utilities -->
+    <script src="../js/api.js" defer></script>
+
     <script src="../js/utils/helpers.js" defer></script>
 
-    <!-- Shared Components -->
     <script src="../js/components/navigation.js" defer></script>
+
     <script src="../js/components/sidebar.js" defer></script>
+
     <script src="../js/components/notifications.js" defer></script>
 
-    <!-- Main JavaScript -->
     <script src="../js/main.js" defer></script>
 
-    <!-- Page JavaScript -->
     <script src="../js/agents.js" defer></script>
-  </body>
+
+</body>
 </html>

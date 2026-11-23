@@ -1,194 +1,370 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Sign In | ScamShield AI</title>
+  <title>Sign In | ScamShield AI</title>
 
-    <meta
-      name="description"
-      content="Securely access your ScamShield AI account."
-    />
+  <meta
+    name="description"
+    content="Securely sign in to your ScamShield AI account and access your cyber safety dashboard."
+  />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta name="theme-color" content="#0b1220" />
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/auth.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-  </head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
 
-  <body class="auth-page">
-    <main class="auth-layout">
-      <section class="auth-visual">
-        <a href="../index.html" class="auth-brand">
-          <span class="brand-icon">
-            <i class="fa-solid fa-shield-halved"></i>
-          </span>
-          <span>ScamShield<span class="brand-highlight">AI</span></span>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+
+<body class="auth-page">
+
+  <a href="#main-content" class="skip-link">
+    Skip to sign in form
+  </a>
+
+  <main class="auth-layout" id="main-content">
+
+    <!-- ================= LEFT VISUAL SECTION ================= -->
+
+    <section class="auth-visual" aria-label="ScamShield AI introduction">
+
+      <a href="../index.html" class="auth-brand" aria-label="ScamShield AI homepage">
+
+        <span class="brand-icon" aria-hidden="true">
+          <i class="fa-solid fa-shield-halved"></i>
+        </span>
+
+        <span>
+          ScamShield<span class="brand-highlight">AI</span>
+        </span>
+
+      </a>
+
+      <div class="auth-visual-content">
+
+        <span class="eyebrow">
+          <span class="status-dot" aria-hidden="true"></span>
+          INTELLIGENT CYBER PROTECTION
+        </span>
+
+        <h1>
+          Stay ahead of
+          <span>digital threats.</span>
+        </h1>
+
+        <p>
+          One intelligent platform to detect suspicious activity,
+          understand cyber threats and make safer decisions online.
+        </p>
+
+        <div class="auth-feature-list">
+
+          <div class="auth-feature">
+
+            <span aria-hidden="true">
+              <i class="fa-solid fa-shield-virus"></i>
+            </span>
+
+            <div>
+              <h3>Advanced Threat Analysis</h3>
+              <p>
+                Analyse suspicious messages and digital evidence.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="auth-feature">
+
+            <span aria-hidden="true">
+              <i class="fa-solid fa-brain"></i>
+            </span>
+
+            <div>
+              <h3>Multi-Agent Intelligence</h3>
+              <p>
+                Organised analysis through specialised AI agents.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="auth-feature">
+
+            <span aria-hidden="true">
+              <i class="fa-solid fa-user-shield"></i>
+            </span>
+
+            <div>
+              <h3>Victim Safety Guidance</h3>
+              <p>
+                Get practical steps when suspicious activity occurs.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="auth-visual-footer">
+        <span>SCAMSHIELD AI</span>
+        <span>SECURITY STARTS WITH AWARENESS</span>
+      </div>
+
+    </section>
+
+
+    <!-- ================= RIGHT LOGIN SECTION ================= -->
+
+    <section class="auth-form-section" aria-labelledby="loginHeading">
+
+      <div class="auth-form-container">
+
+        <!-- Mobile Brand -->
+
+        <a
+          href="../index.html"
+          class="mobile-auth-brand"
+          aria-label="ScamShield AI homepage"
+        >
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          ScamShield<span>AI</span>
         </a>
 
-        <div class="auth-visual-content">
-          <span class="eyebrow">
-            <span class="status-dot"></span>
-            INTELLIGENT CYBER PROTECTION
-          </span>
 
-          <h1>
-            Stay ahead of
-            <span>digital threats.</span>
-          </h1>
+        <!-- Heading -->
+
+        <div class="auth-heading">
+
+          <span class="form-label">WELCOME BACK</span>
+
+          <h2 id="loginHeading">
+            Sign in to your account
+          </h2>
 
           <p>
-            One intelligent platform to detect suspicious activity, understand
-            cyber threats and take safer decisions online.
+            Enter your credentials to access your security dashboard.
           </p>
 
-          <div class="auth-feature-list">
-            <div class="auth-feature">
-              <span><i class="fa-solid fa-shield-virus"></i></span>
-              <div>
-                <h3>Advanced Threat Analysis</h3>
-                <p>Analyse suspicious messages and digital evidence.</p>
-              </div>
-            </div>
-
-            <div class="auth-feature">
-              <span><i class="fa-solid fa-brain"></i></span>
-              <div>
-                <h3>Multi-Agent Intelligence</h3>
-                <p>Organised analysis through specialised AI agents.</p>
-              </div>
-            </div>
-
-            <div class="auth-feature">
-              <span><i class="fa-solid fa-user-shield"></i></span>
-              <div>
-                <h3>Victim Safety Guidance</h3>
-                <p>Get practical steps when suspicious activity occurs.</p>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div class="auth-visual-footer">
-          <span>SCAMSHIELD AI</span>
-          <span>SECURITY STARTS WITH AWARENESS</span>
-        </div>
-      </section>
 
-      <section class="auth-form-section">
-        <div class="auth-form-container">
-          <a href="../index.html" class="mobile-auth-brand">
-            <i class="fa-solid fa-shield-halved"></i>
-            ScamShield<span>AI</span>
-          </a>
+        <!-- Login Form -->
 
-          <div class="auth-heading">
-            <span class="form-label">WELCOME BACK</span>
-            <h2>Sign in to your account</h2>
-            <p>Enter your credentials to access your security dashboard.</p>
+        <form id="loginForm" class="auth-form">
+
+          <!-- Email -->
+
+          <div class="form-group">
+
+            <label for="email">
+              Email address
+            </label>
+
+            <div class="input-wrapper">
+
+              <i
+                class="fa-regular fa-envelope"
+                aria-hidden="true"
+              ></i>
+
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="name@example.com"
+                autocomplete="email"
+                autocapitalize="none"
+                spellcheck="false"
+                maxlength="254"
+                required
+                aria-required="true"
+              />
+
+            </div>
+
           </div>
 
-          <form id="loginForm" class="auth-form">
-            <div class="form-group">
-              <label for="email">Email address</label>
 
-              <div class="input-wrapper">
-                <i class="fa-regular fa-envelope"></i>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="name@example.com"
-                  autocomplete="email"
-                  required
-                />
-              </div>
-            </div>
+          <!-- Password -->
 
-            <div class="form-group">
-              <div class="label-row">
-                <label for="password">Password</label>
-                <a href="#" id="forgotPassword">Forgot password?</a>
-              </div>
+          <div class="form-group">
 
-              <div class="input-wrapper">
-                <i class="fa-solid fa-lock"></i>
+            <div class="label-row">
 
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  autocomplete="current-password"
-                  required
-                />
-
-                <button
-                  type="button"
-                  class="password-toggle"
-                  id="togglePassword"
-                  aria-label="Show password"
-                >
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="form-options">
-              <label class="remember-option">
-                <input type="checkbox" id="rememberMe" />
-                <span>Remember me</span>
+              <label for="password">
+                Password
               </label>
+
+              <a
+                href="#"
+                id="forgotPassword"
+              >
+                Forgot password?
+              </a>
+
             </div>
 
-            <div
-              id="authMessage"
-              class="auth-message"
-              role="alert"
-              aria-live="polite"
-            ></div>
+            <div class="input-wrapper">
 
-            <button type="submit" class="auth-submit-btn" id="loginButton">
-              <span>Sign In</span>
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </form>
+              <i
+                class="fa-solid fa-lock"
+                aria-hidden="true"
+              ></i>
 
-          <div class="auth-divider">
-            <span>SECURE ACCESS</span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                maxlength="128"
+                required
+                aria-required="true"
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                id="togglePassword"
+                aria-label="Show password"
+                aria-controls="password"
+                aria-pressed="false"
+              >
+                <i
+                  class="fa-regular fa-eye"
+                  aria-hidden="true"
+                ></i>
+              </button>
+
+            </div>
+
           </div>
 
-          <div class="security-note">
-            <i class="fa-solid fa-lock"></i>
-            <span>Your account access is protected.</span>
+
+          <!-- Remember Me -->
+
+          <div class="form-options">
+
+            <label class="remember-option">
+
+              <input
+                type="checkbox"
+                id="rememberMe"
+                name="rememberMe"
+              />
+
+              <span>Remember me</span>
+
+            </label>
+
           </div>
 
-          <p class="auth-switch">
-            Don't have an account?
-            <a href="register.html">Create an account</a>
-          </p>
 
-          <a href="../index.html" class="back-home">
-            <i class="fa-solid fa-arrow-left"></i>
-            Back to homepage
-          </a>
+          <!-- Authentication Message -->
+
+          <div
+            id="authMessage"
+            class="auth-message"
+            role="alert"
+            aria-live="polite"
+            aria-atomic="true"
+          ></div>
+
+
+          <!-- Submit Button -->
+
+          <button
+            type="submit"
+            class="auth-submit-btn"
+            id="loginButton"
+          >
+
+            <span>Sign In</span>
+
+            <i
+              class="fa-solid fa-arrow-right"
+              aria-hidden="true"
+            ></i>
+
+          </button>
+
+        </form>
+
+
+        <!-- Security Information -->
+
+        <div class="auth-divider">
+          <span>SECURE ACCESS</span>
         </div>
-      </section>
-    </main>
 
-    <script src="../js/login.js" defer></script>
-  </body>
+        <div class="security-note">
+
+          <i
+            class="fa-solid fa-lock"
+            aria-hidden="true"
+          ></i>
+
+          <span>
+            Your account access is protected.
+          </span>
+
+        </div>
+
+
+        <!-- Register Link -->
+
+        <p class="auth-switch">
+
+          Don't have an account?
+
+          <a href="register.html">
+            Create an account
+          </a>
+
+        </p>
+
+
+        <!-- Homepage Link -->
+
+        <a href="../index.html" class="back-home">
+
+          <i
+            class="fa-solid fa-arrow-left"
+            aria-hidden="true"
+          ></i>
+
+          Back to homepage
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- Login JavaScript -->
+
+  <script src="../js/login.js" defer></script>
+
+</body>
 </html>

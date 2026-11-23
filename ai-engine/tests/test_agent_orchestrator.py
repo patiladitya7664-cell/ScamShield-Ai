@@ -3,34 +3,64 @@
 SCAMSHIELD AI - AGENT ORCHESTRATOR TEST SUITE
 =========================================================
 
+Version: 1.1.0
+
 Coverage:
 1. Initialization and configuration.
 2. Input validation.
-3. Agent response validation.
-4. Guardian execution.
-5. Intelligence execution.
-6. Victim Safety execution.
-7. Agent failure handling.
-8. Unified response structure.
-9. Metadata and execution tracking.
-10. Controlled Decoy lifecycle.
-11. Public analysis function.
-12. Logging failure handling.
+3. Safe helper methods.
+4. Agent response validation.
+5. Guardian execution.
+6. Intelligence execution.
+7. Victim Safety execution.
+8. Agent failure handling.
+9. Unified response structure.
+10. Metadata and execution tracking.
+11. Controlled Decoy lifecycle.
+12. Public analysis function.
+13. Logging failure handling.
+14. Evidence type support.
+15. Analysis ID uniqueness.
 
 Run:
-pytest tests/test_agent_orchestrator.py -v
+    python -m pytest tests/test_agent_orchestrator.py -v
+
 =========================================================
 """
 
 import importlib
+import sys
+
+from pathlib import Path
+from datetime import datetime
 from unittest.mock import Mock
 
 import pytest
+
+
+# =========================================================
+# PYTHON IMPORT PATH
+# =========================================================
+
+AI_ENGINE_ROOT = Path(__file__).resolve().parents[1]
+
+if str(AI_ENGINE_ROOT) not in sys.path:
+    sys.path.insert(0, str(AI_ENGINE_ROOT))
+
+
+# =========================================================
+# PROJECT IMPORTS
+# =========================================================
 
 from services.agent_orchestrator import (
     AgentOrchestrator,
     run_complete_analysis,
 )
+
+from agents.guardian_agent import GuardianAgent
+from agents.intelligence_agent import IntelligenceAgent
+from agents.victim_safety_agent import VictimSafetyAgent
+from agents.decoy_agent import DecoyAgent
 
 
 # =========================================================
@@ -57,11 +87,13 @@ def orchestrator(monkeypatch):
 
     instance = AgentOrchestrator()
 
+    # Replace real agents with isolated mocks.
     instance.guardian = Mock()
     instance.intelligence = Mock()
     instance.victim_safety = Mock()
     instance.decoy = Mock()
 
+    # Guardian response.
     instance.guardian.analyze.return_value = {
         "success": True,
         "analysis": {
@@ -74,16 +106,23 @@ def orchestrator(monkeypatch):
         },
     }
 
+    # Intelligence response.
     instance.intelligence.analyze.return_value = {
         "success": True,
-        "indicators": ["suspicious_link"],
+        "indicators": [
+            "suspicious_link",
+        ],
     }
 
+    # Victim safety response.
     instance.victim_safety.analyze.return_value = {
         "success": True,
-        "recommendations": ["Do not share OTP."],
+        "recommendations": [
+            "Do not share OTP.",
+        ],
     }
 
+    # Decoy responses.
     instance.decoy.start_session.return_value = {
         "success": True,
         "session_id": "test-session",
@@ -125,12 +164,23 @@ def test_orchestrator_version(orchestrator):
     assert orchestrator.VERSION == "1.1.0"
 
 
-def test_all_four_agents_are_initialized(orchestrator):
+def test_all_four_agents_are_actually_initialized(
+    monkeypatch,
+):
 
-    assert orchestrator.guardian is not None
-    assert orchestrator.intelligence is not None
-    assert orchestrator.victim_safety is not None
-    assert orchestrator.decoy is not None
+    monkeypatch.setattr(
+        orchestrator_module,
+        "log_agent_execution",
+        Mock(),
+    )
+
+    # Create a real orchestrator instead of using fixture mocks.
+    instance = AgentOrchestrator()
+
+    assert isinstance(instance.guardian, GuardianAgent)
+    assert isinstance(instance.intelligence, IntelligenceAgent)
+    assert isinstance(instance.victim_safety, VictimSafetyAgent)
+    assert isinstance(instance.decoy, DecoyAgent)
 
 
 def test_supported_evidence_types(orchestrator):
@@ -158,30 +208,52 @@ def test_maximum_evidence_length(orchestrator):
 
 def test_safe_dict_accepts_dictionary(orchestrator):
 
-    value = {"success": True}
+    value = {
+        "success": True,
+    }
 
     assert orchestrator._safe_dict(value) == value
 
 
 @pytest.mark.parametrize(
     "value",
-    [None, [], "text", 123, True],
+    [
+        None,
+        [],
+        "text",
+        123,
+        True,
+    ],
 )
-def test_safe_dict_rejects_non_dictionary(orchestrator, value):
+def test_safe_dict_rejects_non_dictionary(
+    orchestrator,
+    value,
+):
 
     assert orchestrator._safe_dict(value) == {}
 
 
 def test_safe_list_accepts_list(orchestrator):
 
-    assert orchestrator._safe_list([1, 2]) == [1, 2]
+    value = [1, 2]
+
+    assert orchestrator._safe_list(value) == value
 
 
 @pytest.mark.parametrize(
     "value",
-    [None, {}, "text", 123],
+    [
+        None,
+        {},
+        "text",
+        123,
+        True,
+    ],
 )
-def test_safe_list_rejects_non_list(orchestrator, value):
+def test_safe_list_rejects_non_list(
+    orchestrator,
+    value,
+):
 
     assert orchestrator._safe_list(value) == []
 
@@ -191,20 +263,30 @@ def test_safe_string_accepts_string(orchestrator):
     assert orchestrator._safe_string("hello") == "hello"
 
 
-def test_safe_string_returns_default_for_non_string(orchestrator):
+def test_safe_string_returns_default_for_non_string(
+    orchestrator,
+):
 
-    assert orchestrator._safe_string(123, "default") == "default"
+    assert (
+        orchestrator._safe_string(123, "default")
+        == "default"
+    )
+
+
+def test_safe_string_default_value(orchestrator):
+
+    assert orchestrator._safe_string(123) == ""
 
 
 def test_timestamp_is_utc_iso_format(orchestrator):
-
-    from datetime import datetime
 
     timestamp = orchestrator._timestamp()
 
     parsed = datetime.fromisoformat(timestamp)
 
     assert parsed.tzinfo is not None
+
+    assert parsed.utcoffset().total_seconds() == 0
 
 
 # =========================================================
@@ -224,7 +306,15 @@ def test_validate_input_success(orchestrator):
 
 @pytest.mark.parametrize(
     "evidence",
-    [None, 123, 45.5, True, False, [], {}],
+    [
+        None,
+        123,
+        45.5,
+        True,
+        False,
+        [],
+        {},
+    ],
 )
 def test_validate_input_rejects_non_string_evidence(
     orchestrator,
@@ -236,12 +326,21 @@ def test_validate_input_rejects_non_string_evidence(
         match="Evidence must be a string",
     ):
 
-        orchestrator._validate_input(evidence, "message")
+        orchestrator._validate_input(
+            evidence,
+            "message",
+        )
 
 
 @pytest.mark.parametrize(
     "evidence",
-    ["", " ", "\n", "\t", "  \n  "],
+    [
+        "",
+        " ",
+        "\n",
+        "\t",
+        "  \n  ",
+    ],
 )
 def test_validate_input_rejects_empty_evidence(
     orchestrator,
@@ -253,10 +352,15 @@ def test_validate_input_rejects_empty_evidence(
         match="Evidence cannot be empty",
     ):
 
-        orchestrator._validate_input(evidence, "message")
+        orchestrator._validate_input(
+            evidence,
+            "message",
+        )
 
 
-def test_validate_input_rejects_oversized_evidence(orchestrator):
+def test_validate_input_rejects_oversized_evidence(
+    orchestrator,
+):
 
     evidence = "A" * (
         orchestrator.MAX_EVIDENCE_LENGTH + 1
@@ -267,10 +371,15 @@ def test_validate_input_rejects_oversized_evidence(orchestrator):
         match="maximum allowed length",
     ):
 
-        orchestrator._validate_input(evidence, "message")
+        orchestrator._validate_input(
+            evidence,
+            "message",
+        )
 
 
-def test_validate_input_accepts_maximum_evidence(orchestrator):
+def test_validate_input_accepts_maximum_evidence(
+    orchestrator,
+):
 
     evidence = "A" * orchestrator.MAX_EVIDENCE_LENGTH
 
@@ -285,7 +394,13 @@ def test_validate_input_accepts_maximum_evidence(orchestrator):
 
 @pytest.mark.parametrize(
     "evidence_type",
-    [None, 123, True, [], {}],
+    [
+        None,
+        123,
+        True,
+        [],
+        {},
+    ],
 )
 def test_validate_input_rejects_non_string_evidence_type(
     orchestrator,
@@ -305,7 +420,13 @@ def test_validate_input_rejects_non_string_evidence_type(
 
 @pytest.mark.parametrize(
     "evidence_type",
-    ["", "unknown", "audio", "video", "document"],
+    [
+        "",
+        "unknown",
+        "audio",
+        "video",
+        "document",
+    ],
 )
 def test_validate_input_rejects_unsupported_evidence_type(
     orchestrator,
@@ -354,12 +475,16 @@ def test_validate_input_accepts_all_supported_types(
 
 def test_validate_agent_result_accepts_valid_response():
 
-    result = {"success": True}
+    result = {
+        "success": True,
+    }
 
-    assert AgentOrchestrator._validate_agent_result(
+    response = AgentOrchestrator._validate_agent_result(
         result,
         "Guardian",
-    ) == result
+    )
+
+    assert response == result
 
 
 def test_validate_agent_result_accepts_failed_response():
@@ -369,17 +494,27 @@ def test_validate_agent_result_accepts_failed_response():
         "error": {},
     }
 
-    assert AgentOrchestrator._validate_agent_result(
+    response = AgentOrchestrator._validate_agent_result(
         result,
         "Guardian",
-    ) == result
+    )
+
+    assert response == result
 
 
 @pytest.mark.parametrize(
     "result",
-    [None, [], "invalid", 123, True],
+    [
+        None,
+        [],
+        "invalid",
+        123,
+        True,
+    ],
 )
-def test_validate_agent_result_rejects_non_dictionary(result):
+def test_validate_agent_result_rejects_non_dictionary(
+    result,
+):
 
     response = AgentOrchestrator._validate_agent_result(
         result,
@@ -387,7 +522,11 @@ def test_validate_agent_result_rejects_non_dictionary(result):
     )
 
     assert response["success"] is False
-    assert response["error"]["code"] == "invalid_agent_response"
+
+    assert (
+        response["error"]["code"]
+        == "invalid_agent_response"
+    )
 
 
 @pytest.mark.parametrize(
@@ -400,7 +539,9 @@ def test_validate_agent_result_rejects_non_dictionary(result):
         {"success": None},
     ],
 )
-def test_validate_agent_result_rejects_missing_success(result):
+def test_validate_agent_result_rejects_missing_success(
+    result,
+):
 
     response = AgentOrchestrator._validate_agent_result(
         result,
@@ -408,21 +549,31 @@ def test_validate_agent_result_rejects_missing_success(result):
     )
 
     assert response["success"] is False
-    assert response["error"]["code"] == "missing_success_status"
+
+    assert (
+        response["error"]["code"]
+        == "missing_success_status"
+    )
 
 
 # =========================================================
 # SUCCESSFUL ANALYSIS TESTS
 # =========================================================
 
-def test_analyze_returns_success(orchestrator, valid_evidence):
+def test_analyze_returns_success(
+    orchestrator,
+    valid_evidence,
+):
 
     result = orchestrator.analyze(valid_evidence)
 
     assert result["success"] is True
 
 
-def test_analyze_returns_analysis_id(orchestrator, valid_evidence):
+def test_analyze_returns_analysis_id(
+    orchestrator,
+    valid_evidence,
+):
 
     result = orchestrator.analyze(valid_evidence)
 
@@ -430,27 +581,39 @@ def test_analyze_returns_analysis_id(orchestrator, valid_evidence):
     assert len(result["analysis_id"]) > 0
 
 
-def test_analysis_ids_are_unique(orchestrator, valid_evidence):
+def test_analysis_ids_are_unique(
+    orchestrator,
+    valid_evidence,
+):
 
     first = orchestrator.analyze(valid_evidence)
+
     second = orchestrator.analyze(valid_evidence)
 
     assert first["analysis_id"] != second["analysis_id"]
 
 
-def test_analyze_returns_completed_status(orchestrator, valid_evidence):
+def test_analyze_returns_completed_status(
+    orchestrator,
+    valid_evidence,
+):
 
     result = orchestrator.analyze(valid_evidence)
 
     assert result["orchestrator"]["status"] == "completed"
 
 
-def test_all_primary_agents_execute(orchestrator, valid_evidence):
+def test_all_primary_agents_execute(
+    orchestrator,
+    valid_evidence,
+):
 
     orchestrator.analyze(valid_evidence)
 
     orchestrator.guardian.analyze.assert_called_once()
+
     orchestrator.intelligence.analyze.assert_called_once()
+
     orchestrator.victim_safety.analyze.assert_called_once()
 
 
@@ -459,7 +622,10 @@ def test_agents_receive_correct_evidence(
     valid_evidence,
 ):
 
-    orchestrator.analyze(valid_evidence, "message")
+    orchestrator.analyze(
+        valid_evidence,
+        "message",
+    )
 
     orchestrator.guardian.analyze.assert_called_once_with(
         evidence=valid_evidence,
@@ -499,14 +665,39 @@ def test_decoy_does_not_start_automatically(
     orchestrator.analyze(valid_evidence)
 
     orchestrator.decoy.start_session.assert_not_called()
+
     orchestrator.decoy.continue_session.assert_not_called()
 
+    orchestrator.decoy.end_session.assert_not_called()
 
-def test_decoy_status_is_not_started(orchestrator, valid_evidence):
+
+def test_decoy_status_is_not_started(
+    orchestrator,
+    valid_evidence,
+):
 
     result = orchestrator.analyze(valid_evidence)
 
-    assert result["results"]["decoy"]["status"] == "not_started"
+    assert (
+        result["results"]["decoy"]["status"]
+        == "not_started"
+    )
+
+
+def test_guardian_analysis_is_preserved(
+    orchestrator,
+    valid_evidence,
+):
+
+    result = orchestrator.analyze(valid_evidence)
+
+    guardian_result = result["results"]["guardian"]
+
+    assert guardian_result["success"] is True
+
+    assert guardian_result["analysis"]["risk_score"] == 85
+
+    assert guardian_result["analysis"]["risk_level"] == "HIGH"
 
 
 # =========================================================
@@ -536,7 +727,11 @@ def test_analyze_supports_all_evidence_types(
     )
 
     assert result["success"] is True
-    assert result["metadata"]["evidence_type"] == evidence_type
+
+    assert (
+        result["metadata"]["evidence_type"]
+        == evidence_type
+    )
 
 
 def test_analyze_normalizes_evidence_type(
@@ -550,7 +745,24 @@ def test_analyze_normalizes_evidence_type(
     )
 
     assert result["success"] is True
+
     assert result["metadata"]["evidence_type"] == "url"
+
+
+def test_normalized_evidence_type_reaches_guardian(
+    orchestrator,
+    valid_evidence,
+):
+
+    orchestrator.analyze(
+        valid_evidence,
+        " MESSAGE ",
+    )
+
+    orchestrator.guardian.analyze.assert_called_once_with(
+        evidence=valid_evidence,
+        evidence_type="message",
+    )
 
 
 # =========================================================
@@ -569,6 +781,7 @@ def test_guardian_exception_is_handled(
     result = orchestrator.analyze(valid_evidence)
 
     assert result["success"] is False
+
     assert result["orchestrator"]["status"] == "failed"
 
 
@@ -579,12 +792,15 @@ def test_guardian_failure_stops_primary_pipeline(
 
     orchestrator.guardian.analyze.return_value = {
         "success": False,
-        "error": {"code": "guardian_failed"},
+        "error": {
+            "code": "guardian_failed",
+        },
     }
 
     orchestrator.analyze(valid_evidence)
 
     orchestrator.intelligence.analyze.assert_not_called()
+
     orchestrator.victim_safety.analyze.assert_not_called()
 
 
@@ -598,7 +814,11 @@ def test_guardian_invalid_response_is_handled(
     result = orchestrator.analyze(valid_evidence)
 
     assert result["success"] is False
-    assert result["results"]["guardian"]["success"] is False
+
+    assert (
+        result["results"]["guardian"]["success"]
+        is False
+    )
 
 
 def test_guardian_missing_analysis_is_handled(
@@ -614,6 +834,7 @@ def test_guardian_missing_analysis_is_handled(
     result = orchestrator.analyze(valid_evidence)
 
     assert result["success"] is False
+
     assert result["orchestrator"]["status"] == "failed"
 
 
@@ -632,6 +853,31 @@ def test_guardian_failed_execution_has_error_entry(
     )
 
 
+def test_guardian_failure_marks_other_agents_skipped(
+    orchestrator,
+    valid_evidence,
+):
+
+    orchestrator.guardian.analyze.return_value = {
+        "success": False,
+        "error": {
+            "code": "guardian_failed",
+        },
+    }
+
+    result = orchestrator.analyze(valid_evidence)
+
+    assert (
+        "intelligence"
+        in result["metadata"]["agents_skipped"]
+    )
+
+    assert (
+        "victim_safety"
+        in result["metadata"]["agents_skipped"]
+    )
+
+
 # =========================================================
 # INTELLIGENCE FAILURE TESTS
 # =========================================================
@@ -646,6 +892,7 @@ def test_intelligence_exception_is_handled(
     result = orchestrator.analyze(valid_evidence)
 
     assert result["success"] is True
+
     assert result["orchestrator"]["status"] == "partial"
 
 
@@ -668,7 +915,9 @@ def test_intelligence_failed_response_is_tracked(
 
     orchestrator.intelligence.analyze.return_value = {
         "success": False,
-        "error": {"code": "intelligence_failed"},
+        "error": {
+            "code": "intelligence_failed",
+        },
     }
 
     result = orchestrator.analyze(valid_evidence)
@@ -679,6 +928,22 @@ def test_intelligence_failed_response_is_tracked(
         "intelligence"
         in result["metadata"]["agents_failed"]
     )
+
+
+def test_intelligence_result_is_preserved(
+    orchestrator,
+    valid_evidence,
+):
+
+    result = orchestrator.analyze(valid_evidence)
+
+    intelligence = result["results"]["intelligence"]
+
+    assert intelligence["success"] is True
+
+    assert intelligence["indicators"] == [
+        "suspicious_link",
+    ]
 
 
 # =========================================================
@@ -695,6 +960,7 @@ def test_victim_safety_exception_is_handled(
     result = orchestrator.analyze(valid_evidence)
 
     assert result["success"] is True
+
     assert result["orchestrator"]["status"] == "partial"
 
 
@@ -717,7 +983,9 @@ def test_victim_safety_failed_response_is_tracked(
 
     orchestrator.victim_safety.analyze.return_value = {
         "success": False,
-        "error": {"code": "safety_failed"},
+        "error": {
+            "code": "safety_failed",
+        },
     }
 
     result = orchestrator.analyze(valid_evidence)
@@ -728,6 +996,22 @@ def test_victim_safety_failed_response_is_tracked(
         "victim_safety"
         in result["metadata"]["agents_failed"]
     )
+
+
+def test_victim_safety_result_is_preserved(
+    orchestrator,
+    valid_evidence,
+):
+
+    result = orchestrator.analyze(valid_evidence)
+
+    safety = result["results"]["victim_safety"]
+
+    assert safety["success"] is True
+
+    assert safety["recommendations"] == [
+        "Do not share OTP.",
+    ]
 
 
 # =========================================================
@@ -797,8 +1081,15 @@ def test_response_metadata_contains_execution_details(
     metadata = result["metadata"]
 
     assert metadata["evidence_type"] == "message"
-    assert isinstance(metadata["duration_ms"], (int, float))
+
+    assert isinstance(
+        metadata["duration_ms"],
+        (int, float),
+    )
+
     assert metadata["duration_ms"] >= 0
+
+    assert isinstance(metadata["created_at"], str)
 
 
 def test_response_tracks_successful_agents(
@@ -811,7 +1102,9 @@ def test_response_tracks_successful_agents(
     successful = result["metadata"]["agents_successful"]
 
     assert "guardian" in successful
+
     assert "intelligence" in successful
+
     assert "victim_safety" in successful
 
 
@@ -846,6 +1139,53 @@ def test_response_tracks_executed_agents(
     ]
 
 
+def test_response_tracks_skipped_agents(
+    orchestrator,
+    valid_evidence,
+):
+
+    orchestrator.guardian.analyze.return_value = {
+        "success": False,
+        "error": {
+            "code": "guardian_failed",
+        },
+    }
+
+    result = orchestrator.analyze(valid_evidence)
+
+    skipped = result["metadata"]["agents_skipped"]
+
+    assert "intelligence" in skipped
+
+    assert "victim_safety" in skipped
+
+
+def test_completed_analysis_has_no_errors(
+    orchestrator,
+    valid_evidence,
+):
+
+    result = orchestrator.analyze(valid_evidence)
+
+    assert result["orchestrator"]["status"] == "completed"
+
+    assert result["errors"] == []
+
+
+def test_partial_analysis_contains_errors(
+    orchestrator,
+    valid_evidence,
+):
+
+    orchestrator.intelligence.analyze.side_effect = RuntimeError()
+
+    result = orchestrator.analyze(valid_evidence)
+
+    assert result["orchestrator"]["status"] == "partial"
+
+    assert len(result["errors"]) > 0
+
+
 def test_response_contains_verification_disclaimer(
     orchestrator,
     valid_evidence,
@@ -861,25 +1201,46 @@ def test_response_contains_verification_disclaimer(
     )
 
     assert isinstance(result["disclaimer"], str)
+
     assert len(result["disclaimer"]) > 0
 
 
-def test_invalid_input_returns_failed_response(orchestrator):
+def test_invalid_input_returns_failed_response(
+    orchestrator,
+):
 
     result = orchestrator.analyze("")
 
     assert result["success"] is False
+
     assert result["orchestrator"]["status"] == "failed"
+
     assert result["metadata"]["evidence_type"] is None
 
 
-def test_invalid_input_does_not_execute_agents(orchestrator):
+def test_invalid_input_does_not_execute_agents(
+    orchestrator,
+):
 
     orchestrator.analyze("")
 
     orchestrator.guardian.analyze.assert_not_called()
+
     orchestrator.intelligence.analyze.assert_not_called()
+
     orchestrator.victim_safety.analyze.assert_not_called()
+
+
+def test_invalid_input_contains_orchestrator_error(
+    orchestrator,
+):
+
+    result = orchestrator.analyze("")
+
+    assert any(
+        error["agent"] == "orchestrator"
+        for error in result["errors"]
+    )
 
 
 # =========================================================
@@ -889,7 +1250,7 @@ def test_invalid_input_does_not_execute_agents(orchestrator):
 def test_start_decoy_simulation_success(orchestrator):
 
     result = orchestrator.start_decoy_simulation(
-        "Suspicious message",
+        "Suspicious message"
     )
 
     assert result["success"] is True
@@ -899,7 +1260,9 @@ def test_start_decoy_simulation_success(orchestrator):
     )
 
 
-def test_start_decoy_simulation_handles_exception(orchestrator):
+def test_start_decoy_simulation_handles_exception(
+    orchestrator,
+):
 
     orchestrator.decoy.start_session.side_effect = RuntimeError()
 
@@ -908,10 +1271,13 @@ def test_start_decoy_simulation_handles_exception(orchestrator):
     )
 
     assert result["success"] is False
+
     assert result["error"]["code"] == "decoy_start_failed"
 
 
-def test_start_decoy_simulation_validates_response(orchestrator):
+def test_start_decoy_simulation_validates_response(
+    orchestrator,
+):
 
     orchestrator.decoy.start_session.return_value = None
 
@@ -921,8 +1287,29 @@ def test_start_decoy_simulation_validates_response(orchestrator):
 
     assert result["success"] is False
 
+    assert result["error"]["code"] == "invalid_agent_response"
 
-def test_continue_decoy_simulation_success(orchestrator):
+
+def test_start_decoy_simulation_rejects_missing_success(
+    orchestrator,
+):
+
+    orchestrator.decoy.start_session.return_value = {
+        "session_id": "test-session",
+    }
+
+    result = orchestrator.start_decoy_simulation(
+        "Suspicious message"
+    )
+
+    assert result["success"] is False
+
+    assert result["error"]["code"] == "missing_success_status"
+
+
+def test_continue_decoy_simulation_success(
+    orchestrator,
+):
 
     result = orchestrator.continue_decoy_simulation(
         "test-session",
@@ -937,7 +1324,9 @@ def test_continue_decoy_simulation_success(orchestrator):
     )
 
 
-def test_continue_decoy_simulation_handles_exception(orchestrator):
+def test_continue_decoy_simulation_handles_exception(
+    orchestrator,
+):
 
     orchestrator.decoy.continue_session.side_effect = RuntimeError()
 
@@ -947,10 +1336,13 @@ def test_continue_decoy_simulation_handles_exception(orchestrator):
     )
 
     assert result["success"] is False
+
     assert result["error"]["code"] == "decoy_continue_failed"
 
 
-def test_continue_decoy_simulation_validates_response(orchestrator):
+def test_continue_decoy_simulation_validates_response(
+    orchestrator,
+):
 
     orchestrator.decoy.continue_session.return_value = None
 
@@ -964,7 +1356,9 @@ def test_continue_decoy_simulation_validates_response(orchestrator):
 
 def test_end_decoy_simulation_success(orchestrator):
 
-    result = orchestrator.end_decoy_simulation("test-session")
+    result = orchestrator.end_decoy_simulation(
+        "test-session"
+    )
 
     assert result["success"] is True
 
@@ -973,23 +1367,59 @@ def test_end_decoy_simulation_success(orchestrator):
     )
 
 
-def test_end_decoy_simulation_handles_exception(orchestrator):
+def test_end_decoy_simulation_handles_exception(
+    orchestrator,
+):
 
     orchestrator.decoy.end_session.side_effect = RuntimeError()
 
-    result = orchestrator.end_decoy_simulation("test-session")
+    result = orchestrator.end_decoy_simulation(
+        "test-session"
+    )
 
     assert result["success"] is False
+
     assert result["error"]["code"] == "decoy_end_failed"
 
 
-def test_end_decoy_simulation_validates_response(orchestrator):
+def test_end_decoy_simulation_validates_response(
+    orchestrator,
+):
 
     orchestrator.decoy.end_session.return_value = None
 
-    result = orchestrator.end_decoy_simulation("test-session")
+    result = orchestrator.end_decoy_simulation(
+        "test-session"
+    )
 
     assert result["success"] is False
+
+
+def test_decoy_methods_do_not_modify_analysis_state(
+    orchestrator,
+    valid_evidence,
+):
+
+    result = orchestrator.analyze(valid_evidence)
+
+    analysis_id = result["analysis_id"]
+
+    orchestrator.start_decoy_simulation(
+        "Suspicious message"
+    )
+
+    orchestrator.continue_decoy_simulation(
+        "test-session",
+        "Another message",
+    )
+
+    orchestrator.end_decoy_simulation(
+        "test-session"
+    )
+
+    assert result["analysis_id"] == analysis_id
+
+    assert result["results"]["decoy"]["status"] == "not_started"
 
 
 # =========================================================
@@ -1034,18 +1464,74 @@ def test_logging_is_attempted_after_analysis(
     logging_mock.assert_called_once()
 
 
+def test_logging_receives_orchestrator_identity(
+    orchestrator,
+    valid_evidence,
+    monkeypatch,
+):
+
+    logging_mock = Mock()
+
+    monkeypatch.setattr(
+        orchestrator_module,
+        "log_agent_execution",
+        logging_mock,
+    )
+
+    orchestrator.analyze(valid_evidence)
+
+    args = logging_mock.call_args.args
+
+    assert args[0] == "AgentOrchestrator"
+
+    assert args[1] == "COMPLETED"
+
+
+def test_logging_failure_does_not_break_failed_analysis(
+    orchestrator,
+    monkeypatch,
+):
+
+    monkeypatch.setattr(
+        orchestrator_module,
+        "log_agent_execution",
+        Mock(
+            side_effect=RuntimeError("logging failure")
+        ),
+    )
+
+    orchestrator.guardian.analyze.return_value = {
+        "success": False,
+        "error": {
+            "code": "guardian_failed",
+        },
+    }
+
+    result = orchestrator.analyze(
+        "Suspicious message"
+    )
+
+    assert result["success"] is False
+
+    assert result["orchestrator"]["status"] == "failed"
+
+
 # =========================================================
 # PUBLIC FUNCTION TESTS
 # =========================================================
 
-def test_run_complete_analysis_uses_singleton(monkeypatch):
+def test_run_complete_analysis_uses_singleton(
+    monkeypatch,
+):
 
     expected = {
         "success": True,
         "analysis_id": "public-test",
     }
 
-    mock_analyze = Mock(return_value=expected)
+    mock_analyze = Mock(
+        return_value=expected
+    )
 
     monkeypatch.setattr(
         orchestrator_module.agent_orchestrator,
@@ -1071,7 +1557,9 @@ def test_run_complete_analysis_default_evidence_type(
 ):
 
     mock_analyze = Mock(
-        return_value={"success": True}
+        return_value={
+            "success": True,
+        }
     )
 
     monkeypatch.setattr(
@@ -1080,12 +1568,37 @@ def test_run_complete_analysis_default_evidence_type(
         mock_analyze,
     )
 
-    run_complete_analysis("Suspicious message")
+    run_complete_analysis(
+        "Suspicious message"
+    )
 
     mock_analyze.assert_called_once_with(
         evidence="Suspicious message",
         evidence_type="message",
     )
+
+
+def test_run_complete_analysis_preserves_response(
+    monkeypatch,
+):
+
+    expected = {
+        "success": True,
+        "analysis_id": "preserved-analysis",
+        "custom_field": "test",
+    }
+
+    monkeypatch.setattr(
+        orchestrator_module.agent_orchestrator,
+        "analyze",
+        Mock(return_value=expected),
+    )
+
+    result = run_complete_analysis(
+        "Suspicious message"
+    )
+
+    assert result is expected
 
 
 # =========================================================

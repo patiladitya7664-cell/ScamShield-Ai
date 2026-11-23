@@ -1,56 +1,399 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080e1c">
-  <meta name="description" content="Review and manage your ScamShield AI cases.">
+
+  <meta
+    name="description"
+    content="Manage ScamShield AI fraud investigations, review detected threats, and track case progress."
+  >
+
   <title>Cases | ScamShield AI</title>
+
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/responsive.css">
   <link rel="stylesheet" href="../css/modules.css">
+
   <script src="../js/main.js" defer></script>
 </head>
+
 <body>
+
+  <!-- =========================================
+       APPLICATION HEADER
+  ========================================== -->
+
   <header class="app-header">
-    <a class="brand" href="dashboard.html" aria-label="ScamShield AI dashboard">
+
+    <a
+      class="brand"
+      href="dashboard.html"
+      aria-label="ScamShield AI dashboard"
+    >
       <span class="brand-mark" aria-hidden="true">⬡</span>
       ScamShield <span>AI</span>
     </a>
+
     <nav aria-label="Main navigation">
+
       <a href="dashboard.html">Dashboard</a>
+
       <a href="detection.html">Detection</a>
-      <a href="cases.html" aria-current="page">Cases</a>
+
+      <a href="cases.html" aria-current="page">
+        Cases
+      </a>
+
     </nav>
+
   </header>
 
+
+  <!-- =========================================
+       MAIN CONTENT
+  ========================================== -->
+
   <main class="module-page">
+
+    <!-- PAGE INTRODUCTION -->
+
     <section class="module-heading">
-      <p class="module-eyebrow">CASE MANAGEMENT</p>
-      <h1>Your cases</h1>
-      <p>Keep suspicious messages, call notes, and analysis details organized for follow-up.</p>
+
+      <p class="module-eyebrow">
+        INVESTIGATION & CASE MANAGEMENT
+      </p>
+
+      <h1>Your Cases</h1>
+
+      <p>
+        Review suspicious activities, organize fraud analysis records,
+        and track the progress of your investigations in one place.
+      </p>
+
     </section>
 
-    <section class="scanner-panel" aria-labelledby="cases-title">
+
+    <!-- =========================================
+         CASE MANAGEMENT PANEL
+    ========================================== -->
+
+    <section
+      class="scanner-panel"
+      aria-labelledby="cases-title"
+    >
+
+      <!-- PANEL HEADER -->
+
       <div class="scanner-result-header">
+
         <div>
-          <h2 id="cases-title">Saved cases</h2>
-          <p class="scanner-help">Cases connected to your account will appear here.</p>
+
+          <h2 id="cases-title">
+            Case Management
+          </h2>
+
+          <p class="scanner-help">
+            Your saved fraud investigations and detection records.
+          </p>
+
         </div>
-        <a class="scanner-button" href="detection.html">Start a detection</a>
+
+        <a
+          class="scanner-button"
+          href="detection.html"
+        >
+          Start New Detection
+        </a>
+
       </div>
 
-      <div class="scanner-result" role="status">
-        <h3>No cases to show yet</h3>
+
+      <!-- =========================================
+           CASE SEARCH AND FILTERS
+      ========================================== -->
+
+      <section
+        class="case-controls"
+        aria-label="Case search and filters"
+      >
+
+        <div class="case-search">
+
+          <label for="caseSearch">
+            Search Cases
+          </label>
+
+          <input
+            type="search"
+            id="caseSearch"
+            name="search"
+            placeholder="Search by case ID or evidence..."
+            autocomplete="off"
+          >
+
+        </div>
+
+
+        <div class="case-filter">
+
+          <label for="caseStatusFilter">
+            Case Status
+          </label>
+
+          <select
+            id="caseStatusFilter"
+            name="status"
+          >
+
+            <option value="all">
+              All Statuses
+            </option>
+
+            <option value="open">
+              Open
+            </option>
+
+            <option value="investigating">
+              Investigating
+            </option>
+
+            <option value="resolved">
+              Resolved
+            </option>
+
+            <option value="closed">
+              Closed
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="case-filter">
+
+          <label for="casePriorityFilter">
+            Priority
+          </label>
+
+          <select
+            id="casePriorityFilter"
+            name="priority"
+          >
+
+            <option value="all">
+              All Priorities
+            </option>
+
+            <option value="low">
+              Low
+            </option>
+
+            <option value="medium">
+              Medium
+            </option>
+
+            <option value="high">
+              High
+            </option>
+
+            <option value="urgent">
+              Urgent
+            </option>
+
+          </select>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           CASE LIST
+      ========================================== -->
+
+      <section
+        class="case-list-section"
+        aria-labelledby="case-list-title"
+      >
+
+        <div class="scanner-result-header">
+
+          <div>
+
+            <h3 id="case-list-title">
+              Saved Investigations
+            </h3>
+
+            <p class="scanner-help">
+              Review case details and monitor investigation progress.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!--
+          Case records will be rendered here by cases.js
+          after backend integration.
+
+          Expected record information:
+          - Case ID
+          - Evidence type
+          - Fraud category
+          - Risk score
+          - Risk level
+          - Priority
+          - Status
+          - Created date
+        -->
+
+        <div
+          id="casesList"
+          class="case-list"
+          aria-live="polite"
+          aria-busy="false"
+        >
+
+          <div
+            id="casesConnectionState"
+            class="scanner-result"
+            role="status"
+          >
+
+            <h3>
+              Case records are not connected yet
+            </h3>
+
+            <p class="scanner-result-summary">
+              Your saved investigations will appear here after
+              the case management API is connected.
+            </p>
+
+            <p>
+              You can start a new detection while case retrieval
+              and management integration is being completed.
+            </p>
+
+            <a
+              class="scanner-button"
+              href="detection.html"
+            >
+              Open Detection
+            </a>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           CASE STATUS INFORMATION
+      ========================================== -->
+
+      <section
+        class="scanner-result"
+        aria-labelledby="case-status-title"
+      >
+
+        <h3 id="case-status-title">
+          Understanding Case Status
+        </h3>
+
+        <ul>
+
+          <li>
+            <strong>Open:</strong>
+            A case has been created and is awaiting further review.
+          </li>
+
+          <li>
+            <strong>Investigating:</strong>
+            The case is being reviewed.
+          </li>
+
+          <li>
+            <strong>Resolved:</strong>
+            The investigation has been marked as resolved.
+          </li>
+
+          <li>
+            <strong>Closed:</strong>
+            The case has been closed.
+          </li>
+
+        </ul>
+
+      </section>
+
+
+      <!-- =========================================
+           CASE MANAGEMENT INFORMATION
+      ========================================== -->
+
+      <section
+        class="scanner-result"
+        aria-labelledby="case-info-title"
+      >
+
+        <h3 id="case-info-title">
+          What Can a Case Contain?
+        </h3>
+
         <p class="scanner-result-summary">
-          After case storage is connected, your saved investigations will be listed on this page.
+          A case can organize information associated with a suspicious
+          activity or fraud analysis.
         </p>
-      </div>
+
+        <ul>
+
+          <li>
+            Original evidence reference and evidence type.
+          </li>
+
+          <li>
+            Guardian detection result and risk assessment.
+          </li>
+
+          <li>
+            Detected fraud category and analysis summary.
+          </li>
+
+          <li>
+            Case priority and investigation status.
+          </li>
+
+          <li>
+            Relevant timestamps and follow-up information.
+          </li>
+
+        </ul>
+
+      </section>
+
+
+      <!-- =========================================
+           DISCLAIMER
+      ========================================== -->
 
       <p class="scanner-disclaimer">
-        Case saving and retrieval require a connected backend service.
+
+        Case records are intended to help organize suspicious
+        activities and investigation progress. A risk assessment
+        is not proof of fraud. Always verify important findings
+        through appropriate official channels.
+
       </p>
+
     </section>
+
   </main>
+
 </body>
 </html>

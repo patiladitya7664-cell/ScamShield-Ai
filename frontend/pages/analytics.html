@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,15 +6,14 @@
 
   <title>Analytics | ScamShield AI</title>
 
-<meta
- name="description"
- content="ScamShield AI analytics dashboard for fraud trends, risk distribution and threat intelligence insights."
-/>
+  <meta
+    name="description"
+    content="Explore ScamShield AI security analytics covering universal evidence inputs, fraud detection modules, 12 fraud categories, AI agents, Gemini advisory insights and risk distribution."
+  />
 
   <meta name="theme-color" content="#07111f" />
 
   <!-- Google Fonts -->
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -25,614 +23,1265 @@
   />
 
   <!-- Font Awesome -->
-
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   />
 
   <!-- Shared CSS -->
-
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/responsive.css" />
 
-  <!-- Page CSS -->
-
+  <!-- Analytics CSS -->
   <link rel="stylesheet" href="../css/analytics.css" />
-
-  
-
 </head>
 
-<body>
+<body class="analytics-page">
 
   <!-- Background Effects -->
-
   <div class="background-glow glow-one" aria-hidden="true"></div>
   <div class="background-glow glow-two" aria-hidden="true"></div>
 
   <!-- Accessibility -->
-
   <a href="#main-content" class="skip-link">
     Skip to main content
   </a>
 
   <!-- =====================================================
-       NAVBAR
+       NAVIGATION
   ====================================================== -->
 
   <header class="navbar">
     <div class="container nav-content">
 
+      <a
+        href="dashboard.html"
+        class="logo"
+        aria-label="ScamShield AI Dashboard"
+      >
+        <span class="logo-icon" aria-hidden="true">
+          <i class="fa-solid fa-shield-halved"></i>
+        </span>
 
-  <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
-    <span class="logo-icon" aria-hidden="true">
-      <i class="fa-solid fa-shield-halved"></i>
-    </span>
+        <span class="logo-text">
+          ScamShield <span>AI</span>
+        </span>
+      </a>
 
-    <span class="logo-text">
-      ScamShield <span>AI</span>
-    </span>
-  </a>
+      <nav
+        class="nav-links"
+        id="navLinks"
+        aria-label="Main navigation"
+      >
+        <a href="dashboard.html">Dashboard</a>
+        <a href="detection.html">Detection</a>
+        <a href="agents.html">AI Agents</a>
+        <a href="intelligence.html">Intelligence</a>
 
-  <nav
-    class="nav-links"
-    id="navLinks"
-    aria-label="Main navigation"
-  >
-    <a href="dashboard.html">Dashboard</a>
-    <a href="detection.html">Detection</a>
-    <a href="agents.html">AI Agents</a>
-    <a href="intelligence.html">Intelligence</a>
+        <a
+          href="analytics.html"
+          class="active"
+          aria-current="page"
+        >
+          Analytics
+        </a>
 
-    <a
-      href="analytics.html"
-      class="active"
-      aria-current="page"
-    >
-      Analytics
-    </a>
+        <a href="reports.html">Reports</a>
+      </nav>
 
-    <a href="reports.html">Reports</a>
-  </nav>
+      <div class="nav-actions">
+        <a href="settings.html" class="btn btn-secondary">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+          Settings
+        </a>
+      </div>
 
-  <div class="nav-actions">
-    <a href="settings.html" class="btn btn-secondary">
-      <i class="fa-solid fa-gear" aria-hidden="true"></i>
-      Settings
-    </a>
-  </div>
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
 
-  <button
-    class="menu-toggle"
-    id="menuToggle"
-    type="button"
-    aria-label="Open navigation menu"
-    aria-controls="navLinks"
-    aria-expanded="false"
-  >
-    <i class="fa-solid fa-bars" aria-hidden="true"></i>
-  </button>
-
-</div>
-
-
+    </div>
   </header>
 
   <!-- =====================================================
        MAIN CONTENT
   ====================================================== -->
 
-  <main class="analytics-page" id="main-content">
-
-
-<!-- Page Heading -->
-<section class="analytics-hero">
-  <div class="container">
-
-    <div class="analytics-heading">
-
-      <div>
-        <div class="section-tag">
-          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-          THREAT INTELLIGENCE
-        </div>
-
-        <h1>
-          Security <span>Analytics</span>
-        </h1>
-
-        <p>
-          Understand fraud patterns, monitor threat trends and explore
-          security insights through data-driven analytics.
-        </p>
-      </div>
-
-      <div class="analytics-header-actions">
-
-        <div class="analytics-live-status">
-          <span class="status-dot" aria-hidden="true"></span>
-          Analytics Overview
-        </div>
-
-        <button
-          class="analytics-refresh-btn"
-          id="refreshAnalytics"
-          type="button"
-          aria-label="Refresh analytics data"
-        >
-          <i class="fa-solid fa-rotate" aria-hidden="true"></i>
-          Refresh
-        </button>
-
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- =====================================================
-     ANALYTICS CONTENT
-====================================================== -->
-
-<section class="analytics-content">
-  <div class="container">
-
-    <!-- Data Status -->
-    <div
-      class="analytics-notice"
-      id="analyticsNotice"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-
-      <div class="notice-icon" aria-hidden="true">
-        <i class="fa-solid fa-circle-info"></i>
-      </div>
-
-      <div>
-        <strong>Analytics data status</strong>
-
-        <p id="analyticsStatusMessage">
-          Waiting for analytics data from the backend. Charts and reports
-          will appear when the analytics API is available.
-        </p>
-      </div>
-
-    </div>
+  <main id="main-content" class="analytics-page">
 
     <!-- =================================================
-         OVERVIEW
+         ANALYTICS HERO
     ================================================== -->
 
-    <div class="analytics-section-heading">
-      <div>
-        <h2>Analytics Overview</h2>
-        <p>Key security metrics and detection statistics.</p>
-      </div>
-    </div>
+    <section class="analytics-hero">
+      <div class="container">
 
-    <div class="analytics-stats-grid">
+        <div class="analytics-heading">
 
-      <article class="analytics-stat-card">
-        <div class="stat-card-top">
-
-          <span class="stat-icon blue" aria-hidden="true">
-            <i class="fa-solid fa-magnifying-glass-chart"></i>
-          </span>
-
-          <span class="stat-label">Total Analyses</span>
-        </div>
-
-        <h3 id="analyticsTotalAnalyses">--</h3>
-
-        <p>
-          <i class="fa-solid fa-chart-simple" aria-hidden="true"></i>
-          All evidence analyses
-        </p>
-      </article>
-
-      <article class="analytics-stat-card">
-        <div class="stat-card-top">
-
-          <span class="stat-icon red" aria-hidden="true">
-            <i class="fa-solid fa-shield-virus"></i>
-          </span>
-
-          <span class="stat-label">Threats Identified</span>
-        </div>
-
-        <h3 id="analyticsThreats">--</h3>
-
-        <p>
-          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-          Potential fraud detections
-        </p>
-      </article>
-
-      <article class="analytics-stat-card">
-        <div class="stat-card-top">
-
-          <span class="stat-icon green" aria-hidden="true">
-            <i class="fa-solid fa-shield-halved"></i>
-          </span>
-
-          <span class="stat-label">Low Risk Cases</span>
-        </div>
-
-        <h3 id="analyticsLowRisk">--</h3>
-
-        <p>
-          <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-          Classified as low risk
-        </p>
-      </article>
-
-      <article class="analytics-stat-card">
-        <div class="stat-card-top">
-
-          <span class="stat-icon orange" aria-hidden="true">
-            <i class="fa-solid fa-bolt"></i>
-          </span>
-
-          <span class="stat-label">Critical Cases</span>
-        </div>
-
-        <h3 id="analyticsCritical">--</h3>
-
-        <p>
-          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-          Require urgent attention
-        </p>
-      </article>
-
-    </div>
-
-    <!-- =================================================
-         THREAT INTELLIGENCE CHARTS
-    ================================================== -->
-
-    <div class="analytics-section-heading">
-      <div>
-        <h2>Threat Intelligence Insights</h2>
-        <p>Visual overview of risk levels and fraud patterns.</p>
-      </div>
-    </div>
-
-    <div class="analytics-charts-grid">
-
-      <!-- Risk Distribution -->
-      <article class="analytics-panel">
-
-        <div class="analytics-panel-header">
           <div>
-            <h3>Risk Distribution</h3>
-            <p>Cases grouped by assessed risk level.</p>
+            <div class="section-tag">
+              <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+              SECURITY INTELLIGENCE
+            </div>
+
+            <h1>
+              Security <span>Analytics</span>
+            </h1>
+
+            <p>
+              Explore platform activity, understand fraud patterns,
+              monitor risk distribution and evaluate the performance
+              of ScamShield AI's detection and multi-agent architecture.
+            </p>
           </div>
 
-          <span class="panel-icon" aria-hidden="true">
-            <i class="fa-solid fa-chart-pie"></i>
-          </span>
-        </div>
+          <div class="analytics-header-actions">
 
-        <div
-          class="chart-container"
-          id="riskDistributionChart"
-          role="region"
-          aria-label="Risk distribution chart"
-          aria-live="polite"
-        >
-          <div class="chart-empty-state">
-            <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
-            <h4>No risk data available</h4>
-            <p>Risk distribution will appear when data is received.</p>
-          </div>
-        </div>
+            <div class="analytics-live-status">
+              <span
+                class="status-dot"
+                aria-hidden="true"
+              ></span>
 
-        <div class="chart-legend" aria-label="Risk level legend">
+              Backend Analytics
+            </div>
 
-          <span>
-            <i class="legend-dot low" aria-hidden="true"></i>
-            Low
-          </span>
+            <button
+              class="analytics-refresh-btn"
+              id="refreshAnalytics"
+              type="button"
+              aria-label="Refresh analytics data"
+            >
+              <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+              Refresh
+            </button>
 
-          <span>
-            <i class="legend-dot medium" aria-hidden="true"></i>
-            Medium
-          </span>
-
-          <span>
-            <i class="legend-dot high" aria-hidden="true"></i>
-            High
-          </span>
-
-          <span>
-            <i class="legend-dot critical" aria-hidden="true"></i>
-            Critical
-          </span>
-
-        </div>
-
-      </article>
-
-      <!-- Fraud Categories -->
-      <article class="analytics-panel">
-
-        <div class="analytics-panel-header">
-          <div>
-            <h3>Fraud Categories</h3>
-            <p>Distribution across monitored fraud types.</p>
           </div>
 
-          <span class="panel-icon" aria-hidden="true">
-            <i class="fa-solid fa-layer-group"></i>
-          </span>
         </div>
-
-        <div
-          class="category-chart"
-          id="fraudCategoryChart"
-          role="region"
-          aria-label="Fraud category chart"
-          aria-live="polite"
-        >
-          <div class="chart-empty-state">
-            <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
-            <h4>No category data available</h4>
-            <p>Fraud category statistics will appear here.</p>
-          </div>
-        </div>
-
-      </article>
-
-    </div>
-
-    <!-- =================================================
-         THREAT ACTIVITY TRENDS
-    ================================================== -->
-
-    <div class="analytics-section-heading">
-      <div>
-        <h2>Threat Activity Trends</h2>
-        <p>Monitor changes in detected threats over time.</p>
-      </div>
-    </div>
-
-    <article class="analytics-panel trend-panel">
-
-      <div class="analytics-panel-header">
-        <div>
-          <h3>Detection Activity</h3>
-          <p>Historical analysis activity and threat patterns.</p>
-        </div>
-
-        <span class="panel-icon" aria-hidden="true">
-          <i class="fa-solid fa-chart-area"></i>
-        </span>
-      </div>
-
-      <div
-        class="trend-chart-container"
-        id="threatTrendChart"
-        role="region"
-        aria-label="Threat activity trend chart"
-        aria-live="polite"
-      >
-        <div class="chart-empty-state">
-          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-
-          <h4>Trend data unavailable</h4>
-
-          <p>
-            Historical detection trends will be displayed after analytics
-            data is connected.
-          </p>
-        </div>
-      </div>
-
-    </article>
-
-    <!-- =================================================
-         FRAUD INTELLIGENCE BREAKDOWN
-    ================================================== -->
-
-    <div class="analytics-section-heading">
-      <div>
-        <h2>Fraud Intelligence Breakdown</h2>
-        <p>Insights across the five monitored fraud categories.</p>
-      </div>
-    </div>
-
-    <div class="fraud-breakdown-grid">
-
-      <article class="fraud-breakdown-card">
-        <div class="fraud-breakdown-icon investment" aria-hidden="true">
-          <i class="fa-solid fa-chart-line"></i>
-        </div>
-
-        <div>
-          <h3>Investment Scams</h3>
-          <p>Fraudulent investment schemes and unrealistic returns.</p>
-        </div>
-
-        <strong id="investmentAnalyticsCount">--</strong>
-      </article>
-
-      <article class="fraud-breakdown-card">
-        <div class="fraud-breakdown-icon arrest" aria-hidden="true">
-          <i class="fa-solid fa-user-lock"></i>
-        </div>
-
-        <div>
-          <h3>Digital Arrest</h3>
-          <p>Threats, impersonation and coercive payment demands.</p>
-        </div>
-
-        <strong id="arrestAnalyticsCount">--</strong>
-      </article>
-
-      <article class="fraud-breakdown-card">
-        <div class="fraud-breakdown-icon card" aria-hidden="true">
-          <i class="fa-solid fa-credit-card"></i>
-        </div>
-
-        <div>
-          <h3>Credit Card Fraud</h3>
-          <p>Suspicious card-related activity and payment scams.</p>
-        </div>
-
-        <strong id="cardAnalyticsCount">--</strong>
-      </article>
-
-      <article class="fraud-breakdown-card">
-        <div class="fraud-breakdown-icon sextortion" aria-hidden="true">
-          <i class="fa-solid fa-user-shield"></i>
-        </div>
-
-        <div>
-          <h3>Sextortion</h3>
-          <p>Online blackmail and threats involving private material.</p>
-        </div>
-
-        <strong id="sextortionAnalyticsCount">--</strong>
-      </article>
-
-      <article class="fraud-breakdown-card">
-        <div class="fraud-breakdown-icon ecommerce" aria-hidden="true">
-          <i class="fa-solid fa-cart-shopping"></i>
-        </div>
-
-        <div>
-          <h3>E-commerce Fraud</h3>
-          <p>Fake listings, payment deception and shopping scams.</p>
-        </div>
-
-        <strong id="ecommerceAnalyticsCount">--</strong>
-      </article>
-
-    </div>
-
-    <!-- =================================================
-         RECENT ACTIVITY
-    ================================================== -->
-
-    <div class="analytics-section-heading">
-
-      <div>
-        <h2>Recent Analysis Activity</h2>
-        <p>Latest evidence analysis records.</p>
-      </div>
-
-      <a href="reports.html" class="analytics-view-all">
-        View Reports
-        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-      </a>
-
-    </div>
-
-    <article class="analytics-panel activity-panel">
-
-      <div class="activity-table-wrapper">
-
-        <table class="analytics-table">
-
-          <caption class="visually-hidden">
-            Recent evidence analysis records with risk scores and dates.
-          </caption>
-
-          <thead>
-            <tr>
-              <th scope="col">Analysis ID</th>
-              <th scope="col">Evidence Type</th>
-              <th scope="col">Fraud Category</th>
-              <th scope="col">Risk Score</th>
-              <th scope="col">Risk Level</th>
-              <th scope="col">Date</th>
-            </tr>
-          </thead>
-
-          <tbody id="analyticsActivityBody">
-
-            <tr>
-              <td colspan="6">
-
-                <div class="table-empty-state">
-                  <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
-
-                  <strong>No analysis records found</strong>
-
-                  <span>
-                    Recent activity will appear here when records are
-                    available.
-                  </span>
-                </div>
-
-              </td>
-            </tr>
-
-          </tbody>
-
-        </table>
 
       </div>
-
-    </article>
-
-    <!-- =================================================
-         DISCLAIMER
-    ================================================== -->
-
-    <div class="analytics-disclaimer">
-
-      <div class="disclaimer-icon" aria-hidden="true">
-        <i class="fa-solid fa-circle-info"></i>
-      </div>
-
-      <div>
-        <h4>Important Information</h4>
-
-        <p>
-          Analytics represent recorded platform activity and automated
-          risk assessments. A risk score is an indicator for
-          investigation, not proof of fraud. Always verify suspicious
-          activity through official channels.
-        </p>
-      </div>
-
-    </div>
-
-    <!-- =================================================
-         EMERGENCY CYBERCRIME SUPPORT
-    ================================================== -->
-
-    <section
-      class="analytics-emergency"
-      aria-labelledby="analyticsEmergencyTitle"
-    >
-
-      <div>
-        <h2 id="analyticsEmergencyTitle">
-          <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
-          Need urgent cybercrime help?
-        </h2>
-
-        <p>
-          If you have lost money in an online fraud, contact India's
-          cybercrime helpline immediately.
-        </p>
-      </div>
-
-      <a href="tel:1930" class="analytics-emergency-button">
-        <i class="fa-solid fa-phone" aria-hidden="true"></i>
-        Call 1930
-      </a>
-
     </section>
 
-  </div>
-</section>
+    <!-- =================================================
+         ANALYTICS CONTENT
+    ================================================== -->
 
+    <section class="analytics-content">
+      <div class="container">
+
+        <!-- =================================================
+             DATA STATUS
+        ================================================== -->
+
+        <div
+          class="analytics-notice"
+          id="analyticsNotice"
+          data-state="loading"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+
+          <div class="notice-icon" aria-hidden="true">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+
+          <div>
+            <strong>Analytics data status</strong>
+
+            <p id="analyticsStatusMessage">
+              Waiting for verified analytics data from the backend.
+              Unavailable statistics will remain unreported.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- =================================================
+             01. OVERVIEW
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="analyticsOverviewTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="analyticsOverviewTitle">
+                Analytics Overview
+              </h2>
+
+              <p>
+                Overall platform activity and recorded risk assessments.
+              </p>
+            </div>
+          </div>
+
+          <div class="analytics-stats-grid">
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+
+                <span class="stat-icon blue" aria-hidden="true">
+                  <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </span>
+
+                <span class="stat-label">
+                  Total Analyses
+                </span>
+
+              </div>
+
+              <h3 id="analyticsTotalAnalyses">--</h3>
+
+              <p>
+                <i class="fa-solid fa-database" aria-hidden="true"></i>
+                Recorded evidence analyses
+              </p>
+            </article>
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+
+                <span class="stat-icon red" aria-hidden="true">
+                  <i class="fa-solid fa-shield-virus"></i>
+                </span>
+
+                <span class="stat-label">
+                  Threats Identified
+                </span>
+
+              </div>
+
+              <h3 id="analyticsThreats">--</h3>
+
+              <p>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                Recorded threat classifications
+              </p>
+            </article>
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+
+                <span class="stat-icon green" aria-hidden="true">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </span>
+
+                <span class="stat-label">
+                  Low Risk Cases
+                </span>
+
+              </div>
+
+              <h3 id="analyticsLowRisk">--</h3>
+
+              <p>
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                Classified as low risk
+              </p>
+            </article>
+
+            <article class="analytics-stat-card">
+              <div class="stat-card-top">
+
+                <span class="stat-icon orange" aria-hidden="true">
+                  <i class="fa-solid fa-bolt"></i>
+                </span>
+
+                <span class="stat-label">
+                  Critical Cases
+                </span>
+
+              </div>
+
+              <h3 id="analyticsCritical">--</h3>
+
+              <p>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                Require urgent attention
+              </p>
+            </article>
+
+          </div>
+        </section>
+
+        <!-- =================================================
+             02. UNIVERSAL INPUT LAYER
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="inputAnalyticsTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="inputAnalyticsTitle">
+                Universal Input Analytics
+              </h2>
+
+              <p>
+                Evidence submitted through the six supported input types.
+                Counts represent recorded analyses, not automatic
+                device monitoring.
+              </p>
+            </div>
+          </div>
+
+          <div class="fraud-breakdown-grid input-analytics-grid">
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-message"></i>
+              </div>
+
+              <div>
+                <h3>Messages</h3>
+                <p>Submitted message evidence.</p>
+              </div>
+
+              <strong id="inputMessagesCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest" aria-hidden="true">
+                <i class="fa-solid fa-phone"></i>
+              </div>
+
+              <div>
+                <h3>Calls</h3>
+                <p>Submitted call transcripts or text.</p>
+              </div>
+
+              <strong id="inputCallsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card" aria-hidden="true">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+
+              <div>
+                <h3>Emails</h3>
+                <p>Submitted email evidence.</p>
+              </div>
+
+              <strong id="inputEmailsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon ecommerce" aria-hidden="true">
+                <i class="fa-solid fa-link"></i>
+              </div>
+
+              <div>
+                <h3>URLs</h3>
+                <p>Submitted website and link evidence.</p>
+              </div>
+
+              <strong id="inputUrlsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon sextortion" aria-hidden="true">
+                <i class="fa-solid fa-image"></i>
+              </div>
+
+              <div>
+                <h3>Screenshots</h3>
+                <p>Submitted screenshot evidence.</p>
+              </div>
+
+              <strong id="inputScreenshotsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+              </div>
+
+              <div>
+                <h3>Transactions</h3>
+                <p>Submitted UPI and card transaction evidence.</p>
+              </div>
+
+              <strong id="inputTransactionsCount">--</strong>
+            </article>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             03. FRAUD DETECTION ENGINE
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="detectionModulesTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="detectionModulesTitle">
+                Fraud Detection Engine
+              </h2>
+
+              <p>
+                Analytics across the five major detection modules
+                defined in the ScamShield AI architecture.
+              </p>
+            </div>
+          </div>
+
+          <div class="fraud-breakdown-grid">
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+
+              <div>
+                <h3>Investment Scam Detection</h3>
+                <p>
+                  Fake trading, Ponzi schemes and unrealistic returns.
+                </p>
+              </div>
+
+              <strong id="investmentAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest" aria-hidden="true">
+                <i class="fa-solid fa-user-lock"></i>
+              </div>
+
+              <div>
+                <h3>Digital Arrest Protection</h3>
+                <p>
+                  Government impersonation, intimidation and coercion.
+                </p>
+              </div>
+
+              <strong id="arrestAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card" aria-hidden="true">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+
+              <div>
+                <h3>Credit Card Fraud Detection</h3>
+                <p>
+                  Card phishing and suspicious payment activity.
+                </p>
+              </div>
+
+              <strong id="cardAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon sextortion" aria-hidden="true">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+
+              <div>
+                <h3>Sextortion Protection</h3>
+                <p>
+                  Online blackmail and threats involving private material.
+                </p>
+              </div>
+
+              <strong id="sextortionAnalyticsCount">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon ecommerce" aria-hidden="true">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+
+              <div>
+                <h3>E-commerce Fraud Detection</h3>
+                <p>
+                  Fake listings, deceptive sellers and shopping scams.
+                </p>
+              </div>
+
+              <strong id="ecommerceAnalyticsCount">--</strong>
+            </article>
+
+          </div>
+
+          <p class="analytics-section-note">
+            Module statistics and fraud category statistics are
+            separate dimensions. They must not be added together
+            as a single threat total.
+          </p>
+
+        </section>
+
+        <!-- =================================================
+             04. ALL 12 FRAUD CATEGORIES
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="fraudCategoriesTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="fraudCategoriesTitle">
+                Fraud Category Intelligence
+              </h2>
+
+              <p>
+                Detailed classification across all 12 supported
+                fraud detection categories.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="fraud-breakdown-grid category-breakdown-grid"
+            id="fraudCategoryCards"
+          >
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-message"></i>
+              </div>
+
+              <div>
+                <h3>Fraud Message</h3>
+                <p>Suspicious or deceptive messages.</p>
+              </div>
+
+              <strong id="categoryFraudMessage">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest" aria-hidden="true">
+                <i class="fa-solid fa-phone"></i>
+              </div>
+
+              <div>
+                <h3>Fraud Call</h3>
+                <p>Fraudulent call-related evidence.</p>
+              </div>
+
+              <strong id="categoryFraudCall">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card" aria-hidden="true">
+                <i class="fa-solid fa-link"></i>
+              </div>
+
+              <div>
+                <h3>URL Phishing</h3>
+                <p>Deceptive links and phishing websites.</p>
+              </div>
+
+              <strong id="categoryUrlPhishing">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon ecommerce" aria-hidden="true">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+
+              <div>
+                <h3>Email Scam</h3>
+                <p>Fraudulent or deceptive emails.</p>
+              </div>
+
+              <strong id="categoryEmailScam">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+
+              <div>
+                <h3>Investment Scam</h3>
+                <p>Fake trading and unrealistic returns.</p>
+              </div>
+
+              <strong id="categoryInvestmentScam">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest" aria-hidden="true">
+                <i class="fa-solid fa-user-lock"></i>
+              </div>
+
+              <div>
+                <h3>Digital Arrest</h3>
+                <p>Fake legal threats and authority impersonation.</p>
+              </div>
+
+              <strong id="categoryDigitalArrest">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card" aria-hidden="true">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+
+              <div>
+                <h3>UPI / Banking Fraud</h3>
+                <p>Deceptive UPI and banking requests.</p>
+              </div>
+
+              <strong id="categoryUpiBankingFraud">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card" aria-hidden="true">
+                <i class="fa-solid fa-credit-card"></i>
+              </div>
+
+              <div>
+                <h3>Card Fraud</h3>
+                <p>Card phishing and payment deception.</p>
+              </div>
+
+              <strong id="categoryCardFraud">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon ecommerce" aria-hidden="true">
+                <i class="fa-solid fa-cart-shopping"></i>
+              </div>
+
+              <div>
+                <h3>E-commerce Scam</h3>
+                <p>Fake stores and fraudulent product offers.</p>
+              </div>
+
+              <strong id="categoryEcommerceScam">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-briefcase"></i>
+              </div>
+
+              <div>
+                <h3>Job / Loan Scam</h3>
+                <p>Fraudulent employment and loan offers.</p>
+              </div>
+
+              <strong id="categoryJobLoanScam">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon sextortion" aria-hidden="true">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+
+              <div>
+                <h3>Sextortion / Blackmail</h3>
+                <p>Threats and online blackmail attempts.</p>
+              </div>
+
+              <strong id="categorySextortionBlackmail">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest" aria-hidden="true">
+                <i class="fa-solid fa-users"></i>
+              </div>
+
+              <div>
+                <h3>Social Media Scam</h3>
+                <p>Social platform impersonation and deception.</p>
+              </div>
+
+              <strong id="categorySocialMediaScam">--</strong>
+            </article>
+
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             05. AI MULTI-AGENT CORE
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="agentAnalyticsTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="agentAnalyticsTitle">
+                AI Multi-Agent Analytics
+              </h2>
+
+              <p>
+                Execution metrics for the four specialized ScamShield
+                AI agents. Only actual executions should be counted.
+              </p>
+            </div>
+          </div>
+
+          <div class="fraud-breakdown-grid agent-analytics-grid">
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+
+              <div>
+                <h3>Guardian Agent</h3>
+                <p>
+                  Authoritative deterministic fraud detection.
+                </p>
+              </div>
+
+              <strong id="guardianAgentExecutions">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon card" aria-hidden="true">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </div>
+
+              <div>
+                <h3>Intelligence Agent</h3>
+                <p>
+                  Indicator extraction and threat intelligence.
+                </p>
+              </div>
+
+              <strong id="intelligenceAgentExecutions">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon sextortion" aria-hidden="true">
+                <i class="fa-solid fa-heart-circle-check"></i>
+              </div>
+
+              <div>
+                <h3>Victim Safety Agent</h3>
+                <p>
+                  Victim-focused safety guidance and recommendations.
+                </p>
+              </div>
+
+              <strong id="victimSafetyAgentExecutions">--</strong>
+            </article>
+
+            <article class="fraud-breakdown-card">
+              <div class="fraud-breakdown-icon arrest" aria-hidden="true">
+                <i class="fa-solid fa-user-secret"></i>
+              </div>
+
+              <div>
+                <h3>Decoy Agent</h3>
+                <p>
+                  Controlled and explicitly initiated simulations.
+                </p>
+              </div>
+
+              <strong id="decoyAgentExecutions">--</strong>
+            </article>
+
+          </div>
+
+          <p class="analytics-section-note">
+            Decoy simulations are counted only when an actual
+            simulation has been initiated and recorded. Normal
+            analysis does not count as a Decoy execution.
+          </p>
+
+        </section>
+
+        <!-- =================================================
+             06. GEMINI AI ADVISORY
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="geminiAnalyticsTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="geminiAnalyticsTitle">
+                Gemini AI Advisory Insights
+              </h2>
+
+              <p>
+                Separate visibility into optional contextual AI
+                assistance and advisory availability.
+              </p>
+            </div>
+          </div>
+
+          <article class="analytics-panel gemini-analytics-panel">
+
+            <div class="analytics-panel-header">
+
+              <div>
+                <h3>
+                  <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                  Gemini Advisory Service
+                </h3>
+
+                <p>
+                  Contextual advisory insights that complement
+                  Guardian's deterministic analysis.
+                </p>
+              </div>
+
+              <span class="panel-icon" aria-hidden="true">
+                <i class="fa-solid fa-brain"></i>
+              </span>
+
+            </div>
+
+            <div class="fraud-breakdown-grid gemini-stats-grid">
+
+              <div class="fraud-breakdown-card">
+                <div class="fraud-breakdown-icon investment" aria-hidden="true">
+                  <i class="fa-solid fa-list-check"></i>
+                </div>
+
+                <div>
+                  <h3>Advisory Requests</h3>
+                  <p>Recorded Gemini advisory requests.</p>
+                </div>
+
+                <strong id="geminiAdvisoryRequests">--</strong>
+              </div>
+
+              <div class="fraud-breakdown-card">
+                <div class="fraud-breakdown-icon ecommerce" aria-hidden="true">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <div>
+                  <h3>Successful Responses</h3>
+                  <p>Successfully completed advisory requests.</p>
+                </div>
+
+                <strong id="geminiAdvisorySuccess">--</strong>
+              </div>
+
+              <div class="fraud-breakdown-card">
+                <div class="fraud-breakdown-icon sextortion" aria-hidden="true">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+
+                <div>
+                  <h3>Failed Requests</h3>
+                  <p>Recorded unavailable or failed requests.</p>
+                </div>
+
+                <strong id="geminiAdvisoryFailures">--</strong>
+              </div>
+
+            </div>
+
+            <div class="gemini-service-status">
+              <span>Service status</span>
+
+              <strong id="geminiAdvisoryStatus">
+                Not yet verified
+              </strong>
+            </div>
+
+            <p class="analytics-section-note">
+              Gemini provides advisory-only assistance. It does not
+              determine or override Guardian's fraud category,
+              risk score or risk level.
+            </p>
+
+          </article>
+
+        </section>
+
+        <!-- =================================================
+             07. RISK DISTRIBUTION
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="riskAnalyticsTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="riskAnalyticsTitle">
+                Risk Distribution
+              </h2>
+
+              <p>
+                Recorded analysis results grouped by their assessed
+                risk levels.
+              </p>
+            </div>
+          </div>
+
+          <article class="analytics-panel">
+
+            <div class="analytics-panel-header">
+              <div>
+                <h3>Risk Classification Overview</h3>
+                <p>
+                  LOW, MEDIUM, HIGH and CRITICAL risk distribution.
+                </p>
+              </div>
+
+              <span class="panel-icon" aria-hidden="true">
+                <i class="fa-solid fa-chart-pie"></i>
+              </span>
+            </div>
+
+            <div
+              class="chart-container"
+              id="riskDistributionChart"
+              role="region"
+              aria-label="Risk distribution chart"
+              aria-live="polite"
+            >
+              <div class="chart-empty-state">
+                <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+
+                <h4>No risk data available</h4>
+
+                <p>
+                  Risk distribution will appear when verified
+                  analysis data is received.
+                </p>
+              </div>
+            </div>
+
+            <div class="chart-legend" aria-label="Risk level legend">
+
+              <span>
+                <i class="legend-dot low" aria-hidden="true"></i>
+                Low
+              </span>
+
+              <span>
+                <i class="legend-dot medium" aria-hidden="true"></i>
+                Medium
+              </span>
+
+              <span>
+                <i class="legend-dot high" aria-hidden="true"></i>
+                High
+              </span>
+
+              <span>
+                <i class="legend-dot critical" aria-hidden="true"></i>
+                Critical
+              </span>
+
+            </div>
+
+          </article>
+
+        </section>
+
+        <!-- =================================================
+             08. CATEGORY DISTRIBUTION
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="categoryDistributionTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="categoryDistributionTitle">
+                Fraud Category Distribution
+              </h2>
+
+              <p>
+                Visual breakdown of recorded classifications across
+                the supported fraud categories.
+              </p>
+            </div>
+          </div>
+
+          <article class="analytics-panel">
+
+            <div class="analytics-panel-header">
+              <div>
+                <h3>Category Intelligence</h3>
+                <p>
+                  Distribution based on actual backend records.
+                </p>
+              </div>
+
+              <span class="panel-icon" aria-hidden="true">
+                <i class="fa-solid fa-layer-group"></i>
+              </span>
+            </div>
+
+            <div
+              class="category-chart"
+              id="fraudCategoryChart"
+              role="region"
+              aria-label="Fraud category distribution chart"
+              aria-live="polite"
+            >
+              <div class="chart-empty-state">
+                <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
+
+                <h4>No category data available</h4>
+
+                <p>
+                  Category statistics will appear when backend
+                  aggregation is available.
+                </p>
+              </div>
+            </div>
+
+          </article>
+
+        </section>
+
+        <!-- =================================================
+             09. THREAT ACTIVITY TRENDS
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="threatTrendsTitle"
+        >
+
+          <div class="analytics-section-heading">
+            <div>
+              <h2 id="threatTrendsTitle">
+                Threat Activity Trends
+              </h2>
+
+              <p>
+                Historical analysis activity and detected threat
+                patterns over time.
+              </p>
+            </div>
+          </div>
+
+          <article class="analytics-panel trend-panel">
+
+            <div class="analytics-panel-header">
+              <div>
+                <h3>Detection Activity</h3>
+
+                <p>
+                  Historical trends based on recorded analysis data.
+                </p>
+              </div>
+
+              <span class="panel-icon" aria-hidden="true">
+                <i class="fa-solid fa-chart-area"></i>
+              </span>
+            </div>
+
+            <div
+              class="trend-chart-container"
+              id="threatTrendChart"
+              role="region"
+              aria-label="Threat activity trend chart"
+              aria-live="polite"
+            >
+              <div class="chart-empty-state">
+
+                <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+
+                <h4>Historical trends not available</h4>
+
+                <p>
+                  Trend information will appear after historical
+                  analytics aggregation is implemented.
+                </p>
+
+              </div>
+            </div>
+
+          </article>
+
+        </section>
+
+        <!-- =================================================
+             10. RECENT ANALYSIS ACTIVITY
+        ================================================== -->
+
+        <section
+          class="analytics-section"
+          aria-labelledby="recentActivityTitle"
+        >
+
+          <div class="analytics-section-heading">
+
+            <div>
+              <h2 id="recentActivityTitle">
+                Recent Analysis Activity
+              </h2>
+
+              <p>
+                Latest recorded evidence analysis results.
+              </p>
+            </div>
+
+            <a href="reports.html" class="analytics-view-all">
+              View Reports
+
+              <i
+                class="fa-solid fa-arrow-right"
+                aria-hidden="true"
+              ></i>
+            </a>
+
+          </div>
+
+          <article class="analytics-panel activity-panel">
+
+            <div class="activity-table-wrapper">
+
+              <table class="analytics-table">
+
+                <caption class="visually-hidden">
+                  Recent evidence analysis records including evidence
+                  type, fraud category, risk score, risk level and date.
+                </caption>
+
+                <thead>
+                  <tr>
+                    <th scope="col">Analysis ID</th>
+                    <th scope="col">Evidence Type</th>
+                    <th scope="col">Fraud Category</th>
+                    <th scope="col">Risk Score</th>
+                    <th scope="col">Risk Level</th>
+                    <th scope="col">Date</th>
+                  </tr>
+                </thead>
+
+                <tbody id="analyticsActivityBody">
+
+                  <tr>
+                    <td colspan="6">
+
+                      <div class="table-empty-state">
+
+                        <i
+                          class="fa-solid fa-folder-open"
+                          aria-hidden="true"
+                        ></i>
+
+                        <strong>No analysis records found</strong>
+
+                        <span>
+                          Recent activity will appear here when
+                          analysis records become available.
+                        </span>
+
+                      </div>
+
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </article>
+
+        </section>
+
+        <!-- =================================================
+             11. DISCLAIMER
+        ================================================== -->
+
+        <section
+          class="analytics-disclaimer"
+          aria-labelledby="analyticsDisclaimerTitle"
+        >
+
+          <div class="disclaimer-icon" aria-hidden="true">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+
+          <div>
+            <h4 id="analyticsDisclaimerTitle">
+              Important Information
+            </h4>
+
+            <p>
+              Analytics represent recorded platform activity and
+              automated risk assessments. Risk scores are indicators
+              for investigation, not proof of fraud. Intelligence
+              indicators are not automatically verified. Gemini
+              provides advisory-only assistance. Always verify
+              suspicious activity through official channels.
+            </p>
+          </div>
+
+        </section>
+
+        <!-- =================================================
+             12. EMERGENCY CYBERCRIME SUPPORT
+        ================================================== -->
+
+        <section
+          class="analytics-emergency"
+          aria-labelledby="analyticsEmergencyTitle"
+        >
+
+          <div>
+
+            <h2 id="analyticsEmergencyTitle">
+              <i
+                class="fa-solid fa-phone-volume"
+                aria-hidden="true"
+              ></i>
+
+              Need urgent cybercrime help?
+            </h2>
+
+            <p>
+              If you have lost money in an online financial fraud,
+              contact India's cybercrime helpline immediately.
+            </p>
+
+          </div>
+
+          <a
+            href="tel:1930"
+            class="analytics-emergency-button"
+            aria-label="Call India's cybercrime helpline 1930"
+          >
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            Call 1930
+          </a>
+
+        </section>
+
+      </div>
+    </section>
 
   </main>
 
@@ -643,32 +1292,35 @@
   <footer class="footer">
     <div class="container">
 
+      <div class="footer-bottom">
 
-  <div class="footer-bottom">
+        <p>
+          © <span id="currentYear"></span>
+          ScamShield AI. All rights reserved.
+        </p>
 
-    <p>
-      © <span id="currentYear"></span>
-      ScamShield AI. All rights reserved.
-    </p>
+        <p>
+          Intelligent Fraud Detection & Victim Protection
+        </p>
 
-    <p>
-      Intelligent Fraud Detection & Victim Protection
-    </p>
+      </div>
 
-  </div>
-
-</div>
-
-
+    </div>
   </footer>
-<script src="../js/services/api.js" defer></script>
-<script src="../js/utils/helpers.js" defer></script>
 
-<script src="../js/components/navigation.js" defer></script>
-<script src="../js/components/sidebar.js" defer></script>
-<script src="../js/components/notifications.js" defer></script>
+  <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
 
-<script src="../js/main.js" defer></script>
-<script src="../js/analytics.js" defer></script>
+  <script src="../js/services/api.js" defer></script>
+  <script src="../js/utils/helpers.js" defer></script>
+
+  <script src="../js/components/navigation.js" defer></script>
+  <script src="../js/components/sidebar.js" defer></script>
+  <script src="../js/components/notifications.js" defer></script>
+
+  <script src="../js/main.js" defer></script>
+  <script src="../js/analytics.js" defer></script>
+
 </body>
 </html>
