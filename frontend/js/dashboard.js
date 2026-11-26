@@ -1,1666 +1,1213 @@
-"use strict";
+/*
+=========================================================
+ SCAMSHIELD AI - SECURITY DASHBOARD
+ File: dashboard.js
+ Version: 3.0.0
 
-/* =========================================================
-   SCAMSHIELD AI - SECURITY DASHBOARD
-   Version: 4.0.0
+ Responsibilities:
+ 1. Verify authentication.
+ 2. Load dashboard overview from Node.js backend.
+ 3. Normalize API responses.
+ 4. Display dashboard statistics.
+ 5. Display risk distribution chart.
+ 6. Display 12 fraud categories.
+ 7. Display 5 major detection modules.
+ 8. Display recent analysis activity.
+ 9. Handle loading, errors and logout.
 
-   Features:
-   1. Authenticated dashboard access
-   2. Backend dashboard statistics
-   3. Risk distribution visualization
-   4. Five major detection modules
-   5. Twelve fraud category statistics
-   6. Recent analysis activity
-   7. Backend connectivity status
-   8. Shared API service integration
-   9. Logout and session expiration handling
-   10. Loading, error and empty states
-   11. Safe DOM rendering
-   12. Refresh functionality
+ API:
+ GET /api/dashboard/overview
 
-   API:
-   GET /api/auth/me
-   GET /api/dashboard/overview
-========================================================= */
+=========================================================
+*/
 
-(function (window, document) {
+(() => {
+    "use strict";
 
-    if (window.ScamShieldDashboardInitialized) {
-        return;
-    }
+    const CONFIG = Object.freeze({
+        VERSION: "3.0.0",
+        ENDPOINT: "/dashboard/overview",
+        LOGIN_PAGE: "login.html",
+        MAX_ACTIVITY: 10,
+        REQUEST_TIMEOUT: 30000,
+        REFRESH_INTERVAL: 60000
+    });
 
-    window.ScamShieldDashboardInitialized = true;
-
-    /* =====================================================
-       CONFIGURATION
-    ===================================================== */
-
-    const DASHBOARD_ENDPOINT = "/dashboard/overview";
-
-    const LOGIN_PAGE = "login.html";
-
-    const MAX_ACTIVITY_RECORDS = 10;
-
-    const REQUEST_TIMEOUT = 30000;
-
-    const RISK_LEVELS = [
+    const RISK_LEVELS = Object.freeze([
         "low",
         "medium",
         "high",
         "critical"
-    ];
+    ]);
 
-    const RISK_COLORS = {
-        low: "#34d399",
-        medium: "#fbbf24",
-        high: "#fb923c",
-        critical: "#f87171"
-    };
-
-    const CATEGORY_ALIASES = {
-
-        investment: [
-            "investment",
-            "investment_scam"
+    const CATEGORY_ALIASES = Object.freeze({
+        fraud_message: [
+            "fraud_message",
+            "message_fraud",
+            "sms_fraud"
         ],
-
-        digitalArrest: [
-            "digitalArrest",
-            "digital_arrest"
+        fraud_call: [
+            "fraud_call",
+            "call_fraud"
         ],
-
-        creditCard: [
-            "creditCard",
+        url_phishing: [
+            "url_phishing",
+            "phishing_url",
+            "phishing"
+        ],
+        email_scam: [
+            "email_scam",
+            "email_fraud"
+        ],
+        investment_scam: [
+            "investment_scam",
+            "investment_fraud"
+        ],
+        digital_arrest: [
+            "digital_arrest",
+            "digital_arrest_scam"
+        ],
+        upi_banking_fraud: [
+            "upi_banking_fraud",
+            "upi_fraud",
+            "banking_fraud"
+        ],
+        card_fraud: [
             "card_fraud",
             "credit_card_fraud"
         ],
-
-        sextortion: [
-            "sextortion",
-            "sextortion_blackmail"
+        ecommerce_scam: [
+            "ecommerce_scam",
+            "e_commerce_scam",
+            "online_shopping_fraud"
         ],
-
-        ecommerce: [
-            "ecommerce",
-            "ecommerce_scam"
-        ],
-
-        fraud_message: [
-            "fraud_message"
-        ],
-
-        fraud_call: [
-            "fraud_call"
-        ],
-
-        url_phishing: [
-            "url_phishing"
-        ],
-
-        email_scam: [
-            "email_scam"
-        ],
-
-        upi_banking_fraud: [
-            "upi_banking_fraud"
-        ],
-
         job_loan_scam: [
-            "job_loan_scam"
+            "job_loan_scam",
+            "job_scam",
+            "loan_scam"
         ],
-
+        sextortion_blackmail: [
+            "sextortion_blackmail",
+            "sextortion",
+            "blackmail"
+        ],
         social_media_scam: [
-            "social_media_scam"
+            "social_media_scam",
+            "social_media_fraud"
         ]
+    });
 
-    };
-
-    const MAJOR_MODULES = [
-        "investment",
-        "digitalArrest",
-        "creditCard",
-        "sextortion",
-        "ecommerce"
-    ];
-
-    /* =====================================================
-       DOM ELEMENTS
-    ===================================================== */
-
-    const elements = {
-
-        dashboardDate:
-            document.getElementById("dashboardDate"),
-
-        refreshButton:
-            document.getElementById("refreshDashboard"),
-
-        platformStatus:
-            document.querySelector(".platform-status"),
-
-        statisticsStatus:
-            document.getElementById("statisticsStatus"),
-
-        totalAnalyses:
-            document.getElementById("totalAnalyses"),
-
-        threatsDetected:
-            document.getElementById("threatsDetected"),
-
-        lowRiskResults:
-            document.getElementById("lowRiskResults"),
-
-        highRiskResults:
-            document.getElementById("highRiskResults"),
-
-        riskChart:
-            document.getElementById("riskChart"),
-
-        riskLegend:
-            document.getElementById("riskLegend"),
-
-        activityTableBody:
-            document.getElementById("activityTableBody"),
-
-        logoutButtons:
-            document.querySelectorAll("[data-logout]")
-
-    };
-
-    /* =====================================================
-       STATE
-    ===================================================== */
+    const MAJOR_MODULES = Object.freeze({
+        investment: [
+            "investment_scam",
+            "investment_fraud"
+        ],
+        digitalArrest: [
+            "digital_arrest",
+            "digital_arrest_scam"
+        ],
+        creditCard: [
+            "card_fraud",
+            "credit_card_fraud"
+        ],
+        sextortion: [
+            "sextortion_blackmail",
+            "sextortion",
+            "blackmail"
+        ],
+        ecommerce: [
+            "ecommerce_scam",
+            "e_commerce_scam",
+            "online_shopping_fraud"
+        ]
+    });
 
     const state = {
-
         loading: false,
-
-        authenticated: false,
-
-        lastUpdated: null,
-
-        lastDashboardData: null,
-
-        requestController: null,
-
         requestId: 0,
-
+        controller: null,
+        refreshTimer: null,
+        lastData: null,
         initialized: false
-
     };
 
+    const elements = {};
+
     /* =====================================================
-       API SERVICE
+       DOM HELPERS
     ===================================================== */
 
-    function getAPI() {
-
-        const api = window.ScamShieldAPI;
-
-        if (!api) {
-
-            throw new Error(
-                "ScamShield API service is not loaded."
-            );
-
-        }
-
-        return api;
-
+    function getElement(id) {
+        return document.getElementById(id);
     }
 
-    /* =====================================================
-       GENERAL HELPERS
-    ===================================================== */
+    function cacheElements() {
+        const ids = [
+            "dashboardDate",
+            "refreshDashboard",
+            "statisticsStatus",
+            "totalAnalyses",
+            "threatsDetected",
+            "lowRiskResults",
+            "highRiskResults",
+            "riskChart",
+            "riskLegend",
+            "activityTableBody",
+            "lowRiskCount",
+            "mediumRiskCount",
+            "highRiskCount",
+            "criticalRiskCount"
+        ];
+
+        ids.forEach(id => {
+            elements[id] = getElement(id);
+        });
+
+        elements.logoutButtons = document.querySelectorAll("[data-logout]");
+        elements.platformStatuses = document.querySelectorAll(".platform-status");
+    }
+
+    function setText(element, value) {
+        if (!element) return;
+
+        element.textContent =
+            value === null || value === undefined
+                ? "—"
+                : String(value);
+    }
 
     function safeCount(value) {
-
-        const number = Number(value);
-
         if (
             value === null ||
             value === undefined ||
-            value === "" ||
-            !Number.isFinite(number) ||
-            number < 0
+            value === ""
         ) {
+            return 0;
+        }
 
-            return null;
+        if (typeof value === "boolean") {
+            return 0;
+        }
 
+        const number = Number(value);
+
+        if (!Number.isFinite(number) || number < 0) {
+            return 0;
         }
 
         return Math.floor(number);
-
     }
 
     function formatNumber(value) {
-
-        const number = safeCount(value);
-
-        return number === null
-            ? "—"
-            : number.toLocaleString("en-IN");
-
+        return safeCount(value).toLocaleString("en-IN");
     }
 
-    function getNestedValue(object, path) {
+    function formatDate(value) {
+        const date = value ? new Date(value) : new Date();
 
-        return path.split(".").reduce(
-            (current, key) => {
-
-                if (
-                    current === null ||
-                    current === undefined ||
-                    typeof current !== "object"
-                ) {
-                    return undefined;
-                }
-
-                return current[key];
-
-            },
-            object
-        );
-
-    }
-
-    function getFirstAvailableValue(
-        object,
-        paths,
-        fallback = undefined
-    ) {
-
-        for (const path of paths) {
-
-            const value = getNestedValue(
-                object,
-                path
-            );
-
-            if (
-                value !== undefined &&
-                value !== null
-            ) {
-
-                return value;
-
-            }
-
+        if (Number.isNaN(date.getTime())) {
+            return "—";
         }
 
-        return fallback;
-
-    }
-
-    function normalizeRiskLevel(value) {
-
-        const level = String(value || "")
-            .trim()
-            .toLowerCase();
-
-        return RISK_LEVELS.includes(level)
-            ? level
-            : "unknown";
-
-    }
-
-    function getRiskLevelFromScore(score) {
-
-        const value = Number(score);
-
-        if (
-            !Number.isFinite(value) ||
-            value < 0 ||
-            value > 100
-        ) {
-
-            return "unknown";
-
-        }
-
-        if (value >= 75) return "critical";
-
-        if (value >= 50) return "high";
-
-        if (value >= 25) return "medium";
-
-        return "low";
-
-    }
-
-    function isPlainObject(value) {
-
-        return (
-            value !== null &&
-            typeof value === "object" &&
-            !Array.isArray(value)
-        );
-
-    }
-
-    /* =====================================================
-       REDIRECT TO LOGIN
-    ===================================================== */
-
-    function redirectToLogin() {
-
-        if (state.loading && state.requestController) {
-
-            state.requestController.abort();
-
-        }
-
-        state.authenticated = false;
-
-        state.loading = false;
-
-        const currentPage = window.location.pathname;
-
-        const loginPath = new URL(
-            LOGIN_PAGE,
-            currentPage
-        );
-
-        if (
-            window.location.pathname !== loginPath.pathname
-        ) {
-
-            window.location.replace(
-                loginPath.href
-            );
-
-        }
-
-    }
-
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
-
-    async function logout() {
-
-        const api = window.ScamShieldAPI;
-
-        try {
-
-            if (
-                api &&
-                typeof api.logout === "function"
-            ) {
-
-                await api.logout();
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "ScamShield logout error:",
-                error
-            );
-
-        } finally {
-
-            redirectToLogin();
-
-        }
-
-    }
-
-    function initializeLogout() {
-
-        elements.logoutButtons.forEach(button => {
-
-            button.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    logout();
-
-                }
-            );
-
+        return date.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
         });
-
     }
 
-    /* =====================================================
-       AUTHENTICATION VERIFICATION
-    ===================================================== */
-
-    async function verifyAuthentication() {
-
-        const api = getAPI();
-
-        if (
-            typeof api.getToken !== "function" ||
-            typeof api.getCurrentUser !== "function"
-        ) {
-
-            throw new Error(
-                "Authentication methods are missing from the API service."
-            );
-
-        }
-
-        const token = api.getToken();
-
-        if (!token) {
-
-            const error = new Error(
-                "Authentication required."
-            );
-
-            error.status = 401;
-
-            throw error;
-
-        }
-
-        const user = await api.getCurrentUser();
-
-        if (
-            !user ||
-            typeof user !== "object" ||
-            !user.id
-        ) {
-
-            const error = new Error(
-                "Unable to verify your account session."
-            );
-
-            error.status = 401;
-
-            throw error;
-
-        }
-
-        state.authenticated = true;
-
-        return user;
-
-    }
-
-    /* =====================================================
-       DASHBOARD DATE
-    ===================================================== */
-
-    function updateDashboardDate() {
-
-        const element = elements.dashboardDate;
-
-        if (!element) return;
-
-        const formattedDate = new Intl.DateTimeFormat(
-            "en-IN",
-            {
-                weekday: "long",
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            }
-        ).format(new Date());
-
-        element.replaceChildren();
-
-        const icon = document.createElement("i");
-
-        icon.className = "fa-regular fa-calendar";
-
-        const text = document.createElement("span");
-
-        text.textContent = formattedDate;
-
-        element.append(icon, text);
-
-    }
-
-    /* =====================================================
-       PLATFORM STATUS
-    ===================================================== */
-
-    function updatePlatformStatus(
-        status,
-        connected = false
-    ) {
-
-        const container = elements.platformStatus;
-
-        if (!container) return;
-
-        const indicator = document.createElement("span");
-
-        indicator.className = "status-indicator";
-
-        const label = document.createElement("span");
-
-        label.className = "platform-status-text";
-
-        label.textContent = status;
-
-        indicator.style.backgroundColor = connected
-            ? RISK_COLORS.low
-            : RISK_COLORS.medium;
-
-        indicator.style.boxShadow = connected
-            ? "0 0 12px rgba(52, 211, 153, 0.4)"
-            : "0 0 12px rgba(251, 191, 36, 0.4)";
-
-        container.replaceChildren(
-            indicator,
-            label
-        );
-
-        container.setAttribute(
-            "role",
-            "status"
-        );
-
-        container.setAttribute(
-            "aria-label",
-            `Backend status: ${status}`
-        );
-
-        container.dataset.connected = String(connected);
-
-    }
-
-    /* =====================================================
-       STATISTICS STATUS
-    ===================================================== */
-
-    function updateStatisticsStatus(message) {
-
-        if (elements.statisticsStatus) {
-
-            elements.statisticsStatus.textContent = message;
-
-        }
-
-    }
-
-    /* =====================================================
-       REFRESH BUTTON
-    ===================================================== */
-
-    function setRefreshButtonLoading(loading) {
-
-        const button = elements.refreshButton;
-
-        if (!button) return;
-
-        button.disabled = loading;
-
-        button.setAttribute(
-            "aria-busy",
-            String(loading)
-        );
-
-        button.replaceChildren();
-
-        const icon = document.createElement("i");
-
-        icon.className = loading
-            ? "fa-solid fa-spinner fa-spin"
-            : "fa-solid fa-rotate";
-
-        const text = document.createTextNode(
-            loading ? " Loading..." : " Refresh"
-        );
-
-        button.append(icon, text);
-
-    }
-
-    /* =====================================================
-       OVERVIEW STATISTICS
-    ===================================================== */
-
-    function updateOverview(statistics = {}) {
-
-        const total = getFirstAvailableValue(
-            statistics,
-            [
-                "totalAnalyses",
-                "total_analyses",
-                "total"
-            ]
-        );
-
-        const threats = getFirstAvailableValue(
-            statistics,
-            [
-                "threatsDetected",
-                "threats_detected",
-                "totalThreats"
-            ]
-        );
-
-        const lowRisk = getFirstAvailableValue(
-            statistics,
-            [
-                "lowRiskResults",
-                "low_risk_results",
-                "lowRisk"
-            ]
-        );
-
-        const highRisk = getFirstAvailableValue(
-            statistics,
-            [
-                "highRiskResults",
-                "high_risk_results",
-                "highRisk"
-            ]
-        );
-
-        if (elements.totalAnalyses) {
-
-            elements.totalAnalyses.textContent =
-                formatNumber(total);
-
-        }
-
-        if (elements.threatsDetected) {
-
-            elements.threatsDetected.textContent =
-                formatNumber(threats);
-
-        }
-
-        if (elements.lowRiskResults) {
-
-            elements.lowRiskResults.textContent =
-                formatNumber(lowRisk);
-
-        }
-
-        if (elements.highRiskResults) {
-
-            elements.highRiskResults.textContent =
-                formatNumber(highRisk);
-
-        }
-
-    }
-
-    /* =====================================================
-       RISK DISTRIBUTION
-    ===================================================== */
-
-    function updateRiskDistribution(risk = {}) {
-
-        const counts = {};
-
-        RISK_LEVELS.forEach(level => {
-
-            counts[level] = safeCount(
-                getFirstAvailableValue(
-                    risk,
-                    [
-                        level,
-                        level.toUpperCase()
-                    ]
-                )
-            ) ?? 0;
-
-        });
-
-        const total = Object.values(counts).reduce(
-            (sum, count) => sum + count,
-            0
-        );
-
-        if (!elements.riskChart) return;
-
-        elements.riskChart.replaceChildren();
-
-        if (total === 0) {
-
-            elements.riskChart.style.background =
-                "conic-gradient(rgba(255,255,255,0.07) 0% 100%)";
-
-            const placeholder = document.createElement("span");
-
-            placeholder.className = "chart-placeholder";
-
-            placeholder.textContent =
-                "No risk distribution data available.";
-
-            elements.riskChart.appendChild(
-                placeholder
-            );
-
-            elements.riskChart.setAttribute(
-                "aria-label",
-                "No risk distribution data available."
-            );
-
-        } else {
-
-            let currentPosition = 0;
-
-            const gradientParts = [];
-
-            RISK_LEVELS.forEach(level => {
-
-                const percentage =
-                    (counts[level] / total) * 100;
-
-                const nextPosition =
-                    currentPosition + percentage;
-
-                gradientParts.push(
-                    `${RISK_COLORS[level]} ${currentPosition}% ${nextPosition}%`
-                );
-
-                currentPosition = nextPosition;
-
-            });
-
-            elements.riskChart.style.background =
-                `conic-gradient(${gradientParts.join(", ")})`;
-
-            const center = document.createElement("div");
-
-            center.className = "risk-chart-center";
-
-            const totalElement = document.createElement("strong");
-
-            totalElement.textContent = formatNumber(total);
-
-            const label = document.createElement("span");
-
-            label.textContent = "Total Results";
-
-            center.append(
-                totalElement,
-                label
-            );
-
-            elements.riskChart.appendChild(center);
-
-            elements.riskChart.setAttribute(
-                "aria-label",
-                `Risk distribution: ${counts.low} low, ${counts.medium} medium, ${counts.high} high and ${counts.critical} critical cases.`
-            );
-
-        }
-
-        RISK_LEVELS.forEach(level => {
-
-            const countElement = document.getElementById(
-                `${level}RiskCount`
-            );
-
-            if (countElement) {
-
-                countElement.textContent =
-                    formatNumber(counts[level]);
-
-            }
-
-        });
-
-    }
-
-    /* =====================================================
-       CATEGORY COUNT
-    ===================================================== */
-
-    function getCategoryCount(
-        categories,
-        aliases
-    ) {
-
-        for (const alias of aliases) {
-
-            const value = categories[alias];
-
-            if (
-                value === undefined ||
-                value === null
-            ) {
-                continue;
-            }
-
-            if (isPlainObject(value)) {
-
-                return safeCount(
-                    value.count ??
-                    value.total ??
-                    value.totalCases
-                );
-
-            }
-
-            return safeCount(value);
-
-        }
-
-        return null;
-
-    }
-
-    /* =====================================================
-       FRAUD CATEGORY STATISTICS
-    ===================================================== */
-
-    function updateFraudCategories(categories = {}) {
-
-        if (!isPlainObject(categories)) {
-
-            categories = {};
-
-        }
-
-        document.querySelectorAll(
-            "[data-category-count]"
-        ).forEach(element => {
-
-            const category =
-                element.dataset.categoryCount;
-
-            const aliases =
-                CATEGORY_ALIASES[category] || [category];
-
-            const count = getCategoryCount(
-                categories,
-                aliases
-            );
-
-            element.textContent =
-                formatNumber(count);
-
-        });
-
-    }
-
-    /* =====================================================
-       FIVE MAJOR DETECTION MODULES
-    ===================================================== */
-
-    function updateMajorModuleStatistics(
-        categories = {}
-    ) {
-
-        MAJOR_MODULES.forEach(module => {
-
-            const aliases =
-                CATEGORY_ALIASES[module] || [module];
-
-            const count = getCategoryCount(
-                categories,
-                aliases
-            );
-
-            const element = document.querySelector(
-                `[data-module-count="${module}"]`
-            );
-
-            if (element) {
-
-                element.textContent =
-                    formatNumber(count);
-
-            }
-
-        });
-
-    }
-
-    /* =====================================================
-       ACTIVITY DATE FORMAT
-    ===================================================== */
-
-    function formatActivityDate(value) {
-
-        if (!value) return "N/A";
+    function formatDateTime(value) {
+        if (!value) return "—";
 
         const date = new Date(value);
 
         if (Number.isNaN(date.getTime())) {
-
-            return "N/A";
-
+            return "—";
         }
 
-        return new Intl.DateTimeFormat(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
+        return date.toLocaleString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    function normalizeKey(value) {
+        return String(value || "")
+            .trim()
+            .toLowerCase()
+            .replace(/[\s-]+/g, "_");
+    }
+
+    function formatLabel(value) {
+        return String(value || "Unknown")
+            .replace(/[_-]+/g, " ")
+            .replace(/\b\w/g, character => character.toUpperCase());
+    }
+
+    /* =====================================================
+       API AND AUTHENTICATION
+    ===================================================== */
+
+    function getApi() {
+        return window.ScamShieldAPI || null;
+    }
+
+    function getErrorStatus(error) {
+        return (
+            error?.status ??
+            error?.statusCode ??
+            error?.response?.status ??
+            error?.response?.data?.statusCode ??
+            null
+        );
+    }
+
+    function isAbortError(error) {
+        return (
+            error?.name === "AbortError" ||
+            error?.code === "ERR_CANCELED" ||
+            error?.code === "ECONNABORTED"
+        );
+    }
+
+    function extractCurrentUser(response) {
+        if (!response || typeof response !== "object") {
+            return null;
+        }
+
+        let current = response;
+
+        for (let index = 0; index < 4; index++) {
+            if (!current || typeof current !== "object") {
+                break;
             }
-        ).format(date);
 
-    }
+            if (
+                current._id ||
+                current.id ||
+                current.email ||
+                current.username
+            ) {
+                return current;
+            }
 
-    /* =====================================================
-       SAFE TABLE CELL
-    ===================================================== */
+            if (current.user) {
+                current = current.user;
+                continue;
+            }
 
-    function createCell(
-        value,
-        className = ""
-    ) {
+            if (current.data) {
+                current = current.data;
+                continue;
+            }
 
-        const cell = document.createElement("td");
-
-        cell.textContent =
-            value === null ||
-            value === undefined ||
-            value === ""
-                ? "N/A"
-                : String(value);
-
-        if (className) {
-
-            cell.className = className;
-
+            break;
         }
 
-        return cell;
+        return null;
+    }
 
+    async function verifyAuthentication() {
+        const api = getApi();
+
+        if (!api) {
+            throw new Error("API service is not initialized.");
+        }
+
+        if (typeof api.getToken === "function") {
+            const token = await api.getToken();
+
+            if (!token) {
+                redirectToLogin();
+                return false;
+            }
+        }
+
+        if (typeof api.getCurrentUser === "function") {
+            const response = await api.getCurrentUser();
+            const user = extractCurrentUser(response);
+
+            if (!user) {
+                redirectToLogin();
+                return false;
+            }
+
+            return true;
+        }
+
+        if (typeof api.getToken === "function") {
+            return true;
+        }
+
+        throw new Error("Authentication methods are unavailable.");
+    }
+
+    function redirectToLogin() {
+        state.requestId++;
+
+        if (state.controller) {
+            state.controller.abort();
+            state.controller = null;
+        }
+
+        state.loading = false;
+
+        if (state.refreshTimer) {
+            clearInterval(state.refreshTimer);
+            state.refreshTimer = null;
+        }
+
+        window.location.replace(CONFIG.LOGIN_PAGE);
+    }
+
+    async function logout() {
+        try {
+            const api = getApi();
+
+            if (api && typeof api.logout === "function") {
+                await api.logout();
+            }
+        } catch (error) {
+            console.error("[Dashboard] Logout error:", error);
+        } finally {
+            redirectToLogin();
+        }
     }
 
     /* =====================================================
-       EMPTY ACTIVITY
+       RESPONSE NORMALIZATION
     ===================================================== */
 
-    function showEmptyActivity(
-        message = "No Recent Activity",
-        description = "Your analysis history will appear here when available."
-    ) {
+    function normalizeApiResponse(response) {
+        let data = response;
 
-        const tbody = elements.activityTableBody;
+        // Axios-style response.
+        if (
+            data &&
+            typeof data === "object" &&
+            data.data &&
+            (
+                data.status ||
+                data.statusText ||
+                data.config ||
+                data.headers
+            )
+        ) {
+            data = data.data;
+        }
 
-        if (!tbody) return;
+        if (!data || typeof data !== "object") {
+            throw new Error("Invalid dashboard response.");
+        }
 
-        tbody.replaceChildren();
+        if (data.success === false) {
+            throw new Error(
+                data.message ||
+                data.error ||
+                "Dashboard request failed."
+            );
+        }
 
-        const row = document.createElement("tr");
+        // Express response: { success: true, data: {...} }
+        if (
+            data.data &&
+            typeof data.data === "object" &&
+            !Array.isArray(data.data)
+        ) {
+            data = data.data;
+        }
 
-        const cell = document.createElement("td");
+        if (
+            data.dashboard &&
+            typeof data.dashboard === "object"
+        ) {
+            data = data.dashboard;
+        } else if (
+            data.result &&
+            typeof data.result === "object"
+        ) {
+            data = data.result;
+        }
 
-        cell.colSpan = 6;
+        if (!data || typeof data !== "object") {
+            throw new Error("Dashboard data is unavailable.");
+        }
 
-        cell.className = "empty-activity";
+        return data;
+    }
 
-        const wrapper = document.createElement("div");
+    async function fetchDashboardData(signal) {
+        const api = getApi();
 
-        wrapper.className = "empty-state";
+        if (!api || typeof api.get !== "function") {
+            throw new Error("API GET method is unavailable.");
+        }
 
-        const icon = document.createElement("i");
-
-        icon.className = "fa-solid fa-folder-open";
-
-        const title = document.createElement("h3");
-
-        title.textContent = message;
-
-        const text = document.createElement("p");
-
-        text.textContent = description;
-
-        wrapper.append(
-            icon,
-            title,
-            text
+        const response = await api.get(
+            CONFIG.ENDPOINT,
+            {
+                signal,
+                timeout: CONFIG.REQUEST_TIMEOUT
+            }
         );
 
-        cell.appendChild(wrapper);
-
-        row.appendChild(cell);
-
-        tbody.appendChild(row);
-
+        return normalizeApiResponse(response);
     }
 
     /* =====================================================
-       ACTIVITY STATUS
+       STATISTICS NORMALIZATION
     ===================================================== */
 
-    function normalizeActivityStatus(value) {
+    function getFirstDefined(source, keys, fallback = 0) {
+        if (!source || typeof source !== "object") {
+            return fallback;
+        }
 
-        const status = String(value || "")
-            .trim()
-            .toLowerCase();
+        for (const key of keys) {
+            if (
+                source[key] !== undefined &&
+                source[key] !== null
+            ) {
+                return source[key];
+            }
+        }
 
-        const allowedStatuses = [
-            "completed",
-            "resolved",
-            "open",
-            "investigating",
-            "pending",
-            "failed",
-            "closed"
-        ];
+        return fallback;
+    }
 
-        return allowedStatuses.includes(status)
-            ? status
-            : "unknown";
+    function getStatistics(data) {
+        return (
+            data.statistics ||
+            data.stats ||
+            data.overview ||
+            data
+        );
+    }
 
+    function getRiskDistribution(data) {
+        return (
+            data.riskDistribution ||
+            data.risk_distribution ||
+            data.riskStats ||
+            data.risk_stats ||
+            data.risks ||
+            data
+        );
+    }
+
+    function getTotalAnalyses(data, statistics) {
+        return safeCount(
+            getFirstDefined(
+                statistics,
+                [
+                    "totalAnalyses",
+                    "total_analyses",
+                    "totalAnalysis",
+                    "total",
+                    "analyses"
+                ],
+                getFirstDefined(
+                    data,
+                    [
+                        "totalAnalyses",
+                        "total_analyses",
+                        "total"
+                    ],
+                    0
+                )
+            )
+        );
+    }
+
+    function getThreatCount(data, statistics) {
+        return safeCount(
+            getFirstDefined(
+                statistics,
+                [
+                    "threatsDetected",
+                    "threats_detected",
+                    "totalThreats",
+                    "total_threats",
+                    "detectedThreats",
+                    "fraudDetected"
+                ],
+                getFirstDefined(
+                    data,
+                    [
+                        "threatsDetected",
+                        "threats_detected",
+                        "totalThreats"
+                    ],
+                    0
+                )
+            )
+        );
+    }
+
+    function getRiskCount(distribution, level) {
+        const aliases = {
+            low: ["low", "LOW", "lowRisk", "low_risk"],
+            medium: ["medium", "MEDIUM", "mediumRisk", "medium_risk"],
+            high: ["high", "HIGH", "highRisk", "high_risk"],
+            critical: ["critical", "CRITICAL", "criticalRisk", "critical_risk"]
+        };
+
+        const value = getFirstDefined(
+            distribution,
+            aliases[level],
+            0
+        );
+
+        if (typeof value === "object" && value !== null) {
+            return safeCount(
+                value.count ??
+                value.total ??
+                value.value ??
+                0
+            );
+        }
+
+        return safeCount(value);
+    }
+
+    /* =====================================================
+       DASHBOARD STATISTICS
+    ===================================================== */
+
+    function updateStatistics(data) {
+        const statistics = getStatistics(data);
+        const distribution = getRiskDistribution(data);
+
+        const total = getTotalAnalyses(data, statistics);
+        const threats = getThreatCount(data, statistics);
+
+        const low = getRiskCount(distribution, "low");
+        const medium = getRiskCount(distribution, "medium");
+        const high = getRiskCount(distribution, "high");
+        const critical = getRiskCount(distribution, "critical");
+
+        const lowElement = elements.totalAnalyses;
+        const threatElement = elements.threatsDetected;
+        const lowRiskElement = elements.lowRiskResults;
+        const highRiskElement = elements.highRiskResults;
+
+        setText(lowElement, formatNumber(total));
+        setText(threatElement, formatNumber(threats));
+        setText(lowRiskElement, formatNumber(low));
+        setText(highRiskElement, formatNumber(high + critical));
+
+        setText(elements.lowRiskCount, formatNumber(low));
+        setText(elements.mediumRiskCount, formatNumber(medium));
+        setText(elements.highRiskCount, formatNumber(high));
+        setText(elements.criticalRiskCount, formatNumber(critical));
+
+        updateStatisticsStatus("success", "Statistics updated");
+    }
+
+    function updateStatisticsStatus(type, message) {
+        const element = elements.statisticsStatus;
+
+        if (!element) return;
+
+        element.textContent = message;
+
+        element.classList.remove(
+            "success",
+            "error",
+            "loading"
+        );
+
+        if (type) {
+            element.classList.add(type);
+        }
+    }
+
+    /* =====================================================
+       RISK DISTRIBUTION CHART
+    ===================================================== */
+
+    function updateRiskChart(data) {
+        const chart = elements.riskChart;
+
+        if (!chart) return;
+
+        const distribution = getRiskDistribution(data);
+
+        const values = {
+            low: getRiskCount(distribution, "low"),
+            medium: getRiskCount(distribution, "medium"),
+            high: getRiskCount(distribution, "high"),
+            critical: getRiskCount(distribution, "critical")
+        };
+
+        const total = Object.values(values)
+            .reduce((sum, value) => sum + value, 0);
+
+        if (total === 0) {
+            chart.style.background = "none";
+            chart.innerHTML = `
+                <div class="risk-chart-inner">
+                    <strong>0</strong>
+                    <span>Analyses</span>
+                </div>
+            `;
+
+            chart.dataset.loading = "false";
+            return;
+        }
+
+        const colors = {
+            low: "#16a34a",
+            medium: "#eab308",
+            high: "#f97316",
+            critical: "#dc2626"
+        };
+
+        let currentAngle = 0;
+        const segments = [];
+
+        RISK_LEVELS.forEach(level => {
+            const percentage = (values[level] / total) * 100;
+            const nextAngle = currentAngle + percentage;
+
+            segments.push(
+                `${colors[level]} ${currentAngle}% ${nextAngle}%`
+            );
+
+            currentAngle = nextAngle;
+        });
+
+        chart.style.background =
+            `conic-gradient(${segments.join(", ")})`;
+
+        chart.innerHTML = `
+            <div class="risk-chart-inner">
+                <strong>${formatNumber(total)}</strong>
+                <span>Analyses</span>
+            </div>
+        `;
+
+        chart.dataset.loading = "false";
+    }
+
+    /* =====================================================
+       CATEGORY AND MODULE COUNTS
+    ===================================================== */
+
+    function getCategoryData(data) {
+        return (
+            data.categories ||
+            data.categoryCounts ||
+            data.category_counts ||
+            data.fraudCategories ||
+            data.fraud_categories ||
+            {}
+        );
+    }
+
+    function getCategoryCount(categoryData, aliases) {
+        if (Array.isArray(categoryData)) {
+            for (const item of categoryData) {
+                const key = normalizeKey(
+                    item.category ||
+                    item.name ||
+                    item.type
+                );
+
+                if (aliases.includes(key)) {
+                    return safeCount(
+                        item.count ??
+                        item.total ??
+                        item.value ??
+                        0
+                    );
+                }
+            }
+
+            return 0;
+        }
+
+        if (!categoryData || typeof categoryData !== "object") {
+            return 0;
+        }
+
+        for (const alias of aliases) {
+            const value = categoryData[alias];
+
+            if (value !== undefined && value !== null) {
+                if (typeof value === "object") {
+                    return safeCount(
+                        value.count ??
+                        value.total ??
+                        value.value ??
+                        0
+                    );
+                }
+
+                return safeCount(value);
+            }
+        }
+
+        return 0;
+    }
+
+    function updateCategoryCounts(data) {
+        const categoryData = getCategoryData(data);
+
+        Object.entries(CATEGORY_ALIASES).forEach(
+            ([category, aliases]) => {
+                const element = document.querySelector(
+                    `[data-category-count="${category}"]`
+                );
+
+                if (!element) return;
+
+                setText(
+                    element,
+                    formatNumber(
+                        getCategoryCount(categoryData, [
+                            category,
+                            ...aliases
+                        ])
+                    )
+                );
+            }
+        );
+
+        Object.entries(MAJOR_MODULES).forEach(
+            ([module, aliases]) => {
+                const element = document.querySelector(
+                    `[data-module-count="${module}"]`
+                );
+
+                if (!element) return;
+
+                setText(
+                    element,
+                    formatNumber(
+                        getCategoryCount(categoryData, aliases)
+                    )
+                );
+            }
+        );
     }
 
     /* =====================================================
        RECENT ACTIVITY
     ===================================================== */
 
-    function renderRecentActivity(
-        activities = []
-    ) {
+    function getRecentActivity(data) {
+        const activity =
+            data.recentActivity ||
+            data.recent_activity ||
+            data.activities ||
+            data.activity ||
+            [];
 
+        if (Array.isArray(activity)) {
+            return activity;
+        }
+
+        if (activity && typeof activity === "object") {
+            if (Array.isArray(activity.items)) {
+                return activity.items;
+            }
+
+            if (Array.isArray(activity.data)) {
+                return activity.data;
+            }
+        }
+
+        return [];
+    }
+
+    function normalizeActivityStatus(status) {
+        const value = normalizeKey(status);
+
+        const allowed = [
+            "open",
+            "investigating",
+            "resolved",
+            "closed",
+            "pending",
+            "completed",
+            "failed"
+        ];
+
+        return allowed.includes(value)
+            ? value
+            : "unknown";
+    }
+
+    function createCell(text, className = "") {
+        const cell = document.createElement("td");
+
+        cell.textContent =
+            text === null || text === undefined
+                ? "—"
+                : String(text);
+
+        if (className) {
+            cell.className = className;
+        }
+
+        return cell;
+    }
+
+    function createStatusBadge(status) {
+        const badge = document.createElement("span");
+        const normalized = normalizeActivityStatus(status);
+
+        badge.className = `activity-status status-${normalized}`;
+        badge.textContent = formatLabel(normalized);
+
+        return badge;
+    }
+
+    function renderRecentActivity(data) {
         const tbody = elements.activityTableBody;
 
         if (!tbody) return;
 
-        if (
-            !Array.isArray(activities) ||
-            activities.length === 0
-        ) {
-
-            showEmptyActivity();
-
-            return;
-
-        }
+        const activities = getRecentActivity(data)
+            .slice(0, CONFIG.MAX_ACTIVITY);
 
         tbody.replaceChildren();
 
-        activities
-            .slice(0, MAX_ACTIVITY_RECORDS)
-            .forEach(activity => {
-
-                if (!isPlainObject(activity)) return;
-
-                const row = document.createElement("tr");
-
-                const evidenceType = String(
-                    activity.evidenceType ||
-                    activity.evidence_type ||
-                    activity.type ||
-                    "Unknown"
-                );
-
-                const evidenceId = String(
-                    activity.evidenceId ||
-                    activity.evidence_id ||
-                    activity._id ||
-                    ""
-                );
-
-                const category = String(
-                    activity.fraudCategory ||
-                    activity.fraud_category ||
-                    activity.category ||
-                    "Unclassified"
-                );
-
-                const riskScoreValue = Number(
-                    activity.riskScore ??
-                    activity.risk_score ??
-                    activity.score
-                );
-
-                const validRiskScore = (
-                    Number.isFinite(riskScoreValue) &&
-                    riskScoreValue >= 0 &&
-                    riskScoreValue <= 100
-                );
-
-                const riskScore = validRiskScore
-                    ? `${riskScoreValue}/100`
-                    : "N/A";
-
-                let riskLevel = normalizeRiskLevel(
-                    activity.riskLevel ||
-                    activity.risk_level ||
-                    activity.severity
-                );
-
-                if (
-                    riskLevel === "unknown" &&
-                    validRiskScore
-                ) {
-
-                    riskLevel =
-                        getRiskLevelFromScore(
-                            riskScoreValue
-                        );
-
-                }
-
-                const createdAt =
-                    activity.createdAt ||
-                    activity.created_at ||
-                    activity.date;
-
-                const status = normalizeActivityStatus(
-                    activity.status
-                );
-
-                const evidenceCell = createCell(
-                    evidenceId
-                        ? `${evidenceType} · ${evidenceId}`
-                        : evidenceType
-                );
-
-                const categoryCell = createCell(
-                    category
-                );
-
-                const scoreCell = createCell(
-                    riskScore
-                );
-
-                const riskCell = createCell(
-                    riskLevel === "unknown"
-                        ? "N/A"
-                        : riskLevel.charAt(0).toUpperCase() +
-                          riskLevel.slice(1)
-                );
-
-                riskCell.className =
-                    `risk-level-cell ${riskLevel}`;
-
-                const dateCell = createCell(
-                    formatActivityDate(createdAt)
-                );
-
-                const statusCell = createCell(
-                    status === "unknown"
-                        ? "N/A"
-                        : status.charAt(0).toUpperCase() +
-                          status.slice(1)
-                );
-
-                statusCell.className =
-                    `activity-status ${status}`;
-
-                row.append(
-                    evidenceCell,
-                    categoryCell,
-                    scoreCell,
-                    riskCell,
-                    dateCell,
-                    statusCell
-                );
-
-                tbody.appendChild(row);
-
-            });
-
-        if (!tbody.children.length) {
-
-            showEmptyActivity();
-
-        }
-
-    }
-
-    /* =====================================================
-       RESPONSE VALIDATION
-    ===================================================== */
-
-    function validateDashboardData(data) {
-
-        if (!isPlainObject(data)) {
-
-            throw new Error(
-                "Invalid dashboard response."
-            );
-
-        }
-
-        if (data.success === false) {
-
-            throw new Error(
-                data.message ||
-                "Unable to load dashboard data."
-            );
-
-        }
-
-        const dashboard =
-            data.data ||
-            data.dashboard ||
-            data.result ||
-            data;
-
-        if (!isPlainObject(dashboard)) {
-
-            throw new Error(
-                "Dashboard data is missing or invalid."
-            );
-
-        }
-
-        return dashboard;
-
-    }
-
-    /* =====================================================
-       APPLY DASHBOARD DATA
-    ===================================================== */
-
-    function applyDashboardData(dashboard) {
-
-        const statistics =
-            dashboard.statistics ||
-            dashboard.overview ||
-            {};
-
-        const riskDistribution =
-            dashboard.riskDistribution ||
-            dashboard.risk_distribution ||
-            dashboard.riskBreakdown ||
-            dashboard.risk_breakdown ||
-            dashboard.risk ||
-            {};
-
-        const fraudCategories =
-            dashboard.fraudCategories ||
-            dashboard.fraud_categories ||
-            dashboard.categoryStatistics ||
-            dashboard.category_statistics ||
-            dashboard.categories ||
-            {};
-
-        const recentActivity =
-            dashboard.recentActivity ||
-            dashboard.recent_activity ||
-            dashboard.activities ||
-            dashboard.recentCases ||
-            [];
-
-        updateOverview(statistics);
-
-        updateRiskDistribution(
-            riskDistribution
-        );
-
-        updateFraudCategories(
-            fraudCategories
-        );
-
-        updateMajorModuleStatistics(
-            fraudCategories
-        );
-
-        renderRecentActivity(
-            recentActivity
-        );
-
-        state.lastDashboardData = dashboard;
-
-        state.lastUpdated = new Date();
-
-        updateStatisticsStatus(
-            `Last updated: ${state.lastUpdated.toLocaleTimeString("en-IN")}`
-        );
-
-    }
-
-    /* =====================================================
-       FETCH DASHBOARD DATA
-    ===================================================== */
-
-    async function fetchDashboardData(signal) {
-
-        const api = getAPI();
-
-        if (typeof api.get !== "function") {
-
-            throw new Error(
-                "GET method is missing from ScamShield API service."
-            );
-
-        }
-
-        return api.get(
-            DASHBOARD_ENDPOINT,
-            {
-                signal,
-                timeout: REQUEST_TIMEOUT
-            }
-        );
-
-    }
-
-    /* =====================================================
-       ERROR HANDLING
-    ===================================================== */
-
-    function showDashboardError(error) {
-
-        console.error(
-            "ScamShield Dashboard Error:",
-            error
-        );
-
-        if (
-            error.status === 401 ||
-            error.status === 403
-        ) {
-
-            if (error.status === 401) {
-
-                updatePlatformStatus(
-                    "Session expired",
-                    false
-                );
-
-                updateStatisticsStatus(
-                    "Please log in again to access your dashboard."
-                );
-
-                showEmptyActivity(
-                    "Session Expired",
-                    "Please log in again to continue."
-                );
-
-                redirectToLogin();
-
-                return;
-
-            }
-
-            updatePlatformStatus(
-                "Access denied",
-                false
-            );
-
-            updateStatisticsStatus(
-                "Your account does not have permission to access this dashboard."
-            );
-
-            showEmptyActivity(
-                "Access Denied",
-                "Your account does not have permission to view this dashboard."
-            );
+        if (activities.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 5;
+            cell.className = "empty-state";
+            cell.textContent = "No recent activity available.";
+
+            row.appendChild(cell);
+            tbody.appendChild(row);
 
             return;
-
         }
 
-        updatePlatformStatus(
-            "Backend unavailable",
-            false
-        );
+        activities.forEach(activity => {
+            const row = document.createElement("tr");
 
-        updateStatisticsStatus(
-            state.lastUpdated
-                ? `Unable to refresh. Showing previously loaded data. Last updated: ${state.lastUpdated.toLocaleTimeString("en-IN")}`
-                : "Unable to load dashboard data. Check your backend connection."
-        );
+            const evidenceType =
+                activity.evidenceType ||
+                activity.evidence_type ||
+                activity.type ||
+                "Unknown";
 
-        if (!state.lastDashboardData) {
+            const category =
+                activity.fraudCategory ||
+                activity.fraud_category ||
+                activity.detectionCategory ||
+                activity.detection_category ||
+                activity.category ||
+                "Unknown";
 
-            showEmptyActivity(
-                "Dashboard Data Unavailable",
-                "Please check your backend connection and try refreshing."
+            const riskLevel = normalizeKey(
+                activity.riskLevel ||
+                activity.risk_level ||
+                "unknown"
             );
 
-        }
+            const riskScore = activity.riskScore ??
+                activity.risk_score;
 
+            const date =
+                activity.analyzedAt ||
+                activity.analyzed_at ||
+                activity.createdAt ||
+                activity.created_at ||
+                activity.date;
+
+            const status =
+                activity.status ||
+                activity.caseStatus ||
+                activity.case_status ||
+                "unknown";
+
+            row.appendChild(
+                createCell(formatLabel(evidenceType))
+            );
+
+            row.appendChild(
+                createCell(formatLabel(category))
+            );
+
+            const riskCell = document.createElement("td");
+            const riskBadge = document.createElement("span");
+
+            riskBadge.className =
+                `risk-badge risk-${riskLevel}`;
+
+            riskBadge.textContent =
+                `${formatLabel(riskLevel)}${
+                    riskScore !== undefined && riskScore !== null
+                        ? ` (${safeCount(riskScore)})`
+                        : ""
+                }`;
+
+            riskCell.appendChild(riskBadge);
+            row.appendChild(riskCell);
+
+            const statusCell = document.createElement("td");
+            statusCell.appendChild(createStatusBadge(status));
+            row.appendChild(statusCell);
+
+            row.appendChild(
+                createCell(formatDateTime(date))
+            );
+
+            tbody.appendChild(row);
+        });
     }
 
     /* =====================================================
-       LOAD DASHBOARD
+       PLATFORM STATUS
     ===================================================== */
 
-    async function loadDashboard() {
+    function updatePlatformStatus(status, message) {
+        if (!elements.platformStatuses) return;
 
-        if (state.loading) return;
+        elements.platformStatuses.forEach(container => {
+            const indicator = container.querySelector(
+                ".status-indicator"
+            );
 
-        state.loading = true;
+            const label = container.querySelector(
+                ".status-text"
+            );
 
-        const currentRequestId =
-            ++state.requestId;
+            if (indicator) {
+                indicator.classList.remove(
+                    "online",
+                    "offline",
+                    "checking"
+                );
 
-        const controller = new AbortController();
-
-        state.requestController = controller;
-
-        const timeoutId = setTimeout(
-            () => controller.abort(),
-            REQUEST_TIMEOUT
-        );
-
-        setRefreshButtonLoading(true);
-
-        updateStatisticsStatus(
-            "Verifying account and loading dashboard..."
-        );
-
-        updatePlatformStatus(
-            "Connecting to backend...",
-            false
-        );
-
-        try {
-
-            /*
-             * STEP 1:
-             * Verify the authenticated account.
-             */
-
-            if (!state.authenticated) {
-
-                await verifyAuthentication();
-
+                indicator.classList.add(status);
             }
 
-            if (currentRequestId !== state.requestId) {
+            if (label) {
+                label.textContent = message;
+            } else if (!indicator) {
+                container.textContent = message;
+            }
+        });
+    }
+
+    /* =====================================================
+       DASHBOARD RENDERING
+    ===================================================== */
+
+    function applyDashboardData(data) {
+        updateStatistics(data);
+        updateRiskChart(data);
+        updateCategoryCounts(data);
+        renderRecentActivity(data);
+
+        setText(
+            elements.dashboardDate,
+            formatDate(
+                data.updatedAt ||
+                data.updated_at ||
+                data.generatedAt ||
+                data.generated_at ||
+                new Date()
+            )
+        );
+
+        state.lastData = data;
+
+        updatePlatformStatus("online", "Connected");
+    }
+
+    function showDashboardError(message) {
+        updateStatisticsStatus("error", message);
+        updatePlatformStatus("offline", "Connection issue");
+
+        if (!state.lastData) {
+            if (elements.riskChart) {
+                elements.riskChart.dataset.loading = "false";
+            }
+        }
+
+        console.error("[Dashboard]", message);
+    }
+
+    /* =====================================================
+       DASHBOARD LOADING
+    ===================================================== */
+
+    async function loadDashboard(options = {}) {
+        if (state.loading && !options.force) {
+            return;
+        }
+
+        if (state.controller) {
+            state.controller.abort();
+        }
+
+        const requestId = ++state.requestId;
+        const controller = new AbortController();
+
+        state.controller = controller;
+        state.loading = true;
+
+        updateStatisticsStatus("loading", "Loading dashboard...");
+        updatePlatformStatus("checking", "Connecting...");
+
+        if (elements.riskChart) {
+            elements.riskChart.dataset.loading = "true";
+        }
+
+        let timedOut = false;
+
+        const timeoutId = setTimeout(() => {
+            timedOut = true;
+            controller.abort();
+        }, CONFIG.REQUEST_TIMEOUT);
+
+        try {
+            const authenticated = await verifyAuthentication();
+
+            if (!authenticated || requestId !== state.requestId) {
                 return;
             }
 
-            /*
-             * STEP 2:
-             * Fetch dashboard statistics.
-             */
-
-            const response = await fetchDashboardData(
+            const data = await fetchDashboardData(
                 controller.signal
             );
 
-            if (currentRequestId !== state.requestId) {
+            if (requestId !== state.requestId) {
                 return;
             }
 
-            /*
-             * STEP 3:
-             * Validate response.
-             */
-
-            const dashboard =
-                validateDashboardData(response);
-
-            /*
-             * STEP 4:
-             * Update dashboard UI.
-             */
-
-            applyDashboardData(dashboard);
-
-            updatePlatformStatus(
-                "Backend Connected",
-                true
-            );
+            applyDashboardData(data);
 
         } catch (error) {
-
-            if (currentRequestId !== state.requestId) {
+            if (requestId !== state.requestId) {
                 return;
             }
 
-            if (
-                error.name === "AbortError"
-            ) {
-
-                updateStatisticsStatus(
-                    "Dashboard request timed out."
-                );
-
-                updatePlatformStatus(
-                    "Connection interrupted",
-                    false
-                );
-
+            if (getErrorStatus(error) === 401) {
+                redirectToLogin();
                 return;
-
             }
 
-            if (
-                error.status === 401
-            ) {
-
-                state.authenticated = false;
-
-            }
-
-            showDashboardError(error);
-
-        } finally {
-
-            clearTimeout(timeoutId);
-
-            if (currentRequestId === state.requestId) {
-
-                state.loading = false;
-
-                state.requestController = null;
-
-                setRefreshButtonLoading(false);
-
-            }
-
-        }
-
-    }
-
-    /* =====================================================
-       REFRESH BUTTON
-    ===================================================== */
-
-    function initializeRefreshButton() {
-
-        if (!elements.refreshButton) return;
-
-        elements.refreshButton.addEventListener(
-            "click",
-            loadDashboard
-        );
-
-    }
-
-    /* =====================================================
-       AUTHENTICATION EVENTS
-    ===================================================== */
-
-    function initializeAuthenticationEvents() {
-
-        window.addEventListener(
-            "scamshield:session-expired",
-            () => {
-
-                state.authenticated = false;
-
-                redirectToLogin();
-
-            }
-        );
-
-        window.addEventListener(
-            "scamshield:logout",
-            () => {
-
-                state.authenticated = false;
-
-                redirectToLogin();
-
-            }
-        );
-
-        window.addEventListener(
-            "storage",
-            event => {
-
-                if (
-                    event.key === "scamshield_token" &&
-                    !event.newValue
-                ) {
-
-                    state.authenticated = false;
-
-                    redirectToLogin();
-
+            if (isAbortError(error)) {
+                if (timedOut) {
+                    showDashboardError(
+                        "Dashboard request timed out. Please try again."
+                    );
                 }
 
+                return;
             }
-        );
 
+            showDashboardError(
+                error.message ||
+                "Unable to load dashboard data."
+            );
+
+        } finally {
+            clearTimeout(timeoutId);
+
+            if (requestId === state.requestId) {
+                state.loading = false;
+                state.controller = null;
+            }
+        }
     }
 
     /* =====================================================
-       INITIAL DASHBOARD STATE
+       EVENT LISTENERS
     ===================================================== */
 
-    function initializeDashboardState() {
+    function setupRefreshButton() {
+        const button = elements.refreshDashboard;
 
-        updateDashboardDate();
+        if (!button) return;
 
-        updateOverview();
+        button.addEventListener("click", () => {
+            loadDashboard({ force: true });
+        });
+    }
 
-        updateRiskDistribution();
+    function setupLogoutButtons() {
+        if (!elements.logoutButtons) return;
 
-        updateFraudCategories();
+        elements.logoutButtons.forEach(button => {
+            button.addEventListener("click", event => {
+                event.preventDefault();
+                logout();
+            });
+        });
+    }
 
-        updateMajorModuleStatistics();
+    function setupAutoRefresh() {
+        if (state.refreshTimer) {
+            clearInterval(state.refreshTimer);
+        }
 
-        showEmptyActivity(
-            "Loading Activity",
-            "Your recent analysis activity will appear here."
-        );
+        state.refreshTimer = setInterval(() => {
+            if (
+                document.visibilityState === "visible" &&
+                !state.loading
+            ) {
+                loadDashboard();
+            }
+        }, CONFIG.REFRESH_INTERVAL);
+    }
 
-        updatePlatformStatus(
-            "Connecting to backend...",
-            false
-        );
-
-        updateStatisticsStatus(
-            "Waiting for dashboard data..."
-        );
-
+    function setupVisibilityRefresh() {
+        document.addEventListener("visibilitychange", () => {
+            if (
+                document.visibilityState === "visible" &&
+                !state.loading
+            ) {
+                loadDashboard();
+            }
+        });
     }
 
     /* =====================================================
        INITIALIZATION
     ===================================================== */
 
-    function initialize() {
-
+    async function init() {
         if (state.initialized) return;
 
         state.initialized = true;
 
-        initializeDashboardState();
+        cacheElements();
 
-        initializeRefreshButton();
+        setupRefreshButton();
+        setupLogoutButtons();
+        setupVisibilityRefresh();
+        setupAutoRefresh();
 
-        initializeLogout();
+        setText(elements.dashboardDate, formatDate(new Date()));
 
-        initializeAuthenticationEvents();
-
-        loadDashboard();
-
-        console.log(
-            "ScamShield AI Dashboard v4.0.0 initialized."
+        updateStatisticsStatus(
+            "loading",
+            "Initializing dashboard..."
         );
 
+        updatePlatformStatus(
+            "checking",
+            "Connecting..."
+        );
+
+        console.info(
+            `[ScamShield Dashboard] Version ${CONFIG.VERSION} initialized.`
+        );
+
+        await loadDashboard();
     }
 
     /* =====================================================
@@ -1668,63 +1215,21 @@
     ===================================================== */
 
     window.ScamShieldDashboard = Object.freeze({
-
-        loadDashboard,
-
+        init,
+        refresh: () => loadDashboard({ force: true }),
         logout,
-
-        updateOverview,
-
-        updateRiskDistribution,
-
-        updateFraudCategories,
-
-        updateMajorModuleStatistics,
-
-        renderRecentActivity,
-
-        getLastDashboardData() {
-
-            return state.lastDashboardData;
-
-        },
-
-        getLastUpdated() {
-
-            return state.lastUpdated;
-
-        },
-
-        isLoading() {
-
-            return state.loading;
-
-        },
-
-        isAuthenticated() {
-
-            return state.authenticated;
-
-        }
-
+        getVersion: () => CONFIG.VERSION,
+        getLastData: () => state.lastData
     });
 
-    /* =====================================================
-       START APPLICATION
-    ===================================================== */
-
     if (document.readyState === "loading") {
-
         document.addEventListener(
             "DOMContentLoaded",
-            initialize,
+            init,
             { once: true }
         );
-
     } else {
-
-        initialize();
-
+        init();
     }
 
-})(window, document);
+})();

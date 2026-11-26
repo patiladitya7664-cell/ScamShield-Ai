@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,12 +7,14 @@
 
   <meta
     name="description"
-    content="ScamShield AI security dashboard for fraud detection, multi-agent analysis, threat intelligence and victim protection."
+    content="ScamShield AI security dashboard for fraud detection, AI-powered risk analysis, threat intelligence, case monitoring and victim safety."
   >
 
   <meta name="theme-color" content="#080f1d">
 
-  <title>Dashboard | ScamShield AI</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Security Dashboard | ScamShield AI</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,112 +41,61 @@
 
 <body class="dashboard-page">
 
-  <!-- =========================================
-       APPLICATION NAVIGATION
-  ========================================== -->
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-content">
 
-  <header class="navbar dashboard-navbar">
-
-    <div class="container navbar-container">
-
-      <a
-        href="../index.html"
-        class="logo"
-        aria-label="ScamShield AI Home"
-      >
-
+      <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
         <span class="logo-icon">
-          <i class="fa-solid fa-shield-halved"></i>
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
         </span>
 
         <span class="logo-text">
-          ScamShield<span>AI</span>
+          ScamShield <span>AI</span>
         </span>
-
       </a>
 
-
-      <button
-        class="mobile-menu-toggle"
-        id="menuToggle"
-        type="button"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="navLinks"
-      >
-        <i class="fa-solid fa-bars"></i>
-      </button>
-
-
-      <nav
-        class="nav-links"
-        id="navLinks"
-        aria-label="Main navigation"
-      >
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="dashboard.html"
+        class="active"
+          aria-current="page"
+          >Dashboard </a>
 
         <a
-          href="dashboard.html"
-          class="nav-link active"
-          aria-current="page"
+          href="detection.html"
+        
         >
-          <i class="fa-solid fa-chart-pie"></i>
-          Dashboard
-        </a>
-
-        <a href="detection.html" class="nav-link">
-          <i class="fa-solid fa-magnifying-glass-chart"></i>
           Detection
         </a>
 
-        <a href="agents.html" class="nav-link">
-          <i class="fa-solid fa-robot"></i>
-          AI Agents
-        </a>
-
-        <a href="intelligence.html" class="nav-link">
-          <i class="fa-solid fa-brain"></i>
-          Intelligence
-        </a>
-
-        <a href="analytics.html" class="nav-link">
-          <i class="fa-solid fa-chart-line"></i>
-          Analytics
-        </a>
-
-        <a href="cases.html" class="nav-link">
-          <i class="fa-solid fa-folder-open"></i>
-          Cases
-        </a>
-
-        <a href="reports.html" class="nav-link">
-          <i class="fa-solid fa-file-shield"></i>
-          Reports
-        </a>
-
-        <a href="assistant.html" class="nav-link">
-          <i class="fa-solid fa-hand-holding-heart"></i>
-          Assistant
-        </a>
-
-        <a href="settings.html" class="nav-link">
-          <i class="fa-solid fa-gear"></i>
-          Settings
-        </a>
-
-        <button
-          class="btn btn-outline btn-sm"
-          type="button"
-          data-logout
-        >
-          <i class="fa-solid fa-right-from-bracket"></i>
-          Logout
-        </button>
-
+        <a href="agents.html">AI Agents</a>
+        <a href="intelligence.html">Intelligence</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="reports.html">Reports</a>
       </nav>
 
-    </div>
+      <div class="nav-actions">
+        <a href="settings.html" class="btn btn-secondary">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+          Settings
+        </a>
+      </div>
 
+      <button
+        type="button"
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle navigation"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+
+    </div>
   </header>
+
+  <main id="main-content">
 
 
   <!-- =========================================
@@ -165,7 +116,7 @@
         <div class="dashboard-heading">
 
           <span class="section-eyebrow">
-            <i class="fa-solid fa-shield-halved"></i>
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
             SCAMSHIELD SECURITY CENTER
           </span>
 
@@ -174,13 +125,14 @@
           </h1>
 
           <p>
-            Monitor fraud detection, AI agents, threat intelligence,
-            investigation activity and digital safety from one place.
+            Monitor fraud detection activity, AI agents, threat
+            indicators, investigation records and digital safety
+            from one centralized dashboard.
           </p>
 
           <div class="dashboard-date">
 
-            <i class="fa-regular fa-calendar"></i>
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
 
             <span id="dashboardDate">
               Your security overview
@@ -214,14 +166,15 @@
             type="button"
             id="refreshDashboard"
           >
-            <i class="fa-solid fa-rotate"></i>
-            Refresh
+            <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+            Refresh Dashboard
           </button>
 
 
           <p
             id="statisticsStatus"
             class="statistics-status"
+            role="status"
             aria-live="polite"
           >
             Waiting for dashboard data...
@@ -233,42 +186,48 @@
 
 
       <!-- =====================================
-           IMPLEMENTATION STATUS NOTICE
+           2. PLATFORM STATUS INFORMATION
       ====================================== -->
 
-      <section class="dashboard-status-banner">
+      <section
+        class="dashboard-status-banner"
+        aria-labelledby="platformStatusHeading"
+      >
 
         <div class="status-banner-icon">
-          <i class="fa-solid fa-circle-info"></i>
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
         </div>
 
         <div class="status-banner-content">
 
-          <h3>
+          <h2 id="platformStatusHeading">
             Platform Status
-          </h3>
+          </h2>
 
           <p>
-            Dashboard statistics and activity depend on available
-            backend data. AI engine, database and advisory service
-            availability are reported separately.
+            Dashboard statistics are loaded from available backend
+            records. Database, AI engine and Gemini advisory
+            availability are separate service states.
           </p>
 
         </div>
 
         <a href="agents.html" class="text-link">
-          Explore Platform
-          <i class="fa-solid fa-arrow-right"></i>
+          Explore AI Agents
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </a>
 
       </section>
 
 
       <!-- =====================================
-           2. SECURITY OVERVIEW
+           3. SECURITY OVERVIEW
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="securityOverviewHeading"
+      >
 
         <div class="section-heading">
 
@@ -278,12 +237,12 @@
               OVERVIEW
             </span>
 
-            <h2>
+            <h2 id="securityOverviewHeading">
               Security Overview
             </h2>
 
             <p>
-              Summary of your fraud detection activity.
+              A summary of your recorded fraud detection activity.
             </p>
 
           </div>
@@ -293,12 +252,14 @@
 
         <div class="dashboard-stats-grid">
 
+          <!-- TOTAL ANALYSES -->
+
           <article class="stat-card">
 
             <div class="stat-card-top">
 
               <span class="stat-icon blue">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                <i class="fa-solid fa-magnifying-glass-chart" aria-hidden="true"></i>
               </span>
 
               <span class="stat-label">
@@ -307,7 +268,7 @@
 
             </div>
 
-            <h3 id="totalAnalyses">--</h3>
+            <h3 id="totalAnalyses" aria-live="polite">--</h3>
 
             <p>
               Evidence items analyzed
@@ -316,12 +277,14 @@
           </article>
 
 
+          <!-- THREATS -->
+
           <article class="stat-card">
 
             <div class="stat-card-top">
 
               <span class="stat-icon red">
-                <i class="fa-solid fa-triangle-exclamation"></i>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
               </span>
 
               <span class="stat-label">
@@ -330,21 +293,23 @@
 
             </div>
 
-            <h3 id="threatsDetected">--</h3>
+            <h3 id="threatsDetected" aria-live="polite">--</h3>
 
             <p>
-              Potential threats identified
+              Results classified as potential threats
             </p>
 
           </article>
 
+
+          <!-- LOW RISK -->
 
           <article class="stat-card">
 
             <div class="stat-card-top">
 
               <span class="stat-icon green">
-                <i class="fa-solid fa-shield-heart"></i>
+                <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
               </span>
 
               <span class="stat-label">
@@ -353,7 +318,7 @@
 
             </div>
 
-            <h3 id="lowRiskResults">--</h3>
+            <h3 id="lowRiskResults" aria-live="polite">--</h3>
 
             <p>
               Analyses classified as low risk
@@ -362,12 +327,14 @@
           </article>
 
 
+          <!-- HIGH RISK -->
+
           <article class="stat-card">
 
             <div class="stat-card-top">
 
               <span class="stat-icon orange">
-                <i class="fa-solid fa-shield-halved"></i>
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
               </span>
 
               <span class="stat-label">
@@ -376,7 +343,7 @@
 
             </div>
 
-            <h3 id="highRiskResults">--</h3>
+            <h3 id="highRiskResults" aria-live="polite">--</h3>
 
             <p>
               High and critical risk results
@@ -390,10 +357,13 @@
 
 
       <!-- =====================================
-           3. UNIVERSAL INPUT LAYER
+           4. UNIVERSAL INPUT LAYER
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="inputLayerHeading"
+      >
 
         <div class="section-heading">
 
@@ -403,20 +373,20 @@
               UNIVERSAL INPUT LAYER
             </span>
 
-            <h2>
+            <h2 id="inputLayerHeading">
               Analyze Suspicious Evidence
             </h2>
 
             <p>
-              Submit different types of digital evidence for
-              fraud and scam analysis.
+              Select the type of suspicious digital evidence
+              you want to examine.
             </p>
 
           </div>
 
           <a href="detection.html" class="btn btn-primary">
             Open Detection Center
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -424,140 +394,139 @@
 
         <div class="input-types-grid">
 
-          <a
-            href="detection.html?type=message"
-            class="input-type-card"
-          >
+          <!-- MESSAGE -->
+
+          <a href="analyze-message.html" class="input-type-card">
 
             <span class="input-type-icon">
-              <i class="fa-solid fa-comment-sms"></i>
+              <i class="fa-solid fa-comment-sms" aria-hidden="true"></i>
             </span>
 
             <h3>Messages</h3>
 
             <p>
-              Analyze suspicious SMS and message content.
+              Examine suspicious SMS and message content,
+              including scam requests and threatening messages.
             </p>
 
             <span class="card-link">
               Analyze Message
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </span>
 
           </a>
 
 
-          <a
-            href="detection.html?type=call"
-            class="input-type-card"
-          >
+          <!-- CALL -->
+
+          <a href="analyze-call.html" class="input-type-card">
 
             <span class="input-type-icon">
-              <i class="fa-solid fa-phone"></i>
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>
             </span>
 
             <h3>Call Transcripts</h3>
 
             <p>
-              Examine supplied call transcripts and text for
-              suspicious patterns.
+              Analyze supplied call transcripts for impersonation,
+              intimidation and suspicious payment requests.
             </p>
 
             <span class="card-link">
               Analyze Call Text
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </span>
 
           </a>
 
 
-          <a
-            href="detection.html?type=email"
-            class="input-type-card"
-          >
+          <!-- EMAIL -->
+
+          <a href="analyze-email.html" class="input-type-card">
 
             <span class="input-type-icon">
-              <i class="fa-solid fa-envelope"></i>
+              <i class="fa-solid fa-envelope" aria-hidden="true"></i>
             </span>
 
             <h3>Emails</h3>
 
             <p>
-              Identify suspicious email content and phishing attempts.
+              Examine suspicious email content, sender information
+              and potential phishing attempts.
             </p>
 
             <span class="card-link">
               Analyze Email
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </span>
 
           </a>
 
 
-          <a
-            href="detection.html?type=url"
-            class="input-type-card"
-          >
+          <!-- URL -->
+
+          <a href="analyze-url.html" class="input-type-card">
 
             <span class="input-type-icon">
-              <i class="fa-solid fa-link"></i>
+              <i class="fa-solid fa-link" aria-hidden="true"></i>
             </span>
 
             <h3>URLs & Links</h3>
 
             <p>
-              Examine suspicious links and potential phishing indicators.
+              Inspect suspicious web addresses for potentially
+              deceptive patterns and phishing indicators.
             </p>
 
             <span class="card-link">
               Check URL
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </span>
 
           </a>
 
 
-          <a
-            href="detection.html?type=screenshot"
-            class="input-type-card"
-          >
+          <!-- SCREENSHOT -->
+
+          <a href="analyze-screenshot.html" class="input-type-card">
 
             <span class="input-type-icon">
-              <i class="fa-solid fa-image"></i>
+              <i class="fa-solid fa-image" aria-hidden="true"></i>
             </span>
 
             <h3>Screenshots</h3>
 
             <p>
-              Analyze extracted text from suspicious screenshots.
+              Submit screenshot evidence and review extracted text
+              before running fraud analysis.
             </p>
 
             <span class="card-link">
-              Analyze Evidence
-              <i class="fa-solid fa-arrow-right"></i>
+              Analyze Screenshot
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </span>
 
           </a>
 
 
-          <a
-            href="detection.html?type=transaction"
-            class="input-type-card"
-          >
+          <!-- TRANSACTION -->
+
+          <a href="analyze-transaction.html" class="input-type-card">
 
             <span class="input-type-icon">
-              <i class="fa-solid fa-money-bill-transfer"></i>
+              <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
             </span>
 
             <h3>Transactions</h3>
 
             <p>
-              Examine supplied UPI and card transaction details.
+              Examine supplied UPI and card transaction information
+              for suspicious payment activity.
             </p>
 
             <span class="card-link">
               Analyze Transaction
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </span>
 
           </a>
@@ -567,14 +536,14 @@
 
         <div class="dashboard-info-note">
 
-          <i class="fa-solid fa-circle-info"></i>
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
 
           <p>
-            Call analysis uses supplied transcript or text.
-            Screenshot analysis uses extracted text. Automatic
-            call transcription, automatic OCR and live-call
-            monitoring are not currently represented as active
-            capabilities.
+            Call analysis currently uses user-supplied transcript
+            or text. Screenshot analysis requires extracted text
+            to be reviewed before submission. Automatic live-call
+            monitoring and automatic device-wide message scanning
+            are not active web capabilities.
           </p>
 
         </div>
@@ -583,10 +552,13 @@
 
 
       <!-- =====================================
-           4. FIVE MAJOR DETECTION MODULES
+           5. FIVE MAJOR DETECTION MODULES
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="detectionModulesHeading"
+      >
 
         <div class="section-heading">
 
@@ -596,20 +568,20 @@
               FRAUD DETECTION ENGINE
             </span>
 
-            <h2>
+            <h2 id="detectionModulesHeading">
               Major Detection Modules
             </h2>
 
             <p>
-              Five primary protection modules defined in the
-              ScamShield AI architecture.
+              Five primary protection modules in the ScamShield AI
+              detection architecture.
             </p>
 
           </div>
 
           <a href="detection.html" class="text-link">
             View Detection Center
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -618,12 +590,12 @@
         <div class="detection-modules-grid">
 
 
-          <!-- MODULE 01 -->
+          <!-- MODULE 01: INVESTMENT -->
 
           <article class="module-card">
 
             <div class="module-card-icon purple">
-              <i class="fa-solid fa-chart-line"></i>
+              <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
             </div>
 
             <span class="module-number">
@@ -635,8 +607,9 @@
             </h3>
 
             <p>
-              Detect fake trading platforms, Ponzi schemes,
-              unrealistic returns and suspicious investment offers.
+              Identify suspicious investment offers, fake trading
+              platforms, Ponzi-style schemes and unrealistic
+              return promises.
             </p>
 
             <div class="module-tags">
@@ -651,18 +624,18 @@
 
             <a href="detection.html?category=investment_scam">
               Explore Module
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
-          <!-- MODULE 02 -->
+          <!-- MODULE 02: DIGITAL ARREST -->
 
           <article class="module-card">
 
             <div class="module-card-icon red">
-              <i class="fa-solid fa-user-shield"></i>
+              <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
             </div>
 
             <span class="module-number">
@@ -674,8 +647,8 @@
             </h3>
 
             <p>
-              Identify impersonation of police, CBI and government
-              authorities, along with intimidation tactics.
+              Recognize impersonation of police, CBI and government
+              authorities, including intimidation and coercion tactics.
             </p>
 
             <div class="module-tags">
@@ -690,18 +663,18 @@
 
             <a href="detection.html?category=digital_arrest">
               Explore Module
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
-          <!-- MODULE 03 -->
+          <!-- MODULE 03: CREDIT CARD -->
 
           <article class="module-card">
 
             <div class="module-card-icon orange">
-              <i class="fa-solid fa-credit-card"></i>
+              <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
             </div>
 
             <span class="module-number">
@@ -713,8 +686,8 @@
             </h3>
 
             <p>
-              Identify card phishing, suspicious transaction patterns
-              and deceptive payment requests.
+              Identify card-related phishing, suspicious payment
+              requests and deceptive attempts to obtain card details.
             </p>
 
             <div class="module-tags">
@@ -729,18 +702,18 @@
 
             <a href="detection.html?category=card_fraud">
               Explore Module
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
-          <!-- MODULE 04 -->
+          <!-- MODULE 04: SEXTORTION -->
 
           <article class="module-card">
 
             <div class="module-card-icon pink">
-              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
             </div>
 
             <span class="module-number">
@@ -768,18 +741,18 @@
 
             <a href="detection.html?category=sextortion_blackmail">
               Explore Module
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
-          <!-- MODULE 05 -->
+          <!-- MODULE 05: E-COMMERCE -->
 
           <article class="module-card">
 
             <div class="module-card-icon green">
-              <i class="fa-solid fa-cart-shopping"></i>
+              <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
             </div>
 
             <span class="module-number">
@@ -791,8 +764,8 @@
             </h3>
 
             <p>
-              Detect fake shopping websites, deceptive sellers,
-              fraudulent offers and suspicious online stores.
+              Identify potentially deceptive shopping websites,
+              fake sellers, suspicious offers and online store scams.
             </p>
 
             <div class="module-tags">
@@ -807,7 +780,7 @@
 
             <a href="detection.html?category=ecommerce_scam">
               Explore Module
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -818,10 +791,13 @@
 
 
       <!-- =====================================
-           5. RISK ANALYTICS
+           6. RISK ANALYTICS
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="riskAnalyticsHeading"
+      >
 
         <div class="section-heading">
 
@@ -831,12 +807,12 @@
               RISK MONITORING
             </span>
 
-            <h2>
+            <h2 id="riskAnalyticsHeading">
               Risk Analysis Overview
             </h2>
 
             <p>
-              Understand the distribution of analyzed risk levels
+              Review the distribution of recorded risk levels
               and supported fraud categories.
             </p>
 
@@ -844,7 +820,7 @@
 
           <a href="analytics.html" class="text-link">
             Detailed Analytics
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -864,7 +840,7 @@
                 <p>Analysis results by risk level</p>
               </div>
 
-              <i class="fa-solid fa-chart-pie"></i>
+              <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
 
             </div>
 
@@ -879,7 +855,7 @@
               >
 
                 <span class="chart-placeholder" aria-live="polite">
-                  Chart data will appear when available.
+                  Risk distribution will appear when data is available.
                 </span>
 
               </div>
@@ -921,11 +897,11 @@
             <div class="panel-header">
 
               <div>
-                <h3>Other Detection Categories</h3>
-                <p>Seven additional supported fraud categories</p>
+                <h3>Additional Detection Categories</h3>
+                <p>Seven additional supported categories</p>
               </div>
 
-              <i class="fa-solid fa-shield-virus"></i>
+              <i class="fa-solid fa-shield-virus" aria-hidden="true"></i>
 
             </div>
 
@@ -934,7 +910,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-comment-dots"></i>
+                  <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
                   Fraud Messages
                 </span>
 
@@ -944,7 +920,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-phone-volume"></i>
+                  <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
                   Fraud Calls
                 </span>
 
@@ -954,7 +930,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-link"></i>
+                  <i class="fa-solid fa-link" aria-hidden="true"></i>
                   URL Phishing
                 </span>
 
@@ -964,7 +940,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-envelope"></i>
+                  <i class="fa-solid fa-envelope" aria-hidden="true"></i>
                   Email Scams
                 </span>
 
@@ -974,7 +950,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-building-columns"></i>
+                  <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
                   UPI & Banking Fraud
                 </span>
 
@@ -984,7 +960,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-briefcase"></i>
+                  <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
                   Job & Loan Scams
                 </span>
 
@@ -994,7 +970,7 @@
 
               <div class="category-row">
                 <span>
-                  <i class="fa-solid fa-users"></i>
+                  <i class="fa-solid fa-users" aria-hidden="true"></i>
                   Social Media Scams
                 </span>
 
@@ -1010,13 +986,13 @@
 
         <div class="dashboard-info-note">
 
-          <i class="fa-solid fa-circle-info"></i>
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
 
           <p>
-            The five primary detection modules and seven additional
-            categories together represent the twelve supported fraud
-            categories. Their counts are separate dimensions and should
-            not be added together as unique investigations.
+            The five primary modules and seven additional categories
+            represent twelve supported fraud categories. Module counts
+            and category counts are separate views and should not be
+            added together as unique investigations.
           </p>
 
         </div>
@@ -1025,10 +1001,13 @@
 
 
       <!-- =====================================
-           6. FOUR AI AGENTS
+           7. FOUR AI AGENTS
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="agentOverviewHeading"
+      >
 
         <div class="section-heading">
 
@@ -1038,20 +1017,21 @@
               MULTI-AGENT AI SYSTEM
             </span>
 
-            <h2>
+            <h2 id="agentOverviewHeading">
               AI Agent Overview
             </h2>
 
             <p>
-              Four specialized agents designed for coordinated
-              fraud analysis and victim protection.
+              Four specialized agents designed for fraud analysis,
+              indicator extraction, victim guidance and controlled
+              scam-interaction simulation.
             </p>
 
           </div>
 
           <a href="agents.html" class="btn btn-outline">
             Explore All Agents
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -1067,7 +1047,7 @@
             <div class="agent-card-header">
 
               <span class="agent-icon guardian">
-                <i class="fa-solid fa-shield-halved"></i>
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
               </span>
 
               <span class="feature-status implemented">
@@ -1079,19 +1059,19 @@
             <h3>Guardian Agent</h3>
 
             <p>
-              Performs primary fraud detection and authoritative
-              deterministic risk assessment.
+              Performs primary fraud detection and provides the
+              authoritative deterministic risk assessment.
             </p>
 
             <ul>
               <li>Fraud pattern analysis</li>
               <li>Risk classification</li>
-              <li>Authoritative detection result</li>
+              <li>Primary detection result</li>
             </ul>
 
             <a href="agents.html#guardian-agent">
               Agent Details
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -1104,7 +1084,7 @@
             <div class="agent-card-header">
 
               <span class="agent-icon intelligence">
-                <i class="fa-solid fa-brain"></i>
+                <i class="fa-solid fa-brain" aria-hidden="true"></i>
               </span>
 
               <span class="feature-status implemented">
@@ -1116,19 +1096,19 @@
             <h3>Intelligence Agent</h3>
 
             <p>
-              Extracts and organizes suspicious indicators from
-              submitted evidence.
+              Extracts and organizes potentially suspicious indicators
+              found in submitted evidence.
             </p>
 
             <ul>
-              <li>URL indicators</li>
-              <li>Phone and email indicators</li>
-              <li>Suspicious entity extraction</li>
+              <li>URL extraction</li>
+              <li>Phone and email extraction</li>
+              <li>UPI and entity indicators</li>
             </ul>
 
             <a href="agents.html#intelligence-agent">
               Agent Details
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -1141,7 +1121,7 @@
             <div class="agent-card-header">
 
               <span class="agent-icon safety">
-                <i class="fa-solid fa-hand-holding-heart"></i>
+                <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>
               </span>
 
               <span class="feature-status implemented">
@@ -1153,8 +1133,8 @@
             <h3>Victim Safety Agent</h3>
 
             <p>
-              Provides safety recommendations based on possible
-              exposure and suspicious activity.
+              Provides protective guidance based on detected
+              requests, possible exposure and reported activity.
             </p>
 
             <ul>
@@ -1165,7 +1145,7 @@
 
             <a href="agents.html#victim-safety-agent">
               Agent Details
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -1178,7 +1158,7 @@
             <div class="agent-card-header">
 
               <span class="agent-icon decoy">
-                <i class="fa-solid fa-user-secret"></i>
+                <i class="fa-solid fa-user-secret" aria-hidden="true"></i>
               </span>
 
               <span class="feature-status progress">
@@ -1191,7 +1171,7 @@
 
             <p>
               Supports controlled scam-interaction simulations
-              for analysis and awareness.
+              for research, analysis and awareness.
             </p>
 
             <ul>
@@ -1202,7 +1182,7 @@
 
             <a href="agents.html#decoy-agent">
               Agent Details
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -1212,13 +1192,13 @@
 
         <div class="dashboard-info-note">
 
-          <i class="fa-solid fa-circle-info"></i>
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
 
           <p>
             Decoy simulations are not automatically started during
             normal evidence analysis. Intelligence indicators are
-            extracted observations and should not be treated as
-            independently verified threat intelligence.
+            extracted observations and are not independently verified
+            identities or confirmed threat reports.
           </p>
 
         </div>
@@ -1227,10 +1207,13 @@
 
 
       <!-- =====================================
-           7. GEMINI ADVISORY INTELLIGENCE
+           8. GEMINI ADVISORY INTELLIGENCE
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="geminiHeading"
+      >
 
         <div class="section-heading">
 
@@ -1240,13 +1223,13 @@
               GEMINI AI INTEGRATION
             </span>
 
-            <h2>
+            <h2 id="geminiHeading">
               AI Advisory Intelligence
             </h2>
 
             <p>
-              Additional contextual insights to support the
-              Guardian detection workflow.
+              Supplementary contextual insights that support
+              the primary Guardian detection workflow.
             </p>
 
           </div>
@@ -1259,7 +1242,7 @@
           <div class="assistant-visual">
 
             <div class="assistant-orbit">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
             </div>
 
           </div>
@@ -1272,24 +1255,25 @@
             </h3>
 
             <p>
-              Gemini can provide supplementary contextual explanations
-              and advisory insights based on analysis metadata.
+              Gemini may provide additional contextual explanations,
+              scam-intent observations and supplementary safety
+              recommendations when the advisory service is available.
             </p>
 
             <div class="assistant-capabilities">
 
               <span>
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
                 Contextual Insights
               </span>
 
               <span>
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
                 Advisory Explanations
               </span>
 
               <span>
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
                 Additional Guidance
               </span>
 
@@ -1298,13 +1282,13 @@
 
             <div class="dashboard-info-note">
 
-              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
 
               <p>
                 Guardian remains authoritative. Gemini is advisory-only
                 and cannot modify Guardian's fraud category, risk score
-                or risk level. Gemini unavailability does not interrupt
-                the primary detection result.
+                or risk level. If Gemini is unavailable, the primary
+                detection result remains independent of the advisory layer.
               </p>
 
             </div>
@@ -1327,17 +1311,20 @@
 
 
       <!-- =====================================
-           8. UNIVERSAL SAFETY ASSISTANT
+           9. UNIVERSAL SAFETY ASSISTANT
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="safetyAssistantHeading"
+      >
 
         <div class="assistant-dashboard-card">
 
           <div class="assistant-visual">
 
             <div class="assistant-orbit">
-              <i class="fa-solid fa-robot"></i>
+              <i class="fa-solid fa-robot" aria-hidden="true"></i>
             </div>
 
           </div>
@@ -1349,30 +1336,30 @@
               DIGITAL SAFETY SUPPORT
             </span>
 
-            <h2>
+            <h2 id="safetyAssistantHeading">
               Your Security Assistant
             </h2>
 
             <p>
               Access digital safety guidance, learn about common
-              scam tactics and understand recommended protective steps.
+              scam tactics and understand protective steps.
             </p>
 
 
             <div class="assistant-capabilities">
 
               <span>
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
                 Scam Awareness
               </span>
 
               <span>
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
                 Victim Safety Guidance
               </span>
 
               <span>
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
                 Fraud Explanation
               </span>
 
@@ -1381,13 +1368,13 @@
 
             <a href="assistant.html" class="btn btn-primary">
               Open Safety Assistant
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
 
             <small>
-              Dedicated conversational AI chat functionality is
-              not connected yet.
+              Dedicated conversational AI chat functionality
+              is not yet connected.
             </small>
 
           </div>
@@ -1398,10 +1385,13 @@
 
 
       <!-- =====================================
-           9. PROTECTION & INTELLIGENCE
+           10. THREAT INTELLIGENCE CENTER
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="threatIntelligenceHeading"
+      >
 
         <div class="section-heading">
 
@@ -1411,20 +1401,20 @@
               PROTECTION & INTELLIGENCE
             </span>
 
-            <h2>
+            <h2 id="threatIntelligenceHeading">
               Threat Intelligence Center
             </h2>
 
             <p>
-              Explore extracted indicators and security insights
-              from analyzed evidence.
+              Explore indicators extracted from submitted evidence
+              and available security insights.
             </p>
 
           </div>
 
           <a href="intelligence.html" class="text-link">
             Open Intelligence Center
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -1433,10 +1423,12 @@
         <div class="protection-grid">
 
 
+          <!-- URL INDICATORS -->
+
           <article class="protection-card">
 
             <div class="protection-icon">
-              <i class="fa-solid fa-globe"></i>
+              <i class="fa-solid fa-globe" aria-hidden="true"></i>
             </div>
 
             <h3>
@@ -1444,22 +1436,24 @@
             </h3>
 
             <p>
-              Review suspicious web addresses extracted from
-              submitted evidence.
+              Review web addresses extracted from submitted
+              messages, emails and other evidence.
             </p>
 
             <a href="intelligence.html">
               Explore Indicators
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
+          <!-- ENTITY INDICATORS -->
+
           <article class="protection-card">
 
             <div class="protection-icon">
-              <i class="fa-solid fa-address-card"></i>
+              <i class="fa-solid fa-address-card" aria-hidden="true"></i>
             </div>
 
             <h3>
@@ -1467,22 +1461,24 @@
             </h3>
 
             <p>
-              Review extracted phone numbers, email addresses
-              and other suspicious entities.
+              Review extracted phone numbers, email addresses,
+              UPI IDs and other potentially suspicious entities.
             </p>
 
             <a href="intelligence.html">
               View Intelligence
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
+          <!-- REPORTS -->
+
           <article class="protection-card">
 
             <div class="protection-icon">
-              <i class="fa-solid fa-file-shield"></i>
+              <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
             </div>
 
             <h3>
@@ -1490,13 +1486,13 @@
             </h3>
 
             <p>
-              Access available analysis history and fraud
-              detection reports.
+              Access available analysis records, investigation
+              history and fraud detection reports.
             </p>
 
             <a href="reports.html">
               View Reports
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -1507,15 +1503,18 @@
 
 
       <!-- =====================================
-           10. LIVE CALL PROTECTION ROADMAP
+           11. LIVE CALLER INTELLIGENCE ROADMAP
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="callerIntelligenceHeading"
+      >
 
         <div class="roadmap-card">
 
           <div class="roadmap-icon">
-            <i class="fa-solid fa-phone-volume"></i>
+            <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
           </div>
 
 
@@ -1525,26 +1524,35 @@
               Planned Feature
             </span>
 
-            <h2>
-              Live Call Protection
+            <h2 id="callerIntelligenceHeading">
+              Live Caller Intelligence Engine
             </h2>
 
             <p>
-              Future capability to identify suspicious call patterns
-              and provide real-time warnings during phone conversations.
+              Planned caller intelligence capabilities to help users
+              understand incoming caller identity signals, suspicious
+              number reports and potential call-related fraud risks.
             </p>
 
             <ul>
-              <li>Real-time call threat detection</li>
-              <li>Suspicious caller warnings</li>
-              <li>Scam-call pattern recognition</li>
+              <li>Caller identity and available reputation checks</li>
+              <li>Verified, unverified and community-reported information</li>
+              <li>AI-assisted suspicious call risk assessment</li>
+              <li>Digital arrest, banking and impersonation scam awareness</li>
             </ul>
+
+            <p>
+              Caller identity, community reports and AI-estimated risk
+              will be displayed as separate information types.
+              An unverified number will not be presented as a confirmed
+              fraud identity.
+            </p>
 
           </div>
 
 
           <div class="roadmap-label">
-            <i class="fa-solid fa-clock"></i>
+            <i class="fa-solid fa-clock" aria-hidden="true"></i>
             Roadmap
           </div>
 
@@ -1554,10 +1562,13 @@
 
 
       <!-- =====================================
-           11. USER & DEVICE SECURITY
+           12. USER & DEVICE SECURITY
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="accountProtectionHeading"
+      >
 
         <div class="section-heading">
 
@@ -1567,7 +1578,7 @@
               USER & DEVICE SECURITY
             </span>
 
-            <h2>
+            <h2 id="accountProtectionHeading">
               Account Protection
             </h2>
 
@@ -1579,7 +1590,7 @@
 
           <a href="settings.html" class="text-link">
             Security Settings
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -1588,10 +1599,12 @@
         <div class="security-grid">
 
 
+          <!-- ACCOUNT SECURITY -->
+
           <article class="security-card">
 
             <span class="security-card-icon">
-              <i class="fa-solid fa-user-lock"></i>
+              <i class="fa-solid fa-user-lock" aria-hidden="true"></i>
             </span>
 
             <h3>
@@ -1599,21 +1612,24 @@
             </h3>
 
             <p>
-              Manage account credentials and authentication settings.
+              Manage account credentials and available
+              authentication settings.
             </p>
 
             <a href="settings.html">
               Manage Account
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
 
 
+          <!-- DEVICE PROTECTION -->
+
           <article class="security-card">
 
             <span class="security-card-icon">
-              <i class="fa-solid fa-mobile-screen-button"></i>
+              <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
             </span>
 
             <h3>
@@ -1621,8 +1637,8 @@
             </h3>
 
             <p>
-              Device-level protection and application permission
-              monitoring are future capabilities.
+              Device-level protection, permission monitoring
+              and cross-app scanning are future capabilities.
             </p>
 
             <span class="feature-status planned">
@@ -1632,10 +1648,12 @@
           </article>
 
 
+          <!-- AUTHENTICATION -->
+
           <article class="security-card">
 
             <span class="security-card-icon">
-              <i class="fa-solid fa-key"></i>
+              <i class="fa-solid fa-key" aria-hidden="true"></i>
             </span>
 
             <h3>
@@ -1643,13 +1661,13 @@
             </h3>
 
             <p>
-              Secure login and authenticated access through
-              the application account system.
+              Access the application through its authenticated
+              account and login system.
             </p>
 
             <a href="settings.html">
               Security Settings
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
 
           </article>
@@ -1660,10 +1678,13 @@
 
 
       <!-- =====================================
-           12. RECENT ACTIVITY
+           13. RECENT ANALYSIS ACTIVITY
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="recentActivityHeading"
+      >
 
         <div class="section-heading">
 
@@ -1673,19 +1694,20 @@
               ACTIVITY MONITOR
             </span>
 
-            <h2>
+            <h2 id="recentActivityHeading">
               Recent Analysis Activity
             </h2>
 
             <p>
-              Review analyzed evidence and its available risk classification.
+              Review recent evidence analyses and their recorded
+              risk classifications.
             </p>
 
           </div>
 
           <a href="reports.html" class="text-link">
             View All Reports
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </a>
 
         </div>
@@ -1696,6 +1718,10 @@
           <div class="table-responsive">
 
             <table class="activity-table">
+
+              <caption class="sr-only">
+                Recent ScamShield AI analysis activity
+              </caption>
 
               <thead>
 
@@ -1719,7 +1745,7 @@
 
                     <div class="empty-state">
 
-                      <i class="fa-solid fa-folder-open"></i>
+                      <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
 
                       <h3>
                         No Recent Activity
@@ -1727,7 +1753,7 @@
 
                       <p>
                         Your analysis history will appear here
-                        when backend data is available.
+                        when backend records are available.
                       </p>
 
                       <a
@@ -1755,15 +1781,18 @@
 
 
       <!-- =====================================
-           13. ANDROID APPLICATION ROADMAP
+           14. ANDROID APPLICATION ROADMAP
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="androidRoadmapHeading"
+      >
 
         <div class="android-roadmap-card">
 
           <div class="android-roadmap-icon">
-            <i class="fa-brands fa-android"></i>
+            <i class="fa-brands fa-android" aria-hidden="true"></i>
           </div>
 
 
@@ -1773,35 +1802,36 @@
               Future Development
             </span>
 
-            <h2>
+            <h2 id="androidRoadmapHeading">
               ScamShield Android Application
             </h2>
 
             <p>
               The planned native Android application will extend
-              ScamShield protection beyond the web platform.
+              ScamShield protection beyond the web platform after
+              the web system is stabilized.
             </p>
 
 
             <div class="android-roadmap-features">
 
               <span>
-                <i class="fa-solid fa-message"></i>
+                <i class="fa-solid fa-message" aria-hidden="true"></i>
                 Message Protection
               </span>
 
               <span>
-                <i class="fa-solid fa-phone"></i>
+                <i class="fa-solid fa-phone" aria-hidden="true"></i>
                 Call Protection
               </span>
 
               <span>
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 Cross-App Scam Detection
               </span>
 
               <span>
-                <i class="fa-solid fa-mobile-screen"></i>
+                <i class="fa-solid fa-mobile-screen" aria-hidden="true"></i>
                 Floating Security Assistant
               </span>
 
@@ -1810,14 +1840,15 @@
 
             <p class="roadmap-disclaimer">
               These capabilities are planned for future Android
-              development and are not active in the current web application.
+              development. They are not active in the current
+              web application.
             </p>
 
           </div>
 
 
           <div class="android-roadmap-badge">
-            <i class="fa-solid fa-clock"></i>
+            <i class="fa-solid fa-clock" aria-hidden="true"></i>
             Roadmap
           </div>
 
@@ -1827,15 +1858,18 @@
 
 
       <!-- =====================================
-           14. EMERGENCY CYBER SUPPORT
+           15. EMERGENCY CYBER SUPPORT
       ====================================== -->
 
-      <section class="dashboard-section">
+      <section
+        class="dashboard-section"
+        aria-labelledby="emergencySupportHeading"
+      >
 
         <div class="emergency-support-card">
 
           <div class="emergency-icon">
-            <i class="fa-solid fa-life-ring"></i>
+            <i class="fa-solid fa-life-ring" aria-hidden="true"></i>
           </div>
 
 
@@ -1845,14 +1879,15 @@
               INDIA CYBER FRAUD SUPPORT
             </span>
 
-            <h2>
+            <h2 id="emergencySupportHeading">
               Need Immediate Cybercrime Assistance?
             </h2>
 
             <p>
               If you have lost money due to online financial fraud,
-              report it immediately through official Indian
-              cybercrime channels.
+              contact the official Indian cybercrime helpline
+              immediately and report the incident through the
+              official cybercrime portal.
             </p>
 
           </div>
@@ -1861,7 +1896,7 @@
           <div class="emergency-actions">
 
             <a href="tel:1930" class="btn btn-danger">
-              <i class="fa-solid fa-phone"></i>
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>
               Call 1930
             </a>
 
@@ -1872,7 +1907,7 @@
               class="btn btn-outline"
             >
               Report Cybercrime
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
             </a>
 
           </div>
@@ -1883,19 +1918,18 @@
 
 
       <!-- =====================================
-           DASHBOARD DISCLAIMER
+           16. DASHBOARD DISCLAIMER
       ====================================== -->
 
       <section class="dashboard-section">
 
         <p class="scanner-disclaimer">
-
           ScamShield AI provides automated fraud-risk assessments
           and digital safety guidance. A detection result is not
           proof of criminal activity. Risk scores are not calibrated
-          probabilities. Always verify important findings through
-          appropriate official channels.
-
+          probabilities, and extracted indicators are not necessarily
+          verified identities or confirmed threats. Always verify
+          important findings through appropriate official channels.
         </p>
 
       </section>
@@ -1936,18 +1970,24 @@
        APPLICATION SCRIPTS
   ========================================== -->
 
-  <script src="../js/api.js" defer></script>
+  <!-- API Service -->
+  <script src="../js/services/api.js" defer></script>
 
+  <!-- Utilities -->
   <script src="../js/utils/helpers.js" defer></script>
 
+  <!-- Navigation -->
   <script src="../js/components/navigation.js" defer></script>
 
   <script src="../js/components/sidebar.js" defer></script>
 
+  <!-- Notifications -->
   <script src="../js/components/notifications.js" defer></script>
 
+  <!-- Main Application -->
   <script src="../js/main.js" defer></script>
 
+  <!-- Dashboard Logic -->
   <script src="../js/dashboard.js" defer></script>
 
 </body>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="Analyze suspicious phone calls and identify potential scam, digital arrest, banking fraud and impersonation attempts using ScamShield AI.">
+
+    <meta name="theme-color" content="#0b1720">
+
+    <title>Call Analysis | ScamShield AI</title>
+
+    <!-- Page Stylesheet -->
+    <link rel="stylesheet" href="../css/analyze-call.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="analyze-call-page">
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <header class="main-header">
+        <nav class="navbar" aria-label="Main navigation">
+
+            <a href="../index.html" class="brand" aria-label="ScamShield AI Home">
+                <span class="brand-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </span>
+
+                <span class="brand-name">
+                    ScamShield <strong>AI</strong>
+                </span>
+            </a>
+
+            <button
+                class="mobile-menu-toggle"
+                id="mobileMenuToggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="primaryNavigation">
+
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="nav-links" id="primaryNavigation">
+
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Dashboard
+                </a>
+
+                <a href="detection.html">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Detection
+                </a>
+
+                <a href="agents.html">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Agents
+                </a>
+
+                <a href="intelligence.html">
+                    <i class="fa-solid fa-brain"></i>
+                    Intelligence
+                </a>
+
+                <a href="analytics.html">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    Analytics
+                </a>
+
+                <a href="reports.html">
+                    <i class="fa-solid fa-file-lines"></i>
+                    Reports
+                </a>
+
+                <button type="button" id="logoutButton" class="logout-button">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </button>
+
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="call-analysis-container">
+
+        <!-- Breadcrumb -->
+
+        <div class="breadcrumb">
+            <a href="dashboard.html">Dashboard</a>
+            <i class="fa-solid fa-chevron-right"></i>
+            <a href="detection.html">Detection</a>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span>Call Analysis</span>
+        </div>
+
+
+        <!-- =====================================
+             PAGE HERO
+        ====================================== -->
+
+        <section class="call-hero">
+
+            <div class="call-hero-content">
+
+                <span class="section-badge">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    CALL FRAUD PROTECTION
+                </span>
+
+                <h1>
+                    Analyze Suspicious
+                    <span>Phone Calls</span>
+                </h1>
+
+                <p>
+                    Check suspicious call transcripts for digital arrest
+                    threats, impersonation, financial fraud and social
+                    engineering attempts.
+                </p>
+
+                <div class="hero-features">
+
+                    <span>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        AI-powered detection
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-user-shield"></i>
+                        Victim safety guidance
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-lock"></i>
+                        Secure analysis
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="call-hero-icon" aria-hidden="true">
+                <i class="fa-solid fa-phone-volume"></i>
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             IMPORTANT SAFETY NOTICE
+        ====================================== -->
+
+        <section class="call-safety-notice" aria-label="Safety notice">
+
+            <div class="notice-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="notice-content">
+
+                <h2>Important Safety Notice</h2>
+
+                <p>
+                    Never share your OTP, UPI PIN, ATM PIN, CVV,
+                    passwords or banking credentials with anyone.
+                    Genuine authorities do not demand money to avoid arrest.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             CALL ANALYSIS FORM
+        ====================================== -->
+
+        <section class="call-input-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">STEP 01</span>
+
+                    <h2>Enter Call Details</h2>
+
+                    <p>
+                        Provide the conversation transcript or suspicious
+                        statements made by the caller.
+                    </p>
+                </div>
+
+                <span class="input-type-badge">
+                    <i class="fa-solid fa-phone"></i>
+                    Call Transcript
+                </span>
+
+            </div>
+
+
+            <form id="callAnalysisForm" novalidate>
+
+                <!-- Caller Information -->
+
+                <div class="form-group">
+
+                    <label for="callerType">
+                        Caller Category
+                        <span class="optional-label">(Optional)</span>
+                    </label>
+
+                    <select id="callerType" name="callerType">
+
+                        <option value="unknown">Unknown Caller</option>
+                        <option value="bank">Bank Representative</option>
+                        <option value="police">Police / Government Official</option>
+                        <option value="courier">Courier Representative</option>
+                        <option value="company">Company Representative</option>
+                        <option value="customer_support">Customer Support</option>
+                        <option value="other">Other</option>
+
+                    </select>
+
+                    <small>
+                        Select the identity claimed by the caller.
+                    </small>
+
+                </div>
+
+
+                <!-- Transcript Input -->
+
+                <div class="form-group">
+
+                    <div class="label-row">
+
+                        <label for="callTranscript">
+                            Call Conversation / Transcript
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <span class="character-count" id="callCharacterCount">
+                            0 / 20000
+                        </span>
+
+                    </div>
+
+                    <textarea
+                        id="callTranscript"
+                        name="callTranscript"
+                        rows="9"
+                        maxlength="20000"
+                        placeholder="Example:
+
+Caller: Hello, I am calling from the cyber crime department.
+
+Caller: Your bank account is involved in an illegal transaction.
+
+Caller: You must transfer money immediately for verification.
+
+Write or paste the suspicious call conversation here..."
+                        required
+                        aria-describedby="callInputHelp callInputError">
+                    </textarea>
+
+                    <small id="callInputHelp">
+                        Enter the conversation as accurately as possible.
+                        Do not include real passwords, OTPs, PINs or
+                        financial credentials.
+                    </small>
+
+                    <p
+                        class="form-error"
+                        id="callInputError"
+                        role="alert"
+                        hidden>
+                    </p>
+
+                </div>
+
+
+                <!-- Optional Category -->
+
+                <div class="form-group">
+
+                    <label for="callFraudCategory">
+                        Suspected Fraud Category
+                        <span class="optional-label">(Optional)</span>
+                    </label>
+
+                    <select id="callFraudCategory" name="fraudCategory">
+
+                        <option value="auto">
+                            Automatic Detection
+                        </option>
+
+                        <option value="fraud_call">
+                            General Call Fraud
+                        </option>
+
+                        <option value="digital_arrest">
+                            Digital Arrest Scam
+                        </option>
+
+                        <option value="upi_banking_fraud">
+                            UPI / Banking Fraud
+                        </option>
+
+                        <option value="investment_scam">
+                            Investment Scam
+                        </option>
+
+                        <option value="card_fraud">
+                            Credit / Debit Card Fraud
+                        </option>
+
+                        <option value="sextortion_blackmail">
+                            Sextortion / Blackmail
+                        </option>
+
+                        <option value="social_media_scam">
+                            Social Media Scam
+                        </option>
+
+                    </select>
+
+                    <small>
+                        Automatic Detection is recommended if you are
+                        unsure about the fraud category.
+                    </small>
+
+                </div>
+
+
+                <!-- Consent -->
+
+                <div class="call-consent">
+
+                    <label class="consent-label">
+
+                        <input
+                            type="checkbox"
+                            id="callAnalysisConsent"
+                            name="analysisConsent"
+                            required>
+
+                        <span>
+                            I confirm that I have permission to submit
+                            this transcript for analysis and have removed
+                            sensitive personal and financial information.
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Form Actions -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="clearCallForm"
+                        class="btn btn-secondary">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Clear
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="analyzeCallButton"
+                        class="btn btn-primary">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Analyze Call
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =====================================
+             ANALYSIS STATUS
+        ====================================== -->
+
+        <section
+            class="call-analysis-status"
+            id="callAnalysisStatus"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden>
+
+            <div class="status-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <p id="callAnalysisStatusMessage"></p>
+
+        </section>
+
+
+        <!-- =====================================
+             RESULTS SECTION
+        ====================================== -->
+
+        <section
+            class="call-results-section"
+            id="callResults"
+            aria-labelledby="callResultsHeading"
+            hidden>
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">STEP 02</span>
+
+                    <h2 id="callResultsHeading">
+                        Call Analysis Results
+                    </h2>
+
+                    <p>
+                        Review the detected risks and recommended
+                        safety precautions.
+                    </p>
+                </div>
+
+                <span class="result-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Analysis Report
+                </span>
+
+            </div>
+
+
+            <!-- Risk Overview -->
+
+            <div class="risk-overview" id="callRiskOverview">
+
+                <div class="risk-score-card">
+
+                    <span class="result-card-label">
+                        Risk Score
+                    </span>
+
+                    <div class="risk-score-circle" id="callRiskScoreCircle">
+
+                        <strong id="callRiskScore">--</strong>
+
+                        <span>/100</span>
+
+                    </div>
+
+                    <span id="callRiskLevel" class="risk-level">
+                        Awaiting Analysis
+                    </span>
+
+                </div>
+
+
+                <div class="risk-summary-card">
+
+                    <span class="result-card-label">
+                        Detection Summary
+                    </span>
+
+                    <h3 id="callFraudCategoryResult">
+                        Not analyzed
+                    </h3>
+
+                    <p id="callRiskDescription">
+                        Submit a call transcript to view the analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Guardian -->
+
+            <article class="result-agent-card guardian-card">
+
+                <div class="agent-card-heading">
+
+                    <span class="agent-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </span>
+
+                    <div>
+                        <h3>Guardian Agent</h3>
+                        <p>Authoritative Fraud Detection</p>
+                    </div>
+
+                    <span id="guardianStatus" class="agent-status">
+                        Awaiting Result
+                    </span>
+
+                </div>
+
+                <div id="guardianResult" class="agent-result-content">
+                    Guardian analysis will appear here.
+                </div>
+
+            </article>
+
+
+            <!-- Intelligence -->
+
+            <article class="result-agent-card intelligence-card">
+
+                <div class="agent-card-heading">
+
+                    <span class="agent-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </span>
+
+                    <div>
+                        <h3>Intelligence Agent</h3>
+                        <p>Evidence and Indicator Analysis</p>
+                    </div>
+
+                    <span id="intelligenceStatus" class="agent-status">
+                        Awaiting Result
+                    </span>
+
+                </div>
+
+                <div id="intelligenceResult" class="agent-result-content">
+                    Intelligence findings will appear here.
+                </div>
+
+                <p class="agent-disclaimer">
+                    Extracted indicators are unverified observations.
+                </p>
+
+            </article>
+
+
+            <!-- Victim Safety -->
+
+            <article class="result-agent-card safety-card">
+
+                <div class="agent-card-heading">
+
+                    <span class="agent-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </span>
+
+                    <div>
+                        <h3>Victim Safety Agent</h3>
+                        <p>Personal Protection Guidance</p>
+                    </div>
+
+                    <span id="victimSafetyStatus" class="agent-status">
+                        Awaiting Result
+                    </span>
+
+                </div>
+
+                <div id="victimSafetyResult" class="agent-result-content">
+                    Safety recommendations will appear here.
+                </div>
+
+            </article>
+
+
+            <!-- Gemini Advisory -->
+
+            <article class="result-agent-card gemini-card">
+
+                <div class="agent-card-heading">
+
+                    <span class="agent-icon">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </span>
+
+                    <div>
+                        <h3>Gemini AI</h3>
+                        <p>Supplementary Advisory Insights</p>
+                    </div>
+
+                    <span id="geminiStatus" class="agent-status">
+                        Awaiting Result
+                    </span>
+
+                </div>
+
+                <div id="geminiResult" class="agent-result-content">
+                    Supplementary insights will appear here when available.
+                </div>
+
+                <p class="agent-disclaimer">
+                    Gemini is advisory-only and cannot override
+                    Guardian's authoritative detection result.
+                </p>
+
+            </article>
+
+
+            <!-- Decoy -->
+
+            <article class="result-agent-card decoy-card">
+
+                <div class="agent-card-heading">
+
+                    <span class="agent-icon">
+                        <i class="fa-solid fa-user-secret"></i>
+                    </span>
+
+                    <div>
+                        <h3>Decoy Agent</h3>
+                        <p>Controlled Simulation</p>
+                    </div>
+
+                    <span id="decoyStatus" class="agent-status">
+                        Not Started
+                    </span>
+
+                </div>
+
+                <div id="decoyResult" class="agent-result-content">
+
+                    Decoy simulation is not automatically started
+                    during normal call analysis.
+
+                </div>
+
+            </article>
+
+
+            <!-- Safety Guidance -->
+
+            <section class="emergency-guidance">
+
+                <div class="emergency-heading">
+
+                    <i class="fa-solid fa-life-ring"></i>
+
+                    <div>
+                        <h3>Need Immediate Help?</h3>
+
+                        <p>
+                            If you have lost money due to a suspected
+                            cyber fraud, report it immediately.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="emergency-actions">
+
+                    <a href="tel:1930" class="emergency-link">
+                        <i class="fa-solid fa-phone"></i>
+                        Cyber Fraud Helpline: 1930
+                    </a>
+
+                    <a
+                        href="https://cybercrime.gov.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="emergency-link">
+
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        National Cyber Crime Portal
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- Classification Feedback -->
+
+            <section class="call-feedback-section">
+
+                <h3>Help Improve Detection</h3>
+
+                <p>
+                    Was this call analysis useful?
+                </p>
+
+                <div class="feedback-actions">
+
+                    <button
+                        type="button"
+                        id="callFeedbackHelpful"
+                        class="btn btn-secondary"
+                        data-feedback="helpful">
+
+                        <i class="fa-solid fa-thumbs-up"></i>
+                        Helpful
+
+                    </button>
+
+                    <button
+                        type="button"
+                        id="callFeedbackReview"
+                        class="btn btn-secondary"
+                        data-feedback="needs_review">
+
+                        <i class="fa-solid fa-flag"></i>
+                        Needs Review
+
+                    </button>
+
+                </div>
+
+                <p
+                    id="callFeedbackStatus"
+                    class="feedback-status"
+                    role="status"
+                    aria-live="polite">
+                </p>
+
+            </section>
+
+        </section>
+
+
+        <!-- =====================================
+             LIMITATIONS
+        ====================================== -->
+
+        <section class="call-limitations">
+
+            <div class="limitations-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+
+                <h3>How Call Analysis Works</h3>
+
+                <p>
+                    ScamShield AI analyzes the call transcript or text
+                    supplied by the user. It does not automatically
+                    record calls, listen to live conversations,
+                    identify callers or transcribe audio.
+                </p>
+
+                <p>
+                    Results are automated risk assessments, not
+                    definitive proof of criminal activity.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="main-footer">
+
+        <div class="footer-content">
+
+            <a href="../index.html" class="footer-brand">
+                <i class="fa-solid fa-shield-halved"></i>
+                ScamShield AI
+            </a>
+
+            <p>
+                Protecting people from digital fraud through
+                intelligent detection and awareness.
+            </p>
+
+            <span>
+                © <span data-current-year></span> ScamShield AI.
+                All rights reserved.
+            </span>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script src="../js/services/api.js"></script>
+
+    <script src="../js/helpers.js" defer></script>
+
+    <script src="../js/navigation.js" defer></script>
+
+    <script src="../js/sidebar.js" defer></script>
+
+    <script src="../js/notifications.js" defer></script>
+
+    <script src="../js/main.js" defer></script>
+
+    <script src="../js/analyze-call.js" defer></script>
+
+</body>
+</html>

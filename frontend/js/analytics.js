@@ -3,27 +3,33 @@
 /* =====================================================
    SCAMSHIELD AI - ANALYTICS
    File: frontend/js/analytics.js
+   Version: 3.2.0
 
    Backend:
    GET /api/dashboard/overview
 
-   Features:
-   - Backend-connected analytics
-   - Risk distribution
-   - Fraud category breakdown
-   - Threat activity trends (only real API data)
-   - Recent activity
-   - Authentication handling
-   - Accessible loading and error states
-   - Safe DOM rendering
+   Backend response:
+   data.statistics
+   data.riskDistribution
+   data.fraudCategories       (12 categories)
+   data.fraudModules          (5 modules)
+   data.unclassifiedCategories
+   data.recentActivity
+
+   No fabricated statistics.
+   No demo data.
+   No fabricated historical trends.
+   No fabricated agent/Gemini statistics.
 ===================================================== */
 
 (() => {
   const API_BASE_URL = (
-    window.SCAMSHIELD_API_URL || "http://localhost:5000/api"
+    window.SCAMSHIELD_API_URL ||
+    "http://localhost:5000/api"
   ).replace(/\/+$/, "");
 
-  const API_ENDPOINT = `${API_BASE_URL}/dashboard/overview`;
+  const API_ENDPOINT =
+    `${API_BASE_URL}/dashboard/overview`;
 
   const elements = {
     totalAnalyses: document.getElementById("analyticsTotalAnalyses"),
@@ -47,8 +53,49 @@
     ecommerce: document.getElementById("ecommerceAnalyticsCount"),
 
     refreshButton: document.getElementById("refreshAnalytics"),
-    currentYear: document.getElementById("currentYear"),
+    currentYear: document.getElementById("currentYear")
   };
+
+  const CATEGORY_CONFIG = [
+    { key: "fraud_message", id: "categoryFraudMessage", label: "Fraud Messages" },
+    { key: "fraud_call", id: "categoryFraudCall", label: "Fraud Calls" },
+    { key: "url_phishing", id: "categoryUrlPhishing", label: "URL Phishing" },
+    { key: "email_scam", id: "categoryEmailScam", label: "Email Scams" },
+    { key: "investment_scam", id: "categoryInvestmentScam", label: "Investment Scams" },
+    { key: "digital_arrest", id: "categoryDigitalArrest", label: "Digital Arrest" },
+    { key: "upi_banking_fraud", id: "categoryUpiBankingFraud", label: "UPI / Banking Fraud" },
+    { key: "card_fraud", id: "categoryCardFraud", label: "Card Fraud" },
+    { key: "ecommerce_scam", id: "categoryEcommerceScam", label: "E-commerce Scams" },
+    { key: "job_loan_scam", id: "categoryJobLoanScam", label: "Job / Loan Scams" },
+    { key: "sextortion_blackmail", id: "categorySextortionBlackmail", label: "Sextortion / Blackmail" },
+    { key: "social_media_scam", id: "categorySocialMediaScam", label: "Social Media Scams" }
+  ];
+
+  const MODULE_CONFIG = [
+    { key: "investment", element: elements.investment, label: "Investment Scams" },
+    { key: "digitalArrest", element: elements.arrest, label: "Digital Arrest" },
+    { key: "creditCard", element: elements.card, label: "Credit Card Fraud" },
+    { key: "sextortion", element: elements.sextortion, label: "Sextortion" },
+    { key: "ecommerce", element: elements.ecommerce, label: "E-commerce Fraud" }
+  ];
+
+  const UNSUPPORTED_METRICS = [
+    "inputMessagesCount",
+    "inputCallsCount",
+    "inputEmailsCount",
+    "inputUrlsCount",
+    "inputScreenshotsCount",
+    "inputTransactionsCount",
+
+    "guardianAgentExecutions",
+    "intelligenceAgentExecutions",
+    "victimSafetyAgentExecutions",
+    "decoyAgentExecutions",
+
+    "geminiAdvisoryRequests",
+    "geminiAdvisorySuccess",
+    "geminiAdvisoryFailures"
+  ];
 
   let activeController = null;
   let hasLoadedData = false;
@@ -60,21 +107,26 @@
   function initAnalytics() {
     setCurrentYear();
     setInitialState();
+    setUnsupportedMetrics();
 
     if (elements.refreshButton) {
-      elements.refreshButton.addEventListener("click", loadAnalytics);
+      elements.refreshButton.addEventListener(
+        "click",
+        loadAnalytics
+      );
     }
 
     loadAnalytics();
   }
 
   /* =====================================================
-     BASIC HELPERS
+     HELPERS
   ===================================================== */
 
   function setCurrentYear() {
     if (elements.currentYear) {
-      elements.currentYear.textContent = new Date().getFullYear();
+      elements.currentYear.textContent =
+        new Date().getFullYear();
     }
   }
 
@@ -96,22 +148,32 @@
     return new Intl.NumberFormat("en-IN").format(number);
   }
 
+  function getValidNumber(value) {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      return 0;
+    }
+
+    const number = Number(value);
+
+    return Number.isFinite(number) && number >= 0
+      ? number
+      : 0;
+  }
+
   function safeText(value, fallback = "Unknown") {
-    if (value === null || value === undefined || value === "") {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
       return fallback;
     }
 
     return String(value);
-  }
-
-  function getValidNumber(value) {
-    const number = Number(value);
-
-    if (!Number.isFinite(number) || number < 0) {
-      return 0;
-    }
-
-    return number;
   }
 
   function createElement(tag, className = "", text) {
@@ -138,21 +200,48 @@
     if (!element) return;
 
     element.textContent =
-      value === undefined || value === null
+      value === null || value === undefined
         ? "--"
         : formatNumber(value);
   }
 
+  function setUnavailable(id) {
+    const element = document.getElementById(id);
+
+    if (!element) return;
+
+    element.textContent = "--";
+
+    element.title =
+      "This metric is not currently provided by the backend.";
+  }
+
   /* =====================================================
-     STATUS NOTIFICATIONS
+     UNSUPPORTED METRICS
+  ===================================================== */
+
+  function setUnsupportedMetrics() {
+    UNSUPPORTED_METRICS.forEach(setUnavailable);
+
+    const geminiStatus =
+      document.getElementById("geminiAdvisoryStatus");
+
+    if (geminiStatus) {
+      geminiStatus.textContent = "Statistics unavailable";
+      geminiStatus.dataset.status = "unavailable";
+    }
+  }
+
+  /* =====================================================
+     NOTICE
   ===================================================== */
 
   function showNotice(message, type = "info") {
-    if (!elements.notice || !elements.statusMessage) {
-      return;
-    }
+    if (!elements.notice) return;
 
-    elements.statusMessage.textContent = message;
+    if (elements.statusMessage) {
+      elements.statusMessage.textContent = message;
+    }
 
     elements.notice.dataset.state = type;
   }
@@ -171,13 +260,17 @@
       elements.arrest,
       elements.card,
       elements.sextortion,
-      elements.ecommerce,
+      elements.ecommerce
     ];
 
-    statistics.forEach((element) => {
+    statistics.forEach(element => {
       if (element) {
         element.textContent = "--";
       }
+    });
+
+    CATEGORY_CONFIG.forEach(category => {
+      setUnavailable(category.id);
     });
 
     if (elements.activityBody) {
@@ -196,7 +289,10 @@
 
     button.disabled = isLoading;
 
-    button.setAttribute("aria-busy", String(isLoading));
+    button.setAttribute(
+      "aria-busy",
+      String(isLoading)
+    );
 
     const icon = button.querySelector("i");
 
@@ -205,11 +301,12 @@
     }
 
     const textNode = Array.from(button.childNodes).find(
-      (node) => node.nodeType === Node.TEXT_NODE
+      node => node.nodeType === Node.TEXT_NODE
     );
 
     if (textNode) {
-      textNode.textContent = isLoading ? " Loading..." : " Refresh";
+      textNode.textContent =
+        isLoading ? " Loading..." : " Refresh";
     }
   }
 
@@ -239,7 +336,6 @@
   ===================================================== */
 
   async function loadAnalytics() {
-    // Cancel the previous request.
     if (activeController) {
       activeController.abort();
     }
@@ -275,24 +371,17 @@
 
       const response = await fetch(API_ENDPOINT, {
         method: "GET",
+        cache: "no-store",
 
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache"
         },
 
-        signal: controller.signal,
+        signal: controller.signal
       });
-
-      let result;
-
-      try {
-        result = await response.json();
-      } catch {
-        throw new Error(
-          "The server returned an invalid response."
-        );
-      }
 
       if (response.status === 401) {
         handleUnauthorized();
@@ -305,21 +394,31 @@
         );
       }
 
+      let result;
+
+      try {
+        result = await response.json();
+      } catch {
+        throw new Error(
+          `Server returned an invalid JSON response (HTTP ${response.status}).`
+        );
+      }
+
       if (!response.ok) {
         throw new Error(
           result.message ||
-            `Analytics request failed (${response.status}).`
+          `Analytics request failed (${response.status}).`
         );
       }
 
       if (result.success !== true) {
         throw new Error(
           result.message ||
-            "Analytics data could not be retrieved."
+          "Analytics data could not be retrieved."
         );
       }
 
-      const analyticsData = result.data || result.analytics;
+      const analyticsData = result.data;
 
       if (
         !analyticsData ||
@@ -331,7 +430,6 @@
         );
       }
 
-      // Render actual backend data.
       renderAnalytics(analyticsData);
 
       hasLoadedData = true;
@@ -348,22 +446,20 @@
 
       console.error(
         "[ScamShield Analytics]",
-        error.message
+        error
       );
 
-      // Preserve previously loaded data if refresh fails.
       if (!hasLoadedData) {
         renderEmptyStates();
       }
 
       showNotice(
         error.message ||
-          "Analytics service is unavailable. Please try again.",
+        "Analytics service is unavailable. Please try again.",
         "error"
       );
 
     } finally {
-      // Only the latest request can update the loading state.
       if (activeController === controller) {
         activeController = null;
         setLoadingState(false);
@@ -372,23 +468,30 @@
   }
 
   /* =====================================================
-     MAIN ANALYTICS RENDERER
+     MAIN RENDERER
   ===================================================== */
 
   function renderAnalytics(data) {
     const statistics = data.statistics || {};
 
-    const riskDistribution = data.riskDistribution || {};
+    const riskDistribution =
+      data.riskDistribution || {};
 
-    const fraudCategories = data.fraudCategories || {};
+    const fraudCategories =
+      data.fraudCategories || {};
 
-    const threatTrends = Array.isArray(data.threatTrends)
-      ? data.threatTrends
-      : [];
+    const fraudModules =
+      data.fraudModules || {};
 
-    const recentActivity = Array.isArray(data.recentActivity)
-      ? data.recentActivity
-      : [];
+    const threatTrends =
+      Array.isArray(data.threatTrends)
+        ? data.threatTrends
+        : [];
+
+    const recentActivity =
+      Array.isArray(data.recentActivity)
+        ? data.recentActivity
+        : [];
 
     renderStatistics(statistics, riskDistribution);
 
@@ -396,9 +499,13 @@
 
     renderFraudCategories(fraudCategories);
 
+    renderFraudModules(fraudModules);
+
     renderThreatTrends(threatTrends);
 
     renderRecentActivity(recentActivity);
+
+    setUnsupportedMetrics();
   }
 
   /* =====================================================
@@ -406,25 +513,25 @@
   ===================================================== */
 
   function renderStatistics(statistics, riskDistribution) {
-    const totalAnalyses = statistics.totalAnalyses;
+    updateText(
+      elements.totalAnalyses,
+      statistics.totalAnalyses
+    );
 
-    const threatsDetected = statistics.threatsDetected;
+    updateText(
+      elements.threats,
+      statistics.threatsDetected
+    );
 
-    const lowRisk =
-      statistics.lowRiskResults ??
-      statistics.lowRiskCases;
+    updateText(
+      elements.lowRisk,
+      statistics.lowRiskResults
+    );
 
-    const criticalRisk =
-      statistics.criticalCases ??
-      riskDistribution.critical;
-
-    updateText(elements.totalAnalyses, totalAnalyses);
-
-    updateText(elements.threats, threatsDetected);
-
-    updateText(elements.lowRisk, lowRisk);
-
-    updateText(elements.critical, criticalRisk);
+    updateText(
+      elements.critical,
+      riskDistribution.critical
+    );
   }
 
   /* =====================================================
@@ -439,31 +546,15 @@
     clearElement(container);
 
     const riskLevels = [
-      {
-        key: "low",
-        label: "Low Risk",
-        color: "#34d399",
-      },
-      {
-        key: "medium",
-        label: "Medium Risk",
-        color: "#60a5fa",
-      },
-      {
-        key: "high",
-        label: "High Risk",
-        color: "#fbbf24",
-      },
-      {
-        key: "critical",
-        label: "Critical Risk",
-        color: "#f87171",
-      },
+      { key: "low", label: "Low Risk", color: "#60a5fa" },
+      { key: "medium", label: "Medium Risk", color: "#93c5fd" },
+      { key: "high", label: "High Risk", color: "#fbbf24" },
+      { key: "critical", label: "Critical Risk", color: "#f87171" }
     ];
 
-    const values = riskLevels.map((level) => ({
+    const values = riskLevels.map(level => ({
       ...level,
-      value: getValidNumber(distribution[level.key]),
+      value: getValidNumber(distribution[level.key])
     }));
 
     const total = values.reduce(
@@ -475,7 +566,7 @@
       renderChartEmptyState(
         container,
         "No risk data available",
-        "Risk distribution will appear when analysis records are available.",
+        "Risk distribution will appear when completed analysis records are available.",
         "fa-chart-pie"
       );
 
@@ -487,8 +578,9 @@
       "analytics-horizontal-chart"
     );
 
-    values.forEach((item) => {
-      const percentage = (item.value / total) * 100;
+    values.forEach(item => {
+      const percentage =
+        (item.value / total) * 100;
 
       const row = createElement(
         "div",
@@ -515,15 +607,6 @@
         "analytics-bar-track"
       );
 
-      track.setAttribute("role", "progressbar");
-      track.setAttribute("aria-label", item.label);
-      track.setAttribute("aria-valuemin", "0");
-      track.setAttribute("aria-valuemax", "100");
-      track.setAttribute(
-        "aria-valuenow",
-        percentage.toFixed(1)
-      );
-
       const bar = createElement(
         "div",
         "analytics-bar-fill"
@@ -533,9 +616,7 @@
       bar.style.backgroundColor = item.color;
 
       track.appendChild(bar);
-
       row.append(header, track);
-
       chart.appendChild(row);
     });
 
@@ -543,48 +624,19 @@
   }
 
   /* =====================================================
-     FRAUD CATEGORY BREAKDOWN
+     12 INDIVIDUAL DETECTION CATEGORIES
   ===================================================== */
 
   function renderFraudCategories(categories) {
-    const categoryConfig = [
-      {
-        key: "investment",
-        element: elements.investment,
-        label: "Investment Scams",
-      },
-      {
-        key: "digitalArrest",
-        element: elements.arrest,
-        label: "Digital Arrest",
-      },
-      {
-        key: "creditCard",
-        element: elements.card,
-        label: "Credit Card Fraud",
-      },
-      {
-        key: "sextortion",
-        element: elements.sextortion,
-        label: "Sextortion",
-      },
-      {
-        key: "ecommerce",
-        element: elements.ecommerce,
-        label: "E-commerce Fraud",
-      },
-    ];
+    CATEGORY_CONFIG.forEach(category => {
+      const value = categories[category.key];
 
-    let total = 0;
+      const element =
+        document.getElementById(category.id);
 
-    categoryConfig.forEach((category) => {
-      const value = getValidNumber(
-        categories[category.key]
-      );
-
-      total += value;
-
-      updateText(category.element, value);
+      if (element) {
+        updateText(element, value);
+      }
     });
 
     const container = elements.categoryChart;
@@ -593,11 +645,21 @@
 
     clearElement(container);
 
+    const values = CATEGORY_CONFIG.map(category => ({
+      ...category,
+      value: getValidNumber(categories[category.key])
+    }));
+
+    const total = values.reduce(
+      (sum, item) => sum + item.value,
+      0
+    );
+
     if (!total) {
       renderChartEmptyState(
         container,
         "No category data available",
-        "Fraud category statistics will appear when records are available.",
+        "Fraud category statistics will appear when completed analysis records are available.",
         "fa-chart-column"
       );
 
@@ -609,12 +671,9 @@
       "analytics-horizontal-chart"
     );
 
-    categoryConfig.forEach((category) => {
-      const value = getValidNumber(
-        categories[category.key]
-      );
-
-      const percentage = (value / total) * 100;
+    values.forEach(item => {
+      const percentage =
+        (item.value / total) * 100;
 
       const row = createElement(
         "div",
@@ -627,12 +686,12 @@
       );
 
       header.append(
-        createElement("span", "", category.label),
+        createElement("span", "", item.label),
 
         createElement(
           "strong",
           "",
-          `${formatNumber(value)} (${percentage.toFixed(1)}%)`
+          `${formatNumber(item.value)} (${percentage.toFixed(1)}%)`
         )
       );
 
@@ -649,9 +708,7 @@
       bar.style.width = `${percentage}%`;
 
       track.appendChild(bar);
-
       row.append(header, track);
-
       chart.appendChild(row);
     });
 
@@ -659,22 +716,24 @@
   }
 
   /* =====================================================
-     THREAT ACTIVITY TRENDS
+     FIVE MAJOR FRAUD MODULES
 
-     Only displays real API data.
+     IMPORTANT:
+     These values come from data.fraudModules,
+     NOT data.fraudCategories.
+  ===================================================== */
 
-     Expected structure:
-     [
-       {
-         label: "Monday",
-         analyses: 10,
-         threats: 4
-       }
-     ]
+  function renderFraudModules(modules) {
+    MODULE_CONFIG.forEach(module => {
+      updateText(
+        module.element,
+        modules[module.key]
+      );
+    });
+  }
 
-     Current dashboard backend does not yet provide
-     threatTrends. Therefore, the chart will show an
-     honest empty state until backend aggregation exists.
+  /* =====================================================
+     HISTORICAL TRENDS
   ===================================================== */
 
   function renderThreatTrends(trends) {
@@ -684,24 +743,24 @@
 
     clearElement(container);
 
-    if (!Array.isArray(trends) || trends.length === 0) {
+    if (!trends.length) {
       renderChartEmptyState(
         container,
         "Historical trends not available",
-        "Trend information will appear after historical analytics are added to the backend.",
+        "The current dashboard API does not provide historical trend aggregation yet.",
         "fa-chart-line"
       );
 
       return;
     }
 
-    const validTrends = trends.filter((item) => {
-      return (
-        item &&
-        Number.isFinite(Number(item.analyses)) &&
-        Number.isFinite(Number(item.threats))
-      );
-    });
+    const validTrends = trends.filter(item =>
+      item &&
+      Number.isFinite(Number(item.analyses)) &&
+      Number.isFinite(Number(item.threats)) &&
+      Number(item.analyses) >= 0 &&
+      Number(item.threats) >= 0
+    );
 
     if (!validTrends.length) {
       renderChartEmptyState(
@@ -721,7 +780,7 @@
 
     const maximum = Math.max(
       1,
-      ...validTrends.map((item) =>
+      ...validTrends.map(item =>
         Math.max(
           getValidNumber(item.analyses),
           getValidNumber(item.threats)
@@ -729,10 +788,12 @@
       )
     );
 
-    validTrends.forEach((item) => {
-      const analyses = getValidNumber(item.analyses);
+    validTrends.forEach(item => {
+      const analyses =
+        getValidNumber(item.analyses);
 
-      const threats = getValidNumber(item.threats);
+      const threats =
+        getValidNumber(item.threats);
 
       const column = createElement(
         "div",
@@ -754,29 +815,14 @@
         "trend-bar threat-bar"
       );
 
-      const analysisHeight =
-        (analyses / maximum) * 100;
+      analysisBar.style.height =
+        `${(analyses / maximum) * 100}%`;
 
-      const threatHeight =
-        (threats / maximum) * 100;
-
-      analysisBar.style.height = `${analysisHeight}%`;
-
-      threatBar.style.height = `${threatHeight}%`;
+      threatBar.style.height =
+        `${(threats / maximum) * 100}%`;
 
       analysisBar.title = `Analyses: ${analyses}`;
-
       threatBar.title = `Threats: ${threats}`;
-
-      analysisBar.setAttribute(
-        "aria-label",
-        `${analyses} analyses`
-      );
-
-      threatBar.setAttribute(
-        "aria-label",
-        `${threats} threats`
-      );
 
       bars.append(analysisBar, threatBar);
 
@@ -787,7 +833,6 @@
       );
 
       column.append(bars, label);
-
       chart.appendChild(column);
     });
 
@@ -797,15 +842,8 @@
     );
 
     legend.append(
-      createLegendItem(
-        "analysis-bar",
-        "Analyses"
-      ),
-
-      createLegendItem(
-        "threat-bar",
-        "Threats"
-      )
+      createLegendItem("analysis-bar", "Analyses"),
+      createLegendItem("threat-bar", "Threats")
     );
 
     container.append(chart, legend);
@@ -833,16 +871,7 @@
   }
 
   /* =====================================================
-     RECENT ACTIVITY TABLE
-
-     Backend fields:
-     - _id
-     - evidenceId
-     - evidenceType
-     - fraudCategory
-     - riskScore
-     - riskLevel
-     - createdAt
+     RECENT ACTIVITY
   ===================================================== */
 
   function renderRecentActivity(records) {
@@ -852,37 +881,39 @@
 
     clearElement(container);
 
-    if (!Array.isArray(records) || records.length === 0) {
+    if (!records.length) {
       renderTableEmptyState();
-
       return;
     }
 
-    records.forEach((record) => {
+    records.forEach(record => {
       if (!record || typeof record !== "object") {
         return;
       }
 
       const row = document.createElement("tr");
 
-      // Match the actual backend response.
       const analysisId =
+        record._id ||
         record.evidenceId ||
-        record.analysisId ||
-        record._id;
+        record.analysisId;
 
       const riskScore = Number(record.riskScore);
+
+      const category =
+        record.detectionCategory ||
+        record.fraudCategory;
 
       const cells = [
         safeText(analysisId),
         safeText(record.evidenceType),
-        safeText(record.fraudCategory),
+        safeText(category),
         Number.isFinite(riskScore)
           ? `${riskScore}/100`
-          : "--",
+          : "--"
       ];
 
-      cells.forEach((value) => {
+      cells.forEach(value => {
         row.appendChild(
           createElement("td", "", value)
         );
@@ -896,13 +927,13 @@
 
       row.appendChild(riskCell);
 
-      const dateCell = createElement(
-        "td",
-        "",
-        formatDate(record.createdAt || record.analyzedAt)
+      row.appendChild(
+        createElement(
+          "td",
+          "",
+          formatDate(record.createdAt)
+        )
       );
-
-      row.appendChild(dateCell);
 
       container.appendChild(row);
     });
@@ -925,12 +956,13 @@
       "low",
       "medium",
       "high",
-      "critical",
+      "critical"
     ];
 
-    const safeLevel = allowedLevels.includes(normalized)
-      ? normalized
-      : "unknown";
+    const safeLevel =
+      allowedLevels.includes(normalized)
+        ? normalized
+        : "unknown";
 
     const label =
       safeLevel === "unknown"
@@ -958,11 +990,14 @@
       return "--";
     }
 
-    return date.toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return date.toLocaleDateString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      }
+    );
   }
 
   /* =====================================================
@@ -996,9 +1031,7 @@
 
     state.append(
       iconElement,
-
       createElement("h4", "", title),
-
       createElement("p", "", description)
     );
 
@@ -1032,10 +1065,7 @@
       "fa-solid fa-folder-open"
     );
 
-    icon.setAttribute(
-      "aria-hidden",
-      "true"
-    );
+    icon.setAttribute("aria-hidden", "true");
 
     state.append(
       icon,
@@ -1054,9 +1084,7 @@
     );
 
     cell.appendChild(state);
-
     row.appendChild(cell);
-
     container.appendChild(row);
   }
 
@@ -1082,7 +1110,7 @@
     renderChartEmptyState(
       elements.trendChart,
       "Historical trends not available",
-      "Trend information will appear after historical analytics are added to the backend.",
+      "Historical trend aggregation is not currently provided by the backend.",
       "fa-chart-line"
     );
 

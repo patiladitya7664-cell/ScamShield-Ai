@@ -1,10 +1,20 @@
-
 /* =========================================================
    SCAMSHIELD AI — SETTINGS PAGE
    Version: 3.0.0
-   Premium Dark UI | Glassmorphism | Responsive
-   Dark / Light / System Theme Support
+
+   Features:
+   1. Premium Blue Dark UI
+   2. Dark / Light / System Theme Support
+   3. Glassmorphism Design
+   4. Account Settings
+   5. Notification Preferences
+   6. Security and Privacy Settings
+   7. Appearance and System Preferences
+   8. Responsive Layout
+   9. Accessible Controls
+   10. Logout Button Styling
 ========================================================= */
+
 
 /* =========================================================
    1. THEME VARIABLES
@@ -13,33 +23,107 @@
 :root {
   color-scheme: dark;
 
-  --theme-bg: #07110d;
-  --theme-card: #101d17;
-  --theme-card-secondary: #14251c;
-  --theme-text: #f1f8f3;
-  --theme-muted: #9aafa1;
-  --theme-border: rgba(255, 255, 255, 0.09);
-  --theme-input: #0b1711;
-  --theme-hover: #1b3023;
-  --theme-accent: #55d98a;
-  --theme-accent-text: #168344;
-  --theme-danger: #ff9292;
-  --theme-shadow: rgba(0, 0, 0, 0.15);
+  --theme-bg: #080f1d;
+  --theme-card: #101b2d;
+  --theme-card-secondary: #142238;
+
+  --theme-text: #edf4ff;
+  --theme-muted: #9aabc2;
+
+  --theme-border: rgba(148, 173, 211, 0.14);
+
+  --theme-input: #0b1628;
+  --theme-hover: #1a2c47;
+
+  --theme-accent: #3b82f6;
+  --theme-accent-light: #60a5fa;
+  --theme-accent-dark: #2563eb;
+
+  --theme-accent-soft: rgba(59, 130, 246, 0.12);
+  --theme-accent-border: rgba(59, 130, 246, 0.25);
+
+  --theme-danger: #f87171;
+  --theme-danger-soft: rgba(248, 113, 113, 0.10);
+
+  --theme-success: #4ade80;
+  --theme-warning: #fbbf24;
+
+  --theme-shadow: rgba(0, 0, 0, 0.20);
+
+  --theme-radius: 15px;
+  --theme-transition: 0.2s ease;
 }
+
+
+/* LIGHT THEME */
 
 html[data-active-theme="light"] {
   color-scheme: light;
 
-  --theme-bg: #f3f7f4;
+  --theme-bg: #f3f7fd;
   --theme-card: #ffffff;
-  --theme-card-secondary: #edf4ef;
-  --theme-text: #17251c;
-  --theme-muted: #647568;
-  --theme-border: rgba(20, 60, 35, 0.13);
-  --theme-input: #f8fbf9;
-  --theme-hover: #e7f1e9;
-  --theme-shadow: rgba(20, 60, 35, 0.06);
+  --theme-card-secondary: #edf3fc;
+
+  --theme-text: #17243a;
+  --theme-muted: #65758d;
+
+  --theme-border: rgba(40, 70, 120, 0.13);
+
+  --theme-input: #f8faff;
+  --theme-hover: #e8f0fc;
+
+  --theme-accent: #2563eb;
+  --theme-accent-light: #3b82f6;
+  --theme-accent-dark: #1d4ed8;
+
+  --theme-accent-soft: rgba(37, 99, 235, 0.08);
+  --theme-accent-border: rgba(37, 99, 235, 0.20);
+
+  --theme-danger: #dc4444;
+  --theme-danger-soft: rgba(220, 68, 68, 0.08);
+
+  --theme-success: #16834b;
+  --theme-warning: #b7791f;
+
+  --theme-shadow: rgba(30, 60, 110, 0.06);
 }
+
+
+/* SYSTEM THEME */
+
+@media (prefers-color-scheme: light) {
+  html[data-active-theme="system"] {
+    color-scheme: light;
+
+    --theme-bg: #f3f7fd;
+    --theme-card: #ffffff;
+    --theme-card-secondary: #edf3fc;
+
+    --theme-text: #17243a;
+    --theme-muted: #65758d;
+
+    --theme-border: rgba(40, 70, 120, 0.13);
+
+    --theme-input: #f8faff;
+    --theme-hover: #e8f0fc;
+
+    --theme-accent: #2563eb;
+    --theme-accent-light: #3b82f6;
+    --theme-accent-dark: #1d4ed8;
+
+    --theme-accent-soft: rgba(37, 99, 235, 0.08);
+    --theme-accent-border: rgba(37, 99, 235, 0.20);
+
+    --theme-danger: #dc4444;
+    --theme-danger-soft: rgba(220, 68, 68, 0.08);
+
+    --theme-success: #16834b;
+    --theme-warning: #b7791f;
+
+    --theme-shadow: rgba(30, 60, 110, 0.06);
+  }
+}
+
 
 /* =========================================================
    2. GLOBAL SETTINGS
@@ -49,6 +133,7 @@ html[data-active-theme="light"] {
   position: relative;
   min-height: 100vh;
   padding-bottom: 70px;
+
   color: var(--theme-text);
 }
 
@@ -66,6 +151,7 @@ html[data-active-theme="light"] {
 
 .settings-page button {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .settings-page button:disabled {
@@ -76,6 +162,14 @@ html[data-active-theme="light"] {
 .settings-page a {
   -webkit-tap-highlight-color: transparent;
 }
+
+.settings-page h1,
+.settings-page h2,
+.settings-page h3,
+.settings-page p {
+  overflow-wrap: anywhere;
+}
+
 
 /* =========================================================
    3. SETTINGS HERO
@@ -100,7 +194,9 @@ html[data-active-theme="light"] {
 .settings-heading .section-tag {
   display: inline-block;
   margin-bottom: 15px;
-  color: #6ee7a0;
+
+  color: var(--theme-accent-light);
+
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -108,7 +204,9 @@ html[data-active-theme="light"] {
 
 .settings-heading h1 {
   margin: 0 0 15px;
-  color: #f5fff9;
+
+  color: var(--theme-text);
+
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(32px, 5vw, 48px);
   font-weight: 700;
@@ -116,13 +214,15 @@ html[data-active-theme="light"] {
 }
 
 .settings-heading h1 span {
-  color: #55d98a;
+  color: var(--theme-accent-light);
 }
 
 .settings-heading p {
   max-width: 600px;
   margin: 0;
-  color: #9aafa4;
+
+  color: var(--theme-muted);
+
   font-size: 15px;
   line-height: 1.8;
 }
@@ -131,11 +231,15 @@ html[data-active-theme="light"] {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+
   padding: 12px 17px;
-  border: 1px solid rgba(85, 217, 138, 0.2);
+
+  border: 1px solid var(--theme-accent-border);
   border-radius: 30px;
-  background: rgba(31, 104, 65, 0.15);
-  color: #8ae9af;
+
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-light);
+
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -145,9 +249,13 @@ html[data-active-theme="light"] {
   width: 8px;
   height: 8px;
   flex-shrink: 0;
+
   border-radius: 50%;
-  background: #55d98a;
+  background: var(--theme-accent-light);
+
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.55);
 }
+
 
 /* =========================================================
    4. SETTINGS LAYOUT
@@ -160,9 +268,11 @@ html[data-active-theme="light"] {
 .settings-layout {
   display: grid;
   grid-template-columns: 245px minmax(0, 1fr);
+
   align-items: start;
   gap: 25px;
 }
+
 
 /* =========================================================
    5. SETTINGS SIDEBAR
@@ -171,69 +281,92 @@ html[data-active-theme="light"] {
 .settings-sidebar {
   position: sticky;
   top: 100px;
+
   min-width: 0;
   padding: 20px 14px;
-  border: 1px solid rgba(120, 160, 135, 0.14);
-  border-radius: 16px;
-  background: rgba(15, 30, 24, 0.82);
+
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius);
+
+  background: var(--theme-card);
+
+  box-shadow: 0 12px 35px var(--theme-shadow);
+
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .settings-sidebar-heading {
   display: flex;
   align-items: center;
   gap: 11px;
+
   padding: 5px 10px 18px;
-  border-bottom: 1px solid rgba(120, 160, 135, 0.13);
+
+  border-bottom: 1px solid var(--theme-border);
 }
 
 .settings-sidebar-heading i {
-  color: #55d98a;
+  color: var(--theme-accent-light);
   font-size: 16px;
 }
 
-.settings-sidebar-heading h3 {
+/* HTML uses h2 */
+
+.settings-sidebar-heading h2 {
   margin: 0;
-  color: #eafff1;
+
+  color: var(--theme-text);
+
   font-family: "Space Grotesk", sans-serif;
   font-size: 15px;
+  font-weight: 600;
 }
 
 .settings-nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
+
   min-height: 44px;
   margin-top: 7px;
   padding: 13px 11px;
+
   border-radius: 9px;
-  color: #9aafa4;
+
+  color: var(--theme-muted);
+
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease;
+
+  transition:
+    background var(--theme-transition),
+    color var(--theme-transition);
 }
 
 .settings-nav-link > i:first-child {
   width: 18px;
   flex-shrink: 0;
+
   font-size: 14px;
 }
 
 .settings-nav-link > i:last-child {
   margin-left: auto;
+
   font-size: 10px;
   opacity: 0;
 }
 
 .settings-nav-link:hover,
 .settings-nav-link.active {
-  background: rgba(65, 190, 115, 0.12);
-  color: #70e6a0;
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-light);
 }
 
 .settings-nav-link.active {
-  border-left: 3px solid #55d98a;
+  border-left: 3px solid var(--theme-accent);
 }
 
 .settings-nav-link.active > i:last-child {
@@ -244,25 +377,32 @@ html[data-active-theme="light"] {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+
   margin-top: 22px;
   padding: 13px;
-  border: 1px solid rgba(85, 217, 138, 0.12);
+
+  border: 1px solid var(--theme-accent-border);
   border-radius: 10px;
-  background: rgba(85, 217, 138, 0.06);
+
+  background: var(--theme-accent-soft);
 }
 
 .settings-sidebar-note i {
   margin-top: 3px;
-  color: #55d98a;
+
+  color: var(--theme-accent-light);
   font-size: 13px;
 }
 
 .settings-sidebar-note p {
   margin: 0;
-  color: #9aafa4;
+
+  color: var(--theme-muted);
+
   font-size: 11px;
   line-height: 1.7;
 }
+
 
 /* =========================================================
    6. SETTINGS MAIN
@@ -272,8 +412,10 @@ html[data-active-theme="light"] {
   display: flex;
   flex-direction: column;
   gap: 20px;
+
   min-width: 0;
 }
+
 
 /* =========================================================
    7. SETTINGS CARDS
@@ -282,21 +424,30 @@ html[data-active-theme="light"] {
 .settings-card {
   min-width: 0;
   padding: 25px;
+
   scroll-margin-top: 110px;
-  border: 1px solid rgba(120, 160, 135, 0.15);
-  border-radius: 16px;
-  background: linear-gradient(
-    145deg,
-    rgba(19, 39, 30, 0.94),
-    rgba(12, 27, 21, 0.96)
-  );
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius);
+
+  background: var(--theme-card);
+
+  box-shadow: 0 12px 35px var(--theme-shadow);
+
+  transition:
+    border-color var(--theme-transition),
+    box-shadow var(--theme-transition);
+}
+
+.settings-card:hover {
+  border-color: var(--theme-accent-border);
 }
 
 .settings-card-header {
   display: flex;
   align-items: center;
   gap: 14px;
+
   margin-bottom: 25px;
 }
 
@@ -304,19 +455,25 @@ html[data-active-theme="light"] {
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 44px;
   height: 44px;
   flex-shrink: 0;
-  border: 1px solid rgba(85, 217, 138, 0.2);
+
+  border: 1px solid var(--theme-accent-border);
   border-radius: 12px;
-  background: rgba(85, 217, 138, 0.1);
-  color: #65e39a;
+
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-light);
+
   font-size: 17px;
 }
 
 .settings-card-header h2 {
   margin: 0 0 5px;
-  color: #effff4;
+
+  color: var(--theme-text);
+
   font-family: "Space Grotesk", sans-serif;
   font-size: 18px;
   font-weight: 600;
@@ -324,10 +481,13 @@ html[data-active-theme="light"] {
 
 .settings-card-header p {
   margin: 0;
-  color: #8fa79a;
+
+  color: var(--theme-muted);
+
   font-size: 12px;
   line-height: 1.6;
 }
+
 
 /* =========================================================
    8. PROFILE SECTION
@@ -337,23 +497,30 @@ html[data-active-theme="light"] {
   display: flex;
   align-items: center;
   gap: 16px;
+
   padding: 18px;
-  border: 1px solid rgba(120, 160, 135, 0.12);
+
+  border: 1px solid var(--theme-border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.025);
+
+  background: var(--theme-card-secondary);
 }
 
 .settings-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 58px;
   height: 58px;
   flex-shrink: 0;
-  border: 1px solid rgba(85, 217, 138, 0.25);
+
+  border: 1px solid var(--theme-accent-border);
   border-radius: 50%;
-  background: rgba(85, 217, 138, 0.12);
-  color: #6ce59c;
+
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-light);
+
   font-size: 22px;
 }
 
@@ -363,14 +530,17 @@ html[data-active-theme="light"] {
 
 .settings-profile-info h3 {
   margin: 0 0 5px;
-  color: #effff4;
+
+  color: var(--theme-text);
   font-size: 15px;
 }
 
 .settings-profile-info p {
   margin: 0 0 7px;
-  color: #91a79b;
+
+  color: var(--theme-muted);
   font-size: 12px;
+
   overflow-wrap: anywhere;
 }
 
@@ -378,7 +548,8 @@ html[data-active-theme="light"] {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #70e6a0;
+
+  color: var(--theme-success);
   font-size: 10px;
 }
 
@@ -393,9 +564,11 @@ html[data-active-theme="light"] {
 .settings-divider {
   height: 1px;
   margin: 23px 0;
+
   border: 0;
-  background: rgba(120, 160, 135, 0.13);
+  background: var(--theme-border);
 }
+
 
 /* =========================================================
    9. INPUT FIELDS
@@ -404,6 +577,7 @@ html[data-active-theme="light"] {
 .settings-field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+
   gap: 18px;
 }
 
@@ -411,11 +585,13 @@ html[data-active-theme="light"] {
   display: flex;
   flex-direction: column;
   gap: 9px;
+
   min-width: 0;
 }
 
 .settings-field label {
-  color: #c7d9ce;
+  color: var(--theme-text);
+
   font-size: 12px;
   font-weight: 600;
 }
@@ -424,30 +600,40 @@ html[data-active-theme="light"] {
 .settings-field select {
   width: 100%;
   min-height: 45px;
+
   padding: 11px 13px;
-  border: 1px solid rgba(120, 160, 135, 0.2);
+
+  border: 1px solid var(--theme-border);
   border-radius: 8px;
+
   outline: none;
-  background: rgba(5, 18, 12, 0.65);
-  color: #e8f1ec;
-  font-size: 16px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  background: var(--theme-input);
+  color: var(--theme-text);
+
+  font-size: 14px;
+
+  transition:
+    border-color var(--theme-transition),
+    box-shadow var(--theme-transition);
 }
 
 .settings-field input::placeholder {
-  color: #829488;
+  color: var(--theme-muted);
 }
 
 .settings-field input:focus,
 .settings-field select:focus {
-  border-color: #55d98a;
-  box-shadow: 0 0 0 3px rgba(85, 217, 138, 0.09);
+  border-color: var(--theme-accent);
+
+  box-shadow: 0 0 0 3px var(--theme-accent-soft);
 }
 
 .settings-field select option {
-  background: #10241a;
-  color: #e8f1ec;
+  background: var(--theme-card);
+  color: var(--theme-text);
 }
+
 
 /* =========================================================
    10. BUTTONS
@@ -460,48 +646,67 @@ html[data-active-theme="light"] {
   align-items: center;
   justify-content: center;
   gap: 9px;
+
   min-height: 44px;
   padding: 10px 15px;
+
   border-radius: 8px;
+
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  transition: background 0.2s ease, border-color 0.2s ease,
-    transform 0.2s ease;
+
+  transition:
+    background var(--theme-transition),
+    border-color var(--theme-transition),
+    transform var(--theme-transition),
+    box-shadow var(--theme-transition);
 }
 
 .settings-outline-btn {
-  border: 1px solid rgba(85, 217, 138, 0.3);
-  background: rgba(85, 217, 138, 0.07);
-  color: #78e7a5;
+  border: 1px solid var(--theme-accent-border);
+
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-light);
 }
 
 .settings-outline-btn:hover {
-  border-color: #55d98a;
-  background: rgba(85, 217, 138, 0.15);
+  border-color: var(--theme-accent);
+
+  background: rgba(59, 130, 246, 0.18);
 }
 
 .settings-save-btn {
-  border: 1px solid #55d98a;
-  background: linear-gradient(135deg, #39b96e, #21884e);
+  border: 1px solid var(--theme-accent);
+
+  background: linear-gradient(
+    135deg,
+    #3b82f6,
+    #2563eb
+  );
+
   color: #ffffff;
-  box-shadow: 0 5px 15px rgba(40, 160, 90, 0.15);
+
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.18);
 }
 
 .settings-save-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(40, 160, 90, 0.25);
+
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
 }
 
 .settings-danger-btn {
-  border: 1px solid rgba(255, 105, 105, 0.25);
-  background: rgba(255, 80, 80, 0.08);
-  color: #ff9292;
+  border: 1px solid rgba(248, 113, 113, 0.28);
+
+  background: var(--theme-danger-soft);
+  color: var(--theme-danger);
 }
 
 .settings-danger-btn:hover {
-  border-color: #ff7777;
-  background: rgba(255, 80, 80, 0.15);
+  border-color: var(--theme-danger);
+
+  background: rgba(248, 113, 113, 0.16);
 }
 
 .settings-card-footer {
@@ -509,18 +714,69 @@ html[data-active-theme="light"] {
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+
   margin-top: 22px;
 }
 
 #accountSaveMessage,
 #settingsSaveMessage {
-  color: #70e6a0;
+  color: var(--theme-accent-light);
+
   font-size: 12px;
   line-height: 1.6;
 }
 
+
 /* =========================================================
-   11. TOGGLE OPTIONS
+   11. LOGOUT BUTTON
+========================================================= */
+
+.settings-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-height: 42px;
+  padding: 10px 16px;
+
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 10px;
+
+  background: var(--theme-danger-soft);
+  color: var(--theme-danger);
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background var(--theme-transition),
+    border-color var(--theme-transition),
+    transform var(--theme-transition);
+}
+
+.settings-logout-btn:hover {
+  border-color: var(--theme-danger);
+  background: rgba(248, 113, 113, 0.17);
+
+  transform: translateY(-1px);
+}
+
+.settings-logout-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.settings-logout-btn i {
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   12. TOGGLE OPTIONS
 ========================================================= */
 
 .settings-option-list {
@@ -533,18 +789,26 @@ html[data-active-theme="light"] {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+
   padding: 17px 0;
-  border-bottom: 1px solid rgba(120, 160, 135, 0.11);
+
+  border-bottom: 1px solid var(--theme-border);
 }
 
 .settings-option:last-child {
   border-bottom: none;
 }
 
+.settings-option > div:first-child {
+  min-width: 0;
+}
+
 .settings-option h3,
 .settings-action-row h3 {
   margin: 0 0 6px;
-  color: #dff2e6;
+
+  color: var(--theme-text);
+
   font-size: 13px;
   font-weight: 600;
 }
@@ -553,28 +817,36 @@ html[data-active-theme="light"] {
 .settings-action-row p {
   max-width: 530px;
   margin: 0;
-  color: #8fa79a;
+
+  color: var(--theme-muted);
+
   font-size: 11px;
   line-height: 1.7;
 }
 
+
 /* =========================================================
-   12. CUSTOM TOGGLE SWITCH
+   13. CUSTOM TOGGLE SWITCH
 ========================================================= */
 
 .settings-toggle {
   position: relative;
+
   display: inline-block;
+
   width: 43px;
   height: 25px;
   flex-shrink: 0;
+
   cursor: pointer;
 }
 
 .settings-toggle input {
   position: absolute;
+
   width: 1px;
   height: 1px;
+
   overflow: hidden;
   opacity: 0;
 }
@@ -582,63 +854,84 @@ html[data-active-theme="light"] {
 .toggle-slider {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(150, 180, 160, 0.22);
+
+  border: 1px solid var(--theme-border);
   border-radius: 30px;
-  background: #27372e;
-  transition: background 0.2s ease, border-color 0.2s ease;
+
+  background: #35445a;
+
+  transition:
+    background var(--theme-transition),
+    border-color var(--theme-transition);
 }
 
 .toggle-slider::before {
   position: absolute;
   top: 4px;
   left: 3px;
+
   width: 15px;
   height: 15px;
+
   border-radius: 50%;
-  background: #a4b5a9;
+
+  background: #c0ccdc;
+
   content: "";
-  transition: transform 0.2s ease, background 0.2s ease;
+
+  transition:
+    transform var(--theme-transition),
+    background var(--theme-transition);
 }
 
 .settings-toggle input:checked + .toggle-slider {
-  border-color: #55d98a;
-  background: rgba(60, 190, 110, 0.3);
+  border-color: var(--theme-accent);
+
+  background: rgba(59, 130, 246, 0.35);
 }
 
 .settings-toggle input:checked + .toggle-slider::before {
   transform: translateX(19px);
-  background: #65e99c;
+
+  background: #60a5fa;
 }
 
 .settings-toggle input:focus-visible + .toggle-slider {
-  outline: 2px solid #55d98a;
+  outline: 2px solid var(--theme-accent);
   outline-offset: 3px;
 }
 
+
 /* =========================================================
-   13. SECURITY INFORMATION
+   14. SECURITY INFORMATION
 ========================================================= */
 
 .settings-security-info {
   display: flex;
   align-items: flex-start;
   gap: 11px;
+
   margin-top: 19px;
   padding: 14px;
-  border: 1px solid rgba(85, 217, 138, 0.15);
+
+  border: 1px solid var(--theme-accent-border);
   border-radius: 9px;
-  background: rgba(85, 217, 138, 0.055);
+
+  background: var(--theme-accent-soft);
 }
 
 .settings-security-info i {
   margin-top: 2px;
-  color: #67df98;
+
+  color: var(--theme-accent-light);
   font-size: 14px;
 }
 
 .settings-security-info p {
   margin: 0;
-  color: #a6bbae;
+
+  color: var(--theme-muted);
+
   font-size: 11px;
   line-height: 1.7;
 }
@@ -648,16 +941,19 @@ html[data-active-theme="light"] {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+
   margin-top: 22px;
 }
 
+
 /* =========================================================
-   14. SYSTEM INFORMATION
+   15. SYSTEM INFORMATION
 ========================================================= */
 
 .settings-system-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+
   gap: 13px;
 }
 
@@ -665,27 +961,33 @@ html[data-active-theme="light"] {
   display: flex;
   flex-direction: column;
   gap: 8px;
+
   min-width: 0;
   padding: 15px;
-  border: 1px solid rgba(120, 160, 135, 0.12);
+
+  border: 1px solid var(--theme-border);
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.025);
+
+  background: var(--theme-card-secondary);
 }
 
 .system-info-item span {
-  color: #8fa79a;
+  color: var(--theme-muted);
   font-size: 11px;
 }
 
 .system-info-item strong {
-  color: #dff7e7;
+  color: var(--theme-text);
+
   font-size: 13px;
   font-weight: 600;
+
   overflow-wrap: anywhere;
 }
 
+
 /* =========================================================
-   15. BOTTOM SAVE ACTIONS
+   16. BOTTOM SAVE ACTIONS
 ========================================================= */
 
 .settings-bottom-actions {
@@ -693,33 +995,44 @@ html[data-active-theme="light"] {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+
   padding: 20px 23px;
-  border: 1px solid rgba(85, 217, 138, 0.16);
+
+  border: 1px solid var(--theme-accent-border);
   border-radius: 13px;
-  background: rgba(26, 80, 49, 0.14);
+
+  background: var(--theme-accent-soft);
 }
 
 .settings-bottom-actions p {
   margin: 0;
-  color: #9fb4a6;
+
+  color: var(--theme-muted);
+
   font-size: 12px;
   line-height: 1.6;
 }
 
+
 /* =========================================================
-   16. KEYBOARD ACCESSIBILITY
+   17. KEYBOARD ACCESSIBILITY
 ========================================================= */
 
 .settings-page button:focus-visible,
 .settings-page a:focus-visible,
 .settings-page input:focus-visible,
 .settings-page select:focus-visible {
-  outline: 2px solid #55d98a;
+  outline: 2px solid var(--theme-accent-light);
   outline-offset: 3px;
 }
 
+.settings-nav-link:focus-visible {
+  border-radius: 8px;
+}
+
+
 /* =========================================================
-   17. LIGHT THEME
+   18. LIGHT THEME SUPPORT
 ========================================================= */
 
 html[data-active-theme="light"] body {
@@ -731,16 +1044,19 @@ html[data-active-theme="light"] .settings-page {
   color: var(--theme-text);
 }
 
-html[data-active-theme="light"] .settings-sidebar {
+html[data-active-theme="light"] .settings-sidebar,
+html[data-active-theme="light"] .settings-card {
   background: var(--theme-card);
   border-color: var(--theme-border);
+
+  box-shadow: 0 5px 20px var(--theme-shadow);
 }
 
 html[data-active-theme="light"] .settings-sidebar-heading {
   border-color: var(--theme-border);
 }
 
-html[data-active-theme="light"] .settings-sidebar-heading h3,
+html[data-active-theme="light"] .settings-sidebar-heading h2,
 html[data-active-theme="light"] .settings-card-header h2,
 html[data-active-theme="light"] .settings-profile-info h3,
 html[data-active-theme="light"] .settings-option h3,
@@ -751,21 +1067,13 @@ html[data-active-theme="light"] .system-info-item strong {
 
 html[data-active-theme="light"] .settings-sidebar-note,
 html[data-active-theme="light"] .settings-security-info {
-  background: #edf8f0;
+  background: var(--theme-card-secondary);
   border-color: var(--theme-border);
 }
 
 html[data-active-theme="light"] .settings-sidebar-note p,
 html[data-active-theme="light"] .settings-security-info p {
   color: var(--theme-muted);
-}
-
-html[data-active-theme="light"] .settings-card,
-html[data-active-theme="light"] .reports-stat-card {
-  background: var(--theme-card);
-  color: var(--theme-text);
-  border-color: var(--theme-border);
-  box-shadow: 0 5px 20px var(--theme-shadow);
 }
 
 html[data-active-theme="light"] .settings-card-header p,
@@ -800,7 +1108,7 @@ html[data-active-theme="light"] .settings-field input::placeholder {
 
 html[data-active-theme="light"] .settings-field select option {
   background: #ffffff;
-  color: #17251c;
+  color: #17243a;
 }
 
 html[data-active-theme="light"] .settings-divider,
@@ -815,7 +1123,7 @@ html[data-active-theme="light"] .settings-nav-link {
 html[data-active-theme="light"] .settings-nav-link:hover,
 html[data-active-theme="light"] .settings-nav-link.active {
   background: var(--theme-hover);
-  color: #168344;
+  color: var(--theme-accent-dark);
 }
 
 html[data-active-theme="light"] .settings-bottom-actions {
@@ -824,11 +1132,45 @@ html[data-active-theme="light"] .settings-bottom-actions {
 }
 
 html[data-active-theme="light"] .settings-profile-info .account-status {
-  color: #168344;
+  color: var(--theme-success);
 }
 
+
 /* =========================================================
-   18. RESPONSIVE — TABLET
+   19. SYSTEM THEME SUPPORT
+========================================================= */
+
+@media (prefers-color-scheme: light) {
+  html[data-active-theme="system"] body {
+    background: var(--theme-bg);
+    color: var(--theme-text);
+  }
+
+  html[data-active-theme="system"] .settings-sidebar,
+  html[data-active-theme="system"] .settings-card {
+    background: var(--theme-card);
+    border-color: var(--theme-border);
+    box-shadow: 0 5px 20px var(--theme-shadow);
+  }
+
+  html[data-active-theme="system"] .settings-card-header h2,
+  html[data-active-theme="system"] .settings-profile-info h3,
+  html[data-active-theme="system"] .settings-option h3,
+  html[data-active-theme="system"] .settings-action-row h3,
+  html[data-active-theme="system"] .system-info-item strong {
+    color: var(--theme-text);
+  }
+
+  html[data-active-theme="system"] .settings-field input,
+  html[data-active-theme="system"] .settings-field select {
+    background: var(--theme-input);
+    color: var(--theme-text);
+  }
+}
+
+
+/* =========================================================
+   20. RESPONSIVE — TABLET
 ========================================================= */
 
 @media (max-width: 1000px) {
@@ -848,12 +1190,14 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
   .settings-nav-link {
     gap: 9px;
     padding: 12px 9px;
+
     font-size: 12px;
   }
 }
 
+
 /* =========================================================
-   19. RESPONSIVE — MOBILE
+   21. RESPONSIVE — MOBILE
 ========================================================= */
 
 @media (max-width: 760px) {
@@ -880,11 +1224,15 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
 
   .settings-sidebar {
     position: static;
+
     display: flex;
     align-items: center;
     gap: 7px;
+
     overflow-x: auto;
+
     padding: 12px;
+
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
   }
@@ -896,9 +1244,12 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
 
   .settings-nav-link {
     flex-shrink: 0;
+
     margin: 0;
     padding: 11px 13px;
+
     border-radius: 8px;
+
     font-size: 12px;
     white-space: nowrap;
   }
@@ -909,7 +1260,7 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
 
   .settings-nav-link.active {
     border-left: none;
-    border-bottom: 2px solid #55d98a;
+    border-bottom: 2px solid var(--theme-accent);
   }
 
   .settings-card {
@@ -947,8 +1298,9 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
   }
 }
 
+
 /* =========================================================
-   20. RESPONSIVE — SMALL MOBILE
+   22. RESPONSIVE — SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 480px) {
@@ -1012,10 +1364,18 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
   .settings-action-row .settings-danger-btn {
     width: 100%;
   }
+
+  .settings-logout-btn {
+    min-height: 38px;
+    padding: 8px 11px;
+
+    font-size: 12px;
+  }
 }
 
+
 /* =========================================================
-   21. REDUCED MOTION
+   23. REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1029,6 +1389,7 @@ html[data-active-theme="light"] .settings-profile-info .account-status {
   }
 }
 
+
 /* =========================================================
-   END OF SETTINGS STYLESHEET
+   END OF SCAMSHIELD AI SETTINGS CSS v3.0.0
 ========================================================= */

@@ -1,0 +1,1059 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080f1f">
+
+    <title>Transaction Analysis | ScamShield AI</title>
+
+    <meta name="description"
+          content="Analyze suspicious UPI, banking, card and online payment transactions with ScamShield AI.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/analyze-transaction.css">
+</head>
+
+<body>
+
+<div class="page-background"></div>
+
+<!-- ================= HEADER ================= -->
+
+<header class="main-header">
+    <div class="header-container">
+
+        <a href="dashboard.html" class="brand">
+            <span class="brand-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </span>
+
+            <span class="brand-text">
+                <strong>ScamShield</strong>
+                <small>AI Protection</small>
+            </span>
+        </a>
+
+        <button
+            type="button"
+            class="mobile-menu-toggle"
+            id="mobileMenuToggle"
+            aria-label="Toggle navigation"
+            aria-expanded="false"
+            aria-controls="primaryNavigation">
+
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav class="primary-navigation" id="primaryNavigation">
+
+            <a href="dashboard.html">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+
+            <a href="detection.html">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                Detection
+            </a>
+
+            <a href="agents.html">
+                <i class="fa-solid fa-robot"></i>
+                AI Agents
+            </a>
+
+            <a href="intelligence.html">
+                <i class="fa-solid fa-brain"></i>
+                Intelligence
+            </a>
+
+            <a href="analytics.html">
+                <i class="fa-solid fa-chart-line"></i>
+                Analytics
+            </a>
+
+            <button type="button" id="logoutButton" class="logout-button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </button>
+
+        </nav>
+
+    </div>
+</header>
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<main class="main-container">
+
+    <!-- Breadcrumb -->
+
+    <div class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <a href="detection.html">Detection</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>Transaction Analysis</span>
+    </div>
+
+
+    <!-- Page Heading -->
+
+    <section class="page-heading">
+
+        <div class="heading-content">
+
+            <div class="heading-icon">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+            </div>
+
+            <div>
+                <span class="eyebrow">FINANCIAL SECURITY</span>
+
+                <h1>Transaction Analysis</h1>
+
+                <p>
+                    Check suspicious UPI payments, bank transfers, card transactions
+                    and online payment requests before taking action.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="security-badge">
+            <i class="fa-solid fa-shield-check"></i>
+            AI-Powered Analysis
+        </div>
+
+    </section>
+
+
+    <!-- Safety Notice -->
+
+    <section class="security-notice">
+
+        <div class="notice-icon">
+            <i class="fa-solid fa-circle-info"></i>
+        </div>
+
+        <div>
+            <h3>Protect your financial information</h3>
+
+            <p>
+                Never enter your UPI PIN, ATM PIN, CVV, OTP, banking password
+                or complete card details. ScamShield only needs non-sensitive
+                transaction information and suspicious payment messages.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- ================= ANALYSIS FORM ================= -->
+
+    <section class="analysis-layout">
+
+        <div class="analysis-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <span class="section-label">TRANSACTION SCANNER</span>
+                    <h2>Analyze a Transaction</h2>
+
+                    <p>
+                        Enter the available transaction details below.
+                    </p>
+                </div>
+
+                <div class="card-heading-icon">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+
+            </div>
+
+
+            <form id="transactionAnalysisForm" novalidate>
+
+                <!-- Transaction Type -->
+
+                <div class="form-group">
+
+                    <label for="transactionType">
+                        Transaction Type
+                        <span class="required">*</span>
+                    </label>
+
+                    <select id="transactionType"
+                            name="transactionType"
+                            required>
+
+                        <option value="">Select transaction type</option>
+
+                        <option value="upi">UPI Payment</option>
+
+                        <option value="bank_transfer">Bank Transfer</option>
+
+                        <option value="credit_card">Credit Card</option>
+
+                        <option value="debit_card">Debit Card</option>
+
+                        <option value="online_payment">Online Payment</option>
+
+                        <option value="wallet">Digital Wallet</option>
+
+                        <option value="other">Other</option>
+
+                    </select>
+
+                    <small class="field-help">
+                        Select the payment method involved.
+                    </small>
+
+                </div>
+
+
+                <!-- Transaction Direction -->
+
+                <div class="form-group">
+
+                    <label for="transactionDirection">
+                        Transaction Situation
+                    </label>
+
+                    <select id="transactionDirection"
+                            name="transactionDirection">
+
+                        <option value="unknown">Not sure</option>
+
+                        <option value="sent">Money sent</option>
+
+                        <option value="received">Money received</option>
+
+                        <option value="requested">Payment requested</option>
+
+                        <option value="pending">Transaction pending</option>
+
+                        <option value="failed">Transaction failed</option>
+
+                        <option value="unauthorized">Unauthorized transaction</option>
+
+                    </select>
+
+                    <small class="field-help">
+                        Select what happened during the transaction.
+                    </small>
+
+                </div>
+
+
+                <!-- Amount -->
+
+                <div class="form-group">
+
+                    <label for="transactionAmount">
+                        Transaction Amount (₹)
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <div class="input-with-icon">
+
+                        <span class="input-prefix">₹</span>
+
+                        <input
+                            type="number"
+                            id="transactionAmount"
+                            name="transactionAmount"
+                            min="0"
+                            max="100000000"
+                            step="0.01"
+                            placeholder="Example: 5000">
+
+                    </div>
+
+                    <small class="field-help">
+                        Enter the amount only. Do not enter account balances.
+                    </small>
+
+                </div>
+
+
+                <!-- Merchant / Receiver -->
+
+                <div class="form-group">
+
+                    <label for="transactionReceiver">
+                        Receiver / Merchant Name
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="transactionReceiver"
+                        name="transactionReceiver"
+                        maxlength="150"
+                        placeholder="Example: ABC Services">
+
+                </div>
+
+
+                <!-- UPI ID -->
+
+                <div class="form-group">
+
+                    <label for="transactionUPI">
+                        UPI ID
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="transactionUPI"
+                        name="transactionUPI"
+                        maxlength="150"
+                        placeholder="Example: merchant@upi">
+
+                    <small class="field-help">
+                        Enter only the UPI ID if available. Do not enter your UPI PIN.
+                    </small>
+
+                </div>
+
+
+                <!-- Transaction Reference -->
+
+                <div class="form-group">
+
+                    <label for="transactionReference">
+                        Transaction Reference
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="transactionReference"
+                        name="transactionReference"
+                        maxlength="100"
+                        placeholder="Reference ID or masked transaction reference">
+
+                    <small class="field-help">
+                        Avoid entering complete account or card numbers.
+                    </small>
+
+                </div>
+
+
+                <!-- Transaction Date -->
+
+                <div class="form-group">
+
+                    <label for="transactionDate">
+                        Transaction Date
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="transactionDate"
+                        name="transactionDate">
+
+                </div>
+
+
+                <!-- Category -->
+
+                <div class="form-group">
+
+                    <label for="transactionFraudCategory">
+                        Suspected Fraud Category
+                        <span class="optional">Optional</span>
+                    </label>
+
+                    <select id="transactionFraudCategory"
+                            name="fraudCategory">
+
+                        <option value="">Let AI identify the category</option>
+
+                        <option value="upi_banking_fraud">
+                            UPI / Banking Fraud
+                        </option>
+
+                        <option value="card_fraud">
+                            Credit / Debit Card Fraud
+                        </option>
+
+                        <option value="investment_scam">
+                            Investment Scam
+                        </option>
+
+                        <option value="digital_arrest">
+                            Digital Arrest Scam
+                        </option>
+
+                        <option value="ecommerce_scam">
+                            E-commerce Fraud
+                        </option>
+
+                        <option value="job_loan_scam">
+                            Job / Loan Scam
+                        </option>
+
+                        <option value="social_media_scam">
+                            Social Media Scam
+                        </option>
+
+                        <option value="fraud_message">
+                            Fraudulent Payment Message
+                        </option>
+
+                    </select>
+
+                    <small class="field-help">
+                        Your selection is only a suggestion. The AI detection
+                        engine determines the final classification.
+                    </small>
+
+                </div>
+
+
+                <!-- Evidence -->
+
+                <div class="form-group">
+
+                    <label for="transactionEvidence">
+                        Transaction Message / Details
+                        <span class="required">*</span>
+                    </label>
+
+                    <textarea
+                        id="transactionEvidence"
+                        name="transactionEvidence"
+                        rows="8"
+                        maxlength="20000"
+                        required
+                        placeholder="Paste the suspicious payment message, transaction notification, payment request or relevant details here...
+
+Example:
+Your bank account will be blocked today. Verify your KYC immediately using this link...
+"></textarea>
+
+                    <div class="textarea-footer">
+
+                        <small class="field-help">
+                            Include suspicious messages or payment instructions.
+                        </small>
+
+                        <span id="transactionCharacterCount">
+                            0 / 20000
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Error -->
+
+                <div class="form-error"
+                     id="transactionInputError"
+                     role="alert"
+                     aria-live="polite"
+                     hidden>
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <span></span>
+
+                </div>
+
+
+                <!-- Consent -->
+
+                <div class="consent-box">
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="transactionAnalysisConsent"
+                            name="consent"
+                            required>
+
+                        <span>
+                            I confirm that I have removed sensitive information
+                            such as OTPs, PINs, passwords, CVV and complete
+                            banking details before submitting.
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="clearTransactionForm"
+                        class="secondary-button">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Clear Form
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="analyzeTransactionButton"
+                        class="primary-button">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                        <span>Analyze Transaction</span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <aside class="information-sidebar">
+
+            <div class="sidebar-card">
+
+                <div class="sidebar-icon blue">
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+
+                <h3>What can be detected?</h3>
+
+                <ul class="capability-list">
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Suspicious UPI payment requests
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Fake banking and KYC messages
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Card-related phishing attempts
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Unauthorized payment warnings
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Suspicious payment links
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Investment and payment scams
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="sidebar-card safety-card">
+
+                <div class="sidebar-icon warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <h3>Important Safety Tips</h3>
+
+                <ul class="safety-list">
+
+                    <li>Never share your UPI PIN.</li>
+
+                    <li>Receiving money does not require entering your UPI PIN.</li>
+
+                    <li>Never share OTPs or CVV.</li>
+
+                    <li>Do not install unknown screen-sharing applications.</li>
+
+                    <li>Verify payment requests through official channels.</li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="sidebar-card emergency-card">
+
+                <div class="sidebar-icon danger">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+
+                <h3>Already Lost Money?</h3>
+
+                <p>
+                    If you suspect financial fraud, report it immediately.
+                </p>
+
+                <a href="tel:1930" class="emergency-button">
+                    <i class="fa-solid fa-phone"></i>
+                    Call 1930
+                </a>
+
+                <a href="https://cybercrime.gov.in/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="cybercrime-link">
+
+                    Report on Cyber Crime Portal
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                </a>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <!-- ================= ANALYSIS STATUS ================= -->
+
+    <section class="analysis-status"
+             id="transactionAnalysisStatus"
+             aria-live="polite"
+             hidden>
+
+        <div class="status-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </div>
+
+        <div>
+
+            <h3 id="transactionAnalysisStatusTitle">
+                Analyzing Transaction
+            </h3>
+
+            <p id="transactionAnalysisStatusMessage">
+                ScamShield AI is examining the submitted information.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= RESULTS ================= -->
+
+    <section class="results-section"
+             id="transactionResults"
+             aria-live="polite"
+             hidden>
+
+        <div class="results-heading">
+
+            <div>
+                <span class="section-label">ANALYSIS REPORT</span>
+
+                <h2>Transaction Security Results</h2>
+
+                <p>
+                    Review the AI-generated assessment and safety recommendations.
+                </p>
+            </div>
+
+            <span class="result-status"
+                  id="transactionResultStatus">
+
+                <i class="fa-solid fa-circle-check"></i>
+                Analysis Complete
+
+            </span>
+
+        </div>
+
+
+        <!-- Risk Overview -->
+
+        <div class="risk-overview"
+             id="transactionRiskOverview">
+
+            <div class="risk-score-panel">
+
+                <div class="risk-score-circle"
+                     id="transactionRiskScoreCircle">
+
+                    <div class="risk-score-content">
+
+                        <strong id="transactionRiskScore">--</strong>
+
+                        <span>Risk Score</span>
+
+                    </div>
+
+                </div>
+
+                <div class="risk-score-details">
+
+                    <span class="section-label">SECURITY ASSESSMENT</span>
+
+                    <h3 id="transactionRiskLevel">
+                        Awaiting Analysis
+                    </h3>
+
+                    <p id="transactionRiskDescription">
+                        The risk assessment will appear here after analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="category-panel">
+
+                <span class="section-label">
+                    DETECTED CATEGORY
+                </span>
+
+                <h3 id="transactionFraudCategoryResult">
+                    Not classified
+                </h3>
+
+                <p>
+                    Final classification is based on the Guardian detection engine.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Explanation -->
+
+        <div class="result-card">
+
+            <div class="result-card-heading">
+
+                <div class="result-icon">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+
+                <div>
+                    <h3>Why was this risk detected?</h3>
+
+                    <p>Primary analysis explanation</p>
+                </div>
+
+            </div>
+
+            <div id="transactionRiskExplanation"
+                 class="result-content">
+
+                No analysis available yet.
+
+            </div>
+
+        </div>
+
+
+        <!-- Guardian -->
+
+        <div class="result-card agent-result-card">
+
+            <div class="result-card-heading">
+
+                <div class="agent-icon guardian-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div>
+                    <h3>Guardian Agent</h3>
+
+                    <p>Primary fraud detection and risk assessment</p>
+                </div>
+
+                <span class="agent-status"
+                      id="transactionGuardianStatus">
+
+                    Pending
+
+                </span>
+
+            </div>
+
+            <div id="transactionGuardianResult"
+                 class="result-content">
+
+                Guardian analysis will appear here.
+
+            </div>
+
+        </div>
+
+
+        <!-- Intelligence -->
+
+        <div class="result-card agent-result-card">
+
+            <div class="result-card-heading">
+
+                <div class="agent-icon intelligence-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+
+                <div>
+                    <h3>Intelligence Agent</h3>
+
+                    <p>Extracted indicators and suspicious patterns</p>
+                </div>
+
+                <span class="agent-status"
+                      id="transactionIntelligenceStatus">
+
+                    Pending
+
+                </span>
+
+            </div>
+
+            <div id="transactionIntelligenceResult"
+                 class="result-content">
+
+                Intelligence analysis will appear here.
+
+            </div>
+
+            <div class="indicators-container"
+                 id="transactionIndicators">
+
+            </div>
+
+        </div>
+
+
+        <!-- Victim Safety -->
+
+        <div class="result-card agent-result-card">
+
+            <div class="result-card-heading">
+
+                <div class="agent-icon safety-icon">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+
+                <div>
+                    <h3>Victim Safety Agent</h3>
+
+                    <p>Personalized financial safety guidance</p>
+                </div>
+
+                <span class="agent-status"
+                      id="transactionVictimSafetyStatus">
+
+                    Pending
+
+                </span>
+
+            </div>
+
+            <div id="transactionVictimSafetyResult"
+                 class="result-content">
+
+                Safety recommendations will appear here.
+
+            </div>
+
+        </div>
+
+
+        <!-- Gemini -->
+
+        <div class="result-card agent-result-card">
+
+            <div class="result-card-heading">
+
+                <div class="agent-icon gemini-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+
+                <div>
+                    <h3>Gemini AI Advisory</h3>
+
+                    <p>Additional contextual interpretation</p>
+                </div>
+
+                <span class="agent-status"
+                      id="transactionGeminiStatus">
+
+                    Pending
+
+                </span>
+
+            </div>
+
+            <div id="transactionGeminiResult"
+                 class="result-content">
+
+                Gemini advisory will appear here if available.
+
+            </div>
+
+            <div class="advisory-disclaimer">
+                Gemini provides advisory information only. It cannot override
+                Guardian's final risk score or classification.
+            </div>
+
+        </div>
+
+
+        <!-- Decoy -->
+
+        <div class="result-card agent-result-card">
+
+            <div class="result-card-heading">
+
+                <div class="agent-icon decoy-icon">
+                    <i class="fa-solid fa-user-secret"></i>
+                </div>
+
+                <div>
+                    <h3>Decoy Agent</h3>
+
+                    <p>Controlled scam interaction simulation</p>
+                </div>
+
+                <span class="agent-status"
+                      id="transactionDecoyStatus">
+
+                    Not Started
+
+                </span>
+
+            </div>
+
+            <div id="transactionDecoyResult"
+                 class="result-content">
+
+                Decoy simulation is not automatically started during transaction analysis.
+
+            </div>
+
+        </div>
+
+
+        <!-- Feedback -->
+
+        <div class="feedback-card">
+
+            <div>
+                <h3>Was this analysis helpful?</h3>
+
+                <p>
+                    Your feedback can help improve ScamShield AI.
+                </p>
+            </div>
+
+            <div class="feedback-actions">
+
+                <button type="button"
+                        id="transactionFeedbackHelpful"
+                        class="feedback-button">
+
+                    <i class="fa-regular fa-thumbs-up"></i>
+                    Helpful
+
+                </button>
+
+                <button type="button"
+                        id="transactionFeedbackReview"
+                        class="feedback-button">
+
+                    <i class="fa-regular fa-flag"></i>
+                    Needs Review
+
+                </button>
+
+            </div>
+
+            <p id="transactionFeedbackStatus"
+               class="feedback-status"
+               aria-live="polite">
+
+            </p>
+
+        </div>
+
+
+        <!-- Result Disclaimer -->
+
+        <div class="result-disclaimer">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <p>
+                AI-generated assessments are advisory and may contain errors.
+                A low risk score does not guarantee that a transaction is safe.
+                Always verify financial requests through your bank or official
+                payment provider.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="page-footer">
+
+        <div class="footer-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            ScamShield AI
+        </div>
+
+        <p>
+            Intelligent Protection Against Digital Financial Fraud.
+        </p>
+
+        <span>
+            Transaction Analysis Module v3.0.0
+        </span>
+
+    </footer>
+
+</main>
+
+
+<!-- ================= SCRIPTS ================= -->
+
+<script src="../js/services/api.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/analyze-transaction.js"></script>
+
+</body>
+</html>

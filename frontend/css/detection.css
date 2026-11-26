@@ -1,9 +1,10 @@
+
 /* =====================================================
    SCAMSHIELD AI
    DETECTION PAGE STYLESHEET
-   Version: 2.0.0
+   Version: 2.1.0
 
-   Architecture:
+   Theme: Blue
    - Universal Input Layer: 6 evidence types
    - Fraud Detection Engine: 12 fraud categories
    - Guardian: authoritative classification
@@ -15,7 +16,10 @@
 /* ================= DESIGN TOKENS ================= */
 
 :root {
-  --detection-green: #39d98a;
+  --detection-primary: #42a5f5;
+  --detection-primary-light: #64b5f6;
+  --detection-primary-dark: #1976d2;
+
   --detection-blue: #42a5f5;
   --detection-yellow: #f5bd65;
   --detection-orange: #ff8b4a;
@@ -52,11 +56,11 @@
 
 .detection-hero-content h1 span {
   display: block;
-  color: var(--detection-green);
+  color: var(--detection-primary);
   background: linear-gradient(
     90deg,
-    var(--detection-green),
-    var(--detection-blue)
+    var(--detection-primary),
+    #90caf9
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -117,7 +121,7 @@
 .panel-label {
   display: inline-block;
   margin-bottom: 10px;
-  color: var(--detection-green);
+  color: var(--detection-primary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -179,16 +183,6 @@
 
 /* ================= EVIDENCE TYPES ================= */
 
-/*
-   Six Universal Input Layer evidence types:
-   1. Message
-   2. Call transcript
-   3. Email
-   4. URL
-   5. Screenshot extracted text
-   6. Transaction
-*/
-
 .evidence-types {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -206,12 +200,10 @@
   align-items: center;
   gap: 12px;
   padding: 15px 10px;
-
   color: var(--detection-muted);
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid var(--detection-border);
   border-radius: 13px;
-
   cursor: pointer;
   transition:
     color 0.2s ease,
@@ -235,29 +227,24 @@
 
 .evidence-type:hover {
   color: var(--detection-text);
-  border-color: rgba(57, 217, 138, 0.5);
+  border-color: rgba(66, 165, 245, 0.6);
   transform: translateY(-2px);
 }
 
 .evidence-type.active,
 .evidence-type[aria-pressed="true"] {
-  color: var(--detection-green);
-  background: rgba(57, 217, 138, 0.1);
-  border: 2px solid var(--detection-green);
-  box-shadow: 0 0 20px rgba(57, 217, 138, 0.06);
+  color: var(--detection-primary);
+  background: rgba(66, 165, 245, 0.12);
+  border: 2px solid var(--detection-primary);
+  box-shadow: 0 0 20px rgba(66, 165, 245, 0.1);
 }
 
 .evidence-type:focus-visible {
-  outline: 3px solid var(--detection-green);
+  outline: 3px solid var(--detection-primary);
   outline-offset: 3px;
 }
 
 /* ================= FRAUD CATEGORY SELECTOR ================= */
-
-/*
-   Fraud categories are separate from evidence types.
-   Guardian remains authoritative for final classification.
-*/
 
 .fraud-category-field {
   margin-bottom: 25px;
@@ -286,16 +273,8 @@
 
 .fraud-category-field select:focus-visible,
 .classification-feedback select:focus-visible {
-  outline: 3px solid rgba(57, 217, 138, 0.45);
+  outline: 3px solid rgba(66, 165, 245, 0.45);
   outline-offset: 2px;
-}
-
-.fraud-category-field small {
-  display: block;
-  margin-top: 9px;
-  color: var(--detection-muted);
-  font-size: 12px;
-  line-height: 1.6;
 }
 
 /* ================= EVIDENCE FORMS ================= */
@@ -355,8 +334,8 @@
 
 .evidence-form textarea:focus,
 .evidence-form input:focus {
-  border-color: var(--detection-green);
-  box-shadow: 0 0 0 3px rgba(57, 217, 138, 0.12);
+  border-color: var(--detection-primary);
+  box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.14);
 }
 
 .evidence-form textarea:focus-visible,
@@ -378,7 +357,7 @@
   position: absolute;
   top: 50%;
   left: 17px;
-  color: var(--detection-green);
+  color: var(--detection-primary);
   transform: translateY(-50%);
   pointer-events: none;
 }
@@ -406,20 +385,20 @@
 
 .input-footer i {
   margin-top: 3px;
-  color: var(--detection-green);
+  color: var(--detection-primary);
 }
 
 .input-footer span:last-child {
   flex-shrink: 0;
 }
 
-/* ================= PRIVACY / INPUT WARNINGS ================= */
+/* ================= PRIVACY WARNINGS ================= */
 
 .input-warning,
 .evidence-disclaimer {
   margin-top: 14px;
   padding: 13px 15px;
-  color: #f5bd65;
+  color: var(--detection-yellow);
   background: rgba(245, 189, 101, 0.07);
   border: 1px solid rgba(245, 189, 101, 0.18);
   border-radius: 10px;
@@ -458,8 +437,8 @@
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  color: var(--detection-green);
-  background: rgba(57, 217, 138, 0.1);
+  color: var(--detection-primary);
+  background: rgba(66, 165, 245, 0.12);
   border-radius: 10px;
   font-size: 17px;
 }
@@ -483,8 +462,8 @@
   display: grid;
   place-items: center;
   margin-left: auto;
-  color: var(--detection-green);
-  background: rgba(57, 217, 138, 0.12);
+  color: var(--detection-primary);
+  background: rgba(66, 165, 245, 0.12);
   border-radius: 50%;
   font-size: 11px;
 }
@@ -529,9 +508,9 @@
 }
 
 .analysis-message.success {
-  color: var(--detection-green);
-  background: rgba(57, 217, 138, 0.08);
-  border: 1px solid rgba(57, 217, 138, 0.2);
+  color: #90caf9;
+  background: rgba(66, 165, 245, 0.08);
+  border: 1px solid rgba(66, 165, 245, 0.2);
 }
 
 .analysis-message.error {
@@ -588,7 +567,7 @@
   display: grid;
   place-items: center;
   background: conic-gradient(
-    var(--detection-green) 0deg,
+    var(--detection-primary) 0deg,
     rgba(255, 255, 255, 0.08) 0deg
   );
   border-radius: 50%;
@@ -633,7 +612,7 @@
 
 .risk-result-info h3 {
   margin: 7px 0;
-  color: var(--detection-green);
+  color: var(--detection-primary);
   font-family: "Space Grotesk", sans-serif;
   font-size: 24px;
 }
@@ -647,7 +626,7 @@
 /* ================= RISK LEVEL COLORS ================= */
 
 .risk-result-info h3.low {
-  color: var(--detection-green);
+  color: var(--detection-primary);
 }
 
 .risk-result-info h3.medium {
@@ -679,7 +658,7 @@
 }
 
 .result-section h3 i {
-  color: var(--detection-green);
+  color: var(--detection-primary);
 }
 
 .result-section > p {
@@ -728,7 +707,7 @@
   gap: 12px;
   margin-top: 20px;
   padding: 16px;
-  color: #7fc8ff;
+  color: #90caf9;
   background: rgba(66, 165, 245, 0.08);
   border: 1px solid rgba(66, 165, 245, 0.18);
   border-radius: 11px;
@@ -766,7 +745,7 @@
   margin: 18px 0;
   padding: 15px;
   background: rgba(20, 47, 67, 0.3);
-  border: 1px solid rgba(84, 184, 218, 0.18);
+  border: 1px solid rgba(66, 165, 245, 0.2);
   border-radius: 10px;
 }
 
@@ -788,7 +767,7 @@
 
 .classification-feedback span {
   flex-basis: 100%;
-  color: #82d9b8;
+  color: #90caf9;
   font-size: 12px;
   line-height: 1.6;
 }
@@ -813,7 +792,7 @@
 }
 
 .sidebar-card-heading > i {
-  color: var(--detection-green);
+  color: var(--detection-primary);
   font-size: 18px;
 }
 
@@ -842,7 +821,7 @@
 .supported-item i {
   width: 21px;
   flex-shrink: 0;
-  color: var(--detection-green);
+  color: var(--detection-primary);
   font-size: 14px;
 }
 
@@ -868,7 +847,7 @@
 }
 
 .risk-color.low {
-  background: var(--detection-green);
+  background: var(--detection-primary);
 }
 
 .risk-color.medium {
@@ -893,6 +872,13 @@
   color: var(--detection-muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.risk-disclaimer {
+  margin-top: 14px;
+  color: var(--detection-muted);
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 /* ================= EMERGENCY CARD ================= */
@@ -975,7 +961,7 @@
 /* ================= SAFETY CARD ================= */
 
 .safety-card {
-  border-color: rgba(57, 217, 138, 0.2);
+  border-color: rgba(66, 165, 245, 0.2);
 }
 
 .safety-card > p {
@@ -1187,7 +1173,7 @@
 .detection-results button:focus-visible,
 .detection-results a:focus-visible,
 .detection-sidebar a:focus-visible {
-  outline: 3px solid var(--detection-green);
+  outline: 3px solid var(--detection-primary);
   outline-offset: 3px;
 }
 

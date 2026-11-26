@@ -39,96 +39,59 @@
 
 <body class="agents-page">
 
-    <!-- =========================================
-         APPLICATION NAVIGATION
-    ========================================== -->
+    <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-content">
 
-    <header class="navbar dashboard-navbar">
-        <div class="container navbar-container">
+      <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
+        <span class="logo-icon">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        </span>
 
-            <a
-                href="../index.html"
-                class="logo"
-                aria-label="ScamShield AI Home"
-            >
-                <span class="logo-icon">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </span>
+        <span class="logo-text">
+          ScamShield <span>AI</span>
+        </span>
+      </a>
 
-                <span class="logo-text">
-                    ScamShield<span>AI</span>
-                </span>
-            </a>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="dashboard.html">Dashboard </a>
 
-            <button
-                class="mobile-menu-toggle"
-                id="menuToggle"
-                type="button"
-                aria-label="Open navigation menu"
-                aria-expanded="false"
-                aria-controls="navLinks"
-            >
-                <i class="fa-solid fa-bars"></i>
-            </button>
+        <a
+          href="detection.html">
+          Detection
+        </a>
 
-            <nav
-                class="nav-links"
-                id="navLinks"
-                aria-label="Main navigation"
-            >
-                <a href="dashboard.html" class="nav-link">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    Dashboard
-                </a>
+        <a href="agents.html"
+        class="active"
+          aria-current="page"
+          >AI Agents</a>
+        <a href="intelligence.html">Intelligence</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="reports.html">Reports</a>
+      </nav>
 
-                <a href="detection.html" class="nav-link">
-                    <i class="fa-solid fa-magnifying-glass-chart"></i>
-                    Detection
-                </a>
+      <div class="nav-actions">
+        <a href="settings.html" class="btn btn-secondary">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+          Settings
+        </a>
+      </div>
 
-                <a
-                    href="agents.html"
-                    class="nav-link active"
-                    aria-current="page"
-                >
-                    <i class="fa-solid fa-robot"></i>
-                    AI Agents
-                </a>
+      <button
+        type="button"
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle navigation"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
 
-                <a href="intelligence.html" class="nav-link">
-                    <i class="fa-solid fa-brain"></i>
-                    Intelligence
-                </a>
+    </div>
+  </header>
 
-                <a href="analytics.html" class="nav-link">
-                    <i class="fa-solid fa-chart-line"></i>
-                    Analytics
-                </a>
-
-                <a href="reports.html" class="nav-link">
-                    <i class="fa-solid fa-file-shield"></i>
-                    Reports
-                </a>
-
-                <a href="settings.html" class="nav-link">
-                    <i class="fa-solid fa-gear"></i>
-                    Settings
-                </a>
-
-                <button
-                    class="btn btn-outline btn-sm"
-                    type="button"
-                    data-logout
-                >
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </button>
-            </nav>
-
-        </div>
-    </header>
-
-    <main id="main-content">
+  <main id="main-content">
 
         <!-- =========================================
              1. HERO SECTION
@@ -1929,7 +1892,7 @@
          APPLICATION SCRIPTS
     ========================================== -->
 
-    <script src="../js/api.js" defer></script>
+    <script src="../js/services/api.js"></script>
 
     <script src="../js/utils/helpers.js" defer></script>
 

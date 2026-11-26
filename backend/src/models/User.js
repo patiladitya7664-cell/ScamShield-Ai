@@ -2,15 +2,7 @@
 
 // =====================================================
 // SCAMSHIELD AI - USER MODEL
-// Version: 2.0.0
-//
-// Features:
-// 1. Secure password hashing.
-// 2. Email normalization.
-// 3. Centralized role validation.
-// 4. Account status management.
-// 5. Password comparison.
-// 6. Sensitive field protection.
+// Version: 2.1.0
 // =====================================================
 
 const mongoose = require("mongoose");
@@ -18,16 +10,37 @@ const bcrypt = require("bcryptjs");
 
 const config = require("../config/config");
 const { ROLES, ROLE_VALUES } = require("../constants/roles");
+
+// =====================================================
+// CONFIGURATION
+// =====================================================
+
+const BCRYPT_ROUNDS = Number(
+    config?.security?.bcryptRounds ?? 12
+);
+
+if (
+    !Number.isInteger(BCRYPT_ROUNDS) ||
+    BCRYPT_ROUNDS < 10 ||
+    BCRYPT_ROUNDS > 15
+) {
+    throw new Error("Invalid bcrypt configuration.");
+}
+
+if (
+    !ROLES ||
+    !Array.isArray(ROLE_VALUES) ||
+    ROLE_VALUES.length === 0
+) {
+    throw new Error("Invalid user role configuration.");
+}
+
 // =====================================================
 // USER SCHEMA
 // =====================================================
 
 const userSchema = new mongoose.Schema(
     {
-        // ---------------------------------------------
-        // USER NAME
-        // ---------------------------------------------
-
         name: {
             type: String,
             required: [true, "Name is required"],
@@ -36,14 +49,9 @@ const userSchema = new mongoose.Schema(
             maxlength: [60, "Name cannot exceed 60 characters"],
         },
 
-        // ---------------------------------------------
-        // EMAIL
-        // ---------------------------------------------
-
         email: {
             type: String,
             required: [true, "Email is required"],
-            unique: true,
             lowercase: true,
             trim: true,
             maxlength: 254,
@@ -53,10 +61,6 @@ const userSchema = new mongoose.Schema(
             ],
         },
 
-        // ---------------------------------------------
-        // PASSWORD
-        // ---------------------------------------------
-
         password: {
             type: String,
             required: [true, "Password is required"],
@@ -65,20 +69,12 @@ const userSchema = new mongoose.Schema(
             select: false,
         },
 
-        // ---------------------------------------------
-        // USER ROLE
-        // ---------------------------------------------
-
         role: {
             type: String,
             enum: ROLE_VALUES,
             default: ROLES.USER,
             required: true,
         },
-
-        // ---------------------------------------------
-        // ACCOUNT STATUS
-        // ---------------------------------------------
 
         isActive: {
             type: Boolean,
@@ -110,6 +106,7 @@ userSchema.index(
 // =====================================================
 
 userSchema.pre("save", async function () {
+
     if (!this.isModified("password")) {
         return;
     }
@@ -119,14 +116,14 @@ userSchema.pre("save", async function () {
         this.password.length < 8 ||
         Buffer.byteLength(this.password, "utf8") > 72
     ) {
-        throw new Error("Password must contain 8–72 UTF-8 bytes.");
+        throw new Error(
+            "Password must contain 8–72 UTF-8 bytes."
+        );
     }
-
-    const rounds = config.security.bcryptRounds;
 
     this.password = await bcrypt.hash(
         this.password,
-        rounds
+        BCRYPT_ROUNDS
     );
 });
 
@@ -137,6 +134,7 @@ userSchema.pre("save", async function () {
 userSchema.methods.comparePassword = async function (
     candidatePassword
 ) {
+
     if (
         typeof candidatePassword !== "string" ||
         !this.password
@@ -155,8 +153,9 @@ userSchema.methods.comparePassword = async function (
 // =====================================================
 
 userSchema.methods.toSafeObject = function () {
+
     return {
-        id: this._id,
+        id: this._id.toString(),
         name: this.name,
         email: this.email,
         role: this.role,
@@ -167,7 +166,9 @@ userSchema.methods.toSafeObject = function () {
 };
 
 // =====================================================
-// EXPORT
+// EXPORT MODEL
 // =====================================================
 
-module.exports = mongoose.model("User", userSchema);
+module.exports =
+    mongoose.models.User ||
+    mongoose.model("User", userSchema);

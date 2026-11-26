@@ -1,6 +1,24 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!--
+      =========================================================
+      SCAMSHIELD AI - APPLICATION SETTINGS
+      Version: 3.0.0
+
+      Features:
+      1. Account profile settings
+      2. Notification preferences
+      3. Security preferences
+      4. Privacy preferences
+      5. Appearance settings
+      6. System information
+      7. Save and reset preferences
+      8. Secure logout and session cleanup
+      9. Responsive and accessible interface
+      =========================================================
+    -->
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -8,10 +26,13 @@
 
     <meta
       name="description"
-      content="Manage your ScamShield AI account, security, privacy and application preferences."
+      content="Manage your ScamShield AI account, security, privacy, notifications and application preferences."
     />
 
     <meta name="theme-color" content="#080f1d" />
+
+    <meta name="application-name" content="ScamShield AI" />
+    <meta name="version" content="3.0.0" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,6 +55,155 @@
 
     <!-- Settings CSS -->
     <link rel="stylesheet" href="../css/setting.css" />
+
+    <!-- Settings v3.0.0 Additional Styles -->
+    <style>
+      .settings-nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .settings-logout-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 42px;
+        padding: 10px 16px;
+        border: 1px solid rgba(248, 113, 113, 0.35);
+        border-radius: 10px;
+        background: rgba(239, 68, 68, 0.09);
+        color: #fca5a5;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .settings-logout-btn:hover {
+        background: rgba(239, 68, 68, 0.17);
+        border-color: rgba(248, 113, 113, 0.65);
+        transform: translateY(-1px);
+      }
+
+      .settings-logout-btn:focus-visible,
+      .settings-outline-btn:focus-visible,
+      .settings-save-btn:focus-visible,
+      .settings-danger-btn:focus-visible {
+        outline: 3px solid rgba(59, 130, 246, 0.55);
+        outline-offset: 3px;
+      }
+
+      .settings-logout-btn:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+
+      .settings-page {
+        min-height: 70vh;
+      }
+
+      .settings-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .settings-status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #3b82f6;
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.65);
+      }
+
+      .settings-sidebar {
+        align-self: start;
+      }
+
+      .settings-main {
+        min-width: 0;
+      }
+
+      .settings-card {
+        scroll-margin-top: 100px;
+      }
+
+      .settings-option {
+        gap: 20px;
+      }
+
+      .settings-option > div:first-child {
+        min-width: 0;
+      }
+
+      .settings-bottom-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .settings-bottom-actions p {
+        margin: 0;
+      }
+
+      .settings-save-btn,
+      .settings-danger-btn,
+      .settings-outline-btn {
+        cursor: pointer;
+      }
+
+      .settings-field input:focus,
+      .settings-field select:focus {
+        outline: 2px solid rgba(59, 130, 246, 0.6);
+        outline-offset: 2px;
+      }
+
+      .settings-sidebar-note {
+        line-height: 1.6;
+      }
+
+      @media (max-width: 900px) {
+        .settings-nav-actions {
+          gap: 7px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .settings-nav-actions {
+          flex-wrap: wrap;
+        }
+
+        .settings-logout-btn {
+          min-height: 38px;
+          padding: 8px 11px;
+          font-size: 13px;
+        }
+
+        .settings-bottom-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .settings-bottom-actions button {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -53,7 +223,11 @@
     <header class="navbar">
       <div class="container nav-content">
 
-        <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
+        <a
+          href="dashboard.html"
+          class="logo"
+          aria-label="ScamShield AI Dashboard"
+        >
           <span class="logo-icon" aria-hidden="true">
             <i class="fa-solid fa-shield-halved"></i>
           </span>
@@ -76,7 +250,8 @@
           <a href="reports.html">Reports</a>
         </nav>
 
-        <div class="nav-actions">
+        <div class="nav-actions settings-nav-actions">
+
           <a
             href="settings.html"
             class="btn btn-secondary"
@@ -85,6 +260,18 @@
             <i class="fa-solid fa-gear" aria-hidden="true"></i>
             Settings
           </a>
+
+          <button
+            type="button"
+            class="settings-logout-btn"
+            id="logoutBtn"
+            data-logout
+            aria-label="Logout from ScamShield AI"
+          >
+            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+            <span>Logout</span>
+          </button>
+
         </div>
 
         <button
@@ -107,13 +294,18 @@
 
     <main class="settings-page" id="main-content">
 
-      <!-- Settings Hero -->
-      <section class="settings-hero" aria-labelledby="settingsPageTitle">
+      <!-- SETTINGS HERO -->
+
+      <section
+        class="settings-hero"
+        aria-labelledby="settingsPageTitle"
+      >
         <div class="container">
 
           <div class="settings-hero-content">
 
             <div class="settings-heading">
+
               <span class="section-tag">
                 ACCOUNT CONFIGURATION
               </span>
@@ -126,6 +318,7 @@
                 Manage your account preferences, security controls,
                 notifications and ScamShield AI experience.
               </p>
+
             </div>
 
             <div class="settings-status">
@@ -138,10 +331,12 @@
             </div>
 
           </div>
+
         </div>
       </section>
 
-      <!-- Settings Content -->
+      <!-- SETTINGS CONTENT -->
+
       <section class="settings-content">
         <div class="container">
 
@@ -768,7 +963,7 @@
 
                   <div class="system-info-item">
                     <span>Application Version</span>
-                    <strong>Not reported</strong>
+                    <strong>3.0.0</strong>
                   </div>
 
                 </div>
@@ -859,6 +1054,93 @@
 
     <script src="../js/main.js" defer></script>
     <script src="../js/settings.js" defer></script>
+
+    <!-- =====================================================
+         LOGOUT HANDLER
+         Version: 3.0.0
+    ====================================================== -->
+
+    <script>
+      (() => {
+        "use strict";
+
+        const logoutButton = document.getElementById("logoutBtn");
+
+        if (!logoutButton) {
+          return;
+        }
+
+        logoutButton.addEventListener("click", () => {
+          const confirmed = window.confirm(
+            "Are you sure you want to logout from ScamShield AI?"
+          );
+
+          if (!confirmed) {
+            return;
+          }
+
+          logoutButton.disabled = true;
+
+          const tokenKeys = [
+            "scamshield_token",
+            "scamshieldToken",
+            "token",
+            "authToken",
+            "accessToken"
+          ];
+
+          const userKeys = [
+            "scamshield_user",
+            "scamshieldUser",
+            "user"
+          ];
+
+          const allKeys = [...tokenKeys, ...userKeys];
+
+          try {
+            // Clear authentication from local storage.
+            allKeys.forEach((key) => {
+              localStorage.removeItem(key);
+            });
+
+            // Clear authentication from session storage.
+            allKeys.forEach((key) => {
+              sessionStorage.removeItem(key);
+            });
+
+            // Notify application modules.
+            window.dispatchEvent(
+              new CustomEvent("scamshield:logout")
+            );
+
+            window.dispatchEvent(
+              new CustomEvent("scamshield:authchange", {
+                detail: {
+                  authenticated: false,
+                  user: null
+                }
+              })
+            );
+
+            window.dispatchEvent(
+              new CustomEvent("scamshield:session-expired")
+            );
+
+            // Redirect to the application home page.
+            window.location.replace("../index.html");
+
+          } catch (error) {
+            console.error("ScamShield logout error:", error);
+
+            logoutButton.disabled = false;
+
+            alert(
+              "Logout could not be completed. Please try again."
+            );
+          }
+        });
+      })();
+    </script>
 
   </body>
 </html>

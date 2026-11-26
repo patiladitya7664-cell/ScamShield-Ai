@@ -1,17 +1,52 @@
+
 "use strict";
+
+// =====================================================
+// SCAMSHIELD AI - AUTHENTICATION MIDDLEWARE
+// Version: 2.0.0
+//
+// Features:
+// 1. Centralized JWT configuration.
+// 2. Secure JWT verification.
+// 3. Algorithm enforcement.
+// 4. Issuer and audience verification.
+// 5. User database verification.
+// 6. Account status validation.
+// 7. Secure request authentication.
+// =====================================================
 
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+
 const User = require("../models/User");
+const config = require("../config/config");
+
+// =====================================================
+// JWT CONFIGURATION
+// =====================================================
+
+const JWT_ALGORITHM = "HS256";
+
+// =====================================================
+// PROTECT MIDDLEWARE
+// =====================================================
 
 const protect = async (req, res, next) => {
     try {
-        // Validate JWT configuration
-        const jwtSecret = process.env.JWT_SECRET;
 
-        if (!jwtSecret) {
+        // ---------------------------------------------
+        // 1. VALIDATE JWT CONFIGURATION
+        // ---------------------------------------------
+
+        const jwtSecret = config.auth.jwtSecret;
+
+        if (
+            typeof jwtSecret !== "string" ||
+            !jwtSecret.trim() ||
+            Buffer.byteLength(jwtSecret, "utf8") < 32
+        ) {
             const error = new Error(
-                "JWT_SECRET is not configured."
+                "JWT configuration is invalid."
             );
 
             error.statusCode = 500;
@@ -19,17 +54,26 @@ const protect = async (req, res, next) => {
             return next(error);
         }
 
-        // Read Authorization header
+        // ---------------------------------------------
+        // 2. READ AUTHORIZATION HEADER
+        // ---------------------------------------------
+
         const authorization = req.headers.authorization;
 
-        if (!authorization || typeof authorization !== "string") {
+        if (
+            !authorization ||
+            typeof authorization !== "string"
+        ) {
             return res.status(401).json({
                 success: false,
-                message: "Authentication required. Please login."
+                message: "Authentication required. Please login.",
             });
         }
 
-        // Extract Bearer token
+        // ---------------------------------------------
+        // 3. EXTRACT BEARER TOKEN
+        // ---------------------------------------------
+
         const parts = authorization.trim().split(/\s+/);
 
         if (
@@ -39,20 +83,34 @@ const protect = async (req, res, next) => {
         ) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid authentication header."
+                message: "Invalid authentication header.",
             });
         }
 
         const token = parts[1];
 
-        // Verify JWT
+        // ---------------------------------------------
+        // 4. VERIFY JWT
+        // ---------------------------------------------
+
         let decoded;
 
         try {
-            decoded = jwt.verify(token, jwtSecret, {
-                algorithms: ["HS256"]
-            });
+
+            decoded = jwt.verify(
+                token,
+                jwtSecret,
+                {
+                    algorithms: [JWT_ALGORITHM],
+
+                    issuer: config.auth.jwtIssuer,
+
+                    audience: config.auth.jwtAudience,
+                }
+            );
+
         } catch (error) {
+
             if (
                 error.name === "JsonWebTokenError" ||
                 error.name === "TokenExpiredError" ||
@@ -60,14 +118,17 @@ const protect = async (req, res, next) => {
             ) {
                 return res.status(401).json({
                     success: false,
-                    message: "Invalid or expired authentication token."
+                    message: "Invalid or expired authentication token.",
                 });
             }
 
             throw error;
         }
 
-        // Validate token payload
+        // ---------------------------------------------
+        // 5. VALIDATE TOKEN PAYLOAD
+        // ---------------------------------------------
+
         if (
             !decoded ||
             typeof decoded !== "object" ||
@@ -76,27 +137,33 @@ const protect = async (req, res, next) => {
         ) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid authentication token payload."
+                message: "Invalid authentication token payload.",
             });
         }
 
-        // Find authenticated user
-        const user = await User.findById(decoded.id)
-            .select("-password");
+        // ---------------------------------------------
+        // 6. FIND AUTHENTICATED USER
+        // ---------------------------------------------
+
+        const user = await User.findById(decoded.id);
 
         if (!user || !user.isActive) {
             return res.status(401).json({
                 success: false,
-                message: "User account not found or inactive."
+                message: "User account not found or inactive.",
             });
         }
 
-        // Attach authenticated user
+        // ---------------------------------------------
+        // 7. ATTACH USER TO REQUEST
+        // ---------------------------------------------
+
         req.user = user;
 
         return next();
 
     } catch (error) {
+
         console.error(
             "Authentication Middleware Error:",
             error.message
@@ -106,6 +173,10 @@ const protect = async (req, res, next) => {
     }
 };
 
+// =====================================================
+// EXPORTS
+// =====================================================
+
 module.exports = {
-    protect
+    protect,
 };

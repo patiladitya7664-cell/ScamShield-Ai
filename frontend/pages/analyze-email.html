@@ -1,0 +1,662 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+    content="Analyze suspicious emails with ScamShield AI. Detect phishing, financial fraud, malicious links and email scams.">
+
+  <meta name="theme-color" content="#0b1720">
+
+  <title>Email Scam Analysis | ScamShield AI</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <link rel="stylesheet" href="../css/analyze-email.css">
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+  <header class="main-header">
+    <nav class="navbar">
+
+      <a href="dashboard.html" class="brand" aria-label="ScamShield AI Home">
+        <span class="brand-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </span>
+        <span class="brand-name">ScamShield <strong>AI</strong></span>
+      </a>
+
+      <button
+        class="mobile-menu-toggle"
+        id="mobileMenuToggle"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+        aria-controls="primaryNavigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="nav-links" id="primaryNavigation">
+
+        <a href="dashboard.html">
+          <i class="fa-solid fa-house"></i> Dashboard
+        </a>
+
+        <a href="detection.html">
+          <i class="fa-solid fa-magnifying-glass"></i> Detection
+        </a>
+
+        <a href="agents.html">
+          <i class="fa-solid fa-robot"></i> AI Agents
+        </a>
+
+        <a href="intelligence.html">
+          <i class="fa-solid fa-brain"></i> Intelligence
+        </a>
+
+        <a href="analytics.html">
+          <i class="fa-solid fa-chart-line"></i> Analytics
+        </a>
+
+        <a href="reports.html">
+          <i class="fa-solid fa-file-lines"></i> Reports
+        </a>
+
+        <button type="button" class="logout-button" data-action="logout">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+
+      </div>
+    </nav>
+  </header>
+
+
+  <main class="page-container">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="dashboard.html">Dashboard</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <a href="detection.html">Detection</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Email Analysis</span>
+    </div>
+
+
+    <!-- HERO -->
+    <section class="page-hero">
+
+      <div class="hero-icon">
+        <i class="fa-solid fa-envelope-open-text"></i>
+      </div>
+
+      <div class="hero-content">
+
+        <span class="eyebrow">
+          <i class="fa-solid fa-shield-halved"></i>
+          AI-POWERED EMAIL PROTECTION
+        </span>
+
+        <h1>Email Scam Analysis</h1>
+
+        <p>
+          Check suspicious emails for phishing, fake payment requests,
+          financial fraud, impersonation and malicious links.
+        </p>
+
+        <div class="hero-tags">
+          <span><i class="fa-solid fa-robot"></i> Guardian AI</span>
+          <span><i class="fa-solid fa-brain"></i> Intelligence Agent</span>
+          <span><i class="fa-solid fa-user-shield"></i> Victim Safety</span>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- SAFETY NOTICE -->
+    <section class="safety-notice" aria-label="Email safety notice">
+
+      <div class="notice-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+
+      <div class="notice-content">
+
+        <h2>Stay Safe While Analyzing Emails</h2>
+
+        <p>
+          Do not click suspicious links, download unexpected attachments,
+          reply to suspicious senders or share OTPs and banking details.
+        </p>
+
+        <p class="privacy-note">
+          Remove passwords, OTPs, bank account numbers and other sensitive
+          personal information before submitting an email.
+        </p>
+
+      </div>
+    </section>
+
+
+    <!-- EMAIL ANALYSIS FORM -->
+    <section class="analysis-card">
+
+      <div class="section-heading">
+
+        <div>
+          <span class="section-label">EMAIL SCANNER</span>
+          <h2>Analyze Suspicious Email</h2>
+          <p>Paste the email content below to identify potential threats.</p>
+        </div>
+
+        <div class="section-icon">
+          <i class="fa-solid fa-envelope-circle-check"></i>
+        </div>
+
+      </div>
+
+
+      <form id="emailAnalysisForm" method="post" novalidate>
+
+        <div class="form-group">
+
+          <label for="emailSender">
+            Sender Email Address
+            <span class="optional-label">Optional</span>
+          </label>
+
+          <input
+            type="email"
+            id="emailSender"
+            name="sender"
+            maxlength="254"
+            placeholder="example@domain.com"
+            autocomplete="off">
+
+          <small class="field-help">
+            Enter the sender address if available.
+          </small>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="emailSubject">
+            Email Subject
+            <span class="optional-label">Optional</span>
+          </label>
+
+          <input
+            type="text"
+            id="emailSubject"
+            name="subject"
+            maxlength="500"
+            placeholder="Enter suspicious email subject"
+            autocomplete="off">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="emailFraudCategory">
+            Expected Fraud Category
+            <span class="optional-label">Optional</span>
+          </label>
+
+          <select id="emailFraudCategory" name="category">
+
+            <option value="">Automatically identify category</option>
+            <option value="email_scam">Email Scam</option>
+            <option value="url_phishing">URL Phishing</option>
+            <option value="investment_scam">Investment Scam</option>
+            <option value="digital_arrest">Digital Arrest</option>
+            <option value="upi_banking_fraud">UPI / Banking Fraud</option>
+            <option value="card_fraud">Credit / Debit Card Fraud</option>
+            <option value="ecommerce_scam">E-commerce Fraud</option>
+            <option value="job_loan_scam">Job / Loan Scam</option>
+            <option value="sextortion_blackmail">Sextortion / Blackmail</option>
+            <option value="social_media_scam">Social Media Scam</option>
+
+          </select>
+
+          <small class="field-help">
+            Leave this on automatic detection if you are unsure.
+          </small>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <div class="label-row">
+
+            <label for="emailContent">
+              Email Content
+              <span class="required-label">Required</span>
+            </label>
+
+            <span id="emailCharacterCount" class="character-count">
+              0 / 20,000
+            </span>
+
+          </div>
+
+          <textarea
+            id="emailContent"
+            name="emailContent"
+            rows="12"
+            maxlength="20000"
+            required
+            placeholder="Paste the suspicious email content here..."></textarea>
+
+          <small class="field-help" id="emailInputHelp">
+            Paste the email body, sender message and suspicious text.
+            Remove sensitive personal information first.
+          </small>
+
+          <small
+            class="field-error"
+            id="emailInputError"
+            role="alert"
+            hidden>
+          </small>
+
+        </div>
+
+
+        <div class="consent-box">
+
+          <input
+            type="checkbox"
+            id="emailAnalysisConsent"
+            required>
+
+          <label for="emailAnalysisConsent">
+            I confirm that I have permission to analyze this email and
+            have removed sensitive personal information.
+          </label>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="secondary-button"
+            id="clearEmailForm">
+            <i class="fa-solid fa-rotate-left"></i>
+            Clear
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+            id="analyzeEmailButton">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span data-button-label>Analyze Email</span>
+          </button>
+
+        </div>
+
+      </form>
+    </section>
+
+
+    <!-- ANALYSIS STATUS -->
+    <section
+      class="email-analysis-status"
+      id="emailAnalysisStatus"
+      aria-live="polite"
+      hidden>
+
+      <div class="status-icon">
+        <i class="fa-solid fa-circle-info"></i>
+      </div>
+
+      <p id="emailAnalysisStatusMessage">
+        Preparing email analysis...
+      </p>
+
+    </section>
+
+
+    <!-- RESULTS -->
+    <section
+      class="email-results"
+      id="emailResults"
+      aria-live="polite"
+      hidden>
+
+      <div class="results-heading">
+
+        <div>
+          <span class="section-label">ANALYSIS REPORT</span>
+          <h2>Email Security Assessment</h2>
+          <p>Review the risk assessment and recommendations carefully.</p>
+        </div>
+
+        <div class="results-icon">
+          <i class="fa-solid fa-file-shield"></i>
+        </div>
+
+      </div>
+
+
+      <!-- RISK OVERVIEW -->
+      <div class="risk-overview" id="emailRiskOverview">
+
+        <div class="risk-score-container">
+
+          <div
+            class="risk-score-circle"
+            id="emailRiskScoreCircle"
+            role="img"
+            aria-label="Risk score">
+
+            <div class="risk-score-inner">
+              <strong id="emailRiskScore">0</strong>
+              <span>/ 100</span>
+            </div>
+
+          </div>
+
+          <span class="score-caption">Risk Score</span>
+
+        </div>
+
+
+        <div class="risk-details">
+
+          <span class="result-label">Overall Risk Level</span>
+
+          <h3 id="emailRiskLevel" class="risk-level">
+            Not assessed
+          </h3>
+
+          <p id="emailRiskDescription">
+            Email analysis results will appear here.
+          </p>
+
+          <div class="category-result">
+            <span>Detected Category</span>
+            <strong id="emailFraudCategoryResult">Not classified</strong>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- GUARDIAN -->
+      <article class="agent-result-card guardian-card">
+
+        <div class="agent-result-header">
+
+          <div class="agent-result-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+
+          <div>
+            <h3>Guardian Agent</h3>
+            <p>Primary fraud detection assessment</p>
+          </div>
+
+          <span class="agent-status" id="emailGuardianStatus">Waiting</span>
+
+        </div>
+
+        <p class="agent-result-content" id="emailGuardianResult">
+          Guardian assessment will appear here.
+        </p>
+
+      </article>
+
+
+      <!-- INTELLIGENCE -->
+      <article class="agent-result-card intelligence-card">
+
+        <div class="agent-result-header">
+
+          <div class="agent-result-icon">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+
+          <div>
+            <h3>Intelligence Agent</h3>
+            <p>Suspicious indicators and threat intelligence</p>
+          </div>
+
+          <span class="agent-status" id="emailIntelligenceStatus">Waiting</span>
+
+        </div>
+
+        <p class="agent-result-content" id="emailIntelligenceResult">
+          Intelligence findings will appear here.
+        </p>
+
+      </article>
+
+
+      <!-- VICTIM SAFETY -->
+      <article class="agent-result-card safety-card">
+
+        <div class="agent-result-header">
+
+          <div class="agent-result-icon">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+
+          <div>
+            <h3>Victim Safety Agent</h3>
+            <p>Personal safety recommendations</p>
+          </div>
+
+          <span class="agent-status" id="emailVictimSafetyStatus">Waiting</span>
+
+        </div>
+
+        <p class="agent-result-content" id="emailVictimSafetyResult">
+          Safety recommendations will appear here.
+        </p>
+
+      </article>
+
+
+      <!-- GEMINI -->
+      <article class="agent-result-card gemini-card">
+
+        <div class="agent-result-header">
+
+          <div class="agent-result-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+
+          <div>
+            <h3>Gemini AI Advisory</h3>
+            <p>Additional AI-generated explanation</p>
+          </div>
+
+          <span class="agent-status" id="emailGeminiStatus">Waiting</span>
+
+        </div>
+
+        <p class="agent-result-content" id="emailGeminiResult">
+          Optional Gemini advisory will appear here.
+        </p>
+
+        <small class="advisory-disclaimer">
+          Gemini is advisory-only. It cannot override Guardian's
+          authoritative risk score or fraud category.
+        </small>
+
+      </article>
+
+
+      <!-- DECOY -->
+      <article class="agent-result-card decoy-card">
+
+        <div class="agent-result-header">
+
+          <div class="agent-result-icon">
+            <i class="fa-solid fa-user-secret"></i>
+          </div>
+
+          <div>
+            <h3>Decoy Agent</h3>
+            <p>Controlled threat simulation</p>
+          </div>
+
+          <span class="agent-status" id="emailDecoyStatus">Not started</span>
+
+        </div>
+
+        <p class="agent-result-content" id="emailDecoyResult">
+          Decoy simulation is not automatically started during analysis.
+        </p>
+
+      </article>
+
+
+      <!-- FEEDBACK -->
+      <section class="feedback-section">
+
+        <div class="feedback-heading">
+          <h3>Was this analysis helpful?</h3>
+          <p>Your feedback helps improve ScamShield AI.</p>
+        </div>
+
+        <div class="feedback-actions">
+
+          <button
+            type="button"
+            class="feedback-button"
+            id="emailFeedbackHelpful">
+            <i class="fa-solid fa-thumbs-up"></i>
+            Helpful
+          </button>
+
+          <button
+            type="button"
+            class="feedback-button"
+            id="emailFeedbackReview">
+            <i class="fa-solid fa-flag"></i>
+            Needs Review
+          </button>
+
+        </div>
+
+        <p
+          class="feedback-status"
+          id="emailFeedbackStatus"
+          aria-live="polite">
+        </p>
+
+      </section>
+
+    </section>
+
+
+    <!-- EMERGENCY GUIDANCE -->
+    <section class="emergency-section">
+
+      <div class="emergency-icon">
+        <i class="fa-solid fa-life-ring"></i>
+      </div>
+
+      <div class="emergency-content">
+
+        <h2>Already Lost Money Through an Email Scam?</h2>
+
+        <p>
+          Contact your bank immediately and report financial cyber fraud
+          through India's official cybercrime reporting channels.
+        </p>
+
+        <div class="emergency-actions">
+
+          <a href="tel:1930" class="emergency-button">
+            <i class="fa-solid fa-phone"></i>
+            Call 1930
+          </a>
+
+          <a
+            href="https://cybercrime.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cybercrime-button">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            Report Cybercrime
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- LIMITATIONS -->
+    <section class="limitations-section">
+
+      <div class="limitations-icon">
+        <i class="fa-solid fa-circle-info"></i>
+      </div>
+
+      <div>
+
+        <h3>Important Information</h3>
+
+        <ul>
+          <li>ScamShield AI analyzes the email content provided by you.</li>
+          <li>Sender identity and email authenticity cannot always be independently verified.</li>
+          <li>This page does not automatically access your email inbox.</li>
+          <li>Attachments are not automatically downloaded or scanned.</li>
+          <li>Links are analyzed only to the extent supported by the connected detection engine.</li>
+          <li>AI results are security guidance, not a guarantee that an email is safe or fraudulent.</li>
+        </ul>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="main-footer">
+
+    <div class="footer-brand">
+      <i class="fa-solid fa-shield-halved"></i>
+      ScamShield AI
+    </div>
+
+    <p>AI-powered protection against digital fraud.</p>
+
+    <p class="copyright">
+      &copy; 2026 ScamShield AI. All rights reserved.
+    </p>
+
+  </footer>
+
+
+  <!-- SCRIPTS -->
+
+  <script src="../js/services/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/analyze-email.js"></script>
+
+</body>
+</html>

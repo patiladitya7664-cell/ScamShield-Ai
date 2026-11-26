@@ -1,0 +1,823 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="Analyze suspicious SMS, WhatsApp messages and chat messages with ScamShield AI.">
+
+    <meta name="theme-color" content="#0b1220">
+
+    <title>Analyze Message | ScamShield AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/analyze-message.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="top-header">
+
+        <div class="header-container">
+
+            <a href="dashboard.html" class="brand">
+                <span class="brand-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </span>
+
+                <span class="brand-name">
+                    ScamShield <strong>AI</strong>
+                </span>
+            </a>
+
+            <button class="mobile-menu-toggle"
+                id="mobileMenuToggle"
+                type="button"
+                aria-label="Toggle navigation"
+                aria-expanded="false">
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+            <nav class="primary-navigation" id="primaryNavigation">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="detection.html" class="active">
+                    Detection
+                </a>
+
+                <a href="agents.html">
+                    AI Agents
+                </a>
+
+                <a href="intelligence.html">
+                    Intelligence
+                </a>
+
+                <a href="analytics.html">
+                    Analytics
+                </a>
+
+                <a href="reports.html">
+                    Reports
+                </a>
+
+                <a href="settings.html">
+                    Settings
+                </a>
+
+                <button type="button" class="logout-button" id="logoutButton">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="page-container">
+
+        <!-- BREADCRUMB -->
+
+        <div class="breadcrumb">
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+            <a href="detection.html">Detection</a>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+            <span>Message Analysis</span>
+
+        </div>
+
+
+        <!-- PAGE HEADING -->
+
+        <section class="page-heading">
+
+            <div class="heading-icon">
+                <i class="fa-solid fa-message"></i>
+            </div>
+
+            <div>
+
+                <span class="section-label">SCAM DETECTION MODULE</span>
+
+                <h1>Message Analysis</h1>
+
+                <p>
+                    Analyze suspicious SMS, WhatsApp messages and chat
+                    messages to identify potential fraud indicators.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= NOTICE ================= -->
+
+        <section class="notice-card">
+
+            <div class="notice-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+
+                <h3>Before you submit</h3>
+
+                <p>
+                    Never include your actual passwords, OTPs, PINs,
+                    complete card details or other sensitive information.
+                    Use redacted evidence whenever possible.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ANALYSIS FORM ================= -->
+
+        <section class="analysis-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <h2>
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Analyze a Message
+                    </h2>
+
+                    <p>
+                        Enter the suspicious message below.
+                    </p>
+                </div>
+
+                <span class="secure-badge">
+                    <i class="fa-solid fa-shield"></i>
+                    Secure Analysis
+                </span>
+
+            </div>
+
+
+            <form id="messageAnalysisForm" novalidate>
+
+                <!-- SOURCE -->
+
+                <div class="form-group">
+
+                    <label for="messageSource">
+                        Message Source
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <select id="messageSource" name="messageSource">
+
+                        <option value="unknown">Select message source</option>
+
+                        <option value="sms">SMS</option>
+
+                        <option value="whatsapp">WhatsApp</option>
+
+                        <option value="telegram">Telegram</option>
+
+                        <option value="social_media">Social Media</option>
+
+                        <option value="email_message">Other Chat Application</option>
+
+                        <option value="other">Other</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- SENDER -->
+
+                <div class="form-group">
+
+                    <label for="messageSender">
+                        Sender Information
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="messageSender"
+                        name="messageSender"
+                        maxlength="150"
+                        placeholder="Example: Unknown number or sender name"
+                        autocomplete="off">
+
+                    <small>
+                        Do not enter sensitive personal information.
+                    </small>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="form-group">
+
+                    <label for="messageFraudCategory">
+                        Fraud Category
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <select id="messageFraudCategory" name="category">
+
+                        <option value="">Auto Detect Category</option>
+
+                        <option value="fraud_message">
+                            General Fraud Message
+                        </option>
+
+                        <option value="upi_banking_fraud">
+                            UPI / Banking Fraud
+                        </option>
+
+                        <option value="digital_arrest">
+                            Digital Arrest
+                        </option>
+
+                        <option value="investment_scam">
+                            Investment Scam
+                        </option>
+
+                        <option value="card_fraud">
+                            Credit / Debit Card Fraud
+                        </option>
+
+                        <option value="ecommerce_scam">
+                            E-commerce Scam
+                        </option>
+
+                        <option value="job_loan_scam">
+                            Job / Loan Scam
+                        </option>
+
+                        <option value="sextortion_blackmail">
+                            Sextortion / Blackmail
+                        </option>
+
+                        <option value="social_media_scam">
+                            Social Media Scam
+                        </option>
+
+                        <option value="url_phishing">
+                            URL / Phishing
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div class="form-group">
+
+                    <div class="label-row">
+
+                        <label for="messageContent">
+                            Message Content
+                            <span class="required-label">Required</span>
+                        </label>
+
+                        <span id="messageCharacterCount" class="character-count">
+                            0 / 20,000
+                        </span>
+
+                    </div>
+
+                    <textarea
+                        id="messageContent"
+                        name="messageContent"
+                        rows="9"
+                        maxlength="20000"
+                        placeholder="Paste the suspicious SMS, WhatsApp message or chat content here..."
+                        required></textarea>
+
+                    <div class="input-help" id="messageInputHelp">
+
+                        <i class="fa-solid fa-lightbulb"></i>
+
+                        Include the complete suspicious message,
+                        including suspicious links and payment requests.
+                        Replace personal details with placeholders.
+
+                    </div>
+
+                    <div class="input-error" id="messageInputError"
+                        role="alert" aria-live="polite"></div>
+
+                </div>
+
+
+                <!-- CONSENT -->
+
+                <div class="consent-box">
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="messageAnalysisConsent"
+                            name="consent"
+                            required>
+
+                        <span>
+                            I confirm that I have permission to submit
+                            this content for analysis and have removed
+                            unnecessary sensitive personal information.
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- ACTION BUTTONS -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="clearMessageForm"
+                        class="secondary-button">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Clear
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="analyzeMessageButton"
+                        class="primary-button">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Analyze Message
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- ================= STATUS ================= -->
+
+        <section id="messageAnalysisStatus"
+            class="status-card"
+            hidden
+            aria-live="polite">
+
+            <div class="status-icon">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+            </div>
+
+            <div>
+
+                <h3 id="messageAnalysisStatusTitle">
+                    Analysis in progress
+                </h3>
+
+                <p id="messageAnalysisStatusMessage">
+                    ScamShield AI is examining the submitted evidence.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RESULTS ================= -->
+
+        <section id="messageResults" class="results-section" hidden>
+
+            <div class="results-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        ANALYSIS REPORT
+                    </span>
+
+                    <h2>Message Analysis Results</h2>
+
+                    <p>
+                        Review the detected risk and agent findings.
+                    </p>
+
+                </div>
+
+                <span class="result-complete-badge">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Analysis Completed
+                </span>
+
+            </div>
+
+
+            <!-- RISK OVERVIEW -->
+
+            <div class="risk-overview-card" id="messageRiskOverview">
+
+                <div class="risk-score-section">
+
+                    <div class="risk-score-circle"
+                        id="messageRiskScoreCircle">
+
+                        <span id="messageRiskScore">0</span>
+
+                        <small>/100</small>
+
+                    </div>
+
+                    <div>
+
+                        <span class="result-label">
+                            Overall Risk Score
+                        </span>
+
+                        <h3 id="messageRiskLevel">
+                            Pending
+                        </h3>
+
+                        <p>
+                            Risk assessment based on submitted evidence.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="risk-details">
+
+                    <div class="detail-item">
+
+                        <span>Detection Category</span>
+
+                        <strong id="messageFraudCategoryResult">
+                            Not classified
+                        </strong>
+
+                    </div>
+
+                    <div class="detail-item">
+
+                        <span>Analysis Status</span>
+
+                        <strong id="messageResultStatus">
+                            Completed
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="risk-description">
+
+                    <h4>Risk Explanation</h4>
+
+                    <p id="messageRiskDescription">
+                        Risk explanation will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- GUARDIAN -->
+
+            <div class="agent-result-card">
+
+                <div class="agent-result-heading">
+
+                    <div class="agent-icon guardian-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Guardian Agent</h3>
+
+                        <span id="messageGuardianStatus">
+                            Awaiting result
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <p id="messageGuardianResult">
+                    Primary fraud detection and risk assessment.
+                </p>
+
+            </div>
+
+
+            <!-- INTELLIGENCE -->
+
+            <div class="agent-result-card">
+
+                <div class="agent-result-heading">
+
+                    <div class="agent-icon intelligence-icon">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Intelligence Agent</h3>
+
+                        <span id="messageIntelligenceStatus">
+                            Awaiting result
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <p id="messageIntelligenceResult">
+                    Extracted indicators and suspicious information.
+                </p>
+
+                <div id="messageIndicators" class="indicators-container"></div>
+
+            </div>
+
+
+            <!-- VICTIM SAFETY -->
+
+            <div class="agent-result-card">
+
+                <div class="agent-result-heading">
+
+                    <div class="agent-icon safety-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Victim Safety Agent</h3>
+
+                        <span id="messageVictimSafetyStatus">
+                            Awaiting result
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <p id="messageVictimSafetyResult">
+                    Safety recommendations will appear here.
+                </p>
+
+            </div>
+
+
+            <!-- GEMINI -->
+
+            <div class="agent-result-card">
+
+                <div class="agent-result-heading">
+
+                    <div class="agent-icon gemini-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Gemini AI Advisory</h3>
+
+                        <span id="messageGeminiStatus">
+                            Awaiting result
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <p id="messageGeminiResult">
+                    Additional AI advisory information.
+                </p>
+
+                <p class="advisory-disclaimer">
+                    Gemini is advisory-only and cannot override
+                    Guardian's classification or risk score.
+                </p>
+
+            </div>
+
+
+            <!-- DECOY -->
+
+            <div class="agent-result-card">
+
+                <div class="agent-result-heading">
+
+                    <div class="agent-icon decoy-icon">
+                        <i class="fa-solid fa-user-secret"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Decoy Agent</h3>
+
+                        <span id="messageDecoyStatus">
+                            Not started
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <p id="messageDecoyResult">
+                    Decoy simulation is a separate controlled operation
+                    and is not started automatically.
+                </p>
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            <div class="feedback-card">
+
+                <h3>Was this analysis helpful?</h3>
+
+                <p>
+                    Your feedback can help improve ScamShield AI.
+                </p>
+
+                <div class="feedback-actions">
+
+                    <button type="button"
+                        id="messageFeedbackHelpful"
+                        class="feedback-button">
+
+                        <i class="fa-solid fa-thumbs-up"></i>
+                        Helpful
+
+                    </button>
+
+                    <button type="button"
+                        id="messageFeedbackReview"
+                        class="feedback-button">
+
+                        <i class="fa-solid fa-flag"></i>
+                        Needs Review
+
+                    </button>
+
+                </div>
+
+                <p id="messageFeedbackStatus"
+                    class="feedback-status"
+                    aria-live="polite"></p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SAFETY GUIDANCE ================= -->
+
+        <section class="emergency-card">
+
+            <div class="emergency-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div>
+
+                <h3>Suspect Financial Fraud?</h3>
+
+                <p>
+                    If you have lost money through cyber fraud in India,
+                    contact the cybercrime helpline immediately.
+                </p>
+
+                <div class="emergency-actions">
+
+                    <a href="tel:1930" class="emergency-button">
+                        <i class="fa-solid fa-phone"></i>
+                        Call 1930
+                    </a>
+
+                    <a href="https://cybercrime.gov.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="cybercrime-button">
+
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        Cyber Crime Portal
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= LIMITATIONS ================= -->
+
+        <section class="limitations-card">
+
+            <h3>
+                <i class="fa-solid fa-circle-info"></i>
+                Important Limitations
+            </h3>
+
+            <ul>
+
+                <li>
+                    Analysis is based on the text submitted by the user.
+                </li>
+
+                <li>
+                    Extracted phone numbers, URLs and other indicators
+                    are not automatically externally verified.
+                </li>
+
+                <li>
+                    A risk score is an automated assessment, not proof
+                    that a person or message is fraudulent.
+                </li>
+
+                <li>
+                    ScamShield AI does not automatically contact senders,
+                    block numbers or make payments.
+                </li>
+
+            </ul>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="page-footer">
+
+        <p>
+            &copy; 2026 ScamShield AI.
+            Intelligent Protection Against Digital Fraud.
+        </p>
+
+        <span>
+            Automated analysis is advisory.
+            Always verify through official channels.
+        </span>
+
+    </footer>
+
+
+    <!-- ================= SCRIPTS ================= -->
+
+    <script src="../js/services/api.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/analyze-message.js"></script>
+
+</body>
+
+</html>

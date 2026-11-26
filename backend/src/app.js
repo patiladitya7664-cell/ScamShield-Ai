@@ -1,4 +1,3 @@
-
 "use strict";
 
 // =====================================================
@@ -20,7 +19,6 @@
 // Server startup belongs in server.js.
 // =====================================================
 
-
 // =====================================================
 // 1. IMPORT DEPENDENCIES
 // =====================================================
@@ -33,15 +31,13 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const path = require("path");
 
-
 // =====================================================
 // 2. LOAD ENVIRONMENT VARIABLES
 // =====================================================
 
 dotenv.config({
-    path: path.resolve(__dirname, "../../.env"),
+  path: path.resolve(__dirname, "../../.env"),
 });
-
 
 // =====================================================
 // 3. ROUTE IMPORTS
@@ -57,13 +53,11 @@ const notificationRoutes = require("./routes/notificationRoutes");
 // Verify that this filename matches the actual file.
 const agentsRoutes = require("./routes/agentsRoutes");
 
-
 // =====================================================
 // 4. ERROR MIDDLEWARE
 // =====================================================
 
 const errorMiddleware = require("./middleware/errorMiddleware");
-
 
 // =====================================================
 // 5. EXPRESS APPLICATION
@@ -73,172 +67,136 @@ const app = express();
 
 app.disable("x-powered-by");
 
-
 // =====================================================
 // 6. SECURITY MIDDLEWARE
 // =====================================================
 
-app.use(
-    helmet()
-);
-
+app.use(helmet());
 
 // =====================================================
 // 7. CORS CONFIGURATION
 // =====================================================
 
-const allowedOrigins = (
-    process.env.FRONTEND_URL ||
-    "http://127.0.0.1:5500"
-)
-    .split(",")
-    .map((origin) => origin.trim().replace(/\/+$/, ""))
-    .filter(Boolean);
-
+const allowedOrigins = (process.env.FRONTEND_URL || "http://127.0.0.1:5500")
+  .split(",")
+  .map((origin) => origin.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
 
 app.use(
-    cors({
-        origin(origin, callback) {
-            // Allow requests without Origin headers,
-            // such as server-to-server requests.
+  cors({
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
 
-            if (!origin) {
-                return callback(null, true);
-            }
+      const normalizedOrigin = origin.trim().replace(/\/+$/, "");
 
-            const normalizedOrigin = origin
-                .trim()
-                .replace(/\/+$/, "");
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
 
-            if (
-                allowedOrigins.includes(normalizedOrigin)
-            ) {
-                return callback(null, true);
-            }
+      const error = new Error("CORS policy: Origin not allowed.");
 
-            const error = new Error(
-                "CORS policy: Origin not allowed."
-            );
+      error.statusCode = 403;
+      error.code = "CORS_ORIGIN_DENIED";
 
-            error.statusCode = 403;
+      return callback(error);
+    },
 
-            error.code = "CORS_ORIGIN_DENIED";
+    credentials: true,
 
-            return callback(error);
-        },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 
-        credentials: true,
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "Cache-Control",
+      "Pragma",
+    ],
 
-        methods: [
-            "GET",
-            "POST",
-            "PUT",
-            "PATCH",
-            "DELETE",
-            "OPTIONS",
-        ],
-
-        allowedHeaders: [
-            "Content-Type",
-            "Authorization",
-        ],
-
-        optionsSuccessStatus: 204,
-    })
+    optionsSuccessStatus: 204,
+  }),
 );
-
 
 // =====================================================
 // 8. REQUEST LOGGING
 // =====================================================
 
 if (process.env.NODE_ENV === "development") {
-    app.use(
-        morgan("dev")
-    );
+  app.use(morgan("dev"));
 }
-
 
 // =====================================================
 // 9. BODY PARSING
 // =====================================================
 
 app.use(
-    express.json({
-        limit: "1mb",
-        strict: true,
-    })
+  express.json({
+    limit: "1mb",
+    strict: true,
+  }),
 );
 
 app.use(
-    express.urlencoded({
-        extended: true,
-        limit: "1mb",
-        parameterLimit: 100,
-    })
+  express.urlencoded({
+    extended: true,
+    limit: "1mb",
+    parameterLimit: 100,
+  }),
 );
-
 
 // =====================================================
 // 10. ROOT ROUTE
 // =====================================================
 
 app.get("/", (req, res) => {
-    return res.status(200).json({
-        success: true,
+  return res.status(200).json({
+    success: true,
 
-        status: "success",
+    status: "success",
 
-        message: "Welcome to ScamShield AI API",
+    message: "Welcome to ScamShield AI API",
 
-        application: "ScamShield AI",
+    application: "ScamShield AI",
 
-        version: "2.0.0",
-    });
+    version: "2.0.0",
+  });
 });
-
 
 // =====================================================
 // 11. HEALTH CHECK
 // =====================================================
 
 app.get("/api/health", (req, res) => {
-    const databaseState =
-        mongoose.connection.readyState;
+  const databaseState = mongoose.connection.readyState;
 
-    const databaseStatus = {
-        0: "Disconnected",
-        1: "Connected",
-        2: "Connecting",
-        3: "Disconnecting",
+  const databaseStatus =
+    {
+      0: "Disconnected",
+      1: "Connected",
+      2: "Connecting",
+      3: "Disconnecting",
     }[databaseState] || "Unknown";
 
-    const isDatabaseConnected =
-        databaseState === 1;
+  const isDatabaseConnected = databaseState === 1;
 
-    const isHealthy =
-        isDatabaseConnected;
+  const isHealthy = isDatabaseConnected;
 
-    return res
-        .status(isHealthy ? 200 : 503)
-        .json({
-            success: isHealthy,
+  return res.status(isHealthy ? 200 : 503).json({
+    success: isHealthy,
 
-            status: isHealthy
-                ? "healthy"
-                : "degraded",
+    status: isHealthy ? "healthy" : "degraded",
 
-            message:
-                "ScamShield AI Backend health check",
+    message: "ScamShield AI Backend health check",
 
-            server: "Running",
+    server: "Running",
 
-            database: databaseStatus,
+    database: databaseStatus,
 
-            timestamp: new Date().toISOString(),
-        });
+    timestamp: new Date().toISOString(),
+  });
 });
-
 
 // =====================================================
 // 12. API ROUTES
@@ -246,58 +204,33 @@ app.get("/api/health", (req, res) => {
 
 const API_PREFIX = "/api";
 
-app.use(
-    `${API_PREFIX}/auth`,
-    authRoutes
-);
+app.use(`${API_PREFIX}/auth`, authRoutes);
 
-app.use(
-    `${API_PREFIX}/analysis`,
-    analysisRoutes
-);
+app.use(`${API_PREFIX}/analysis`, analysisRoutes);
 
-app.use(
-    `${API_PREFIX}/cases`,
-    caseRoutes
-);
+app.use(`${API_PREFIX}/cases`, caseRoutes);
 
-app.use(
-    `${API_PREFIX}/dashboard`,
-    dashboardRoutes
-);
+app.use(`${API_PREFIX}/dashboard`, dashboardRoutes);
 
-app.use(
-    `${API_PREFIX}/intelligence`,
-    intelligenceRoutes
-);
+app.use(`${API_PREFIX}/intelligence`, intelligenceRoutes);
 
-app.use(
-    `${API_PREFIX}/notifications`,
-    notificationRoutes
-);
+app.use(`${API_PREFIX}/notifications`, notificationRoutes);
 
-app.use(
-    `${API_PREFIX}/agents`,
-    agentsRoutes
-);
-
+app.use(`${API_PREFIX}/agents`, agentsRoutes);
 
 // =====================================================
 // 13. API ROUTE NOT FOUND
 // =====================================================
 
 app.use((req, res, next) => {
-    const error = new Error(
-        `Route not found: ${req.method} ${req.path}`
-    );
+  const error = new Error(`Route not found: ${req.method} ${req.path}`);
 
-    error.statusCode = 404;
+  error.statusCode = 404;
 
-    error.status = "fail";
+  error.status = "fail";
 
-    next(error);
+  next(error);
 });
-
 
 // =====================================================
 // 14. GLOBAL ERROR HANDLER
@@ -305,7 +238,6 @@ app.use((req, res, next) => {
 // =====================================================
 
 app.use(errorMiddleware);
-
 
 // =====================================================
 // 15. EXPORT APPLICATION

@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1220">
+
+    <title>Screenshot Analysis | ScamShield AI</title>
+
+    <meta name="description" content="Upload and analyze suspicious screenshots, payment messages, fake banking alerts and phishing evidence with ScamShield AI.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/analyze-screenshot.css">
+</head>
+
+<body>
+
+    <!-- APPLICATION HEADER -->
+
+    <header class="app-header">
+
+        <div class="header-container">
+
+            <a href="dashboard.html" class="brand">
+                <span class="brand-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </span>
+
+                <span class="brand-text">
+                    <strong>ScamShield</strong>
+                    <span>AI Protection</span>
+                </span>
+            </a>
+
+            <button
+                type="button"
+                class="mobile-menu-toggle"
+                id="mobileMenuToggle"
+                aria-label="Toggle navigation"
+                aria-expanded="false"
+                aria-controls="primaryNavigation"
+            >
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <nav class="primary-navigation" id="primaryNavigation">
+
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-house"></i>
+                    Dashboard
+                </a>
+
+                <a href="detection.html">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    Detection
+                </a>
+
+                <a href="agents.html">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Agents
+                </a>
+
+                <a href="intelligence.html">
+                    <i class="fa-solid fa-brain"></i>
+                    Intelligence
+                </a>
+
+                <a href="analytics.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Analytics
+                </a>
+
+                <a href="#" id="logoutButton" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="page-container">
+
+        <!-- BREADCRUMB -->
+
+        <div class="breadcrumb">
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+            <a href="detection.html">Detection</a>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+            <span>Screenshot Analysis</span>
+
+        </div>
+
+
+        <!-- PAGE INTRODUCTION -->
+
+        <section class="page-intro">
+
+            <div class="intro-icon">
+                <i class="fa-solid fa-image"></i>
+            </div>
+
+            <div class="intro-content">
+
+                <span class="eyebrow">
+                    VISUAL EVIDENCE SECURITY
+                </span>
+
+                <h1>Screenshot Analysis</h1>
+
+                <p>
+                    Upload suspicious messages, payment screenshots,
+                    fake banking alerts, KYC warnings and other
+                    screenshot-based evidence for analysis.
+                </p>
+
+                <div class="intro-badges">
+
+                    <span>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        AI-Powered Analysis
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-lock"></i>
+                        Local OCR Processing
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- OCR INFORMATION NOTICE -->
+
+        <section class="notice-card info-notice">
+
+            <div class="notice-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div class="notice-content">
+
+                <h3>How screenshot analysis works</h3>
+
+                <p>
+                    Upload a screenshot or paste its text manually.
+                    ScamShield uses browser-based OCR to extract readable
+                    text from the image. You can review and edit the
+                    extracted text before submitting it for fraud analysis.
+                </p>
+
+                <p>
+                    OCR may misread text, numbers, URLs or payment details.
+                    Always review the extracted text before analysis.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- SECURITY WARNING -->
+
+        <section class="notice-card warning-notice">
+
+            <div class="notice-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="notice-content">
+
+                <h3>Protect your personal information</h3>
+
+                <p>
+                    Remove OTPs, UPI PINs, ATM PINs, CVV, passwords,
+                    complete card numbers, account numbers and other
+                    sensitive financial information before submitting.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ANALYSIS FORM LAYOUT -->
+
+        <section class="analysis-layout">
+
+            <div class="analysis-main-card">
+
+                <div class="card-heading">
+
+                    <div class="heading-icon">
+                        <i class="fa-solid fa-file-image"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            SCREENSHOT SCANNER
+                        </span>
+
+                        <h2>Analyze Screenshot Evidence</h2>
+
+                        <p>
+                            Upload an image or enter the extracted text manually.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="screenshotAnalysisForm" novalidate>
+
+                    <!-- SCREENSHOT SOURCE -->
+
+                    <div class="form-group">
+
+                        <label for="screenshotSource">
+                            Screenshot Source
+                            <span class="optional-label">Optional</span>
+                        </label>
+
+                        <select id="screenshotSource" name="screenshotSource">
+
+                            <option value="">Select source</option>
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="sms">SMS</option>
+                            <option value="banking_app">Banking App</option>
+                            <option value="payment_app">Payment App</option>
+                            <option value="social_media">Social Media</option>
+                            <option value="website">Website</option>
+                            <option value="email">Email Screenshot</option>
+                            <option value="other">Other</option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Select where the screenshot or displayed message originated.
+                        </small>
+
+                    </div>
+
+
+                    <!-- FRAUD CATEGORY -->
+
+                    <div class="form-group">
+
+                        <label for="screenshotFraudCategory">
+                            Suspected Fraud Category
+                            <span class="optional-label">Optional</span>
+                        </label>
+
+                        <select
+                            id="screenshotFraudCategory"
+                            name="screenshotFraudCategory"
+                        >
+
+                            <option value="">Let AI identify the category</option>
+
+                            <option value="upi_banking_fraud">UPI / Banking Fraud</option>
+                            <option value="card_fraud">Credit / Debit Card Fraud</option>
+                            <option value="investment_scam">Investment Scam</option>
+                            <option value="digital_arrest">Digital Arrest Scam</option>
+                            <option value="ecommerce_scam">E-commerce Fraud</option>
+                            <option value="job_loan_scam">Job / Loan Scam</option>
+                            <option value="social_media_scam">Social Media Scam</option>
+                            <option value="url_phishing">URL Phishing</option>
+                            <option value="fraud_message">Fraudulent Message</option>
+                            <option value="sextortion_blackmail">Sextortion / Blackmail</option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Your selection is only a suggestion. Guardian determines
+                            the final classification.
+                        </small>
+
+                    </div>
+
+
+                    <!-- IMAGE UPLOAD -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Upload Screenshot
+                            <span class="optional-label">Optional</span>
+                        </label>
+
+                        <div
+                            class="screenshot-upload-area"
+                            id="screenshotUploadArea"
+                            role="button"
+                            tabindex="0"
+                            aria-label="Choose a screenshot image or drag and drop one here"
+                            aria-describedby="screenshotUploadHelp"
+                        >
+
+                            <input
+                                type="file"
+                                id="screenshotFileInput"
+                                name="screenshotFile"
+                                accept="image/jpeg,image/png,image/webp"
+                                hidden
+                            >
+
+                            <div class="upload-placeholder" id="screenshotUploadPlaceholder">
+
+                                <div class="upload-icon">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+
+                                <h3>Drag and drop your screenshot here</h3>
+
+                                <p>or click to browse your device</p>
+
+                                <span class="upload-button">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                    Choose Screenshot
+                                </span>
+
+                                <small id="screenshotUploadHelp">
+                                    Supported formats: JPG, JPEG, PNG, WEBP · Maximum size: 8 MB
+                                </small>
+
+                            </div>
+
+
+                            <!-- IMAGE PREVIEW -->
+
+                            <div
+                                class="screenshot-preview"
+                                id="screenshotPreview"
+                                hidden
+                            >
+
+                                <img
+                                    id="screenshotPreviewImage"
+                                    src=""
+                                    alt="Selected screenshot preview"
+                                >
+
+                                <div class="screenshot-file-details">
+
+                                    <span id="screenshotFileName">
+                                        Screenshot
+                                    </span>
+
+                                    <span id="screenshotFileSize"></span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- IMAGE ACTIONS -->
+
+                        <div
+                            class="screenshot-upload-actions"
+                            id="screenshotUploadActions"
+                            hidden
+                        >
+
+                            <button
+                                type="button"
+                                class="secondary-button"
+                                id="replaceScreenshotButton"
+                            >
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                Replace Image
+                            </button>
+
+                            <button
+                                type="button"
+                                class="secondary-button"
+                                id="removeScreenshotButton"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                                Remove Image
+                            </button>
+
+                        </div>
+
+
+                        <!-- OCR PROGRESS -->
+
+                        <div
+                            class="ocr-progress-card"
+                            id="screenshotOCRProgress"
+                            hidden
+                            aria-live="polite"
+                        >
+
+                            <div class="ocr-progress-heading">
+
+                                <span>
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    Extracting text from screenshot
+                                </span>
+
+                                <strong id="screenshotOCRPercentage">0%</strong>
+
+                            </div>
+
+                            <div class="ocr-progress-track">
+
+                                <div
+                                    class="ocr-progress-bar"
+                                    id="screenshotOCRProgressBar"
+                                ></div>
+
+                            </div>
+
+                            <p id="screenshotOCRMessage">
+                                Preparing image for text extraction...
+                            </p>
+
+                        </div>
+
+
+                        <!-- OCR STATUS -->
+
+                        <div
+                            class="ocr-status-message"
+                            id="screenshotOCRStatus"
+                            role="status"
+                            aria-live="polite"
+                            hidden
+                        ></div>
+
+                        <small class="field-help">
+                            The selected image is processed in your browser for OCR.
+                            The image itself is not sent to the analysis API.
+                        </small>
+
+                    </div>
+
+
+                    <!-- EXTRACTED TEXT -->
+
+                    <div class="form-group">
+
+                        <div class="label-row">
+
+                            <label for="screenshotEvidence">
+                                Extracted / Pasted Screenshot Text
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <span class="character-count" id="screenshotCharacterCount">
+                                0 / 20000
+                            </span>
+
+                        </div>
+
+                        <textarea
+                            id="screenshotEvidence"
+                            name="screenshotEvidence"
+                            rows="11"
+                            maxlength="20000"
+                            placeholder="Upload a screenshot to extract text automatically, or paste the text here manually...
+
+Example:
+
+Your bank account will be suspended today.
+Complete your KYC immediately.
+Click the link below to verify your account.
+Failure to verify may result in account blocking."
+                            required
+                        ></textarea>
+
+                        <small class="field-help">
+                            Review OCR output carefully. Include visible messages,
+                            warnings, payment instructions or suspicious URLs.
+                            Do not include private credentials.
+                        </small>
+
+                    </div>
+
+
+                    <!-- CONSENT -->
+
+                    <div class="consent-box">
+
+                        <input
+                            type="checkbox"
+                            id="screenshotAnalysisConsent"
+                            name="screenshotAnalysisConsent"
+                            required
+                        >
+
+                        <label for="screenshotAnalysisConsent">
+                            I confirm that I have removed sensitive information
+                            such as OTPs, PINs, passwords, CVV and complete
+                            banking details before submitting.
+                        </label>
+
+                    </div>
+
+
+                    <!-- VALIDATION ERROR -->
+
+                    <div
+                        class="input-error"
+                        id="screenshotInputError"
+                        role="alert"
+                        aria-live="polite"
+                        hidden
+                    >
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        <span></span>
+
+                    </div>
+
+
+                    <!-- FORM ACTIONS -->
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            id="clearScreenshotForm"
+                        >
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Clear Form
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                            id="analyzeScreenshotButton"
+                        >
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Analyze Screenshot</span>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- SIDEBAR -->
+
+            <aside class="analysis-sidebar">
+
+                <div class="sidebar-card">
+
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+
+                    <h3>What can be detected?</h3>
+
+                    <ul class="feature-list">
+
+                        <li>
+                            <i class="fa-solid fa-check"></i>
+                            Fake bank and KYC warnings
+                        </li>
+
+                        <li>
+                            <i class="fa-solid fa-check"></i>
+                            Suspicious payment requests
+                        </li>
+
+                        <li>
+                            <i class="fa-solid fa-check"></i>
+                            Phishing links
+                        </li>
+
+                        <li>
+                            <i class="fa-solid fa-check"></i>
+                            Fake investment messages
+                        </li>
+
+                        <li>
+                            <i class="fa-solid fa-check"></i>
+                            Digital arrest threats
+                        </li>
+
+                        <li>
+                            <i class="fa-solid fa-check"></i>
+                            Fraudulent offers and alerts
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="sidebar-card tips-card">
+
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+
+                    <h3>Safety Tips</h3>
+
+                    <ul class="feature-list">
+
+                        <li>Never click suspicious payment links.</li>
+                        <li>Verify banking alerts through official apps.</li>
+                        <li>Do not share OTPs or PINs.</li>
+                        <li>Never transfer money under pressure.</li>
+                        <li>Preserve original screenshots as evidence.</li>
+
+                    </ul>
+
+                </div>
+
+
+                <div class="emergency-card">
+
+                    <div class="emergency-icon">
+                        <i class="fa-solid fa-phone-volume"></i>
+                    </div>
+
+                    <h3>Already Lost Money?</h3>
+
+                    <p>
+                        Report suspected financial cyber fraud immediately.
+                    </p>
+
+                    <a href="tel:1930" class="emergency-call">
+                        <i class="fa-solid fa-phone"></i>
+                        Call 1930
+                    </a>
+
+                    <a
+                        href="https://cybercrime.gov.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="emergency-link"
+                    >
+                        Report on Cyber Crime Portal
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+
+        <!-- ANALYSIS STATUS -->
+
+        <section
+            class="analysis-status-card"
+            id="screenshotAnalysisStatus"
+            aria-live="polite"
+            hidden
+        >
+
+            <div class="loading-icon">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+            </div>
+
+            <div>
+
+                <h3 id="screenshotAnalysisStatusTitle">
+                    Analyzing Screenshot
+                </h3>
+
+                <p id="screenshotAnalysisStatusMessage">
+                    ScamShield AI is examining the submitted evidence.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ANALYSIS RESULTS -->
+
+        <section
+            class="results-section"
+            id="screenshotResults"
+            hidden
+        >
+
+            <div class="results-heading">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        ANALYSIS REPORT
+                    </span>
+
+                    <h2>Screenshot Security Results</h2>
+
+                    <p>
+                        Review the AI-generated assessment and safety recommendations.
+                    </p>
+
+                </div>
+
+                <div
+                    class="result-status"
+                    id="screenshotResultStatus"
+                >
+                    <i class="fa-solid fa-circle-check"></i>
+                    Analysis Complete
+                </div>
+
+            </div>
+
+
+            <!-- RISK OVERVIEW -->
+
+            <div class="risk-overview-card" id="screenshotRiskOverview">
+
+                <div class="risk-score-area">
+
+                    <div
+                        class="risk-score-circle"
+                        id="screenshotRiskScoreCircle"
+                    >
+
+                        <div class="risk-score-inner">
+
+                            <strong id="screenshotRiskScore">0</strong>
+
+                            <span>Risk Score</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="risk-details">
+
+                    <span class="section-eyebrow">
+                        SECURITY ASSESSMENT
+                    </span>
+
+                    <h3
+                        id="screenshotRiskLevel"
+                        class="risk-level"
+                    >
+                        PENDING
+                    </h3>
+
+                    <p id="screenshotRiskDescription">
+                        Analysis result will appear here.
+                    </p>
+
+                    <div class="detected-category">
+
+                        <span>DETECTED CATEGORY</span>
+
+                        <strong id="screenshotFraudCategoryResult">
+                            Not classified
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RISK EXPLANATION -->
+
+            <div class="result-card explanation-card">
+
+                <div class="result-card-heading">
+
+                    <span class="result-icon">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </span>
+
+                    <div>
+
+                        <h3>Why was this risk detected?</h3>
+
+                        <p>Explanation from the primary detection engine.</p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-content"
+                    id="screenshotRiskExplanation"
+                >
+                    No explanation available.
+                </div>
+
+            </div>
+
+
+            <!-- GUARDIAN AGENT -->
+
+            <div class="result-card agent-card">
+
+                <div class="result-card-heading">
+
+                    <span class="result-icon guardian-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </span>
+
+                    <div>
+
+                        <h3>Guardian Agent</h3>
+
+                        <p>Primary fraud detection and risk assessment.</p>
+
+                    </div>
+
+                    <span class="agent-status" id="screenshotGuardianStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="result-content"
+                    id="screenshotGuardianResult"
+                >
+                    Guardian result will appear here.
+                </div>
+
+            </div>
+
+
+            <!-- INTELLIGENCE AGENT -->
+
+            <div class="result-card agent-card">
+
+                <div class="result-card-heading">
+
+                    <span class="result-icon intelligence-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </span>
+
+                    <div>
+
+                        <h3>Intelligence Agent</h3>
+
+                        <p>Extracted URLs, contact details and suspicious indicators.</p>
+
+                    </div>
+
+                    <span class="agent-status" id="screenshotIntelligenceStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="result-content"
+                    id="screenshotIntelligenceResult"
+                >
+                    Intelligence result will appear here.
+                </div>
+
+                <div
+                    class="indicators-container"
+                    id="screenshotIndicators"
+                ></div>
+
+            </div>
+
+
+            <!-- VICTIM SAFETY AGENT -->
+
+            <div class="result-card agent-card">
+
+                <div class="result-card-heading">
+
+                    <span class="result-icon safety-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </span>
+
+                    <div>
+
+                        <h3>Victim Safety Agent</h3>
+
+                        <p>Practical safety guidance based on submitted evidence.</p>
+
+                    </div>
+
+                    <span class="agent-status" id="screenshotVictimSafetyStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="result-content"
+                    id="screenshotVictimSafetyResult"
+                >
+                    Victim Safety recommendations will appear here.
+                </div>
+
+            </div>
+
+
+            <!-- GEMINI ADVISORY -->
+
+            <div class="result-card agent-card gemini-card">
+
+                <div class="result-card-heading">
+
+                    <span class="result-icon gemini-icon">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </span>
+
+                    <div>
+
+                        <h3>Gemini AI Advisory</h3>
+
+                        <p>Additional contextual interpretation.</p>
+
+                    </div>
+
+                    <span class="agent-status" id="screenshotGeminiStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="result-content"
+                    id="screenshotGeminiResult"
+                >
+                    Gemini advisory will appear here.
+                </div>
+
+                <div class="advisory-disclaimer">
+                    Gemini provides advisory information only. It cannot override
+                    Guardian's authoritative classification or risk score.
+                </div>
+
+            </div>
+
+
+            <!-- DECOY AGENT -->
+
+            <div class="result-card agent-card">
+
+                <div class="result-card-heading">
+
+                    <span class="result-icon decoy-icon">
+                        <i class="fa-solid fa-user-secret"></i>
+                    </span>
+
+                    <div>
+
+                        <h3>Decoy Agent</h3>
+
+                        <p>Controlled scam interaction simulation.</p>
+
+                    </div>
+
+                    <span class="agent-status" id="screenshotDecoyStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="result-content"
+                    id="screenshotDecoyResult"
+                >
+                    Decoy simulation is not started automatically.
+                </div>
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            <div class="feedback-card">
+
+                <div class="feedback-content">
+
+                    <h3>Was this analysis helpful?</h3>
+
+                    <p>Your feedback can help improve ScamShield AI.</p>
+
+                </div>
+
+                <div class="feedback-actions">
+
+                    <button
+                        type="button"
+                        id="screenshotFeedbackHelpful"
+                        class="feedback-button"
+                    >
+                        <i class="fa-solid fa-thumbs-up"></i>
+                        Helpful
+                    </button>
+
+                    <button
+                        type="button"
+                        id="screenshotFeedbackReview"
+                        class="feedback-button"
+                    >
+                        <i class="fa-solid fa-flag"></i>
+                        Needs Review
+                    </button>
+
+                </div>
+
+                <p
+                    class="feedback-status"
+                    id="screenshotFeedbackStatus"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="result-disclaimer">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                    AI-generated assessments are advisory and may contain errors.
+                    A low risk score does not guarantee that evidence is safe.
+                    Always verify suspicious information through official channels.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="app-footer">
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                <strong>ScamShield AI</strong>
+
+                <span>
+                    Intelligent Protection Against Digital Financial Fraud.
+                </span>
+
+            </div>
+
+            <div class="footer-meta">
+
+                <span>Screenshot Analysis Module v3.1.0</span>
+
+                <span>Built for safer digital experiences.</span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- APPLICATION SCRIPTS -->
+
+    <script src="../js/services/api.js"></script>
+
+    <script src="../js/main.js"></script>
+
+    <!-- Browser-based OCR library -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <!-- Screenshot analysis module -->
+    <script src="../js/analyze-screenshot.js"></script>
+
+</body>
+</html>

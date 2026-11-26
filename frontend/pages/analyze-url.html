@@ -1,0 +1,948 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+        content="Analyze suspicious URLs and detect phishing, fake websites and online fraud using ScamShield AI.">
+
+    <meta name="theme-color" content="#071426">
+
+    <title>URL Analysis | ScamShield AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/analyze-url.css">
+</head>
+
+<body>
+
+    <!-- =================================================
+         PAGE NAVIGATION
+    ================================================== -->
+
+    <header class="main-header">
+
+        <div class="header-container">
+
+            <a href="dashboard.html" class="brand">
+
+                <span class="brand-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </span>
+
+                <span class="brand-name">
+                    ScamShield <span>AI</span>
+                </span>
+
+            </a>
+
+            <button
+                class="mobile-menu-toggle"
+                id="mobileMenuToggle"
+                type="button"
+                aria-label="Toggle navigation"
+                aria-expanded="false"
+                aria-controls="primaryNavigation">
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+            <nav class="primary-navigation" id="primaryNavigation">
+
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-house"></i>
+                    Dashboard
+                </a>
+
+                <a href="detection.html">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Detection
+                </a>
+
+                <a href="agents.html">
+                    <i class="fa-solid fa-robot"></i>
+                    AI Agents
+                </a>
+
+                <a href="intelligence.html">
+                    <i class="fa-solid fa-brain"></i>
+                    Intelligence
+                </a>
+
+                <a href="analytics.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Analytics
+                </a>
+
+                <a href="reports.html">
+                    <i class="fa-solid fa-file-lines"></i>
+                    Reports
+                </a>
+
+                <button
+                    type="button"
+                    class="logout-button"
+                    id="logoutButton">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main class="page-container">
+
+        <!-- Breadcrumb -->
+
+        <div class="breadcrumb">
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+            <a href="detection.html">Detection</a>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+            <span>URL Analysis</span>
+
+        </div>
+
+
+        <!-- Page Heading -->
+
+        <section class="page-heading">
+
+            <div class="heading-icon">
+                <i class="fa-solid fa-link"></i>
+            </div>
+
+            <div class="heading-content">
+
+                <span class="section-label">
+                    SCAMSHIELD URL PROTECTION
+                </span>
+
+                <h1>Suspicious URL Analysis</h1>
+
+                <p>
+                    Check suspicious website links before opening them.
+                    ScamShield AI analyzes URL patterns and identifies
+                    potential phishing and fraud indicators.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Security Notice -->
+
+        <section class="security-notice">
+
+            <div class="notice-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+
+                <h3>Stay safe while checking links</h3>
+
+                <p>
+                    Never enter your password, OTP, banking details
+                    or payment information on an unfamiliar website.
+                    You can analyze a suspicious URL without opening it.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             URL ANALYSIS FORM
+        ================================================== -->
+
+        <section class="analysis-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        URL SCANNER
+                    </span>
+
+                    <h2>Analyze a Website Link</h2>
+
+                    <p>
+                        Paste the complete URL you want ScamShield AI
+                        to examine.
+                    </p>
+
+                </div>
+
+                <div class="card-heading-icon">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+
+            </div>
+
+
+            <form id="urlAnalysisForm" novalidate>
+
+                <!-- URL Input -->
+
+                <div class="form-group">
+
+                    <label for="urlInput">
+                        Website URL
+                        <span class="required">*</span>
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            <i class="fa-solid fa-link"></i>
+                        </span>
+
+                        <input
+                            type="url"
+                            id="urlInput"
+                            name="url"
+                            placeholder="https://example.com"
+                            autocomplete="url"
+                            maxlength="2048"
+                            aria-describedby="urlInputHelp urlInputError"
+                            required>
+
+                    </div>
+
+                    <div class="input-meta">
+
+                        <small id="urlInputHelp">
+                            Enter the complete website address,
+                            including https:// or http://.
+                        </small>
+
+                        <small id="urlCharacterCount">
+                            0 / 2048
+                        </small>
+
+                    </div>
+
+                    <p
+                        class="input-error"
+                        id="urlInputError"
+                        role="alert"
+                        aria-live="polite">
+                    </p>
+
+                </div>
+
+
+                <!-- Optional Category -->
+
+                <div class="form-group">
+
+                    <label for="urlFraudCategory">
+                        Suspected Fraud Category
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <div class="select-wrapper">
+
+                        <select
+                            id="urlFraudCategory"
+                            name="category">
+
+                            <option value="">
+                                Let ScamShield AI identify the category
+                            </option>
+
+                            <option value="url_phishing">
+                                URL Phishing
+                            </option>
+
+                            <option value="upi_banking_fraud">
+                                UPI / Banking Fraud
+                            </option>
+
+                            <option value="card_fraud">
+                                Credit / Debit Card Fraud
+                            </option>
+
+                            <option value="investment_scam">
+                                Investment Scam
+                            </option>
+
+                            <option value="ecommerce_scam">
+                                E-commerce Scam
+                            </option>
+
+                            <option value="job_loan_scam">
+                                Job / Loan Scam
+                            </option>
+
+                            <option value="social_media_scam">
+                                Social Media Scam
+                            </option>
+
+                            <option value="fraud_message">
+                                Fraud Message
+                            </option>
+
+                        </select>
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </div>
+
+                    <small class="field-description">
+                        This is only your suspicion. The final classification
+                        is determined by the detection engine.
+                    </small>
+
+                </div>
+
+
+                <!-- Consent -->
+
+                <div class="consent-group">
+
+                    <label class="consent-label">
+
+                        <input
+                            type="checkbox"
+                            id="urlAnalysisConsent"
+                            name="consent"
+                            required>
+
+                        <span class="custom-checkbox"></span>
+
+                        <span>
+                            I confirm that I have permission to submit
+                            this URL for security analysis. I understand
+                            that results are automated assessments and
+                            may not guarantee website safety.
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Form Actions -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="clearUrlForm">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Clear
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="analyzeUrlButton">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Analyze URL
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             ANALYSIS STATUS
+        ================================================== -->
+
+        <section
+            class="analysis-status"
+            id="urlAnalysisStatus"
+            role="status"
+            aria-live="polite"
+            hidden>
+
+            <div class="status-icon">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+
+                <h3 id="urlAnalysisStatusTitle">
+                    Analysis Status
+                </h3>
+
+                <p id="urlAnalysisStatusMessage">
+                    Waiting for analysis.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ANALYSIS RESULTS
+        ================================================== -->
+
+        <section
+            class="results-section"
+            id="urlResults"
+            aria-labelledby="urlResultsHeading"
+            hidden>
+
+            <div class="results-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        SECURITY REPORT
+                    </span>
+
+                    <h2 id="urlResultsHeading">
+                        URL Analysis Results
+                    </h2>
+
+                    <p>
+                        Review the risk assessment and supporting
+                        agent findings below.
+                    </p>
+
+                </div>
+
+                <span class="result-status" id="urlResultStatus">
+                    Completed
+                </span>
+
+            </div>
+
+
+            <!-- Risk Overview -->
+
+            <div class="risk-overview" id="urlRiskOverview">
+
+                <div class="risk-score-container">
+
+                    <div
+                        class="risk-score-circle"
+                        id="urlRiskScoreCircle">
+
+                        <span
+                            class="risk-score"
+                            id="urlRiskScore">
+                            0
+                        </span>
+
+                        <span class="risk-score-label">
+                            / 100
+                        </span>
+
+                    </div>
+
+                    <p>Risk Score</p>
+
+                </div>
+
+
+                <div class="risk-details">
+
+                    <span class="result-label">
+                        RISK LEVEL
+                    </span>
+
+                    <h3 id="urlRiskLevel">
+                        Pending
+                    </h3>
+
+                    <span class="result-label">
+                        DETECTED CATEGORY
+                    </span>
+
+                    <h4 id="urlFraudCategoryResult">
+                        Not classified
+                    </h4>
+
+                    <p id="urlRiskDescription">
+                        Analysis summary will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Guardian Agent -->
+
+            <article class="agent-result-card guardian-card">
+
+                <div class="agent-card-heading">
+
+                    <div class="agent-icon guardian-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Guardian Agent</h3>
+
+                        <p>Primary Fraud Detection</p>
+
+                    </div>
+
+                    <span
+                        class="agent-status"
+                        id="urlGuardianStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="agent-result-content"
+                    id="urlGuardianResult">
+
+                    Guardian analysis will appear here.
+
+                </div>
+
+            </article>
+
+
+            <!-- Intelligence Agent -->
+
+            <article class="agent-result-card">
+
+                <div class="agent-card-heading">
+
+                    <div class="agent-icon intelligence-icon">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Intelligence Agent</h3>
+
+                        <p>Indicator Extraction</p>
+
+                    </div>
+
+                    <span
+                        class="agent-status"
+                        id="urlIntelligenceStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="agent-result-content"
+                    id="urlIntelligenceResult">
+
+                    Intelligence findings will appear here.
+
+                </div>
+
+                <div class="indicator-section">
+
+                    <h4>Extracted Indicators</h4>
+
+                    <div
+                        class="indicator-list"
+                        id="urlIndicators">
+
+                        <p>No indicators available yet.</p>
+
+                    </div>
+
+                    <small class="verification-notice">
+                        Extracted indicators are unverified unless
+                        explicitly confirmed by a trusted source.
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <!-- Victim Safety Agent -->
+
+            <article class="agent-result-card">
+
+                <div class="agent-card-heading">
+
+                    <div class="agent-icon safety-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Victim Safety Agent</h3>
+
+                        <p>Safety Guidance</p>
+
+                    </div>
+
+                    <span
+                        class="agent-status"
+                        id="urlVictimSafetyStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="agent-result-content"
+                    id="urlVictimSafetyResult">
+
+                    Safety recommendations will appear here.
+
+                </div>
+
+            </article>
+
+
+            <!-- Gemini Advisory -->
+
+            <article class="agent-result-card">
+
+                <div class="agent-card-heading">
+
+                    <div class="agent-icon gemini-icon">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Gemini AI Advisory</h3>
+
+                        <p>Additional Contextual Analysis</p>
+
+                    </div>
+
+                    <span
+                        class="agent-status"
+                        id="urlGeminiStatus">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div
+                    class="agent-result-content"
+                    id="urlGeminiResult">
+
+                    Gemini advisory will appear here.
+
+                </div>
+
+                <div class="advisory-notice">
+                    Gemini provides supplementary advice only.
+                    It cannot override Guardian's risk score
+                    or classification.
+                </div>
+
+            </article>
+
+
+            <!-- Decoy Agent -->
+
+            <article class="agent-result-card">
+
+                <div class="agent-card-heading">
+
+                    <div class="agent-icon decoy-icon">
+                        <i class="fa-solid fa-mask"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Decoy Agent</h3>
+
+                        <p>Controlled Threat Simulation</p>
+
+                    </div>
+
+                    <span
+                        class="agent-status"
+                        id="urlDecoyStatus">
+                        Not started
+                    </span>
+
+                </div>
+
+                <div
+                    class="agent-result-content"
+                    id="urlDecoyResult">
+
+                    Decoy simulation is not automatically started
+                    during normal URL analysis.
+
+                </div>
+
+            </article>
+
+
+            <!-- =================================================
+                 FEEDBACK
+            ================================================== -->
+
+            <section class="feedback-section">
+
+                <h3>Was this analysis helpful?</h3>
+
+                <p>
+                    Your feedback can help improve ScamShield AI.
+                </p>
+
+                <div class="feedback-actions">
+
+                    <button
+                        type="button"
+                        class="feedback-button"
+                        id="urlFeedbackHelpful">
+
+                        <i class="fa-solid fa-thumbs-up"></i>
+                        Helpful
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="feedback-button"
+                        id="urlFeedbackReview">
+
+                        <i class="fa-solid fa-flag"></i>
+                        Needs Review
+
+                    </button>
+
+                </div>
+
+                <p
+                    id="urlFeedbackStatus"
+                    class="feedback-status"
+                    role="status"
+                    aria-live="polite">
+                </p>
+
+            </section>
+
+        </section>
+
+
+        <!-- =================================================
+             SAFETY GUIDANCE
+        ================================================== -->
+
+        <section class="safety-guidance">
+
+            <div class="safety-guidance-heading">
+
+                <div class="safety-icon-large">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+
+                <div>
+
+                    <h2>Important Online Safety Tips</h2>
+
+                    <p>
+                        Follow these precautions when visiting unfamiliar
+                        websites.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <ul>
+
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    Never share OTPs, passwords or PINs.
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    Check the domain carefully for spelling changes.
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    Avoid downloading unknown files.
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    Do not make payments on suspicious websites.
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    HTTPS alone does not prove a website is legitimate.
+                </li>
+
+            </ul>
+
+        </section>
+
+
+        <!-- =================================================
+             EMERGENCY SUPPORT
+        ================================================== -->
+
+        <section class="emergency-card">
+
+            <div class="emergency-icon">
+                <i class="fa-solid fa-phone-volume"></i>
+            </div>
+
+            <div class="emergency-content">
+
+                <h2>Reported a financial cyber fraud?</h2>
+
+                <p>
+                    If you have lost money through cyber fraud in India,
+                    contact the cybercrime helpline immediately.
+                </p>
+
+                <div class="emergency-actions">
+
+                    <a href="tel:1930" class="emergency-button">
+
+                        <i class="fa-solid fa-phone"></i>
+                        Call 1930
+
+                    </a>
+
+                    <a
+                        href="https://cybercrime.gov.in/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="cybercrime-button">
+
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        Cyber Crime Portal
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LIMITATIONS
+        ================================================== -->
+
+        <section class="limitations-card">
+
+            <h3>
+                <i class="fa-solid fa-circle-exclamation"></i>
+                Important Limitations
+            </h3>
+
+            <ul>
+
+                <li>
+                    URL analysis does not guarantee that a website
+                    is safe or malicious.
+                </li>
+
+                <li>
+                    A suspicious URL is assessed using available
+                    detection signals and rules.
+                </li>
+
+                <li>
+                    Unless a live reputation service is integrated,
+                    external domain reputation is not independently verified.
+                </li>
+
+                <li>
+                    ScamShield AI does not automatically open or interact
+                    with the submitted website.
+                </li>
+
+                <li>
+                    Risk scores are automated assessments, not
+                    calibrated probabilities.
+                </li>
+
+            </ul>
+
+        </section>
+
+    </main>
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
+
+    <footer class="main-footer">
+
+        <div class="footer-container">
+
+            <p>
+                © 2026 ScamShield AI. All rights reserved.
+            </p>
+
+            <p>
+                AI-powered fraud awareness and protection.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =================================================
+         SCRIPTS
+    ================================================== -->
+
+    <script src="../js/services/api.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/analyze-url.js"></script>
+
+</body>
+
+</html>

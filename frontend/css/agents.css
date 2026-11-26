@@ -47,7 +47,7 @@
     --agents-primary: #38bdf8;
     --agents-primary-dark: #0284c7;
 
-    --agents-green: #34d399;
+    --agents-green: #60a5fa;
     --agents-blue: #60a5fa;
     --agents-purple: #a78bfa;
     --agents-orange: #fb923c;
@@ -2067,6 +2067,65 @@ body.agents-page {
     }
 
 }
+/* =========================================================
+   SCAMSHIELD AI — BLUE THEME OVERRIDES
+   Version: 2.2.0
+   Purpose: Replace green accents with blue
+========================================================= */
+
+.agents-page {
+    --agents-green: #60a5fa;
+}
+
+/* Section indicator */
+.agents-page .section-tag > span {
+    background: var(--agents-blue);
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.6);
+}
+
+/* Overview cards */
+.agents-page .overview-green {
+    color: var(--agents-blue);
+    background: rgba(96, 165, 250, 0.12);
+}
+
+/* E-commerce module */
+.agents-page .module-card-icon.green {
+    color: #93c5fd;
+    background: rgba(96, 165, 250, 0.13);
+}
+
+/* Guardian / Victim Safety agent */
+.agents-page .agent-green {
+    color: var(--agents-blue);
+    background: rgba(96, 165, 250, 0.13);
+}
+
+/* Agent responsibility indicators */
+.agents-page .agent-responsibilities li i {
+    color: var(--agents-blue);
+}
+
+/* LOW risk classification */
+.agents-page .risk-level-card.low::before {
+    background: var(--agents-blue);
+}
+
+.agents-page .risk-level-card.low .risk-level-label {
+    color: var(--agents-blue);
+}
+
+/* Consistent blue hover accents */
+.agents-page .overview-item:hover,
+.agents-page .architecture-card:hover,
+.agents-page .input-type-card:hover,
+.agents-page .module-card:hover,
+.agents-page .category-row:hover,
+.agents-page .agent-detail-card:hover,
+.agents-page .protection-card:hover {
+    border-color: rgba(96, 165, 250, 0.45);
+}
+
 
 
 /* =========================================================
