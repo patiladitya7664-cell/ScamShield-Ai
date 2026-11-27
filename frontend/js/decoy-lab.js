@@ -58,11 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       message:
         "Congratulations! You have been selected for an exclusive investment plan. Invest ₹5,000 today and receive guaranteed returns of ₹50,000 within 7 days. Limited seats available. Act immediately!",
 
-      indicators: [
-        "guaranteed-returns",
-        "urgency",
-        "payment-pressure",
-      ],
+      indicators: ["guaranteed-returns", "urgency", "payment-pressure"],
 
       explanation:
         "Fraudsters often promise unrealistic returns, create urgency, and pressure people to transfer money.",
@@ -74,11 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
       message:
         "Your Aadhaar has been linked to an illegal activity. A police case has been registered against you. Stay on video call and pay the verification fee immediately to avoid arrest.",
 
-      indicators: [
-        "urgency",
-        "suspicious-contact",
-        "payment-pressure",
-      ],
+      indicators: ["urgency", "suspicious-contact", "payment-pressure"],
 
       explanation:
         "Real law enforcement agencies do not conduct digital arrests or demand money to avoid arrest.",
@@ -90,11 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       message:
         "Your credit card will be blocked today. Complete your KYC immediately using the verification link. Share your card details and OTP to reactivate your account.",
 
-      indicators: [
-        "urgency",
-        "suspicious-contact",
-        "payment-pressure",
-      ],
+      indicators: ["urgency", "suspicious-contact", "payment-pressure"],
 
       explanation:
         "Fraudsters impersonate banks and use account-blocking threats to steal confidential banking information.",
@@ -106,11 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       message:
         "We have recorded your private video. Pay the demanded amount immediately or we will share it with your friends and family. Do not report this to anyone.",
 
-      indicators: [
-        "urgency",
-        "suspicious-contact",
-        "payment-pressure",
-      ],
+      indicators: ["urgency", "suspicious-contact", "payment-pressure"],
 
       explanation:
         "Sextortion scammers use fear, threats, and financial pressure to force victims into paying money.",
@@ -122,11 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
       message:
         "You have won an expensive smartphone in our lucky draw. Pay a small processing fee immediately to claim your prize. Offer expires in 10 minutes.",
 
-      indicators: [
-        "guaranteed-returns",
-        "urgency",
-        "payment-pressure",
-      ],
+      indicators: ["guaranteed-returns", "urgency", "payment-pressure"],
 
       explanation:
         "Fake shopping offers use unrealistic rewards and advance-fee demands to trick people.",
@@ -173,9 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getAllIndicators() {
     return Array.from(
-      simulationOptions.querySelectorAll(
-        'input[name="simulationIndicator"]',
-      ),
+      simulationOptions.querySelectorAll('input[name="simulationIndicator"]'),
     );
   }
 
@@ -199,12 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const option = input.closest(".simulation-option");
 
       if (option) {
-        option.classList.remove(
-          "selected",
-          "correct",
-          "incorrect",
-          "missed",
-        );
+        option.classList.remove("selected", "correct", "incorrect", "missed");
       }
     });
   }
@@ -298,11 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (option) {
         option.classList.toggle("selected", input.checked);
 
-        option.classList.remove(
-          "correct",
-          "incorrect",
-          "missed",
-        );
+        option.classList.remove("correct", "incorrect", "missed");
       }
 
       hideResults();
@@ -350,11 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const option = input.closest(".simulation-option");
 
       if (option) {
-        option.classList.remove(
-          "correct",
-          "incorrect",
-          "missed",
-        );
+        option.classList.remove("correct", "incorrect", "missed");
       }
 
       if (isExpected && isSelected) {
@@ -378,15 +343,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalIndicators = allInputs.length;
 
     const trueNegatives =
-      totalIndicators -
-      expectedIndicators.length -
-      incorrectCount;
+      totalIndicators - expectedIndicators.length - incorrectCount;
 
     const score =
       totalIndicators > 0
-        ? Math.round(
-            ((correctCount + trueNegatives) / totalIndicators) * 100,
-          )
+        ? Math.round(((correctCount + trueNegatives) / totalIndicators) * 100)
         : 0;
 
     // ==============================================

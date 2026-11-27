@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta
     name="description"
-    content="Choose an evidence type and use ScamShield AI's dedicated fraud analysis tools to assess suspicious messages, calls, emails, URLs, screenshots and transactions."
+    content="ScamShield AI Detection Center: analyze suspicious messages, call transcripts, emails, URLs, screenshots and transaction evidence using AI-assisted fraud detection."
   >
 
   <meta name="theme-color" content="#0b1720">
+
+  <meta name="robots" content="index, follow">
 
   <title>Detection Center | ScamShield AI</title>
 
@@ -41,7 +44,7 @@
   <script src="../js/components/sidebar.js" defer></script>
   <script src="../js/components/notifications.js" defer></script>
 
-  <!-- Detection Hub Styles -->
+  <!-- Detection Center Styles -->
   <style>
     .evidence-hub {
       padding: 35px;
@@ -73,15 +76,18 @@
     .evidence-card {
       display: flex;
       flex-direction: column;
-      min-height: 205px;
+      min-height: 215px;
       padding: 23px;
       border: 1px solid rgba(120, 160, 200, 0.18);
       border-radius: 15px;
       background: rgba(23, 42, 65, 0.72);
       color: inherit;
       text-decoration: none;
-      transition: transform 0.2s ease, border-color 0.2s ease,
-                  background 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .evidence-card:hover {
@@ -197,6 +203,65 @@
       opacity: 0.75;
     }
 
+    .category-coverage {
+      margin-top: 25px;
+      padding: 22px;
+      border: 1px solid rgba(120, 160, 200, 0.14);
+      border-radius: 14px;
+      background: rgba(23, 42, 65, 0.4);
+    }
+
+    .category-coverage h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .category-coverage > p {
+      margin: 0 0 17px;
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.75;
+    }
+
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .category-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border: 1px solid rgba(105, 170, 255, 0.2);
+      border-radius: 30px;
+      background: rgba(47, 126, 220, 0.09);
+      color: #a9ceff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .capability-note {
+      margin-top: 18px;
+      padding: 13px 15px;
+      border-left: 3px solid #69aaff;
+      border-radius: 5px;
+      background: rgba(47, 126, 220, 0.07);
+      font-size: 12px;
+      line-height: 1.65;
+      opacity: 0.85;
+    }
+
+    .risk-disclaimer {
+      line-height: 1.6;
+    }
+
+    .emergency-link:focus-visible,
+    .emergency-number:focus-visible {
+      outline: 3px solid #69aaff;
+      outline-offset: 4px;
+    }
+
     @media (max-width: 900px) {
       .evidence-card-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -214,7 +279,22 @@
       }
 
       .evidence-card {
-        min-height: 175px;
+        min-height: 180px;
+      }
+
+      .category-coverage {
+        padding: 17px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .evidence-card,
+      .evidence-card-action i {
+        transition: none;
+      }
+
+      .evidence-card:hover {
+        transform: none;
       }
     }
   </style>
@@ -233,9 +313,14 @@
 
   <!-- Navbar -->
   <header class="navbar">
+
     <div class="container nav-content">
 
-      <a href="dashboard.html" class="logo" aria-label="ScamShield AI Dashboard">
+      <a
+        href="dashboard.html"
+        class="logo"
+        aria-label="ScamShield AI Dashboard"
+      >
         <span class="logo-icon">
           <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
         </span>
@@ -249,7 +334,11 @@
 
         <a href="dashboard.html">Dashboard</a>
 
-        <a href="detection.html" class="active" aria-current="page">
+        <a
+          href="detection.html"
+          class="active"
+          aria-current="page"
+        >
           Detection
         </a>
 
@@ -261,10 +350,12 @@
       </nav>
 
       <div class="nav-actions">
+
         <a href="settings.html" class="btn btn-secondary">
           <i class="fa-solid fa-gear" aria-hidden="true"></i>
           Settings
         </a>
+
       </div>
 
       <button
@@ -279,18 +370,24 @@
       </button>
 
     </div>
+
   </header>
 
   <main id="main-content">
 
     <!-- Detection Hero -->
     <section class="detection-hero">
+
       <div class="container">
 
         <div class="detection-hero-content">
 
           <div class="section-tag">
-            <i class="fa-solid fa-magnifying-glass-chart" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-magnifying-glass-chart"
+              aria-hidden="true"
+            ></i>
+
             AI-POWERED FRAUD ANALYSIS
           </div>
 
@@ -300,18 +397,20 @@
           </h1>
 
           <p>
-            Choose the evidence you want to check.
-            Each detection tool provides a dedicated workspace
-            for submitting and analyzing suspicious information.
+            Analyze suspicious digital evidence using ScamShield AI.
+            Select an evidence type to open its dedicated analysis
+            workspace and receive an AI-assisted risk assessment.
           </p>
 
         </div>
 
       </div>
+
     </section>
 
     <!-- Detection Workspace -->
     <section class="detection-workspace section">
+
       <div class="container">
 
         <div class="detection-layout">
@@ -319,8 +418,11 @@
           <!-- Main Content -->
           <div class="detection-main">
 
-            <!-- Evidence Selection Hub -->
-            <section class="evidence-hub" aria-labelledby="evidenceTitle">
+            <!-- Universal Input Layer -->
+            <section
+              class="evidence-hub"
+              aria-labelledby="evidenceTitle"
+            >
 
               <div class="evidence-hub-heading">
 
@@ -333,9 +435,9 @@
                 </h2>
 
                 <p>
-                  Select one of the six evidence types below.
-                  You will be redirected to its dedicated analysis page
-                  where you can submit evidence and view the results.
+                  Select one of the six supported evidence types.
+                  Each option opens a dedicated workspace for
+                  submitting information and reviewing its analysis.
                 </p>
 
               </div>
@@ -348,21 +450,30 @@
                   class="evidence-card"
                   aria-label="Open message analysis"
                 >
+
                   <div class="evidence-card-icon">
-                    <i class="fa-solid fa-comment-sms" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-comment-sms"
+                      aria-hidden="true"
+                    ></i>
                   </div>
 
                   <h3>Message Analysis</h3>
 
                   <p>
-                    Check suspicious SMS, WhatsApp messages,
+                    Analyze suspicious SMS, WhatsApp messages,
                     Telegram messages and other text conversations.
                   </p>
 
                   <span class="evidence-card-action">
                     Analyze Message
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      aria-hidden="true"
+                    ></i>
                   </span>
+
                 </a>
 
                 <!-- Call -->
@@ -371,21 +482,31 @@
                   class="evidence-card"
                   aria-label="Open call transcript analysis"
                 >
+
                   <div class="evidence-card-icon">
-                    <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-phone-volume"
+                      aria-hidden="true"
+                    ></i>
                   </div>
 
                   <h3>Call Analysis</h3>
 
                   <p>
-                    Analyze suspicious call transcripts,
-                    threats, impersonation and fraudulent demands.
+                    Analyze supplied call transcripts for threats,
+                    impersonation, digital arrest tactics and
+                    fraudulent demands.
                   </p>
 
                   <span class="evidence-card-action">
                     Analyze Call
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      aria-hidden="true"
+                    ></i>
                   </span>
+
                 </a>
 
                 <!-- Email -->
@@ -394,21 +515,31 @@
                   class="evidence-card"
                   aria-label="Open email analysis"
                 >
+
                   <div class="evidence-card-icon">
-                    <i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-envelope-open-text"
+                      aria-hidden="true"
+                    ></i>
                   </div>
 
                   <h3>Email Analysis</h3>
 
                   <p>
-                    Inspect suspicious emails, fake bank alerts,
-                    phishing messages and deceptive attachments.
+                    Inspect suspicious email content, fake bank
+                    alerts, phishing attempts and deceptive
+                    messages.
                   </p>
 
                   <span class="evidence-card-action">
                     Analyze Email
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      aria-hidden="true"
+                    ></i>
                   </span>
+
                 </a>
 
                 <!-- URL -->
@@ -417,44 +548,64 @@
                   class="evidence-card"
                   aria-label="Open website URL analysis"
                 >
+
                   <div class="evidence-card-icon">
-                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-link"
+                      aria-hidden="true"
+                    ></i>
                   </div>
 
                   <h3>Website URL Analysis</h3>
 
                   <p>
-                    Submit suspicious website links and check
-                    for potential phishing indicators.
+                    Submit suspicious website links and examine
+                    potential phishing indicators using
+                    URL-based analysis.
                   </p>
 
                   <span class="evidence-card-action">
                     Analyze URL
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      aria-hidden="true"
+                    ></i>
                   </span>
+
                 </a>
 
                 <!-- Screenshot -->
                 <a
                   href="analyze-screenshot.html"
                   class="evidence-card"
-                  aria-label="Open screenshot analysis"
+                  aria-label="Open screenshot evidence analysis"
                 >
+
                   <div class="evidence-card-icon">
-                    <i class="fa-solid fa-image" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-image"
+                      aria-hidden="true"
+                    ></i>
                   </div>
 
                   <h3>Screenshot Analysis</h3>
 
                   <p>
-                    Examine suspicious screenshots, payment proofs,
-                    chat captures and other visual evidence.
+                    Analyze text extracted from suspicious screenshots,
+                    payment proofs, chat captures and other
+                    visual evidence.
                   </p>
 
                   <span class="evidence-card-action">
                     Analyze Screenshot
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      aria-hidden="true"
+                    ></i>
                   </span>
+
                 </a>
 
                 <!-- Transaction -->
@@ -463,106 +614,229 @@
                   class="evidence-card"
                   aria-label="Open transaction analysis"
                 >
+
                   <div class="evidence-card-icon">
-                    <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
+                    <i
+                      class="fa-solid fa-money-bill-transfer"
+                      aria-hidden="true"
+                    ></i>
                   </div>
 
                   <h3>Transaction Analysis</h3>
 
                   <p>
-                    Check suspicious UPI requests, payment details,
-                    banking messages and transaction-related fraud.
+                    Assess suspicious UPI requests, payment details,
+                    banking messages and transaction-related
+                    fraud indicators.
                   </p>
 
                   <span class="evidence-card-action">
                     Analyze Transaction
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      aria-hidden="true"
+                    ></i>
                   </span>
+
                 </a>
 
               </div>
 
-              <div class="hub-info">
-                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              <!-- Evidence Safety Information -->
+              <div class="hub-info" role="note">
+
+                <i
+                  class="fa-solid fa-circle-info"
+                  aria-hidden="true"
+                ></i>
 
                 <p>
                   <strong>Safety reminder:</strong>
-                  Never submit OTPs, UPI PINs, CVV, passwords
-                  or complete banking credentials. Only provide
-                  the non-sensitive information required for analysis.
+                  Never submit OTPs, UPI PINs, ATM PINs, CVVs,
+                  passwords or complete banking credentials.
+                  Remove sensitive personal information before
+                  submitting evidence.
                 </p>
+
               </div>
 
             </section>
 
-            <!-- Five Major Fraud Modules -->
-            <section class="result-section" aria-labelledby="modulesTitle">
+            <!-- Five Major Fraud Detection Modules -->
+            <section
+              class="result-section"
+              aria-labelledby="modulesTitle"
+            >
 
               <h2 id="modulesTitle">
-                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <i
+                  class="fa-solid fa-shield-halved"
+                  aria-hidden="true"
+                ></i>
+
                 Five Major Fraud Detection Modules
               </h2>
 
               <div class="module-grid">
 
+                <!-- Investment Scam -->
                 <div class="module-item">
-                  <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+
+                  <i
+                    class="fa-solid fa-chart-line"
+                    aria-hidden="true"
+                  ></i>
 
                   <div>
                     <h4>Investment Scam Detection</h4>
+
                     <p>
-                      Fake trading platforms, Ponzi schemes
-                      and unrealistic return promises.
+                      Fake trading platforms, Ponzi schemes,
+                      unrealistic returns and fraudulent
+                      investment opportunities.
                     </p>
                   </div>
+
                 </div>
 
+                <!-- Digital Arrest -->
                 <div class="module-item">
-                  <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+
+                  <i
+                    class="fa-solid fa-user-shield"
+                    aria-hidden="true"
+                  ></i>
 
                   <div>
                     <h4>Digital Arrest Protection</h4>
+
                     <p>
-                      Fake authorities, intimidation,
-                      threats and impersonation.
+                      Fake police or government officials,
+                      intimidation, threats and authority
+                      impersonation.
                     </p>
                   </div>
+
                 </div>
 
+                <!-- Credit Card Fraud -->
                 <div class="module-item">
-                  <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+
+                  <i
+                    class="fa-solid fa-credit-card"
+                    aria-hidden="true"
+                  ></i>
 
                   <div>
                     <h4>Credit Card Fraud Detection</h4>
+
                     <p>
-                      Card phishing, suspicious payment requests
-                      and credential theft attempts.
+                      Card phishing, suspicious payment requests,
+                      fraudulent transactions and credential
+                      theft attempts.
                     </p>
                   </div>
+
                 </div>
 
+                <!-- Sextortion -->
                 <div class="module-item">
-                  <i class="fa-solid fa-user-lock" aria-hidden="true"></i>
+
+                  <i
+                    class="fa-solid fa-user-lock"
+                    aria-hidden="true"
+                  ></i>
 
                   <div>
                     <h4>Sextortion Protection</h4>
+
                     <p>
-                      Blackmail, coercion and intimate-image threats.
+                      Online blackmail, coercion, extortion
+                      and intimate-image threats.
                     </p>
                   </div>
+
                 </div>
 
+                <!-- E-commerce Fraud -->
                 <div class="module-item">
-                  <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+
+                  <i
+                    class="fa-solid fa-cart-shopping"
+                    aria-hidden="true"
+                  ></i>
 
                   <div>
                     <h4>E-commerce Fraud Detection</h4>
+
                     <p>
-                      Fake shopping websites, deceptive sellers
-                      and online purchase scams.
+                      Fake shopping websites, deceptive sellers,
+                      fraudulent offers and online purchase scams.
                     </p>
                   </div>
+
                 </div>
+
+              </div>
+
+              <!-- All 12 Fraud Categories -->
+              <div
+                class="category-coverage"
+                aria-labelledby="categoryTitle"
+              >
+
+                <h3 id="categoryTitle">
+                  12 Supported Fraud Categories
+                </h3>
+
+                <p>
+                  ScamShield AI organizes suspicious evidence
+                  into the following detection categories.
+                </p>
+
+                <div class="category-list">
+
+                  <span class="category-tag">Fraud Messages</span>
+
+                  <span class="category-tag">Fraud Calls</span>
+
+                  <span class="category-tag">URL Phishing</span>
+
+                  <span class="category-tag">Email Scams</span>
+
+                  <span class="category-tag">Investment Scams</span>
+
+                  <span class="category-tag">Digital Arrest</span>
+
+                  <span class="category-tag">UPI & Banking Fraud</span>
+
+                  <span class="category-tag">Card Fraud</span>
+
+                  <span class="category-tag">E-commerce Scams</span>
+
+                  <span class="category-tag">Job & Loan Scams</span>
+
+                  <span class="category-tag">Sextortion & Blackmail</span>
+
+                  <span class="category-tag">Social Media Scams</span>
+
+                </div>
+
+              </div>
+
+              <!-- Capability Transparency -->
+              <div class="capability-note">
+
+                <strong>
+                  Analysis limitations:
+                </strong>
+
+                Call analysis currently evaluates supplied transcript
+                text. Screenshot analysis evaluates supplied extracted
+                text and does not imply automatic OCR. URL assessments
+                use available detection heuristics and should not be
+                treated as verified live website reputation checks.
 
               </div>
 
@@ -574,11 +848,22 @@
           <aside class="detection-sidebar">
 
             <!-- Supported Evidence -->
-            <div class="sidebar-card">
+            <section
+              class="sidebar-card"
+              aria-labelledby="supportedEvidenceTitle"
+            >
 
               <div class="sidebar-card-heading">
-                <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
-                <h3>Supported Evidence</h3>
+
+                <i
+                  class="fa-solid fa-file-shield"
+                  aria-hidden="true"
+                ></i>
+
+                <h3 id="supportedEvidenceTitle">
+                  Supported Evidence
+                </h3>
+
               </div>
 
               <div class="supported-item">
@@ -603,80 +888,128 @@
 
               <div class="supported-item">
                 <i class="fa-solid fa-image" aria-hidden="true"></i>
-                <span>Screenshots</span>
+                <span>Screenshot Text</span>
               </div>
 
               <div class="supported-item">
-                <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
+                <i
+                  class="fa-solid fa-money-bill-transfer"
+                  aria-hidden="true"
+                ></i>
+
                 <span>Transaction Details</span>
               </div>
 
-            </div>
+            </section>
 
             <!-- Risk Classification -->
-            <div class="sidebar-card">
+            <section
+              class="sidebar-card"
+              aria-labelledby="riskClassificationTitle"
+            >
 
               <div class="sidebar-card-heading">
-                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
-                <h3>Risk Classification</h3>
+
+                <i
+                  class="fa-solid fa-gauge-high"
+                  aria-hidden="true"
+                ></i>
+
+                <h3 id="riskClassificationTitle">
+                  Risk Classification
+                </h3>
+
               </div>
 
               <div class="risk-level-item">
-                <span class="risk-color low"></span>
+
+                <span class="risk-color low" aria-hidden="true"></span>
+
                 <div>
                   <h4>Low Risk</h4>
                   <p>0 – 24</p>
                 </div>
+
               </div>
 
               <div class="risk-level-item">
-                <span class="risk-color medium"></span>
+
+                <span class="risk-color medium" aria-hidden="true"></span>
+
                 <div>
                   <h4>Medium Risk</h4>
                   <p>25 – 49</p>
                 </div>
+
               </div>
 
               <div class="risk-level-item">
-                <span class="risk-color high"></span>
+
+                <span class="risk-color high" aria-hidden="true"></span>
+
                 <div>
                   <h4>High Risk</h4>
                   <p>50 – 74</p>
                 </div>
+
               </div>
 
               <div class="risk-level-item">
-                <span class="risk-color critical"></span>
+
+                <span
+                  class="risk-color critical"
+                  aria-hidden="true"
+                ></span>
+
                 <div>
                   <h4>Critical Risk</h4>
                   <p>75 – 100</p>
                 </div>
+
               </div>
 
               <p class="risk-disclaimer">
-                Risk scores indicate assessment severity,
-                not the probability that fraud occurred.
+                Risk scores indicate assessment severity.
+                They are not calibrated probabilities that
+                fraud has occurred.
               </p>
 
-            </div>
+            </section>
 
             <!-- Emergency Support -->
-            <div class="sidebar-card emergency-card">
+            <section
+              class="sidebar-card emergency-card"
+              aria-labelledby="emergencyTitle"
+            >
 
               <div class="emergency-icon">
-                <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
+
+                <i
+                  class="fa-solid fa-phone-volume"
+                  aria-hidden="true"
+                ></i>
+
               </div>
 
-              <h3>Need Immediate Help?</h3>
+              <h3 id="emergencyTitle">
+                Need Immediate Help?
+              </h3>
 
               <p>
                 If you have lost money due to cyber fraud in India,
-                contact the official cybercrime helpline immediately.
+                contact the national cybercrime helpline immediately.
               </p>
 
-              <a href="tel:1930" class="emergency-number">
+              <a
+                href="tel:1930"
+                class="emergency-number"
+                aria-label="Call cybercrime helpline 1930"
+              >
+
                 <i class="fa-solid fa-phone" aria-hidden="true"></i>
+
                 1930
+
               </a>
 
               <a
@@ -685,32 +1018,52 @@
                 rel="noopener noreferrer"
                 class="emergency-link"
               >
+
                 Report Cybercrime
-                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+
+                <i
+                  class="fa-solid fa-arrow-up-right-from-square"
+                  aria-hidden="true"
+                ></i>
+
               </a>
 
-            </div>
+            </section>
 
             <!-- Safety Reminder -->
-            <div class="sidebar-card safety-card">
+            <section
+              class="sidebar-card safety-card"
+              aria-labelledby="safetyTitle"
+            >
 
               <div class="sidebar-card-heading">
-                <i class="fa-solid fa-lock" aria-hidden="true"></i>
-                <h3>Safety Reminder</h3>
+
+                <i
+                  class="fa-solid fa-lock"
+                  aria-hidden="true"
+                ></i>
+
+                <h3 id="safetyTitle">
+                  Safety Reminder
+                </h3>
+
               </div>
 
               <p>
                 Never share your OTP, UPI PIN, ATM PIN, CVV,
-                password or full card credentials with anyone.
+                password or complete card credentials with anyone.
+                Banks and legitimate authorities do not need
+                these secrets from you.
               </p>
 
-            </div>
+            </section>
 
           </aside>
 
         </div>
 
       </div>
+
     </section>
 
   </main>
@@ -737,18 +1090,22 @@
 
   </footer>
 
-  <!-- Shared Scripts -->
+  <!-- Main Application Script -->
   <script src="../js/main.js" defer></script>
 
+  <!-- Page Initialization -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+
       const yearElement = document.getElementById("currentYear");
 
       if (yearElement) {
-        yearElement.textContent = new Date().getFullYear();
+        yearElement.textContent = String(new Date().getFullYear());
       }
+
     });
   </script>
 
 </body>
+
 </html>

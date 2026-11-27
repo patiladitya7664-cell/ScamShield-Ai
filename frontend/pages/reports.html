@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <meta name="theme-color" content="#080e1c" />
 
   <meta
@@ -38,6 +38,7 @@
 
 <body>
 
+  <!-- Accessibility -->
   <a href="#main-content" class="skip-link">
     Skip to main content
   </a>
@@ -67,7 +68,6 @@
         </span>
       </a>
 
-
       <nav
         class="nav-links"
         id="navLinks"
@@ -88,7 +88,6 @@
         </a>
       </nav>
 
-
       <div class="nav-actions">
 
         <a href="settings.html" class="btn btn-secondary">
@@ -97,7 +96,6 @@
         </a>
 
       </div>
-
 
       <button
         class="menu-toggle"
@@ -118,7 +116,6 @@
   <!-- ================= MAIN CONTENT ================= -->
 
   <main class="reports-page" id="main-content">
-
 
     <!-- ================= PAGE HEADER ================= -->
 
@@ -146,10 +143,12 @@
 
           </div>
 
-
           <div class="reports-header-actions">
 
-            <div class="reports-record-status">
+            <div
+              class="reports-record-status"
+              aria-label="Report records status"
+            >
               <span class="record-status-dot" aria-hidden="true"></span>
               Report Records
             </div>
@@ -158,6 +157,7 @@
               class="reports-refresh-btn"
               id="refreshReports"
               type="button"
+              aria-label="Refresh reports"
             >
               <i class="fa-solid fa-rotate" aria-hidden="true"></i>
               Refresh
@@ -178,7 +178,6 @@
 
       <div class="container">
 
-
         <!-- ================= API STATUS ================= -->
 
         <div
@@ -189,8 +188,8 @@
           aria-atomic="true"
         >
 
-          <div class="reports-notice-icon">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <div class="reports-notice-icon" aria-hidden="true">
+            <i class="fa-solid fa-circle-info"></i>
           </div>
 
           <div>
@@ -223,9 +222,7 @@
 
         <div class="reports-stats-grid">
 
-
           <!-- Total Reports -->
-
           <article class="report-stat-card">
 
             <div class="report-stat-top">
@@ -238,7 +235,7 @@
 
             </div>
 
-            <h3 id="totalReports">--</h3>
+            <h3 id="totalReports" aria-live="polite">--</h3>
 
             <p>All recorded analyses</p>
 
@@ -246,7 +243,6 @@
 
 
           <!-- High Risk -->
-
           <article class="report-stat-card">
 
             <div class="report-stat-top">
@@ -259,7 +255,7 @@
 
             </div>
 
-            <h3 id="highRiskReports">--</h3>
+            <h3 id="highRiskReports" aria-live="polite">--</h3>
 
             <p>High-risk assessments</p>
 
@@ -267,7 +263,6 @@
 
 
           <!-- Under Review -->
-
           <article class="report-stat-card">
 
             <div class="report-stat-top">
@@ -280,7 +275,7 @@
 
             </div>
 
-            <h3 id="reviewReports">--</h3>
+            <h3 id="reviewReports" aria-live="polite">--</h3>
 
             <p>Records requiring review</p>
 
@@ -288,7 +283,6 @@
 
 
           <!-- Completed -->
-
           <article class="report-stat-card">
 
             <div class="report-stat-top">
@@ -301,7 +295,7 @@
 
             </div>
 
-            <h3 id="completedReports">--</h3>
+            <h3 id="completedReports" aria-live="polite">--</h3>
 
             <p>Completed assessments</p>
 
@@ -327,9 +321,7 @@
 
         <div class="reports-filter-panel">
 
-
           <!-- Search -->
-
           <div class="reports-search-box">
 
             <i
@@ -340,22 +332,19 @@
             <input
               type="search"
               id="reportSearch"
-              placeholder="Search by report ID or category..."
+              placeholder="Search report ID, category, evidence type or explanation..."
               autocomplete="off"
               maxlength="120"
-              aria-label="Search reports by ID or category"
+              aria-label="Search reports by ID, category, evidence type or explanation"
             />
 
           </div>
 
 
           <!-- Filter Controls -->
-
           <div class="reports-filter-controls">
 
-
             <!-- Risk Filter -->
-
             <div class="report-filter-group">
 
               <label for="riskFilter">
@@ -365,13 +354,9 @@
               <select id="riskFilter">
 
                 <option value="all">All Risk Levels</option>
-
                 <option value="low">Low</option>
-
                 <option value="medium">Medium</option>
-
                 <option value="high">High</option>
-
                 <option value="critical">Critical</option>
 
               </select>
@@ -380,7 +365,6 @@
 
 
             <!-- Category Filter -->
-
             <div class="report-filter-group">
 
               <label for="categoryFilter">
@@ -406,7 +390,7 @@
                   </option>
 
                   <option value="sextortion_blackmail">
-                    Sextortion
+                    Sextortion / Blackmail
                   </option>
 
                   <option value="ecommerce_scam">
@@ -453,7 +437,6 @@
 
 
             <!-- Date Filter -->
-
             <div class="report-filter-group">
 
               <label for="dateFilter">
@@ -463,11 +446,8 @@
               <select id="dateFilter">
 
                 <option value="all">All Time</option>
-
                 <option value="today">Today</option>
-
                 <option value="7days">Last 7 Days</option>
-
                 <option value="30days">Last 30 Days</option>
 
               </select>
@@ -478,7 +458,6 @@
 
 
           <!-- Clear Filters -->
-
           <button
             class="reports-clear-btn"
             id="clearReportFilters"
@@ -499,7 +478,6 @@
 
         <article class="reports-table-panel">
 
-
           <div class="reports-table-header">
 
             <div>
@@ -511,7 +489,6 @@
               </p>
 
             </div>
-
 
             <button
               class="reports-export-btn"
@@ -526,9 +503,13 @@
           </div>
 
 
-          <!-- Table -->
-
-          <div class="reports-table-wrapper">
+          <!-- Accessible Scrollable Table -->
+          <div
+            class="reports-table-wrapper"
+            role="region"
+            aria-label="Scrollable investigation reports table"
+            tabindex="0"
+          >
 
             <table class="reports-table">
 
@@ -550,7 +531,6 @@
                 </tr>
 
               </thead>
-
 
               <tbody id="reportsTableBody">
 
@@ -586,7 +566,6 @@
 
 
           <!-- Pagination -->
-
           <div class="reports-pagination" id="reportsPagination">
 
             <span id="paginationInfo">
@@ -604,9 +583,7 @@
                 <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
               </button>
 
-              <span id="currentPage" aria-live="polite">
-                1
-              </span>
+              <span id="currentPage" aria-live="polite">1</span>
 
               <button
                 id="nextPage"
@@ -635,8 +612,8 @@
           <div
             class="report-modal-overlay"
             id="closeModalOverlay"
+            aria-hidden="true"
           ></div>
-
 
           <div
             class="report-modal-content"
@@ -660,7 +637,6 @@
                 </h2>
 
               </div>
-
 
               <button
                 type="button"
@@ -705,7 +681,6 @@
                 Close
               </button>
 
-
               <button
                 type="button"
                 class="report-modal-primary"
@@ -727,11 +702,8 @@
 
         <div class="reports-security-note">
 
-          <div class="security-note-icon">
-            <i
-              class="fa-solid fa-shield-halved"
-              aria-hidden="true"
-            ></i>
+          <div class="security-note-icon" aria-hidden="true">
+            <i class="fa-solid fa-shield-halved"></i>
           </div>
 
           <div>

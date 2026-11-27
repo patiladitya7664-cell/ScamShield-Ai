@@ -49,6 +49,7 @@ const caseRoutes = require("./routes/caseRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const intelligenceRoutes = require("./routes/intelligenceRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const reportsRoutes = require("./routes/reportRoutes");
 
 // Verify that this filename matches the actual file.
 const agentsRoutes = require("./routes/agentsRoutes");
@@ -217,6 +218,8 @@ app.use(`${API_PREFIX}/intelligence`, intelligenceRoutes);
 app.use(`${API_PREFIX}/notifications`, notificationRoutes);
 
 app.use(`${API_PREFIX}/agents`, agentsRoutes);
+
+app.use("/api/reports", reportsRoutes);
 
 // =====================================================
 // 13. API ROUTE NOT FOUND

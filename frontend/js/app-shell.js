@@ -19,7 +19,6 @@
 ===================================================== */
 
 (() => {
-
   /* ================================================
      INITIALIZATION GUARD
   ================================================ */
@@ -46,7 +45,7 @@
     "reports",
     "settings",
     "login",
-    "register"
+    "register",
   ]);
 
   const protectedScreens = new Set([
@@ -58,13 +57,10 @@
     "intelligence",
     "analytics",
     "reports",
-    "settings"
+    "settings",
   ]);
 
-  const authScreens = new Set([
-    "login",
-    "register"
-  ]);
+  const authScreens = new Set(["login", "register"]);
 
   /* ================================================
      SCREEN STYLESHEETS
@@ -81,7 +77,7 @@
     reports: "reports",
     settings: "setting",
     login: "auth",
-    register: "auth"
+    register: "auth",
   };
 
   /* ================================================
@@ -91,7 +87,7 @@
   const refreshButtons = {
     dashboard: "refreshDashboard",
     analytics: "refreshAnalytics",
-    reports: "refreshReports"
+    reports: "refreshReports",
   };
 
   /* ================================================
@@ -130,11 +126,7 @@
   }
 
   function getStoredUser() {
-    return (
-      currentUser ||
-      getAPI()?.getSavedUser?.() ||
-      null
-    );
+    return currentUser || getAPI()?.getSavedUser?.() || null;
   }
 
   function isAuthenticated() {
@@ -146,59 +138,39 @@
   ================================================ */
 
   function updateAuthActions(screen = currentScreen) {
-
     const signedIn = isAuthenticated();
 
-    document.querySelectorAll(
-      "[data-private-link]"
-    ).forEach((element) => {
+    document.querySelectorAll("[data-private-link]").forEach((element) => {
       element.hidden = !signedIn;
     });
 
-    document.querySelectorAll(
-      "[data-auth-link], [data-public-link]"
-    ).forEach((element) => {
-      element.hidden = signedIn;
-    });
+    document
+      .querySelectorAll("[data-auth-link], [data-public-link]")
+      .forEach((element) => {
+        element.hidden = signedIn;
+      });
 
-    document.querySelectorAll(
-      "[data-logout]"
-    ).forEach((element) => {
+    document.querySelectorAll("[data-logout]").forEach((element) => {
       element.hidden = !signedIn;
     });
 
-    document.body.classList.toggle(
-      "auth-screen",
-      authScreens.has(screen)
-    );
+    document.body.classList.toggle("auth-screen", authScreens.has(screen));
 
-    document.body.classList.toggle(
-      "guest-screen",
-      !signedIn
-    );
+    document.body.classList.toggle("guest-screen", !signedIn);
 
-    document.body.classList.toggle(
-      "authenticated",
-      signedIn
-    );
+    document.body.classList.toggle("authenticated", signedIn);
 
-    document.body.classList.toggle(
-      "is-authenticated",
-      signedIn
-    );
+    document.body.classList.toggle("is-authenticated", signedIn);
 
-    document.body.classList.toggle(
-      "is-guest",
-      !signedIn
-    );
+    document.body.classList.toggle("is-guest", !signedIn);
 
     window.dispatchEvent(
       new CustomEvent("scamshield:auth-ui-updated", {
         detail: {
           authenticated: signedIn,
-          user: getStoredUser()
-        }
-      })
+          user: getStoredUser(),
+        },
+      }),
     );
   }
 
@@ -207,16 +179,15 @@
   ================================================ */
 
   function notifyAuthenticationChange() {
-
     const authenticated = isAuthenticated();
 
     window.dispatchEvent(
       new CustomEvent("scamshield:authchange", {
         detail: {
           authenticated,
-          user: getStoredUser()
-        }
-      })
+          user: getStoredUser(),
+        },
+      }),
     );
 
     updateAuthActions();
@@ -227,7 +198,6 @@
   ================================================ */
 
   function clearAuthentication() {
-
     authVerified = false;
     currentUser = null;
 
@@ -243,7 +213,7 @@
         "scamshieldUser",
         "token",
         "authToken",
-        "accessToken"
+        "accessToken",
       ];
 
       keys.forEach((key) => {
@@ -251,9 +221,7 @@
           localStorage.removeItem(key);
           sessionStorage.removeItem(key);
         } catch (error) {
-          console.warn(
-            "ScamShield AI: Storage cleanup failed."
-          );
+          console.warn("ScamShield AI: Storage cleanup failed.");
         }
       });
     }
@@ -266,7 +234,6 @@
   ================================================ */
 
   async function verifySession() {
-
     const API = getAPI();
 
     if (!API || typeof API.getCurrentUser !== "function") {
@@ -292,15 +259,11 @@
     }
 
     verificationPromise = (async () => {
-
       try {
-
         const user = await API.getCurrentUser();
 
         if (!user || !user.id) {
-          throw new Error(
-            "Invalid user profile returned by server."
-          );
+          throw new Error("Invalid user profile returned by server.");
         }
 
         authVerified = true;
@@ -309,12 +272,10 @@
         notifyAuthenticationChange();
 
         return true;
-
       } catch (error) {
-
         console.warn(
           "ScamShield AI: Session verification failed.",
-          error.message
+          error.message,
         );
 
         authVerified = false;
@@ -329,13 +290,9 @@
         }
 
         return false;
-
       } finally {
-
         verificationPromise = null;
-
       }
-
     })();
 
     return verificationPromise;
@@ -346,19 +303,12 @@
   ================================================ */
 
   function closeMobileNavigation() {
-
     const navLinks = document.getElementById("navLinks");
     const menuToggle = document.getElementById("menuToggle");
 
-    navLinks?.classList.remove(
-      "active",
-      "open"
-    );
+    navLinks?.classList.remove("active", "open");
 
-    menuToggle?.setAttribute(
-      "aria-expanded",
-      "false"
-    );
+    menuToggle?.setAttribute("aria-expanded", "false");
 
     if (menuToggle) {
       menuToggle.innerHTML =
@@ -371,10 +321,7 @@
   ================================================ */
 
   function loadScreenStyles(screen) {
-
-    const stylesheet = document.getElementById(
-      "screenStyles"
-    );
+    const stylesheet = document.getElementById("screenStyles");
 
     if (!stylesheet) {
       return;
@@ -391,9 +338,7 @@
 
     const stylesheetPath = `css/${cssFile}.css`;
 
-    if (
-      stylesheet.getAttribute("href") !== stylesheetPath
-    ) {
+    if (stylesheet.getAttribute("href") !== stylesheetPath) {
       stylesheet.href = stylesheetPath;
     }
 
@@ -405,19 +350,15 @@
   ================================================ */
 
   function validateScreen(screen) {
-
     if (!screens.has(screen)) {
       return "home";
     }
 
-    const target = document.querySelector(
-      `[data-screen="${screen}"]`
-    );
+    const target = document.querySelector(`[data-screen="${screen}"]`);
 
     if (!target) {
-
       console.warn(
-        `ScamShield AI: Screen "${screen}" does not exist in the current document.`
+        `ScamShield AI: Screen "${screen}" does not exist in the current document.`,
       );
 
       return "home";
@@ -431,7 +372,6 @@
   ================================================ */
 
   function updateBrowserUrl(screen, replace = false) {
-
     const newHash = `#screen-${screen}`;
 
     if (location.hash === newHash) {
@@ -439,25 +379,13 @@
     }
 
     const state = {
-      screen
+      screen,
     };
 
     if (replace) {
-
-      history.replaceState(
-        state,
-        "",
-        newHash
-      );
-
+      history.replaceState(state, "", newHash);
     } else {
-
-      history.pushState(
-        state,
-        "",
-        newHash
-      );
-
+      history.pushState(state, "", newHash);
     }
   }
 
@@ -466,7 +394,6 @@
   ================================================ */
 
   function showScreen(screen, updateUrl = true) {
-
     if (navigationLocked) {
       return currentScreen;
     }
@@ -474,33 +401,22 @@
     navigationLocked = true;
 
     try {
-
       screen = validateScreen(screen);
 
       /* ==========================================
          PROTECTED ROUTES
       ========================================== */
 
-      if (
-        protectedScreens.has(screen) &&
-        !isAuthenticated()
-      ) {
-
+      if (protectedScreens.has(screen) && !isAuthenticated()) {
         screen = "login";
-
       }
 
       /* ==========================================
          AUTHENTICATED USERS
       ========================================== */
 
-      if (
-        authScreens.has(screen) &&
-        isAuthenticated()
-      ) {
-
+      if (authScreens.has(screen) && isAuthenticated()) {
         screen = "dashboard";
-
       }
 
       /* ==========================================
@@ -509,45 +425,28 @@
 
       screen = validateScreen(screen);
 
-      const targetScreen = document.querySelector(
-        `[data-screen="${screen}"]`
-      );
+      const targetScreen = document.querySelector(`[data-screen="${screen}"]`);
 
       if (!targetScreen) {
-
-        console.error(
-          "ScamShield AI: Target screen is unavailable."
-        );
+        console.error("ScamShield AI: Target screen is unavailable.");
 
         return currentScreen;
-
       }
 
       /* ==========================================
          UPDATE ACTIVE SCREENS
       ========================================== */
 
-      document.querySelectorAll(
-        "[data-screen]"
-      ).forEach((element) => {
+      document.querySelectorAll("[data-screen]").forEach((element) => {
+        const active = element.dataset.screen === screen;
 
-        const active =
-          element.dataset.screen === screen;
+        element.classList.toggle("active", active);
 
-        element.classList.toggle(
-          "active",
-          active
-        );
-
-        element.setAttribute(
-          "aria-hidden",
-          String(!active)
-        );
+        element.setAttribute("aria-hidden", String(!active));
 
         if ("inert" in element) {
           element.inert = !active;
         }
-
       });
 
       /* ==========================================
@@ -589,7 +488,7 @@
 
       window.scrollTo({
         top: 0,
-        behavior: "instant"
+        behavior: "instant",
       });
 
       /* ==========================================
@@ -610,35 +509,24 @@
         new CustomEvent("scamshield:screenchange", {
           detail: {
             screen,
-            previousScreen
-          }
-        })
+            previousScreen,
+          },
+        }),
       );
 
       /* ==========================================
          REFRESH SCREEN DATA
       ========================================== */
 
-      if (
-        !bootstrapping &&
-        isAuthenticated() &&
-        refreshButtons[screen]
-      ) {
-
-        const refreshButton = document.getElementById(
-          refreshButtons[screen]
-        );
+      if (!bootstrapping && isAuthenticated() && refreshButtons[screen]) {
+        const refreshButton = document.getElementById(refreshButtons[screen]);
 
         refreshButton?.click();
-
       }
 
       return screen;
-
     } finally {
-
       navigationLocked = false;
-
     }
   }
 
@@ -647,50 +535,28 @@
   ================================================ */
 
   function getScreenFromHash() {
-
-    const match = location.hash.match(
-      /^#screen-([a-z-]+)$/
-    );
+    const match = location.hash.match(/^#screen-([a-z-]+)$/);
 
     if (!match) {
       return "home";
     }
 
-    return screens.has(match[1])
-      ? match[1]
-      : "home";
+    return screens.has(match[1]) ? match[1] : "home";
   }
 
   function syncFromHash() {
-
     const requestedScreen = getScreenFromHash();
 
-    const actualScreen = showScreen(
-      requestedScreen,
-      false
-    );
+    const actualScreen = showScreen(requestedScreen, false);
 
-    if (
-      actualScreen &&
-      actualScreen !== requestedScreen
-    ) {
-
-      updateBrowserUrl(
-        actualScreen,
-        true
-      );
-
+    if (actualScreen && actualScreen !== requestedScreen) {
+      updateBrowserUrl(actualScreen, true);
     }
 
-    if (
-      !location.hash ||
-      !/^#screen-[a-z-]+$/.test(location.hash)
-    ) {
-
+    if (!location.hash || !/^#screen-[a-z-]+$/.test(location.hash)) {
       if (actualScreen) {
         updateBrowserUrl(actualScreen, true);
       }
-
     }
   }
 
@@ -699,22 +565,15 @@
   ================================================ */
 
   function loginSuccess(user) {
-
     if (!tokenExists()) {
-
-      console.error(
-        "ScamShield AI: Login token is missing."
-      );
+      console.error("ScamShield AI: Login token is missing.");
 
       return false;
-
     }
 
     authVerified = true;
 
-    currentUser =
-      user ||
-      getStoredUser();
+    currentUser = user || getStoredUser();
 
     notifyAuthenticationChange();
 
@@ -728,7 +587,6 @@
   ================================================ */
 
   function registerSuccess() {
-
     /*
       Backend registration does not issue a JWT.
       Therefore registration must return to login.
@@ -747,7 +605,6 @@
   ================================================ */
 
   function logout() {
-
     const API = getAPI();
 
     if (API?.logout) {
@@ -773,11 +630,9 @@
   ================================================ */
 
   document.addEventListener("click", (event) => {
-
     const route = event.target.closest("[data-route]");
 
     if (route) {
-
       event.preventDefault();
 
       const requestedRoute = route.dataset.route;
@@ -791,75 +646,36 @@
       return;
     }
 
-    const logoutButton = event.target.closest(
-      "[data-logout]"
-    );
+    const logoutButton = event.target.closest("[data-logout]");
 
     if (logoutButton) {
-
       event.preventDefault();
 
       logout();
-
     }
-
   });
 
   /* ================================================
      AUTHENTICATION EVENTS
   ================================================ */
 
-  window.addEventListener(
-    "scamshield:login",
-    (event) => {
+  window.addEventListener("scamshield:login", (event) => {
+    loginSuccess(event.detail?.user);
+  });
 
-      loginSuccess(
-        event.detail?.user
-      );
+  window.addEventListener("scamshield:logout", () => {
+    authVerified = false;
+    currentUser = null;
 
+    notifyAuthenticationChange();
+
+    if (protectedScreens.has(currentScreen)) {
+      showScreen("home");
     }
-  );
+  });
 
-  window.addEventListener(
-    "scamshield:logout",
-    () => {
-
-      authVerified = false;
-      currentUser = null;
-
-      notifyAuthenticationChange();
-
-      if (protectedScreens.has(currentScreen)) {
-        showScreen("home");
-      }
-
-    }
-  );
-
-  window.addEventListener(
-    "scamshield:authchange",
-    (event) => {
-
-      if (event.detail?.authenticated === false) {
-
-        authVerified = false;
-        currentUser = null;
-
-        notifyAuthenticationChange();
-
-        if (protectedScreens.has(currentScreen)) {
-          showScreen("login");
-        }
-
-      }
-
-    }
-  );
-
-  window.addEventListener(
-    "scamshield:session-expired",
-    () => {
-
+  window.addEventListener("scamshield:authchange", (event) => {
+    if (event.detail?.authenticated === false) {
       authVerified = false;
       currentUser = null;
 
@@ -868,35 +684,38 @@
       if (protectedScreens.has(currentScreen)) {
         showScreen("login");
       }
-
     }
-  );
+  });
+
+  window.addEventListener("scamshield:session-expired", () => {
+    authVerified = false;
+    currentUser = null;
+
+    notifyAuthenticationChange();
+
+    if (protectedScreens.has(currentScreen)) {
+      showScreen("login");
+    }
+  });
 
   /* ================================================
      BROWSER HISTORY EVENTS
   ================================================ */
 
-  window.addEventListener(
-    "hashchange",
-    syncFromHash
-  );
+  window.addEventListener("hashchange", syncFromHash);
 
-  window.addEventListener(
-    "popstate",
-    syncFromHash
-  );
+  window.addEventListener("popstate", syncFromHash);
 
   /* ================================================
      CROSS-TAB AUTHENTICATION
   ================================================ */
 
   window.addEventListener("storage", async (event) => {
-
     const authKeys = [
       "scamshield_token",
       "scamshieldToken",
       "scamshield_user",
-      "scamshieldUser"
+      "scamshieldUser",
     ];
 
     if (!authKeys.includes(event.key)) {
@@ -904,7 +723,6 @@
     }
 
     if (!tokenExists()) {
-
       authVerified = false;
       currentUser = null;
 
@@ -926,7 +744,6 @@
     if (valid && authScreens.has(currentScreen)) {
       showScreen("dashboard");
     }
-
   });
 
   /* ================================================
@@ -934,7 +751,6 @@
   ================================================ */
 
   window.ScamShieldApp = Object.freeze({
-
     showScreen,
 
     tokenExists,
@@ -959,8 +775,7 @@
 
     getCurrentScreen() {
       return currentScreen;
-    }
-
+    },
   });
 
   /* ================================================
@@ -968,21 +783,14 @@
   ================================================ */
 
   async function initialize() {
-
-    const homeScreen = document.querySelector(
-      '[data-screen="home"]'
-    );
+    const homeScreen = document.querySelector('[data-screen="home"]');
 
     if (!homeScreen) {
-
-      console.error(
-        "ScamShield AI: Required home screen was not found."
-      );
+      console.error("ScamShield AI: Required home screen was not found.");
 
       bootstrapping = false;
 
       return;
-
     }
 
     /*
@@ -1007,24 +815,12 @@
 
     notifyAuthenticationChange();
 
-    console.info(
-      "ScamShield AI Router v2.1.0 initialized."
-    );
-
+    console.info("ScamShield AI Router v2.1.0 initialized.");
   }
 
   if (document.readyState === "loading") {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      initialize,
-      { once: true }
-    );
-
+    document.addEventListener("DOMContentLoaded", initialize, { once: true });
   } else {
-
     initialize();
-
   }
-
 })();

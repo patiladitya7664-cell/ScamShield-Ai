@@ -1,8 +1,11 @@
-
 /* =====================================================
    SCAMSHIELD AI - REPORTS MODULE
+   Version: 2.1.0
    Case + Analysis Integration
+
+   Features:
    Search | Filters | Pagination | CSV | PDF
+   Category Normalization | Accessible Modal
 ===================================================== */
 
 "use strict";
@@ -14,8 +17,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   const API = window.ScamShieldAPI;
+
   const REPORTS_PER_PAGE = 8;
   const API_ENDPOINT = "/cases?limit=100";
+
+  const ALLOWED_RISKS = [
+    "low",
+    "medium",
+    "high",
+    "critical",
+  ];
+
+  const ALLOWED_STATUSES = [
+    "open",
+    "pending",
+    "review",
+    "under_review",
+    "investigating",
+    "in_progress",
+    "completed",
+    "resolved",
+    "closed",
+    "failed",
+    "rejected",
+    "cancelled",
+    "canceled",
+  ];
 
   // ================================================
   // DOM ELEMENTS
@@ -66,14 +93,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   if (!API || typeof API.get !== "function") {
-    console.error("ScamShield Reports: API service unavailable.");
+
+    console.error(
+      "ScamShield Reports: API service unavailable."
+    );
 
     showNotice(
       "API service unavailable. Check frontend/js/services/api.js.",
       "error"
     );
 
-    renderEmpty("API service unavailable.");
+    renderEmpty(
+      "API service unavailable.",
+      "Please verify that the ScamShield API service is initialized."
+    );
 
     return;
   }
@@ -87,26 +120,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentPage = 1;
   let selectedReport = null;
+
   let isLoading = false;
 
+  let previousFocusElement = null;
+  let previousBodyOverflow = "";
+
   // ================================================
-  // HELPERS
+  // GENERAL HELPERS
   // ================================================
 
   function normalize(value) {
-    return String(value ?? "").trim().toLowerCase();
+    return String(value ?? "")
+      .trim()
+      .toLowerCase();
   }
 
   function formatNumber(value) {
     return Number(value || 0).toLocaleString("en-IN");
   }
 
+  function firstValue(...values) {
+    return values.find(
+      value =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+    );
+  }
+
+  function isObject(value) {
+    return (
+      value !== null &&
+      typeof value === "object" &&
+      !Array.isArray(value)
+    );
+  }
+
   function formatDate(value) {
+
     if (!value) return "N/A";
 
     const date = new Date(value);
 
-    if (Number.isNaN(date.getTime())) return "N/A";
+    if (Number.isNaN(date.getTime())) {
+      return "N/A";
+    }
 
     return date.toLocaleString("en-IN", {
       day: "2-digit",
@@ -117,48 +176,131 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ================================================
+  // ANALYSIS OBJECT RESOLUTION
+  // ================================================
+
   function getAnalysis(report) {
-    return report.analysis && typeof report.analysis === "object"
-      ? report.analysis
-      : {};
+
+    const candidates = [
+      report?.analysis,
+      report?.analysisResult,
+      report?.detection,
+      report?.result,
+      report?.aiResult,
+      report?.aiAnalysis,
+    ];
+
+    for (const candidate of candidates) {
+
+      if (isObject(candidate)) {
+
+        if (isObject(candidate.result)) {
+          return {
+            ...candidate,
+            ...candidate.result,
+          };
+        }
+
+        return candidate;
+      }
+    }
+
+    return {};
   }
 
-  function getId(report) {
-    return String(report._id || report.id || report.reportId || "N/A");
-  }
+  function getIntelligence(report) {
 
-  function getScore(report) {
     const analysis = getAnalysis(report);
 
-    const raw = report.riskScore ?? analysis.riskScore;
+    return (
+      report?.intelligence ||
+      analysis?.intelligence ||
+      {}
+    );
+  }
 
-    if (raw === null || raw === undefined || raw === "") {
+  // ================================================
+  // REPORT ID
+  // ================================================
+
+  function getId(report) {
+
+    return String(
+      firstValue(
+        report?._id,
+        report?.id,
+        report?.reportId,
+        report?.caseId,
+        "N/A"
+      )
+    );
+  }
+
+  // ================================================
+  // RISK SCORE
+  // ================================================
+
+  function getScore(report) {
+
+    const analysis = getAnalysis(report);
+
+    const raw = firstValue(
+      report?.riskScore,
+      report?.score,
+      analysis?.riskScore,
+      analysis?.score,
+      analysis?.result?.riskScore
+    );
+
+    if (
+      raw === null ||
+      raw === undefined ||
+      raw === ""
+    ) {
       return null;
     }
 
     const score = Number(raw);
 
-    if (!Number.isFinite(score) || score < 0 || score > 100) {
+    if (
+      !Number.isFinite(score) ||
+      score < 0 ||
+      score > 100
+    ) {
       return null;
     }
 
     return score;
   }
 
+  // ================================================
+  // RISK LEVEL
+  // ================================================
+
   function getRisk(report) {
+
     const analysis = getAnalysis(report);
 
-    const value = normalize(
-      report.riskLevel || analysis.riskLevel
+    const raw = normalize(
+      firstValue(
+        report?.riskLevel,
+        report?.severity,
+        analysis?.riskLevel,
+        analysis?.severity,
+        analysis?.result?.riskLevel
+      )
     );
 
-    if (["low", "medium", "high", "critical"].includes(value)) {
-      return value;
+    if (ALLOWED_RISKS.includes(raw)) {
+      return raw;
     }
 
     const score = getScore(report);
 
-    if (score === null) return "unknown";
+    if (score === null) {
+      return "unknown";
+    }
 
     if (score < 25) return "low";
     if (score < 50) return "medium";
@@ -167,112 +309,306 @@ document.addEventListener("DOMContentLoaded", () => {
     return "critical";
   }
 
-  function getCategory(report) {
-    const analysis = getAnalysis(report);
+  // ================================================
+  // CATEGORY NORMALIZATION
+  // ================================================
 
-    return (
-      report.fraudCategory ||
-      analysis.fraudCategory ||
+  const CATEGORY_MAP = {
+
+    fraud_message: "fraud_message",
+    message_fraud: "fraud_message",
+
+    fraud_call: "fraud_call",
+    call_fraud: "fraud_call",
+
+    url_phishing: "url_phishing",
+    phishing: "url_phishing",
+    url_fraud: "url_phishing",
+
+    email_scam: "email_scam",
+    email_fraud: "email_scam",
+
+    investment_scam: "investment_scam",
+    investment: "investment_scam",
+    investment_fraud: "investment_scam",
+
+    digital_arrest: "digital_arrest",
+    digitalarrest: "digital_arrest",
+    "digital-arrest": "digital_arrest",
+
+    upi_banking_fraud: "upi_banking_fraud",
+    upi_fraud: "upi_banking_fraud",
+    banking_fraud: "upi_banking_fraud",
+    upi: "upi_banking_fraud",
+
+    card_fraud: "card_fraud",
+    credit_card_fraud: "card_fraud",
+    creditcard_fraud: "card_fraud",
+    credit_card: "card_fraud",
+
+    ecommerce_scam: "ecommerce_scam",
+    ecommerce_fraud: "ecommerce_scam",
+    "e-commerce": "ecommerce_scam",
+    "e-commerce fraud": "ecommerce_scam",
+
+    job_loan_scam: "job_loan_scam",
+    job_scam: "job_loan_scam",
+    loan_scam: "job_loan_scam",
+
+    sextortion_blackmail: "sextortion_blackmail",
+    sextortion: "sextortion_blackmail",
+    blackmail: "sextortion_blackmail",
+
+    social_media_scam: "social_media_scam",
+    social_media_fraud: "social_media_scam",
+
+    other: "other",
+    unclassified: "unclassified",
+  };
+
+  const CATEGORY_LABELS = {
+
+    fraud_message: "Fraud Message",
+    fraud_call: "Fraud Call",
+    url_phishing: "URL Phishing",
+    email_scam: "Email Scam",
+
+    investment_scam: "Investment Scam",
+    digital_arrest: "Digital Arrest",
+
+    upi_banking_fraud: "UPI & Banking Fraud",
+    card_fraud: "Credit Card Fraud",
+
+    ecommerce_scam: "E-commerce Fraud",
+    job_loan_scam: "Job & Loan Scam",
+
+    sextortion_blackmail: "Sextortion / Blackmail",
+    social_media_scam: "Social Media Scam",
+
+    other: "Other",
+    unclassified: "Unclassified",
+  };
+
+  function normalizeCategory(value) {
+
+    const raw = normalize(value);
+
+    if (!raw) {
+      return "unclassified";
+    }
+
+    const key = raw
+      .replace(/[\s-]+/g, "_")
+      .replace(/[^a-z0-9_]/g, "");
+
+    return CATEGORY_MAP[key] || CATEGORY_MAP[raw] || key;
+  }
+
+  function getCategory(report) {
+
+    const analysis = getAnalysis(report);
+    const result = analysis?.result || {};
+    const intelligence = getIntelligence(report);
+
+    const raw = firstValue(
+
+      report?.fraudCategory,
+      report?.detectionCategory,
+      report?.category,
+
+      analysis?.fraudCategory,
+      analysis?.detectionCategory,
+      analysis?.category,
+
+      result?.fraudCategory,
+      result?.detectionCategory,
+      result?.category,
+
+      intelligence?.category,
+
       "unclassified"
     );
+
+    return normalizeCategory(raw);
   }
 
-  function getEvidenceType(report) {
-    const analysis = getAnalysis(report);
+  function formatCategory(value) {
+
+    const category = normalizeCategory(value);
 
     return (
-      report.evidenceType ||
-      analysis.evidenceType ||
-      "N/A"
+      CATEGORY_LABELS[category] ||
+      category
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, character => character.toUpperCase())
     );
   }
 
-  function getStatus(report) {
-    const value = normalize(report.status);
+  // ================================================
+  // CATEGORY FILTER COMPATIBILITY
+  // ================================================
 
-    const allowed = [
-      "pending",
-      "review",
-      "completed",
-      "resolved",
-      "open",
-      "investigating",
-      "closed",
-      "failed",
-    ];
+  const CATEGORY_FILTER_ALIASES = {
 
-    return allowed.includes(value) ? value : "pending";
-  }
+    investment: "investment_scam",
+    investment_scam: "investment_scam",
+    "investment scam": "investment_scam",
 
-  function getDate(report) {
-    const analysis = getAnalysis(report);
+    "digital-arrest": "digital_arrest",
+    digital_arrest: "digital_arrest",
+    digitalarrest: "digital_arrest",
+
+    "credit-card": "card_fraud",
+    credit_card: "card_fraud",
+    creditcard: "card_fraud",
+    card_fraud: "card_fraud",
+
+    ecommerce: "ecommerce_scam",
+    "e-commerce": "ecommerce_scam",
+    ecommerce_scam: "ecommerce_scam",
+
+    sextortion: "sextortion_blackmail",
+    sextortion_blackmail: "sextortion_blackmail",
+
+    upi: "upi_banking_fraud",
+    upi_banking: "upi_banking_fraud",
+    upi_banking_fraud: "upi_banking_fraud",
+
+    email: "email_scam",
+    email_scam: "email_scam",
+
+    phishing: "url_phishing",
+    url_phishing: "url_phishing",
+
+    fraud_message: "fraud_message",
+    fraud_call: "fraud_call",
+
+    job_loan: "job_loan_scam",
+    job_loan_scam: "job_loan_scam",
+
+    social_media: "social_media_scam",
+    social_media_scam: "social_media_scam",
+  };
+
+  function normalizeCategoryFilter(value) {
+
+    const raw = normalize(value);
 
     return (
-      report.createdAt ||
-      analysis.analyzedAt ||
-      analysis.createdAt ||
+      CATEGORY_FILTER_ALIASES[raw] ||
+      normalizeCategory(raw)
+    );
+  }
+
+  // ================================================
+  // EVIDENCE TYPE
+  // ================================================
+
+  function getEvidenceType(report) {
+
+    const analysis = getAnalysis(report);
+
+    const value = firstValue(
+      report?.evidenceType,
+      report?.inputType,
+      report?.sourceType,
+
+      analysis?.evidenceType,
+      analysis?.inputType,
+      analysis?.sourceType,
+
+      "N/A"
+    );
+
+    return String(value);
+  }
+
+  // ================================================
+  // REPORT STATUS
+  // ================================================
+
+  function getStatus(report) {
+
+    const raw = normalize(
+      firstValue(
+        report?.status,
+        report?.caseStatus,
+        "open"
+      )
+    );
+
+    const aliases = {
+
+      "under-review": "under_review",
+      under_review: "under_review",
+
+      "in-progress": "in_progress",
+      in_progress: "in_progress",
+
+      complete: "completed",
+
+      cancel: "cancelled",
+    };
+
+    const status = aliases[raw] || raw;
+
+    return ALLOWED_STATUSES.includes(status)
+      ? status
+      : "unknown";
+  }
+
+  // ================================================
+  // REPORT DATE
+  // ================================================
+
+  function getDate(report) {
+
+    const analysis = getAnalysis(report);
+
+    return firstValue(
+      report?.createdAt,
+      report?.updatedAt,
+      analysis?.analyzedAt,
+      analysis?.createdAt,
       null
     );
   }
 
+  // ================================================
+  // EXPLANATION
+  // ================================================
+
   function getExplanation(report) {
+
     const analysis = getAnalysis(report);
 
-    const explanation =
-      report.description ||
-      analysis.explanation ||
-      analysis.summary ||
-      analysis.riskDescription ||
-      "No explanation available.";
+    const result = analysis?.result || {};
 
-    return Array.isArray(explanation)
-      ? explanation.join("\n")
-      : String(explanation);
-  }
+    const explanation = firstValue(
 
-  function formatCategory(value) {
-    const categories = {
-      investment: "Investment Scam",
-      digitalarrest: "Digital Arrest",
-      "digital-arrest": "Digital Arrest",
-      digital_arrest: "Digital Arrest",
-      creditcard: "Credit Card Fraud",
-      "credit-card": "Credit Card Fraud",
-      credit_card: "Credit Card Fraud",
-      sextortion: "Sextortion",
-      ecommerce: "E-commerce Fraud",
-      "e-commerce": "E-commerce Fraud",
-      other: "Other",
-      unclassified: "Unclassified",
-    };
+      report?.description,
+      report?.explanation,
+      report?.summary,
 
-    const key = normalize(value).replace(/\s+/g, "");
+      analysis?.explanation,
+      analysis?.summary,
+      analysis?.riskDescription,
 
-    return categories[key] || categories[normalize(value)] || value;
-  }
+      result?.explanation,
+      result?.summary,
 
-  function normalizeCategoryFilter(value) {
-    const aliases = {
-      investment: "investment",
-      "investment scam": "investment",
+      "No explanation available."
+    );
 
-      "digital arrest": "digital-arrest",
-      digital_arrest: "digital-arrest",
-      "digital-arrest": "digital-arrest",
+    if (Array.isArray(explanation)) {
+      return explanation.join("\n");
+    }
 
-      "credit card": "credit-card",
-      "credit card fraud": "credit-card",
-      credit_card: "credit-card",
-      "credit-card": "credit-card",
+    if (typeof explanation === "object") {
+      return JSON.stringify(explanation, null, 2);
+    }
 
-      ecommerce: "ecommerce",
-      "e-commerce": "ecommerce",
-      "e-commerce fraud": "ecommerce",
-
-      sextortion: "sextortion",
-    };
-
-    return aliases[normalize(value)] || normalize(value);
+    return String(explanation);
   }
 
   // ================================================
@@ -280,6 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function showNotice(message, state = "info") {
+
     if (!el.notice) return;
 
     el.notice.classList.add("show");
@@ -291,7 +628,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function hideNotice() {
-    el.notice?.classList.remove("show");
+
+    if (!el.notice) return;
+
+    el.notice.classList.remove("show");
   }
 
   // ================================================
@@ -302,6 +642,7 @@ document.addEventListener("DOMContentLoaded", () => {
     heading = "No reports available",
     description = "Investigation records will appear here when available."
   ) {
+
     if (!el.table) return;
 
     el.table.replaceChildren();
@@ -316,6 +657,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const icon = document.createElement("i");
     icon.className = "fa-solid fa-folder-open";
+    icon.setAttribute("aria-hidden", "true");
 
     const title = document.createElement("h4");
     title.textContent = heading;
@@ -335,15 +677,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function setLoading(value) {
+
     isLoading = value;
 
-    if (el.refresh) {
-      el.refresh.disabled = value;
+    if (!el.refresh) return;
 
-      el.refresh.innerHTML = value
-        ? '<i class="fa-solid fa-spinner fa-spin"></i> Loading...'
-        : '<i class="fa-solid fa-rotate"></i> Refresh';
-    }
+    el.refresh.disabled = value;
+
+    el.refresh.innerHTML = value
+      ? '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Loading...'
+      : '<i class="fa-solid fa-rotate" aria-hidden="true"></i> Refresh';
   }
 
   // ================================================
@@ -351,24 +694,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function extractRecords(response) {
-    if (Array.isArray(response?.cases)) {
-      return response.cases;
-    }
 
-    if (Array.isArray(response?.data?.cases)) {
-      return response.data.cases;
-    }
+    const candidates = [
 
-    if (Array.isArray(response?.data?.data)) {
-      return response.data.data;
-    }
+      response?.cases,
+      response?.data?.cases,
 
-    if (Array.isArray(response?.data)) {
-      return response.data;
-    }
+      response?.data?.items,
+      response?.items,
 
-    if (Array.isArray(response?.results)) {
-      return response.results;
+      response?.data?.results,
+      response?.results,
+
+      response?.data?.data,
+
+      response?.data,
+    ];
+
+    for (const candidate of candidates) {
+
+      if (Array.isArray(candidate)) {
+        return candidate.filter(isObject);
+      }
     }
 
     return [];
@@ -379,28 +726,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   async function fetchReports() {
+
     if (isLoading) return;
 
     setLoading(true);
     hideNotice();
 
     try {
+
       const response = await API.get(API_ENDPOINT);
 
-      if (!response || response.success === false) {
+      if (
+        !response ||
+        response.success === false ||
+        response.error
+      ) {
         throw new Error(
-          response?.message || "Unable to retrieve reports."
+          response?.message ||
+          response?.error?.message ||
+          "Unable to retrieve reports."
         );
       }
 
       const records = extractRecords(response);
 
-      allReports = records.map((record) => ({
+      allReports = records.map(record => ({
         ...record,
-        analysis:
-          record.analysis && typeof record.analysis === "object"
-            ? record.analysis
-            : null,
+        analysis: isObject(record.analysis)
+          ? record.analysis
+          : null,
       }));
 
       currentPage = 1;
@@ -409,11 +763,14 @@ document.addEventListener("DOMContentLoaded", () => {
       applyFilters();
 
       if (allReports.length === 0) {
+
         showNotice(
           "No investigation records found. Analyze evidence to create your first report.",
           "info"
         );
+
       } else {
+
         showNotice(
           `${allReports.length} investigation record(s) loaded successfully.`,
           "success"
@@ -426,6 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
     } catch (error) {
+
       console.error("Reports API Error:", error);
 
       allReports = [];
@@ -447,6 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
     } finally {
+
       setLoading(false);
     }
   }
@@ -456,27 +815,62 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function updateStatistics() {
+
     const total = allReports.length;
 
-    const high = allReports.filter((report) => {
+    const high = allReports.filter(report => {
+
       const risk = getRisk(report);
 
-      return risk === "high" || risk === "critical";
+      return (
+        risk === "high" ||
+        risk === "critical"
+      );
+
     }).length;
 
-    const review = allReports.filter((report) => {
-      return ["pending", "review", "open", "investigating"]
-        .includes(getStatus(report));
+    const reviewStatuses = [
+      "pending",
+      "review",
+      "under_review",
+      "open",
+      "investigating",
+      "in_progress",
+    ];
+
+    const completedStatuses = [
+      "completed",
+      "resolved",
+      "closed",
+    ];
+
+    const review = allReports.filter(report => {
+
+      return reviewStatuses.includes(
+        getStatus(report)
+      );
+
     }).length;
 
-    const completed = allReports.filter((report) => {
-      return ["completed", "resolved", "closed"]
-        .includes(getStatus(report));
+    const completed = allReports.filter(report => {
+
+      return completedStatuses.includes(
+        getStatus(report)
+      );
+
     }).length;
 
-    if (el.total) el.total.textContent = formatNumber(total);
-    if (el.highRisk) el.highRisk.textContent = formatNumber(high);
-    if (el.review) el.review.textContent = formatNumber(review);
+    if (el.total) {
+      el.total.textContent = formatNumber(total);
+    }
+
+    if (el.highRisk) {
+      el.highRisk.textContent = formatNumber(high);
+    }
+
+    if (el.review) {
+      el.review.textContent = formatNumber(review);
+    }
 
     if (el.completed) {
       el.completed.textContent = formatNumber(completed);
@@ -484,70 +878,118 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ================================================
+  // SEARCH
+  // ================================================
+
+  function getSearchableText(report) {
+
+    return [
+
+      getId(report),
+      getEvidenceType(report),
+
+      getCategory(report),
+      formatCategory(getCategory(report)),
+
+      getRisk(report),
+      getStatus(report),
+
+      getExplanation(report),
+
+      report?.title,
+      report?.description,
+      report?.caseNumber,
+
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  }
+
+  // ================================================
   // FILTERS
   // ================================================
 
   function applyFilters() {
+
     const search = normalize(el.search?.value);
-    const selectedRisk = el.risk?.value || "all";
-    const selectedCategory = el.category?.value || "all";
-    const selectedDate = el.date?.value || "all";
+
+    const selectedRisk =
+      el.risk?.value || "all";
+
+    const selectedCategory =
+      el.category?.value || "all";
+
+    const selectedDate =
+      el.date?.value || "all";
 
     const now = new Date();
+
     const oneDay = 86400000;
 
-    filteredReports = allReports.filter((report) => {
-      const id = normalize(getId(report));
-      const type = normalize(getEvidenceType(report));
-      const category = normalize(getCategory(report));
+    filteredReports = allReports.filter(report => {
+
       const risk = getRisk(report);
-      const status = getStatus(report);
+      const category = getCategory(report);
 
-      const searchable = [
-        id,
-        type,
-        category,
-        formatCategory(category),
-        risk,
-        status,
-      ].join(" ");
-
-      if (search && !searchable.includes(search)) {
+      if (
+        search &&
+        !getSearchableText(report).includes(search)
+      ) {
         return false;
       }
 
-      if (selectedRisk !== "all" && risk !== selectedRisk) {
+      if (
+        selectedRisk !== "all" &&
+        risk !== selectedRisk
+      ) {
         return false;
       }
 
       if (
         selectedCategory !== "all" &&
-        normalizeCategoryFilter(category) !== selectedCategory
+        normalizeCategoryFilter(category) !==
+          normalizeCategoryFilter(selectedCategory)
       ) {
         return false;
       }
 
       if (selectedDate !== "all") {
+
         const date = new Date(getDate(report));
 
-        if (Number.isNaN(date.getTime())) return false;
+        if (Number.isNaN(date.getTime())) {
+          return false;
+        }
 
-        const difference = now.getTime() - date.getTime();
+        const difference =
+          now.getTime() - date.getTime();
 
         if (selectedDate === "today") {
-          if (date.toDateString() !== now.toDateString()) {
+
+          if (
+            date.toDateString() !== now.toDateString()
+          ) {
             return false;
           }
         }
 
         if (selectedDate === "7days") {
-          if (difference < 0 || difference > 7 * oneDay) {
+
+          if (
+            difference < 0 ||
+            difference > 7 * oneDay
+          ) {
             return false;
           }
         }
 
         if (selectedDate === "30days") {
-          if (difference < 0 || difference > 30 * oneDay) {
+
+          if (
+            difference < 0 ||
+            difference > 30 * oneDay
+          ) {
             return false;
           }
         }
@@ -566,11 +1008,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function renderTable() {
+
     if (!el.table) return;
 
     el.table.replaceChildren();
 
     if (filteredReports.length === 0) {
+
       renderEmpty(
         "No matching reports",
         "Try changing your search term or filters."
@@ -582,15 +1026,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const start = (currentPage - 1) * REPORTS_PER_PAGE;
+    const start =
+      (currentPage - 1) * REPORTS_PER_PAGE;
 
     const records = filteredReports.slice(
       start,
       start + REPORTS_PER_PAGE
     );
 
-    records.forEach((report) => {
-      el.table.appendChild(createRow(report));
+    records.forEach(report => {
+
+      el.table.appendChild(
+        createRow(report)
+      );
+
     });
 
     updatePagination();
@@ -602,6 +1051,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function createRow(report) {
+
     const row = document.createElement("tr");
 
     const score = getScore(report);
@@ -609,34 +1059,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = getStatus(report);
 
     const values = [
+
       getId(report),
       getEvidenceType(report),
       formatCategory(getCategory(report)),
-      score === null ? "N/A" : `${score}/100`,
+
+      score === null
+        ? "N/A"
+        : `${score}/100`,
+
       risk,
       status,
+
       formatDate(getDate(report)),
+
     ];
 
     values.forEach((value, index) => {
+
       const cell = document.createElement("td");
 
-      if (index === 0) cell.className = "report-id";
-      if (index === 2) cell.className = "report-category";
-      if (index === 3) cell.className = "report-score";
-      if (index === 6) cell.className = "report-date";
+      if (index === 0) {
+        cell.className = "report-id";
+      }
+
+      if (index === 2) {
+        cell.className = "report-category";
+      }
+
+      if (index === 3) {
+        cell.className = "report-score";
+      }
+
+      if (index === 6) {
+        cell.className = "report-date";
+      }
 
       if (index === 4 || index === 5) {
+
         const badge = document.createElement("span");
 
-        badge.className = index === 4
-          ? `report-risk-badge ${risk}`
-          : `report-status-badge ${status}`;
+        badge.className =
+          index === 4
+            ? `report-risk-badge ${risk}`
+            : `report-status-badge ${status}`;
 
         badge.textContent = value;
 
         cell.appendChild(badge);
+
       } else {
+
         cell.textContent = String(value);
       }
 
@@ -650,10 +1123,20 @@ document.addEventListener("DOMContentLoaded", () => {
     button.type = "button";
     button.className = "report-view-btn";
 
-    button.innerHTML = '<i class="fa-solid fa-eye"></i> View';
+    button.setAttribute(
+      "aria-label",
+      `View report ${getId(report)}`
+    );
+
+    const icon = document.createElement("i");
+
+    icon.className = "fa-solid fa-eye";
+    icon.setAttribute("aria-hidden", "true");
+
+    button.append(icon, document.createTextNode(" View"));
 
     button.addEventListener("click", () => {
-      openDetails(report);
+      openDetails(report, button);
     });
 
     action.appendChild(button);
@@ -667,6 +1150,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function updatePagination() {
+
     const total = filteredReports.length;
 
     const pages = Math.max(
@@ -674,7 +1158,10 @@ document.addEventListener("DOMContentLoaded", () => {
       Math.ceil(total / REPORTS_PER_PAGE)
     );
 
-    currentPage = Math.min(currentPage, pages);
+    currentPage = Math.min(
+      currentPage,
+      pages
+    );
 
     const start = total === 0
       ? 0
@@ -686,16 +1173,21 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (el.resultCount) {
-      el.resultCount.textContent = `${total} report(s)`;
+
+      el.resultCount.textContent =
+        `${total} report(s)`;
     }
 
     if (el.paginationInfo) {
+
       el.paginationInfo.textContent =
         `Showing ${start}-${end} of ${total} reports`;
     }
 
     if (el.currentPage) {
-      el.currentPage.textContent = `${currentPage} / ${pages}`;
+
+      el.currentPage.textContent =
+        `${currentPage} / ${pages}`;
     }
 
     if (el.previous) {
@@ -707,19 +1199,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (el.pagination) {
+
       el.pagination.style.display =
-        total > REPORTS_PER_PAGE ? "flex" : "none";
+        total > REPORTS_PER_PAGE
+          ? "flex"
+          : "none";
     }
   }
 
   function previousPage() {
+
     if (currentPage <= 1) return;
 
     currentPage--;
+
     renderTable();
   }
 
   function nextPage() {
+
     const pages = Math.ceil(
       filteredReports.length / REPORTS_PER_PAGE
     );
@@ -727,23 +1225,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentPage >= pages) return;
 
     currentPage++;
+
     renderTable();
   }
 
   // ================================================
-  // DETAILS MODAL
+  // MODAL DETAILS
   // ================================================
 
-  function createDetail(label, value) {
+  function createDetail(label, value, fullWidth = false) {
+
     const wrapper = document.createElement("div");
 
-    wrapper.className = "report-detail-item";
+    wrapper.className = fullWidth
+      ? "report-detail-item full-width"
+      : "report-detail-item";
 
     const title = document.createElement("span");
+
     title.className = "report-detail-label";
     title.textContent = label;
 
     const content = document.createElement("div");
+
     content.className = "report-detail-value";
     content.textContent = String(value ?? "N/A");
 
@@ -752,56 +1256,222 @@ document.addEventListener("DOMContentLoaded", () => {
     return wrapper;
   }
 
-  function openDetails(report) {
-    if (!el.modal || !el.modalContent) return;
+  function getModalFocusableElements() {
+
+    if (!el.modal) return [];
+
+    return Array.from(
+      el.modal.querySelectorAll(
+        'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter(element => {
+
+      return (
+        element.offsetWidth > 0 ||
+        element.offsetHeight > 0 ||
+        element === document.activeElement
+      );
+    });
+  }
+
+  function openDetails(report, triggerElement = null) {
+
+    if (!el.modal || !el.modalContent) {
+      return;
+    }
 
     selectedReport = report;
+
+    previousFocusElement =
+      triggerElement || document.activeElement;
 
     const score = getScore(report);
 
     if (el.modalTitle) {
+
       el.modalTitle.textContent =
         `Report Details - ${getId(report)}`;
     }
 
     const grid = document.createElement("div");
+
     grid.className = "report-detail-grid";
 
     grid.append(
-      createDetail("Report ID", getId(report)),
-      createDetail("Evidence Type", getEvidenceType(report)),
-      createDetail("Fraud Category", formatCategory(getCategory(report))),
-      createDetail("Risk Score", score === null ? "N/A" : `${score}/100`),
-      createDetail("Risk Level", getRisk(report)),
-      createDetail("Report Status", getStatus(report)),
-      createDetail("Created At", formatDate(getDate(report))),
-      createDetail("Analysis Explanation", getExplanation(report))
+
+      createDetail(
+        "Report ID",
+        getId(report)
+      ),
+
+      createDetail(
+        "Evidence Type",
+        getEvidenceType(report)
+      ),
+
+      createDetail(
+        "Fraud Category",
+        formatCategory(getCategory(report))
+      ),
+
+      createDetail(
+        "Risk Score",
+        score === null
+          ? "N/A"
+          : `${score}/100`
+      ),
+
+      createDetail(
+        "Risk Level",
+        getRisk(report)
+      ),
+
+      createDetail(
+        "Report Status",
+        getStatus(report)
+      ),
+
+      createDetail(
+        "Created At",
+        formatDate(getDate(report))
+      ),
+
+      createDetail(
+        "Analysis Explanation",
+        getExplanation(report),
+        true
+      )
     );
 
     el.modalContent.replaceChildren(grid);
 
+    previousBodyOverflow =
+      document.body.style.overflow;
+
     el.modal.classList.add("show");
-    el.modal.setAttribute("aria-hidden", "false");
+
+    el.modal.setAttribute(
+      "aria-hidden",
+      "false"
+    );
 
     document.body.style.overflow = "hidden";
 
     if (el.downloadSingle) {
       el.downloadSingle.disabled = false;
     }
+
+    requestAnimationFrame(() => {
+
+      if (el.close) {
+        el.close.focus();
+      } else {
+        const focusable = getModalFocusableElements();
+
+        focusable[0]?.focus();
+      }
+
+    });
   }
 
   function closeModal() {
-    if (!el.modal) return;
+
+    if (
+      !el.modal ||
+      !el.modal.classList.contains("show")
+    ) {
+      return;
+    }
 
     el.modal.classList.remove("show");
-    el.modal.setAttribute("aria-hidden", "true");
 
-    document.body.style.overflow = "";
+    el.modal.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.body.style.overflow =
+      previousBodyOverflow;
 
     selectedReport = null;
 
     if (el.downloadSingle) {
       el.downloadSingle.disabled = true;
+    }
+
+    if (
+      previousFocusElement &&
+      document.contains(previousFocusElement)
+    ) {
+      previousFocusElement.focus();
+    }
+
+    previousFocusElement = null;
+  }
+
+  // ================================================
+  // MODAL KEYBOARD ACCESSIBILITY
+  // ================================================
+
+  function handleModalKeyboard(event) {
+
+    if (
+      !el.modal ||
+      !el.modal.classList.contains("show")
+    ) {
+      return;
+    }
+
+    if (event.key === "Escape") {
+
+      event.preventDefault();
+
+      closeModal();
+
+      return;
+    }
+
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    const focusable = getModalFocusableElements();
+
+    if (focusable.length === 0) {
+
+      event.preventDefault();
+
+      el.modal.focus();
+
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey) {
+
+      if (
+        document.activeElement === first ||
+        !el.modal.contains(document.activeElement)
+      ) {
+
+        event.preventDefault();
+
+        last.focus();
+      }
+
+    } else {
+
+      if (
+        document.activeElement === last ||
+        !el.modal.contains(document.activeElement)
+      ) {
+
+        event.preventDefault();
+
+        first.focus();
+      }
     }
   }
 
@@ -810,9 +1480,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function csvEscape(value) {
+
     let text = String(value ?? "");
 
     // Prevent spreadsheet formula injection.
+
     if (/^[\s]*[=+\-@\t\r]/.test(text)) {
       text = "'" + text;
     }
@@ -821,12 +1493,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function exportCSV(records) {
+
     if (!records.length) {
-      showNotice("No reports available to export.", "warning");
+
+      showNotice(
+        "No reports available to export.",
+        "warning"
+      );
+
       return;
     }
 
     const headers = [
+
       "Report ID",
       "Evidence Type",
       "Fraud Category",
@@ -834,39 +1513,60 @@ document.addEventListener("DOMContentLoaded", () => {
       "Risk Level",
       "Status",
       "Created At",
+
     ];
 
-    const rows = records.map((report) => [
+    const rows = records.map(report => [
+
       getId(report),
       getEvidenceType(report),
+
       formatCategory(getCategory(report)),
+
       getScore(report) ?? "N/A",
+
       getRisk(report),
       getStatus(report),
+
       formatDate(getDate(report)),
+
     ]);
 
-    const csv = [headers, ...rows]
-      .map((row) => row.map(csvEscape).join(","))
+    const csv = [
+      headers,
+      ...rows,
+    ]
+      .map(row =>
+        row.map(csvEscape).join(",")
+      )
       .join("\r\n");
 
-    const blob = new Blob(["\uFEFF" + csv], {
-      type: "text/csv;charset=utf-8;",
-    });
+    const blob = new Blob(
+      ["\uFEFF" + csv],
+      {
+        type: "text/csv;charset=utf-8;",
+      }
+    );
 
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
 
     link.href = url;
+
     link.download =
-      `scamshield-reports-${new Date().toISOString().slice(0, 10)}.csv`;
+      `scamshield-reports-${new Date()
+        .toISOString()
+        .slice(0, 10)}.csv`;
 
     document.body.appendChild(link);
+
     link.click();
     link.remove();
 
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
 
     showNotice(
       `${records.length} report(s) exported successfully.`,
@@ -875,8 +1575,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateExportButton() {
+
     if (el.export) {
-      el.export.disabled = filteredReports.length === 0;
+
+      el.export.disabled =
+        filteredReports.length === 0;
     }
   }
 
@@ -885,6 +1588,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function printReport() {
+
     if (!selectedReport) return;
 
     const report = selectedReport;
@@ -896,6 +1600,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (!printWindow) {
+
       showNotice(
         "Please allow pop-ups to print or save the report.",
         "error"
@@ -904,34 +1609,58 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const escapeHTML = (value) =>
-      String(value ?? "").replace(/[&<>"']/g, (character) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      })[character]);
+    const escapeHTML = value => {
+
+      return String(value ?? "").replace(
+        /[&<>"']/g,
+        character => ({
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+
+        })[character]
+      );
+    };
 
     const score = getScore(report);
 
     const html = `
       <!doctype html>
-      <html>
+
+      <html lang="en">
+
       <head>
+
         <meta charset="utf-8">
-        <title>ScamShield Report</title>
+
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        >
+
+        <title>ScamShield Security Report</title>
 
         <style>
+
+          * {
+            box-sizing: border-box;
+          }
+
           body {
             font-family: Arial, sans-serif;
             color: #172033;
             max-width: 780px;
             margin: 40px auto;
             padding: 20px;
+            line-height: 1.6;
           }
 
-          h1 { color: #14532d; }
+          h1 {
+            color: #14532d;
+          }
 
           .grid {
             display: grid;
@@ -943,6 +1672,7 @@ document.addEventListener("DOMContentLoaded", () => {
             background: #f3f6fa;
             padding: 14px;
             border-radius: 6px;
+            overflow-wrap: anywhere;
           }
 
           .label {
@@ -959,17 +1689,42 @@ document.addEventListener("DOMContentLoaded", () => {
             border: 1px solid #e5c477;
           }
 
-          @media print {
-            body { margin: 0; }
+          .explanation {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
           }
+
+          @media print {
+
+            body {
+              margin: 0;
+            }
+
+            .item,
+            .notice {
+              break-inside: avoid;
+            }
+          }
+
+          @media (max-width: 600px) {
+
+            .grid {
+              grid-template-columns: 1fr;
+            }
+          }
+
         </style>
+
       </head>
 
       <body>
+
         <h1>ScamShield AI</h1>
+
         <p>Security Investigation Report</p>
 
         <div class="grid">
+
           <div class="item">
             <span class="label">Report ID</span>
             ${escapeHTML(getId(report))}
@@ -1004,35 +1759,64 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="label">Created At</span>
             ${escapeHTML(formatDate(getDate(report)))}
           </div>
+
         </div>
 
         <h3>Assessment Explanation</h3>
 
-        <p>${escapeHTML(getExplanation(report))}</p>
-
-        <div class="notice">
-          <strong>Important Disclaimer</strong>
-          <p>
-            This report contains a risk assessment, not definitive proof
-            of fraud. Extracted indicators are unverified and require
-            independent verification.
-          </p>
-        </div>
-
-        <p>
-          Generated by ScamShield AI.
+        <p class="explanation">
+          ${escapeHTML(getExplanation(report))}
         </p>
 
+        <div class="notice">
+
+          <strong>Important Disclaimer</strong>
+
+          <p>
+            This report contains a risk assessment, not definitive
+            proof of fraud. Extracted indicators are unverified
+            unless independently verified.
+          </p>
+
+        </div>
+
+        <p>Generated by ScamShield AI.</p>
+
         <script>
-          window.addEventListener("load", () => window.print());
+
+          window.addEventListener("load", () => {
+            window.print();
+          });
+
         <\/script>
+
       </body>
+
       </html>
     `;
 
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
+    try {
+
+      printWindow.document.open();
+
+      printWindow.document.write(html);
+
+      printWindow.document.close();
+
+    } catch (error) {
+
+      console.error(
+        "Report print error:",
+        error
+      );
+
+      printWindow.close();
+
+      showNotice(
+        "Unable to prepare the report for printing.",
+        "error"
+      );
+    }
   }
 
   // ================================================
@@ -1040,10 +1824,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function clearFilters() {
-    if (el.search) el.search.value = "";
-    if (el.risk) el.risk.value = "all";
-    if (el.category) el.category.value = "all";
-    if (el.date) el.date.value = "all";
+
+    if (el.search) {
+      el.search.value = "";
+    }
+
+    if (el.risk) {
+      el.risk.value = "all";
+    }
+
+    if (el.category) {
+      el.category.value = "all";
+    }
+
+    if (el.date) {
+      el.date.value = "all";
+    }
 
     applyFilters();
   }
@@ -1053,35 +1849,76 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function initializeEvents() {
-    el.search?.addEventListener("input", applyFilters);
-    el.risk?.addEventListener("change", applyFilters);
-    el.category?.addEventListener("change", applyFilters);
-    el.date?.addEventListener("change", applyFilters);
 
-    el.clear?.addEventListener("click", clearFilters);
-    el.refresh?.addEventListener("click", fetchReports);
+    el.search?.addEventListener(
+      "input",
+      applyFilters
+    );
 
-    el.export?.addEventListener("click", () => {
-      exportCSV(filteredReports);
-    });
+    el.risk?.addEventListener(
+      "change",
+      applyFilters
+    );
 
-    el.previous?.addEventListener("click", previousPage);
-    el.next?.addEventListener("click", nextPage);
+    el.category?.addEventListener(
+      "change",
+      applyFilters
+    );
 
-    el.close?.addEventListener("click", closeModal);
-    el.closeDetails?.addEventListener("click", closeModal);
-    el.overlay?.addEventListener("click", closeModal);
+    el.date?.addEventListener(
+      "change",
+      applyFilters
+    );
 
-    el.downloadSingle?.addEventListener("click", printReport);
+    el.clear?.addEventListener(
+      "click",
+      clearFilters
+    );
 
-    document.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Escape" &&
-        el.modal?.classList.contains("show")
-      ) {
-        closeModal();
-      }
-    });
+    el.refresh?.addEventListener(
+      "click",
+      fetchReports
+    );
+
+    el.export?.addEventListener(
+      "click",
+      () => exportCSV(filteredReports)
+    );
+
+    el.previous?.addEventListener(
+      "click",
+      previousPage
+    );
+
+    el.next?.addEventListener(
+      "click",
+      nextPage
+    );
+
+    el.close?.addEventListener(
+      "click",
+      closeModal
+    );
+
+    el.closeDetails?.addEventListener(
+      "click",
+      closeModal
+    );
+
+    el.overlay?.addEventListener(
+      "click",
+      closeModal
+    );
+
+    el.downloadSingle?.addEventListener(
+      "click",
+      printReport
+    );
+
+    document.addEventListener(
+      "keydown",
+      handleModalKeyboard
+    );
   }
 
   // ================================================
@@ -1089,8 +1926,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================================================
 
   function initialize() {
+
     if (el.currentYear) {
-      el.currentYear.textContent = new Date().getFullYear();
+
+      el.currentYear.textContent =
+        new Date().getFullYear();
+    }
+
+    if (el.downloadSingle) {
+      el.downloadSingle.disabled = true;
     }
 
     initializeEvents();
@@ -1098,7 +1942,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchReports();
 
     console.log(
-      "ScamShield AI Reports Module Initialized Successfully."
+      "ScamShield AI Reports Module v2.1.0 initialized successfully."
     );
   }
 

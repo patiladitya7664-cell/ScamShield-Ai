@@ -1212,3 +1212,156 @@
     transition-duration: 0.01ms !important;
   }
 }
+/* =====================================================
+   SCAMSHIELD AI - REPORTS ACCESSIBILITY PATCH
+   Version: 2.1.0
+   Purpose:
+   - Keyboard accessibility
+   - Better touch targets
+   - Additional backend status support
+   - Improved modal scrolling
+   - Mobile usability
+===================================================== */
+
+/* =========================
+   KEYBOARD ACCESSIBILITY
+========================= */
+
+.reports-table-wrapper:focus-visible {
+  outline: 3px solid #4ade80;
+  outline-offset: -3px;
+  border-radius: 4px;
+}
+
+.report-view-btn:focus-visible,
+.report-modal-close:focus-visible,
+.pagination-controls button:focus-visible {
+  outline: 3px solid #4ade80;
+  outline-offset: 3px;
+}
+
+/* =========================
+   ADDITIONAL STATUS SUPPORT
+========================= */
+
+.report-status-badge.under_review,
+.report-status-badge.under-review,
+.report-status-badge.in_progress,
+.report-status-badge.in-progress {
+  background: rgba(245, 158, 11, 0.11);
+  color: #fcd34d;
+}
+
+.report-status-badge.rejected,
+.report-status-badge.cancelled,
+.report-status-badge.canceled {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
+/* =========================
+   IMPROVED TOUCH TARGETS
+========================= */
+
+.report-view-btn {
+  min-height: 40px;
+}
+
+.report-modal-close {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.pagination-controls button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* =========================
+   MODAL SCROLL IMPROVEMENTS
+========================= */
+
+.report-modal {
+  overscroll-behavior: contain;
+}
+
+.report-modal-content {
+  overscroll-behavior: contain;
+}
+
+.report-modal-body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================
+   TABLE SCROLL IMPROVEMENTS
+========================= */
+
+.reports-table-wrapper {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* =========================
+   SMALL SCREEN IMPROVEMENTS
+========================= */
+
+@media (max-width: 520px) {
+  .report-view-btn {
+    min-height: 44px;
+    padding: 9px 12px;
+  }
+
+  .reports-clear-btn,
+  .reports-refresh-btn,
+  .reports-export-btn {
+    min-height: 46px;
+  }
+
+  .reports-pagination {
+    gap: 12px;
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
+  }
+
+  .report-modal-footer button {
+    min-height: 44px;
+  }
+}
+
+/* =========================
+   HIGH CONTRAST SUPPORT
+========================= */
+
+@media (prefers-contrast: more) {
+  .reports-page {
+    --reports-border: rgba(203, 213, 225, 0.4);
+    --reports-muted: #cbd5e1;
+  }
+
+  .reports-table td {
+    color: #f1f5f9;
+  }
+
+  .report-risk-badge,
+  .report-status-badge {
+    border: 1px solid currentColor;
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .reports-page *,
+  .reports-page *::before,
+  .reports-page *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

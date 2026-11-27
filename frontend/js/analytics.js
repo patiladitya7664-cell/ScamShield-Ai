@@ -24,12 +24,10 @@
 
 (() => {
   const API_BASE_URL = (
-    window.SCAMSHIELD_API_URL ||
-    "http://localhost:5000/api"
+    window.SCAMSHIELD_API_URL || "http://localhost:5000/api"
   ).replace(/\/+$/, "");
 
-  const API_ENDPOINT =
-    `${API_BASE_URL}/dashboard/overview`;
+  const API_ENDPOINT = `${API_BASE_URL}/dashboard/overview`;
 
   const elements = {
     totalAnalyses: document.getElementById("analyticsTotalAnalyses"),
@@ -53,30 +51,70 @@
     ecommerce: document.getElementById("ecommerceAnalyticsCount"),
 
     refreshButton: document.getElementById("refreshAnalytics"),
-    currentYear: document.getElementById("currentYear")
+    currentYear: document.getElementById("currentYear"),
   };
 
   const CATEGORY_CONFIG = [
-    { key: "fraud_message", id: "categoryFraudMessage", label: "Fraud Messages" },
+    {
+      key: "fraud_message",
+      id: "categoryFraudMessage",
+      label: "Fraud Messages",
+    },
     { key: "fraud_call", id: "categoryFraudCall", label: "Fraud Calls" },
     { key: "url_phishing", id: "categoryUrlPhishing", label: "URL Phishing" },
     { key: "email_scam", id: "categoryEmailScam", label: "Email Scams" },
-    { key: "investment_scam", id: "categoryInvestmentScam", label: "Investment Scams" },
-    { key: "digital_arrest", id: "categoryDigitalArrest", label: "Digital Arrest" },
-    { key: "upi_banking_fraud", id: "categoryUpiBankingFraud", label: "UPI / Banking Fraud" },
+    {
+      key: "investment_scam",
+      id: "categoryInvestmentScam",
+      label: "Investment Scams",
+    },
+    {
+      key: "digital_arrest",
+      id: "categoryDigitalArrest",
+      label: "Digital Arrest",
+    },
+    {
+      key: "upi_banking_fraud",
+      id: "categoryUpiBankingFraud",
+      label: "UPI / Banking Fraud",
+    },
     { key: "card_fraud", id: "categoryCardFraud", label: "Card Fraud" },
-    { key: "ecommerce_scam", id: "categoryEcommerceScam", label: "E-commerce Scams" },
-    { key: "job_loan_scam", id: "categoryJobLoanScam", label: "Job / Loan Scams" },
-    { key: "sextortion_blackmail", id: "categorySextortionBlackmail", label: "Sextortion / Blackmail" },
-    { key: "social_media_scam", id: "categorySocialMediaScam", label: "Social Media Scams" }
+    {
+      key: "ecommerce_scam",
+      id: "categoryEcommerceScam",
+      label: "E-commerce Scams",
+    },
+    {
+      key: "job_loan_scam",
+      id: "categoryJobLoanScam",
+      label: "Job / Loan Scams",
+    },
+    {
+      key: "sextortion_blackmail",
+      id: "categorySextortionBlackmail",
+      label: "Sextortion / Blackmail",
+    },
+    {
+      key: "social_media_scam",
+      id: "categorySocialMediaScam",
+      label: "Social Media Scams",
+    },
   ];
 
   const MODULE_CONFIG = [
-    { key: "investment", element: elements.investment, label: "Investment Scams" },
+    {
+      key: "investment",
+      element: elements.investment,
+      label: "Investment Scams",
+    },
     { key: "digitalArrest", element: elements.arrest, label: "Digital Arrest" },
     { key: "creditCard", element: elements.card, label: "Credit Card Fraud" },
     { key: "sextortion", element: elements.sextortion, label: "Sextortion" },
-    { key: "ecommerce", element: elements.ecommerce, label: "E-commerce Fraud" }
+    {
+      key: "ecommerce",
+      element: elements.ecommerce,
+      label: "E-commerce Fraud",
+    },
   ];
 
   const UNSUPPORTED_METRICS = [
@@ -94,7 +132,7 @@
 
     "geminiAdvisoryRequests",
     "geminiAdvisorySuccess",
-    "geminiAdvisoryFailures"
+    "geminiAdvisoryFailures",
   ];
 
   let activeController = null;
@@ -110,10 +148,7 @@
     setUnsupportedMetrics();
 
     if (elements.refreshButton) {
-      elements.refreshButton.addEventListener(
-        "click",
-        loadAnalytics
-      );
+      elements.refreshButton.addEventListener("click", loadAnalytics);
     }
 
     loadAnalytics();
@@ -125,8 +160,7 @@
 
   function setCurrentYear() {
     if (elements.currentYear) {
-      elements.currentYear.textContent =
-        new Date().getFullYear();
+      elements.currentYear.textContent = new Date().getFullYear();
     }
   }
 
@@ -149,27 +183,17 @@
   }
 
   function getValidNumber(value) {
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
+    if (value === null || value === undefined || value === "") {
       return 0;
     }
 
     const number = Number(value);
 
-    return Number.isFinite(number) && number >= 0
-      ? number
-      : 0;
+    return Number.isFinite(number) && number >= 0 ? number : 0;
   }
 
   function safeText(value, fallback = "Unknown") {
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
+    if (value === null || value === undefined || value === "") {
       return fallback;
     }
 
@@ -200,9 +224,7 @@
     if (!element) return;
 
     element.textContent =
-      value === null || value === undefined
-        ? "--"
-        : formatNumber(value);
+      value === null || value === undefined ? "--" : formatNumber(value);
   }
 
   function setUnavailable(id) {
@@ -212,8 +234,7 @@
 
     element.textContent = "--";
 
-    element.title =
-      "This metric is not currently provided by the backend.";
+    element.title = "This metric is not currently provided by the backend.";
   }
 
   /* =====================================================
@@ -223,8 +244,7 @@
   function setUnsupportedMetrics() {
     UNSUPPORTED_METRICS.forEach(setUnavailable);
 
-    const geminiStatus =
-      document.getElementById("geminiAdvisoryStatus");
+    const geminiStatus = document.getElementById("geminiAdvisoryStatus");
 
     if (geminiStatus) {
       geminiStatus.textContent = "Statistics unavailable";
@@ -260,16 +280,16 @@
       elements.arrest,
       elements.card,
       elements.sextortion,
-      elements.ecommerce
+      elements.ecommerce,
     ];
 
-    statistics.forEach(element => {
+    statistics.forEach((element) => {
       if (element) {
         element.textContent = "--";
       }
     });
 
-    CATEGORY_CONFIG.forEach(category => {
+    CATEGORY_CONFIG.forEach((category) => {
       setUnavailable(category.id);
     });
 
@@ -289,10 +309,7 @@
 
     button.disabled = isLoading;
 
-    button.setAttribute(
-      "aria-busy",
-      String(isLoading)
-    );
+    button.setAttribute("aria-busy", String(isLoading));
 
     const icon = button.querySelector("i");
 
@@ -301,12 +318,11 @@
     }
 
     const textNode = Array.from(button.childNodes).find(
-      node => node.nodeType === Node.TEXT_NODE
+      (node) => node.nodeType === Node.TEXT_NODE,
     );
 
     if (textNode) {
-      textNode.textContent =
-        isLoading ? " Loading..." : " Refresh";
+      textNode.textContent = isLoading ? " Loading..." : " Refresh";
     }
   }
 
@@ -321,10 +337,7 @@
     sessionStorage.removeItem("scamshieldToken");
     sessionStorage.removeItem("scamshieldUser");
 
-    showNotice(
-      "Your session has expired. Please log in again.",
-      "error"
-    );
+    showNotice("Your session has expired. Please log in again.", "error");
 
     window.setTimeout(() => {
       window.location.href = "login.html";
@@ -346,19 +359,13 @@
 
     setLoadingState(true);
 
-    showNotice(
-      "Loading analytics from the server...",
-      "loading"
-    );
+    showNotice("Loading analytics from the server...", "loading");
 
     try {
       const token = getToken();
 
       if (!token) {
-        showNotice(
-          "Please log in to access your security analytics.",
-          "error"
-        );
+        showNotice("Please log in to access your security analytics.", "error");
 
         window.setTimeout(() => {
           if (activeController === controller) {
@@ -377,10 +384,10 @@
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Cache-Control": "no-cache",
-          Pragma: "no-cache"
+          Pragma: "no-cache",
         },
 
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       if (response.status === 401) {
@@ -390,7 +397,7 @@
 
       if (response.status === 403) {
         throw new Error(
-          "You do not have permission to access this analytics data."
+          "You do not have permission to access this analytics data.",
         );
       }
 
@@ -400,21 +407,19 @@
         result = await response.json();
       } catch {
         throw new Error(
-          `Server returned an invalid JSON response (HTTP ${response.status}).`
+          `Server returned an invalid JSON response (HTTP ${response.status}).`,
         );
       }
 
       if (!response.ok) {
         throw new Error(
-          result.message ||
-          `Analytics request failed (${response.status}).`
+          result.message || `Analytics request failed (${response.status}).`,
         );
       }
 
       if (result.success !== true) {
         throw new Error(
-          result.message ||
-          "Analytics data could not be retrieved."
+          result.message || "Analytics data could not be retrieved.",
         );
       }
 
@@ -425,40 +430,29 @@
         typeof analyticsData !== "object" ||
         Array.isArray(analyticsData)
       ) {
-        throw new Error(
-          "The analytics response has an invalid structure."
-        );
+        throw new Error("The analytics response has an invalid structure.");
       }
 
       renderAnalytics(analyticsData);
 
       hasLoadedData = true;
 
-      showNotice(
-        "Analytics successfully updated from the backend.",
-        "success"
-      );
-
+      showNotice("Analytics successfully updated from the backend.", "success");
     } catch (error) {
       if (error.name === "AbortError") {
         return;
       }
 
-      console.error(
-        "[ScamShield Analytics]",
-        error
-      );
+      console.error("[ScamShield Analytics]", error);
 
       if (!hasLoadedData) {
         renderEmptyStates();
       }
 
       showNotice(
-        error.message ||
-        "Analytics service is unavailable. Please try again.",
-        "error"
+        error.message || "Analytics service is unavailable. Please try again.",
+        "error",
       );
-
     } finally {
       if (activeController === controller) {
         activeController = null;
@@ -474,24 +468,19 @@
   function renderAnalytics(data) {
     const statistics = data.statistics || {};
 
-    const riskDistribution =
-      data.riskDistribution || {};
+    const riskDistribution = data.riskDistribution || {};
 
-    const fraudCategories =
-      data.fraudCategories || {};
+    const fraudCategories = data.fraudCategories || {};
 
-    const fraudModules =
-      data.fraudModules || {};
+    const fraudModules = data.fraudModules || {};
 
-    const threatTrends =
-      Array.isArray(data.threatTrends)
-        ? data.threatTrends
-        : [];
+    const threatTrends = Array.isArray(data.threatTrends)
+      ? data.threatTrends
+      : [];
 
-    const recentActivity =
-      Array.isArray(data.recentActivity)
-        ? data.recentActivity
-        : [];
+    const recentActivity = Array.isArray(data.recentActivity)
+      ? data.recentActivity
+      : [];
 
     renderStatistics(statistics, riskDistribution);
 
@@ -513,25 +502,13 @@
   ===================================================== */
 
   function renderStatistics(statistics, riskDistribution) {
-    updateText(
-      elements.totalAnalyses,
-      statistics.totalAnalyses
-    );
+    updateText(elements.totalAnalyses, statistics.totalAnalyses);
 
-    updateText(
-      elements.threats,
-      statistics.threatsDetected
-    );
+    updateText(elements.threats, statistics.threatsDetected);
 
-    updateText(
-      elements.lowRisk,
-      statistics.lowRiskResults
-    );
+    updateText(elements.lowRisk, statistics.lowRiskResults);
 
-    updateText(
-      elements.critical,
-      riskDistribution.critical
-    );
+    updateText(elements.critical, riskDistribution.critical);
   }
 
   /* =====================================================
@@ -549,48 +526,35 @@
       { key: "low", label: "Low Risk", color: "#60a5fa" },
       { key: "medium", label: "Medium Risk", color: "#93c5fd" },
       { key: "high", label: "High Risk", color: "#fbbf24" },
-      { key: "critical", label: "Critical Risk", color: "#f87171" }
+      { key: "critical", label: "Critical Risk", color: "#f87171" },
     ];
 
-    const values = riskLevels.map(level => ({
+    const values = riskLevels.map((level) => ({
       ...level,
-      value: getValidNumber(distribution[level.key])
+      value: getValidNumber(distribution[level.key]),
     }));
 
-    const total = values.reduce(
-      (sum, item) => sum + item.value,
-      0
-    );
+    const total = values.reduce((sum, item) => sum + item.value, 0);
 
     if (!total) {
       renderChartEmptyState(
         container,
         "No risk data available",
         "Risk distribution will appear when completed analysis records are available.",
-        "fa-chart-pie"
+        "fa-chart-pie",
       );
 
       return;
     }
 
-    const chart = createElement(
-      "div",
-      "analytics-horizontal-chart"
-    );
+    const chart = createElement("div", "analytics-horizontal-chart");
 
-    values.forEach(item => {
-      const percentage =
-        (item.value / total) * 100;
+    values.forEach((item) => {
+      const percentage = (item.value / total) * 100;
 
-      const row = createElement(
-        "div",
-        "analytics-bar-row"
-      );
+      const row = createElement("div", "analytics-bar-row");
 
-      const header = createElement(
-        "div",
-        "analytics-bar-header"
-      );
+      const header = createElement("div", "analytics-bar-header");
 
       header.append(
         createElement("span", "", item.label),
@@ -598,19 +562,13 @@
         createElement(
           "strong",
           "",
-          `${formatNumber(item.value)} (${percentage.toFixed(1)}%)`
-        )
+          `${formatNumber(item.value)} (${percentage.toFixed(1)}%)`,
+        ),
       );
 
-      const track = createElement(
-        "div",
-        "analytics-bar-track"
-      );
+      const track = createElement("div", "analytics-bar-track");
 
-      const bar = createElement(
-        "div",
-        "analytics-bar-fill"
-      );
+      const bar = createElement("div", "analytics-bar-fill");
 
       bar.style.width = `${percentage}%`;
       bar.style.backgroundColor = item.color;
@@ -628,11 +586,10 @@
   ===================================================== */
 
   function renderFraudCategories(categories) {
-    CATEGORY_CONFIG.forEach(category => {
+    CATEGORY_CONFIG.forEach((category) => {
       const value = categories[category.key];
 
-      const element =
-        document.getElementById(category.id);
+      const element = document.getElementById(category.id);
 
       if (element) {
         updateText(element, value);
@@ -645,45 +602,32 @@
 
     clearElement(container);
 
-    const values = CATEGORY_CONFIG.map(category => ({
+    const values = CATEGORY_CONFIG.map((category) => ({
       ...category,
-      value: getValidNumber(categories[category.key])
+      value: getValidNumber(categories[category.key]),
     }));
 
-    const total = values.reduce(
-      (sum, item) => sum + item.value,
-      0
-    );
+    const total = values.reduce((sum, item) => sum + item.value, 0);
 
     if (!total) {
       renderChartEmptyState(
         container,
         "No category data available",
         "Fraud category statistics will appear when completed analysis records are available.",
-        "fa-chart-column"
+        "fa-chart-column",
       );
 
       return;
     }
 
-    const chart = createElement(
-      "div",
-      "analytics-horizontal-chart"
-    );
+    const chart = createElement("div", "analytics-horizontal-chart");
 
-    values.forEach(item => {
-      const percentage =
-        (item.value / total) * 100;
+    values.forEach((item) => {
+      const percentage = (item.value / total) * 100;
 
-      const row = createElement(
-        "div",
-        "analytics-bar-row"
-      );
+      const row = createElement("div", "analytics-bar-row");
 
-      const header = createElement(
-        "div",
-        "analytics-bar-header"
-      );
+      const header = createElement("div", "analytics-bar-header");
 
       header.append(
         createElement("span", "", item.label),
@@ -691,19 +635,13 @@
         createElement(
           "strong",
           "",
-          `${formatNumber(item.value)} (${percentage.toFixed(1)}%)`
-        )
+          `${formatNumber(item.value)} (${percentage.toFixed(1)}%)`,
+        ),
       );
 
-      const track = createElement(
-        "div",
-        "analytics-bar-track"
-      );
+      const track = createElement("div", "analytics-bar-track");
 
-      const bar = createElement(
-        "div",
-        "analytics-bar-fill category-fill"
-      );
+      const bar = createElement("div", "analytics-bar-fill category-fill");
 
       bar.style.width = `${percentage}%`;
 
@@ -724,11 +662,8 @@
   ===================================================== */
 
   function renderFraudModules(modules) {
-    MODULE_CONFIG.forEach(module => {
-      updateText(
-        module.element,
-        modules[module.key]
-      );
+    MODULE_CONFIG.forEach((module) => {
+      updateText(module.element, modules[module.key]);
     });
   }
 
@@ -748,18 +683,19 @@
         container,
         "Historical trends not available",
         "The current dashboard API does not provide historical trend aggregation yet.",
-        "fa-chart-line"
+        "fa-chart-line",
       );
 
       return;
     }
 
-    const validTrends = trends.filter(item =>
-      item &&
-      Number.isFinite(Number(item.analyses)) &&
-      Number.isFinite(Number(item.threats)) &&
-      Number(item.analyses) >= 0 &&
-      Number(item.threats) >= 0
+    const validTrends = trends.filter(
+      (item) =>
+        item &&
+        Number.isFinite(Number(item.analyses)) &&
+        Number.isFinite(Number(item.threats)) &&
+        Number(item.analyses) >= 0 &&
+        Number(item.threats) >= 0,
     );
 
     if (!validTrends.length) {
@@ -767,59 +703,37 @@
         container,
         "Trend data unavailable",
         "The server did not return valid trend values.",
-        "fa-chart-line"
+        "fa-chart-line",
       );
 
       return;
     }
 
-    const chart = createElement(
-      "div",
-      "analytics-trend-chart"
-    );
+    const chart = createElement("div", "analytics-trend-chart");
 
     const maximum = Math.max(
       1,
-      ...validTrends.map(item =>
-        Math.max(
-          getValidNumber(item.analyses),
-          getValidNumber(item.threats)
-        )
-      )
+      ...validTrends.map((item) =>
+        Math.max(getValidNumber(item.analyses), getValidNumber(item.threats)),
+      ),
     );
 
-    validTrends.forEach(item => {
-      const analyses =
-        getValidNumber(item.analyses);
+    validTrends.forEach((item) => {
+      const analyses = getValidNumber(item.analyses);
 
-      const threats =
-        getValidNumber(item.threats);
+      const threats = getValidNumber(item.threats);
 
-      const column = createElement(
-        "div",
-        "trend-column"
-      );
+      const column = createElement("div", "trend-column");
 
-      const bars = createElement(
-        "div",
-        "trend-bars"
-      );
+      const bars = createElement("div", "trend-bars");
 
-      const analysisBar = createElement(
-        "div",
-        "trend-bar analysis-bar"
-      );
+      const analysisBar = createElement("div", "trend-bar analysis-bar");
 
-      const threatBar = createElement(
-        "div",
-        "trend-bar threat-bar"
-      );
+      const threatBar = createElement("div", "trend-bar threat-bar");
 
-      analysisBar.style.height =
-        `${(analyses / maximum) * 100}%`;
+      analysisBar.style.height = `${(analyses / maximum) * 100}%`;
 
-      threatBar.style.height =
-        `${(threats / maximum) * 100}%`;
+      threatBar.style.height = `${(threats / maximum) * 100}%`;
 
       analysisBar.title = `Analyses: ${analyses}`;
       threatBar.title = `Threats: ${threats}`;
@@ -829,43 +743,31 @@
       const label = createElement(
         "span",
         "trend-label",
-        safeText(item.label, "Unknown")
+        safeText(item.label, "Unknown"),
       );
 
       column.append(bars, label);
       chart.appendChild(column);
     });
 
-    const legend = createElement(
-      "div",
-      "trend-legend"
-    );
+    const legend = createElement("div", "trend-legend");
 
     legend.append(
       createLegendItem("analysis-bar", "Analyses"),
-      createLegendItem("threat-bar", "Threats")
+      createLegendItem("threat-bar", "Threats"),
     );
 
     container.append(chart, legend);
   }
 
   function createLegendItem(className, label) {
-    const item = createElement(
-      "span",
-      "trend-legend-item"
-    );
+    const item = createElement("span", "trend-legend-item");
 
-    const dot = createElement(
-      "i",
-      `trend-legend-dot ${className}`
-    );
+    const dot = createElement("i", `trend-legend-dot ${className}`);
 
     dot.setAttribute("aria-hidden", "true");
 
-    item.append(
-      dot,
-      document.createTextNode(label)
-    );
+    item.append(dot, document.createTextNode(label));
 
     return item;
   }
@@ -886,54 +788,37 @@
       return;
     }
 
-    records.forEach(record => {
+    records.forEach((record) => {
       if (!record || typeof record !== "object") {
         return;
       }
 
       const row = document.createElement("tr");
 
-      const analysisId =
-        record._id ||
-        record.evidenceId ||
-        record.analysisId;
+      const analysisId = record._id || record.evidenceId || record.analysisId;
 
       const riskScore = Number(record.riskScore);
 
-      const category =
-        record.detectionCategory ||
-        record.fraudCategory;
+      const category = record.detectionCategory || record.fraudCategory;
 
       const cells = [
         safeText(analysisId),
         safeText(record.evidenceType),
         safeText(category),
-        Number.isFinite(riskScore)
-          ? `${riskScore}/100`
-          : "--"
+        Number.isFinite(riskScore) ? `${riskScore}/100` : "--",
       ];
 
-      cells.forEach(value => {
-        row.appendChild(
-          createElement("td", "", value)
-        );
+      cells.forEach((value) => {
+        row.appendChild(createElement("td", "", value));
       });
 
       const riskCell = document.createElement("td");
 
-      riskCell.appendChild(
-        createRiskBadge(record.riskLevel)
-      );
+      riskCell.appendChild(createRiskBadge(record.riskLevel));
 
       row.appendChild(riskCell);
 
-      row.appendChild(
-        createElement(
-          "td",
-          "",
-          formatDate(record.createdAt)
-        )
-      );
+      row.appendChild(createElement("td", "", formatDate(record.createdAt)));
 
       container.appendChild(row);
     });
@@ -952,29 +837,18 @@
       .trim()
       .toLowerCase();
 
-    const allowedLevels = [
-      "low",
-      "medium",
-      "high",
-      "critical"
-    ];
+    const allowedLevels = ["low", "medium", "high", "critical"];
 
-    const safeLevel =
-      allowedLevels.includes(normalized)
-        ? normalized
-        : "unknown";
+    const safeLevel = allowedLevels.includes(normalized)
+      ? normalized
+      : "unknown";
 
     const label =
       safeLevel === "unknown"
         ? "Unknown"
-        : safeLevel.charAt(0).toUpperCase() +
-          safeLevel.slice(1);
+        : safeLevel.charAt(0).toUpperCase() + safeLevel.slice(1);
 
-    return createElement(
-      "span",
-      `analytics-risk-badge ${safeLevel}`,
-      label
-    );
+    return createElement("span", `analytics-risk-badge ${safeLevel}`, label);
   }
 
   /* =====================================================
@@ -990,49 +864,32 @@
       return "--";
     }
 
-    return date.toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-      }
-    );
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   }
 
   /* =====================================================
      EMPTY CHART STATE
   ===================================================== */
 
-  function renderChartEmptyState(
-    container,
-    title,
-    description,
-    icon
-  ) {
+  function renderChartEmptyState(container, title, description, icon) {
     if (!container) return;
 
     clearElement(container);
 
-    const state = createElement(
-      "div",
-      "chart-empty-state"
-    );
+    const state = createElement("div", "chart-empty-state");
 
-    const iconElement = createElement(
-      "i",
-      `fa-solid ${icon}`
-    );
+    const iconElement = createElement("i", `fa-solid ${icon}`);
 
-    iconElement.setAttribute(
-      "aria-hidden",
-      "true"
-    );
+    iconElement.setAttribute("aria-hidden", "true");
 
     state.append(
       iconElement,
       createElement("h4", "", title),
-      createElement("p", "", description)
+      createElement("p", "", description),
     );
 
     container.appendChild(state);
@@ -1055,32 +912,22 @@
 
     cell.colSpan = 6;
 
-    const state = createElement(
-      "div",
-      "table-empty-state"
-    );
+    const state = createElement("div", "table-empty-state");
 
-    const icon = createElement(
-      "i",
-      "fa-solid fa-folder-open"
-    );
+    const icon = createElement("i", "fa-solid fa-folder-open");
 
     icon.setAttribute("aria-hidden", "true");
 
     state.append(
       icon,
 
-      createElement(
-        "strong",
-        "",
-        "No analysis records found"
-      ),
+      createElement("strong", "", "No analysis records found"),
 
       createElement(
         "span",
         "",
-        "Recent activity will appear here when analysis records are available."
-      )
+        "Recent activity will appear here when analysis records are available.",
+      ),
     );
 
     cell.appendChild(state);
@@ -1097,21 +944,21 @@
       elements.riskChart,
       "No risk data available",
       "Risk distribution will appear when analysis records are available.",
-      "fa-chart-pie"
+      "fa-chart-pie",
     );
 
     renderChartEmptyState(
       elements.categoryChart,
       "No category data available",
       "Fraud category statistics will appear when records are available.",
-      "fa-chart-column"
+      "fa-chart-column",
     );
 
     renderChartEmptyState(
       elements.trendChart,
       "Historical trends not available",
       "Historical trend aggregation is not currently provided by the backend.",
-      "fa-chart-line"
+      "fa-chart-line",
     );
 
     renderTableEmptyState();
@@ -1122,12 +969,8 @@
   ===================================================== */
 
   if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initAnalytics
-    );
+    document.addEventListener("DOMContentLoaded", initAnalytics);
   } else {
     initAnalytics();
   }
-
 })();

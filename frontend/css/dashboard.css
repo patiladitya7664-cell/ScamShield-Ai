@@ -1,17 +1,19 @@
 /* =========================================================
    SCAMSHIELD AI - SECURITY DASHBOARD
-   Version: 3.2.0
+   Version: 3.3.0
+   Compatible with: frontend/pages/dashboard.html
 
-   Compatible with:
-   frontend/pages/dashboard.html
-
-   Theme:
-   Premium Navy + Blue
+   Theme: Premium Navy + Blue
+   Architecture:
+   - Universal Input Layer
+   - Five Major Detection Modules
+   - Twelve Fraud Categories
+   - Four AI Agents
 ========================================================= */
 
 
 /* =========================================================
-   DASHBOARD FOUNDATION
+   1. DASHBOARD FOUNDATION
 ========================================================= */
 
 .dashboard-page {
@@ -24,11 +26,39 @@
     --dashboard-surface: rgba(255, 255, 255, 0.035);
     --dashboard-surface-hover: rgba(255, 255, 255, 0.055);
 
-    --dashboard-border: rgba(148, 163, 184, 0.14);
-    --dashboard-muted: #94a3b8;
+    --dashboard-border: rgba(148, 163, 184, 0.16);
+    --dashboard-muted: #a1afc2;
+    --dashboard-text: #e5edf8;
+
+    --dashboard-success: #34d399;
+    --dashboard-warning: #fbbf24;
+    --dashboard-danger: #f87171;
 
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow-x: clip;
+    color: var(--dashboard-text);
+}
+
+.dashboard-page *,
+.dashboard-page *::before,
+.dashboard-page *::after {
+    box-sizing: border-box;
+}
+
+.dashboard-page h1,
+.dashboard-page h2,
+.dashboard-page h3,
+.dashboard-page h4 {
+    font-family: "Space Grotesk", sans-serif;
+}
+
+.dashboard-page p {
+    line-height: 1.7;
+}
+
+.dashboard-page img,
+.dashboard-page svg {
+    max-width: 100%;
 }
 
 .dashboard-main {
@@ -49,20 +79,9 @@
     margin-top: 0;
 }
 
-.dashboard-page h1,
-.dashboard-page h2,
-.dashboard-page h3,
-.dashboard-page h4 {
-    font-family: "Space Grotesk", sans-serif;
-}
-
-.dashboard-page p {
-    line-height: 1.7;
-}
-
 
 /* =========================================================
-   NAVIGATION
+   2. NAVIGATION
 ========================================================= */
 
 .dashboard-navbar {
@@ -97,7 +116,7 @@
 
 
 /* =========================================================
-   DASHBOARD HEADER
+   3. DASHBOARD HEADER
 ========================================================= */
 
 .dashboard-header {
@@ -173,7 +192,7 @@
     height: 9px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: #fbbf24;
+    background: var(--dashboard-warning);
     box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
 }
 
@@ -183,7 +202,7 @@
 
 
 /* =========================================================
-   STATUS BANNER
+   4. STATUS BANNER
 ========================================================= */
 
 .dashboard-status-banner {
@@ -203,8 +222,8 @@
     place-items: center;
     flex-shrink: 0;
     border-radius: 12px;
-    color: #60a5fa;
-    background: rgba(59, 130, 246, 0.12);
+    color: var(--dashboard-primary-light);
+    background: var(--dashboard-primary-soft);
     font-size: 1.1rem;
 }
 
@@ -241,7 +260,7 @@
 
 
 /* =========================================================
-   SECTION HEADINGS
+   5. SECTION HEADINGS
 ========================================================= */
 
 .section-heading {
@@ -269,7 +288,7 @@
 
 
 /* =========================================================
-   STATISTICS CARDS
+   6. STATISTICS CARDS
 ========================================================= */
 
 .dashboard-stats-grid {
@@ -352,7 +371,7 @@
 
 
 /* =========================================================
-   STATISTICS STATUS
+   7. STATISTICS STATUS
 ========================================================= */
 
 .statistics-status {
@@ -364,20 +383,20 @@
 }
 
 .statistics-status.success {
-    color: #34d399;
+    color: var(--dashboard-success);
 }
 
 .statistics-status.error {
-    color: #f87171;
+    color: var(--dashboard-danger);
 }
 
 .statistics-status.loading {
-    color: #fbbf24;
+    color: var(--dashboard-warning);
 }
 
 
 /* =========================================================
-   UNIVERSAL INPUT LAYER
+   8. UNIVERSAL INPUT LAYER
 ========================================================= */
 
 .input-types-grid {
@@ -455,7 +474,7 @@
 
 .dashboard-info-note > i {
     margin-top: 3px;
-    color: #fbbf24;
+    color: var(--dashboard-warning);
 }
 
 .dashboard-info-note p {
@@ -465,7 +484,7 @@
 
 
 /* =========================================================
-   FIVE MAJOR DETECTION MODULES
+   9. FIVE MAJOR DETECTION MODULES
 ========================================================= */
 
 .detection-modules-grid {
@@ -576,7 +595,7 @@
 
 
 /* =========================================================
-   DETECTION MODULE STATISTICS
+   10. DETECTION MODULE STATISTICS
 ========================================================= */
 
 .module-stat {
@@ -605,12 +624,12 @@
 
 
 /* =========================================================
-   ANALYTICS PANELS
+   11. ANALYTICS PANELS
 ========================================================= */
 
 .analytics-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
 }
 
@@ -645,6 +664,7 @@
     height: 41px;
     display: grid;
     place-items: center;
+    flex-shrink: 0;
     border: 1px solid var(--dashboard-border);
     border-radius: 11px;
     color: var(--dashboard-primary-light);
@@ -653,7 +673,7 @@
 
 
 /* =========================================================
-   RISK DISTRIBUTION CHART
+   12. RISK DISTRIBUTION CHART
 ========================================================= */
 
 .risk-chart-container {
@@ -768,7 +788,7 @@
 
 
 /* =========================================================
-   CATEGORY LIST
+   13. FRAUD CATEGORY LIST
 ========================================================= */
 
 .category-list {
@@ -810,7 +830,7 @@
 
 
 /* =========================================================
-   AI AGENT OVERVIEW
+   14. FOUR AI AGENTS
 ========================================================= */
 
 .agent-overview-grid {
@@ -926,6 +946,7 @@
 
 .agent-overview-card li::before {
     content: "✓";
+    flex-shrink: 0;
     color: var(--dashboard-primary-light);
     font-weight: 700;
 }
@@ -942,7 +963,7 @@
 
 
 /* =========================================================
-   UNIVERSAL AI ASSISTANT
+   15. UNIVERSAL AI ASSISTANT
 ========================================================= */
 
 .assistant-dashboard-card {
@@ -1023,7 +1044,7 @@
 
 
 /* =========================================================
-   PROTECTION & INTELLIGENCE
+   16. PROTECTION & THREAT INTELLIGENCE
 ========================================================= */
 
 .protection-grid {
@@ -1033,6 +1054,7 @@
 }
 
 .protection-card {
+    min-width: 0;
     padding: 24px;
     border: 1px solid var(--dashboard-border);
     border-radius: 16px;
@@ -1083,7 +1105,7 @@
 
 
 /* =========================================================
-   ROADMAP CARD
+   17. ROADMAP CARD
 ========================================================= */
 
 .roadmap-card {
@@ -1156,7 +1178,7 @@
 
 
 /* =========================================================
-   USER & DEVICE SECURITY
+   18. USER & DEVICE SECURITY
 ========================================================= */
 
 .security-grid {
@@ -1212,7 +1234,7 @@
 
 
 /* =========================================================
-   ACTIVITY TABLE
+   19. ACTIVITY TABLE
 ========================================================= */
 
 .activity-panel {
@@ -1338,7 +1360,7 @@
 
 
 /* =========================================================
-   DASHBOARD LOADING STATE
+   20. DASHBOARD LOADING STATE
 ========================================================= */
 
 .dashboard-loading {
@@ -1364,7 +1386,7 @@
 
 
 /* =========================================================
-   REFRESH BUTTON
+   21. REFRESH BUTTON
 ========================================================= */
 
 #refreshDashboard {
@@ -1385,7 +1407,7 @@
 
 
 /* =========================================================
-   STATUS INDICATORS
+   22. STATUS INDICATORS
 ========================================================= */
 
 .status-indicator.online {
@@ -1400,11 +1422,12 @@
 
 .status-indicator.checking {
     background: #fbbf24;
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
 }
 
 
 /* =========================================================
-   ANDROID ROADMAP
+   23. ANDROID ROADMAP
 ========================================================= */
 
 .android-roadmap-card {
@@ -1430,8 +1453,8 @@
     place-items: center;
     flex-shrink: 0;
     border-radius: 16px;
-    color: #60a5fa;
-    background: rgba(59, 130, 246, 0.12);
+    color: var(--dashboard-primary-light);
+    background: var(--dashboard-primary-soft);
     font-size: 1.8rem;
 }
 
@@ -1486,7 +1509,7 @@
 
 
 /* =========================================================
-   EMERGENCY SUPPORT
+   24. EMERGENCY CYBER SUPPORT
 ========================================================= */
 
 .emergency-support-card {
@@ -1540,7 +1563,7 @@
 
 
 /* =========================================================
-   FOOTER
+   25. FOOTER
 ========================================================= */
 
 .dashboard-footer {
@@ -1564,20 +1587,22 @@
 
 
 /* =========================================================
-   CARD INTERACTIONS
+   26. CARD INTERACTIONS
 ========================================================= */
 
 .module-card,
 .stat-card,
 .input-type-card,
 .protection-card,
-.agent-overview-card {
+.agent-overview-card,
+.security-card {
     overflow-wrap: anywhere;
 }
 
 .module-card > a:focus-visible,
 .agent-overview-card > a:focus-visible,
-.protection-card > a:focus-visible {
+.protection-card > a:focus-visible,
+.security-card > a:focus-visible {
     outline: 3px solid var(--dashboard-primary-light);
     outline-offset: 5px;
     border-radius: 4px;
@@ -1585,7 +1610,7 @@
 
 
 /* =========================================================
-   FOCUS ACCESSIBILITY
+   27. ACCESSIBILITY
 ========================================================= */
 
 .dashboard-page a:focus-visible,
@@ -1599,26 +1624,36 @@
     opacity: 0.65;
 }
 
+.dashboard-page a {
+    -webkit-tap-highlight-color: transparent;
+}
+
 
 /* =========================================================
-   HIGH CONTRAST PREFERENCE
+   28. HIGH CONTRAST PREFERENCE
 ========================================================= */
 
 @media (prefers-contrast: more) {
+
+    .dashboard-page {
+        --dashboard-muted: #cbd5e1;
+        --dashboard-border: rgba(255, 255, 255, 0.4);
+    }
 
     .stat-card,
     .module-card,
     .dashboard-panel,
     .input-type-card,
-    .agent-overview-card {
+    .agent-overview-card,
+    .protection-card,
+    .security-card {
         border-color: rgba(255, 255, 255, 0.4);
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - LARGE TABLETS
+   29. RESPONSIVE - LARGE TABLETS
 ========================================================= */
 
 @media (max-width: 1100px) {
@@ -1646,12 +1681,11 @@
     .security-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - TABLETS
+   30. RESPONSIVE - TABLETS
 ========================================================= */
 
 @media (max-width: 850px) {
@@ -1705,12 +1739,11 @@
     .emergency-actions > a {
         flex: 1;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - MOBILE
+   31. RESPONSIVE - MOBILE
 ========================================================= */
 
 @media (max-width: 768px) {
@@ -1753,12 +1786,11 @@
     .android-roadmap-badge {
         margin-left: 82px;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - SMALL MOBILE
+   32. RESPONSIVE - SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 576px) {
@@ -1900,12 +1932,46 @@
     .statistics-status {
         font-size: 0.7rem;
     }
-
 }
 
 
 /* =========================================================
-   REDUCED MOTION
+   33. VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .dashboard-container {
+        width: calc(100% - 22px);
+    }
+
+    .dashboard-heading h1 {
+        font-size: 1.8rem;
+    }
+
+    .stat-card > h3 {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-panel,
+    .stat-card,
+    .module-card,
+    .input-type-card {
+        padding: 17px;
+    }
+
+    .assistant-dashboard-card {
+        padding: 18px;
+    }
+
+    .panel-header {
+        align-items: flex-start;
+    }
+}
+
+
+/* =========================================================
+   34. REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1918,5 +1984,9 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-
 }
+
+
+/* =========================================================
+   END OF SCAMSHIELD AI DASHBOARD CSS
+========================================================= */

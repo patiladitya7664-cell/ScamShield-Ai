@@ -67,11 +67,7 @@
 
     messageElement.textContent = message;
 
-    messageElement.classList.remove(
-      "success",
-      "error",
-      "warning"
-    );
+    messageElement.classList.remove("success", "error", "warning");
 
     messageElement.classList.add(type);
     messageElement.hidden = false;
@@ -83,11 +79,7 @@
     }
 
     messageElement.textContent = "";
-    messageElement.classList.remove(
-      "success",
-      "error",
-      "warning"
-    );
+    messageElement.classList.remove("success", "error", "warning");
 
     messageElement.hidden = true;
   }
@@ -105,10 +97,7 @@
 
     submitButton.disabled = loading;
 
-    submitButton.setAttribute(
-      "aria-busy",
-      String(loading)
-    );
+    submitButton.setAttribute("aria-busy", String(loading));
 
     if (loading) {
       submitButton.innerHTML = `
@@ -130,16 +119,13 @@
       return;
     }
 
-    const isPassword =
-      passwordInput.type === "password";
+    const isPassword = passwordInput.type === "password";
 
-    passwordInput.type = isPassword
-      ? "text"
-      : "password";
+    passwordInput.type = isPassword ? "text" : "password";
 
     passwordToggle.setAttribute(
       "aria-label",
-      isPassword ? "Hide password" : "Show password"
+      isPassword ? "Hide password" : "Show password",
     );
 
     const icon = passwordToggle.querySelector("i");
@@ -150,18 +136,14 @@
     }
   }
 
-  passwordToggle?.addEventListener(
-    "click",
-    togglePasswordVisibility
-  );
+  passwordToggle?.addEventListener("click", togglePasswordVisibility);
 
   /* ================================================
      INPUT VALIDATION
   ================================================ */
 
   function validateCredentials(email, password) {
-    const emailPattern =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email) {
       return "Please enter your email address.";
@@ -207,7 +189,7 @@
 
     showMessage(
       "Password recovery is not available yet. Please contact your administrator.",
-      "warning"
+      "warning",
     );
   });
 
@@ -235,10 +217,7 @@
     const email = emailInput?.value.trim().toLowerCase() || "";
     const password = passwordInput?.value || "";
 
-    const validationError = validateCredentials(
-      email,
-      password
-    );
+    const validationError = validateCredentials(email, password);
 
     if (validationError) {
       showMessage(validationError, "error");
@@ -250,12 +229,10 @@
     if (!API || typeof API.login !== "function") {
       showMessage(
         "Authentication service is unavailable. Please refresh the page.",
-        "error"
+        "error",
       );
 
-      console.error(
-        "ScamShield AI: ScamShieldAPI is not initialized."
-      );
+      console.error("ScamShield AI: ScamShieldAPI is not initialized.");
 
       return;
     }
@@ -264,18 +241,16 @@
     setLoading(true);
 
     try {
-      const remember = Boolean(
-        rememberInput?.checked
-      );
+      const remember = Boolean(rememberInput?.checked);
 
       const response = await API.login(
         {
           email,
-          password
+          password,
         },
         {
-          remember
-        }
+          remember,
+        },
       );
 
       if (
@@ -284,35 +259,24 @@
         !response.token ||
         !response.user
       ) {
-        throw new Error(
-          response?.message || "Login failed."
-        );
+        throw new Error(response?.message || "Login failed.");
       }
 
       showMessage(
         "Login successful! Redirecting to your dashboard...",
-        "success"
+        "success",
       );
 
       form.reset();
 
-      window.setTimeout(
-        redirectToDashboard,
-        REDIRECT_DELAY
-      );
-
+      window.setTimeout(redirectToDashboard, REDIRECT_DELAY);
     } catch (error) {
-      console.error(
-        "ScamShield AI Login Error:",
-        error.message
-      );
+      console.error("ScamShield AI Login Error:", error.message);
 
       showMessage(
-        error.message ||
-        "Unable to sign in. Please try again.",
-        "error"
+        error.message || "Unable to sign in. Please try again.",
+        "error",
       );
-
     } finally {
       isSubmitting = false;
       setLoading(false);
@@ -325,8 +289,5 @@
 
   clearMessage();
 
-  console.info(
-    "ScamShield AI Authentication Handler v3.0.0 initialized."
-  );
-
+  console.info("ScamShield AI Authentication Handler v3.0.0 initialized.");
 })();

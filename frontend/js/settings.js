@@ -79,11 +79,7 @@ function cloneDefaults() {
 }
 
 function isObject(value) {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    !Array.isArray(value)
-  );
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 function isValidEmail(email) {
@@ -96,9 +92,7 @@ function isValidEmail(email) {
 
 function loadSettings() {
   try {
-    const savedSettings = localStorage.getItem(
-      SETTINGS_STORAGE_KEY,
-    );
+    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
 
     if (!savedSettings) {
       settings = cloneDefaults();
@@ -114,9 +108,7 @@ function loadSettings() {
     settings = {
       account: {
         ...DEFAULT_SETTINGS.account,
-        ...(isObject(parsedSettings.account)
-          ? parsedSettings.account
-          : {}),
+        ...(isObject(parsedSettings.account) ? parsedSettings.account : {}),
       },
 
       notifications: {
@@ -128,16 +120,12 @@ function loadSettings() {
 
       security: {
         ...DEFAULT_SETTINGS.security,
-        ...(isObject(parsedSettings.security)
-          ? parsedSettings.security
-          : {}),
+        ...(isObject(parsedSettings.security) ? parsedSettings.security : {}),
       },
 
       privacy: {
         ...DEFAULT_SETTINGS.privacy,
-        ...(isObject(parsedSettings.privacy)
-          ? parsedSettings.privacy
-          : {}),
+        ...(isObject(parsedSettings.privacy) ? parsedSettings.privacy : {}),
       },
 
       appearance: {
@@ -156,10 +144,7 @@ function loadSettings() {
 
 function saveSettings() {
   try {
-    localStorage.setItem(
-      SETTINGS_STORAGE_KEY,
-      JSON.stringify(settings),
-    );
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
 
     return true;
   } catch (error) {
@@ -193,11 +178,9 @@ function initializeAccountSettings() {
 
   updateAccountLabels();
 
-  document
-    .getElementById("editProfileBtn")
-    ?.addEventListener("click", () => {
-      displayNameInput?.focus();
-    });
+  document.getElementById("editProfileBtn")?.addEventListener("click", () => {
+    displayNameInput?.focus();
+  });
 
   document
     .getElementById("saveAccountBtn")
@@ -252,13 +235,11 @@ function updateAccountLabels() {
   const emailElement = document.getElementById("settingsUserEmail");
 
   if (nameElement) {
-    nameElement.textContent =
-      settings.account.displayName || "ScamShield User";
+    nameElement.textContent = settings.account.displayName || "ScamShield User";
   }
 
   if (emailElement) {
-    emailElement.textContent =
-      settings.account.email || "No email added";
+    emailElement.textContent = settings.account.email || "No email added";
   }
 }
 
@@ -275,34 +256,26 @@ function initializePreferenceControls() {
       "productUpdates",
     ],
 
-    security: [
-      "loginVerification",
-      "loginMonitoring",
-    ],
+    security: ["loginVerification", "loginMonitoring"],
 
-    privacy: [
-      "saveAnalysisHistory",
-      "usageAnalytics",
-    ],
+    privacy: ["saveAnalysisHistory", "usageAnalytics"],
   };
 
-  Object.entries(preferenceElements).forEach(
-    ([section, elementIds]) => {
-      elementIds.forEach((id) => {
-        const element = document.getElementById(id);
+  Object.entries(preferenceElements).forEach(([section, elementIds]) => {
+    elementIds.forEach((id) => {
+      const element = document.getElementById(id);
 
-        if (!element) return;
+      if (!element) return;
 
-        element.checked = Boolean(settings[section][id]);
+      element.checked = Boolean(settings[section][id]);
 
-        element.addEventListener("change", () => {
-          settings[section][id] = element.checked;
+      element.addEventListener("change", () => {
+        settings[section][id] = element.checked;
 
-          saveSettings();
-        });
+        saveSettings();
       });
-    },
-  );
+    });
+  });
 }
 
 /* =========================================================
@@ -312,13 +285,9 @@ function initializePreferenceControls() {
 function initializeAppearanceSettings() {
   const themeSelect = document.getElementById("themePreference");
 
-  const languageSelect = document.getElementById(
-    "languagePreference",
-  );
+  const languageSelect = document.getElementById("languagePreference");
 
-  const reduceAnimations = document.getElementById(
-    "reduceAnimations",
-  );
+  const reduceAnimations = document.getElementById("reduceAnimations");
 
   if (themeSelect) {
     themeSelect.value = settings.appearance.themePreference;
@@ -338,8 +307,7 @@ function initializeAppearanceSettings() {
   }
 
   if (languageSelect) {
-    languageSelect.value =
-      settings.appearance.languagePreference;
+    languageSelect.value = settings.appearance.languagePreference;
 
     languageSelect.addEventListener("change", () => {
       const selectedLanguage = languageSelect.value;
@@ -363,12 +331,10 @@ function initializeAppearanceSettings() {
   }
 
   if (reduceAnimations) {
-    reduceAnimations.checked =
-      settings.appearance.reduceAnimations;
+    reduceAnimations.checked = settings.appearance.reduceAnimations;
 
     reduceAnimations.addEventListener("change", () => {
-      settings.appearance.reduceAnimations =
-        reduceAnimations.checked;
+      settings.appearance.reduceAnimations = reduceAnimations.checked;
 
       applyReducedMotion(reduceAnimations.checked);
       saveSettings();
@@ -402,9 +368,7 @@ function applyTheme(theme) {
 }
 
 function updateSystemTheme() {
-  const prefersDark = window.matchMedia(
-    "(prefers-color-scheme: dark)",
-  ).matches;
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
   document.documentElement.setAttribute(
     "data-active-theme",
@@ -415,9 +379,7 @@ function updateSystemTheme() {
 function initializeSystemThemeListener() {
   if (!window.matchMedia) return;
 
-  const mediaQuery = window.matchMedia(
-    "(prefers-color-scheme: dark)",
-  );
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
   const handleThemeChange = () => {
     if (settings.appearance.themePreference === "system") {
@@ -433,10 +395,7 @@ function initializeSystemThemeListener() {
 }
 
 function applyReducedMotion(enabled) {
-  document.documentElement.classList.toggle(
-    "reduce-motion",
-    Boolean(enabled),
-  );
+  document.documentElement.classList.toggle("reduce-motion", Boolean(enabled));
 }
 
 /* =========================================================
@@ -444,13 +403,9 @@ function applyReducedMotion(enabled) {
 ========================================================= */
 
 function initializeNavigation() {
-  const navLinks = document.querySelectorAll(
-    ".settings-nav-link",
-  );
+  const navLinks = document.querySelectorAll(".settings-nav-link");
 
-  const sections = document.querySelectorAll(
-    ".settings-card[id]",
-  );
+  const sections = document.querySelectorAll(".settings-card[id]");
 
   navLinks.forEach((link) => {
     link.addEventListener("click", () => {
@@ -474,10 +429,7 @@ function initializeNavigation() {
         navLinks.forEach((link) => {
           const target = link.getAttribute("href");
 
-          link.classList.toggle(
-            "active",
-            target === `#${sectionId}`,
-          );
+          link.classList.toggle("active", target === `#${sectionId}`);
         });
       });
     },
@@ -496,17 +448,15 @@ function initializeNavigation() {
 ========================================================= */
 
 function initializeButtons() {
-  document
-    .getElementById("saveAllSettings")
-    ?.addEventListener("click", () => {
-      if (!saveSettings()) return;
+  document.getElementById("saveAllSettings")?.addEventListener("click", () => {
+    if (!saveSettings()) return;
 
-      showMessage(
-        "settingsSaveMessage",
-        "All preferences saved successfully.",
-        "success",
-      );
-    });
+    showMessage(
+      "settingsSaveMessage",
+      "All preferences saved successfully.",
+      "success",
+    );
+  });
 
   document
     .getElementById("resetSettingsBtn")
@@ -599,26 +549,20 @@ function refreshPreferenceControls() {
 function refreshAppearanceControls() {
   const themeSelect = document.getElementById("themePreference");
 
-  const languageSelect = document.getElementById(
-    "languagePreference",
-  );
+  const languageSelect = document.getElementById("languagePreference");
 
-  const reduceAnimations = document.getElementById(
-    "reduceAnimations",
-  );
+  const reduceAnimations = document.getElementById("reduceAnimations");
 
   if (themeSelect) {
     themeSelect.value = settings.appearance.themePreference;
   }
 
   if (languageSelect) {
-    languageSelect.value =
-      settings.appearance.languagePreference;
+    languageSelect.value = settings.appearance.languagePreference;
   }
 
   if (reduceAnimations) {
-    reduceAnimations.checked =
-      settings.appearance.reduceAnimations;
+    reduceAnimations.checked = settings.appearance.reduceAnimations;
   }
 
   applyTheme(settings.appearance.themePreference);
@@ -630,11 +574,7 @@ function refreshAppearanceControls() {
    MESSAGE HELPER
 ========================================================= */
 
-function showMessage(
-  elementId,
-  message,
-  type = "success",
-) {
+function showMessage(elementId, message, type = "success") {
   const element = document.getElementById(elementId);
 
   if (!element) return;

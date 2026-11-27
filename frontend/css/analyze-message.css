@@ -1431,3 +1431,175 @@ textarea:focus-visible {
     }
 
 }
+/* =====================================================
+   SCAMSHIELD AI - UI IMPROVEMENTS
+   Version: 3.1.0
+===================================================== */
+
+/* Better text wrapping */
+
+body,
+.agent-result-card,
+.notice-card,
+.risk-description {
+    overflow-wrap: anywhere;
+}
+
+/* Form validation */
+
+.form-group input:invalid:not(:placeholder-shown),
+.form-group textarea:invalid:not(:placeholder-shown) {
+    border-color: var(--danger);
+}
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Better disabled buttons */
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Loading state */
+
+.primary-button.loading {
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.primary-button.loading i {
+    animation: scamShieldSpin 1s linear infinite;
+}
+
+@keyframes scamShieldSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Status states */
+
+.status-card.success {
+    border-color: rgba(52, 211, 153, 0.35);
+}
+
+.status-card.error {
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.status-card.warning {
+    border-color: rgba(251, 191, 36, 0.4);
+}
+
+/* Risk score improvements */
+
+.risk-score-circle {
+    position: relative;
+    text-align: center;
+}
+
+.risk-score-circle span {
+    line-height: 1;
+}
+
+.risk-score-circle.low {
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.15);
+}
+
+.risk-score-circle.medium {
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.15);
+}
+
+.risk-score-circle.high {
+    box-shadow: 0 0 25px rgba(251, 146, 60, 0.15);
+}
+
+.risk-score-circle.critical {
+    box-shadow: 0 0 25px rgba(248, 113, 113, 0.2);
+}
+
+/* Feedback active state */
+
+.feedback-button.active {
+    color: var(--primary-light);
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+/* Agent states */
+
+.agent-result-card.unavailable {
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.agent-result-card.failed {
+    border-color: rgba(248, 113, 113, 0.35);
+}
+
+.agent-result-card.completed {
+    border-color: rgba(52, 211, 153, 0.25);
+}
+
+/* Better navigation interaction */
+
+.primary-navigation > a:focus-visible,
+.logout-button:focus-visible {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 3px;
+}
+
+/* Better touch targets */
+
+.feedback-button,
+.emergency-button,
+.cybercrime-button {
+    min-height: 42px;
+}
+
+/* Mobile overflow protection */
+
+@media (max-width: 480px) {
+
+    .risk-score-section {
+        flex-wrap: wrap;
+    }
+
+    .status-card {
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .agent-result-heading {
+        align-items: flex-start;
+    }
+
+    .secure-badge,
+    .result-complete-badge {
+        white-space: normal;
+    }
+
+    .page-heading {
+        min-width: 0;
+    }
+
+    .page-heading > div:last-child {
+        min-width: 0;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .primary-button.loading i {
+        animation: none;
+    }
+
+}

@@ -31,14 +31,14 @@
   const CONFIG = {
     maxLength: 20000,
     endpoint: "/analysis/analyze",
-    feedbackEndpoint: "/cases"
+    feedbackEndpoint: "/cases",
   };
 
   const state = {
     isAnalyzing: false,
     lastAnalysis: null,
     lastCaseId: null,
-    selectedFeedback: null
+    selectedFeedback: null,
   };
 
   const $ = (id) => document.getElementById(id);
@@ -83,7 +83,7 @@
 
     feedbackHelpful: $("callFeedbackHelpful"),
     feedbackReview: $("callFeedbackReview"),
-    feedbackStatus: $("callFeedbackStatus")
+    feedbackStatus: $("callFeedbackStatus"),
   };
 
   const CATEGORY_LABELS = {
@@ -99,7 +99,7 @@
     job_loan_scam: "Job / Loan Scam",
     sextortion_blackmail: "Sextortion / Blackmail",
     social_media_scam: "Social Media Scam",
-    unknown: "Not Classified"
+    unknown: "Not Classified",
   };
 
   /* =====================================================
@@ -161,12 +161,7 @@
   }
 
   function logout() {
-    const keys = [
-      "scamshieldToken",
-      "token",
-      "authToken",
-      "scamshieldUser"
-    ];
+    const keys = ["scamshieldToken", "token", "authToken", "scamshieldUser"];
 
     keys.forEach((key) => {
       localStorage.removeItem(key);
@@ -191,14 +186,16 @@
 
     if (transcript.length > CONFIG.maxLength) {
       showInputError(
-        `Transcript must not exceed ${CONFIG.maxLength} characters.`
+        `Transcript must not exceed ${CONFIG.maxLength} characters.`,
       );
       elements.transcript.focus();
       return false;
     }
 
     if (!elements.consent?.checked) {
-      showInputError("Please confirm that you have permission to analyze this transcript.");
+      showInputError(
+        "Please confirm that you have permission to analyze this transcript.",
+      );
       elements.consent?.focus();
       return false;
     }
@@ -229,12 +226,11 @@
 
     const length = elements.transcript.value.length;
 
-    elements.characterCount.textContent =
-      `${length.toLocaleString()} / ${CONFIG.maxLength.toLocaleString()}`;
+    elements.characterCount.textContent = `${length.toLocaleString()} / ${CONFIG.maxLength.toLocaleString()}`;
 
     elements.characterCount.classList.toggle(
       "limit-reached",
-      length >= CONFIG.maxLength
+      length >= CONFIG.maxLength,
     );
   }
 
@@ -251,7 +247,7 @@
     if (!API || typeof API.post !== "function") {
       showStatus(
         "The API service is unavailable. Please refresh the page and try again.",
-        "error"
+        "error",
       );
       return;
     }
@@ -269,14 +265,16 @@
 
       if (!response || response.success === false) {
         throw new Error(
-          response?.message || "The analysis request could not be completed."
+          response?.message || "The analysis request could not be completed.",
         );
       }
 
       const normalized = normalizeResponse(response);
 
       if (!normalized.result) {
-        throw new Error("The AI engine returned an incomplete analysis result.");
+        throw new Error(
+          "The AI engine returned an incomplete analysis result.",
+        );
       }
 
       state.lastAnalysis = normalized;
@@ -288,16 +286,12 @@
 
       elements.results?.scrollIntoView({
         behavior: "smooth",
-        block: "start"
+        block: "start",
       });
-
     } catch (error) {
       console.error("Call analysis failed:", error);
 
-      showStatus(
-        getErrorMessage(error),
-        "error"
-      );
+      showStatus(getErrorMessage(error), "error");
     } finally {
       state.isAnalyzing = false;
       setLoading(false);
@@ -313,8 +307,8 @@
         source: "analyze-call-page",
         caller_type: elements.callerType?.value || "unknown",
         input_method: "manual_transcript",
-        version: VERSION
-      }
+        version: VERSION,
+      },
     };
   }
 
@@ -344,19 +338,13 @@
     const orchestration = data.orchestration || {};
 
     const guardian =
-      agents.guardian ||
-      data.guardian ||
-      result?.guardian ||
-      null;
+      agents.guardian || data.guardian || result?.guardian || null;
 
     return {
       result,
       guardian,
 
-      intelligence:
-        data.intelligence ||
-        agents.intelligence ||
-        null,
+      intelligence: data.intelligence || agents.intelligence || null,
 
       victimSafety:
         data.victim_safety ||
@@ -365,27 +353,16 @@
         agents.victimSafety ||
         null,
 
-      gemini:
-        data.gemini_advisory ||
-        data.gemini ||
-        agents.gemini ||
-        null,
+      gemini: data.gemini_advisory || data.gemini || agents.gemini || null,
 
-      decoy:
-        agents.decoy ||
-        data.decoy ||
-        null,
+      decoy: agents.decoy || data.decoy || null,
 
       orchestration,
 
       caseId:
-        data.case?._id ||
-        data.case?.id ||
-        data.caseId ||
-        data.case_id ||
-        null,
+        data.case?._id || data.case?.id || data.caseId || data.case_id || null,
 
-      raw: outer
+      raw: outer,
     };
   }
 
@@ -397,15 +374,11 @@
     const result = data.result || {};
 
     const score = normalizeScore(
-      result.risk_score ??
-      result.riskScore ??
-      result.score
+      result.risk_score ?? result.riskScore ?? result.score,
     );
 
     const level = normalizeRiskLevel(
-      result.risk_level ||
-      result.riskLevel ||
-      getRiskLevelFromScore(score)
+      result.risk_level || result.riskLevel || getRiskLevelFromScore(score),
     );
 
     const category =
@@ -426,25 +399,20 @@
     setText(elements.riskDescription, description);
 
     if (elements.riskScoreCircle) {
-      elements.riskScoreCircle.style.setProperty(
-        "--risk-score",
-        `${score}%`
-      );
+      elements.riskScoreCircle.style.setProperty("--risk-score", `${score}%`);
 
       elements.riskScoreCircle.setAttribute(
         "aria-label",
-        `Risk score ${score} out of 100`
+        `Risk score ${score} out of 100`,
       );
     }
 
     if (elements.riskOverview) {
-      elements.riskOverview.className =
-        `risk-overview risk-${level.toLowerCase()}`;
+      elements.riskOverview.className = `risk-overview risk-${level.toLowerCase()}`;
     }
 
     if (elements.riskLevel) {
-      elements.riskLevel.className =
-        `risk-level ${level.toLowerCase()}`;
+      elements.riskLevel.className = `risk-level ${level.toLowerCase()}`;
     }
 
     renderGuardian(data.guardian, result);
@@ -464,7 +432,7 @@
         elements.guardianStatus,
         elements.guardianResult,
         "Unavailable",
-        "Guardian result was not included in the response."
+        "Guardian result was not included in the response.",
       );
       return;
     }
@@ -472,17 +440,17 @@
     const category = source.category || result.category || "unknown";
     const score = normalizeScore(
       source.risk_score ??
-      source.riskScore ??
-      result.risk_score ??
-      result.riskScore
+        source.riskScore ??
+        result.risk_score ??
+        result.riskScore,
     );
 
     const level = normalizeRiskLevel(
       source.risk_level ||
-      source.riskLevel ||
-      result.risk_level ||
-      result.riskLevel ||
-      getRiskLevelFromScore(score)
+        source.riskLevel ||
+        result.risk_level ||
+        result.riskLevel ||
+        getRiskLevelFromScore(score),
     );
 
     const explanation =
@@ -497,7 +465,7 @@
       elements.guardianStatus,
       elements.guardianResult,
       "Completed",
-      `Category: ${getCategoryLabel(category)}. Risk: ${level} (${score}/100). ${explanation}`
+      `Category: ${getCategoryLabel(category)}. Risk: ${level} (${score}/100). ${explanation}`,
     );
   }
 
@@ -507,7 +475,7 @@
         elements.intelligenceStatus,
         elements.intelligenceResult,
         "Unavailable",
-        "No intelligence indicators were returned."
+        "No intelligence indicators were returned.",
       );
       return;
     }
@@ -525,17 +493,21 @@
       "Intelligence assessment completed.";
 
     const indicatorText = Array.isArray(indicators)
-      ? indicators.map((item) => {
-          if (typeof item === "string") return item;
-          return item.name || item.value || item.description || "Indicator found";
-        }).join("; ")
+      ? indicators
+          .map((item) => {
+            if (typeof item === "string") return item;
+            return (
+              item.name || item.value || item.description || "Indicator found"
+            );
+          })
+          .join("; ")
       : "";
 
     setAgent(
       elements.intelligenceStatus,
       elements.intelligenceResult,
       intelligence.status || "Completed",
-      `${summary}${indicatorText ? ` Indicators: ${indicatorText}` : ""} Treat indicators as unverified unless independently confirmed.`
+      `${summary}${indicatorText ? ` Indicators: ${indicatorText}` : ""} Treat indicators as unverified unless independently confirmed.`,
     );
   }
 
@@ -545,7 +517,7 @@
         elements.victimSafetyStatus,
         elements.victimSafetyResult,
         "Unavailable",
-        "No victim safety guidance was returned."
+        "No victim safety guidance was returned.",
       );
       return;
     }
@@ -562,7 +534,7 @@
       elements.victimSafetyStatus,
       elements.victimSafetyResult,
       safety.status || "Guidance available",
-      formatValue(guidance)
+      formatValue(guidance),
     );
   }
 
@@ -572,7 +544,7 @@
         elements.geminiStatus,
         elements.geminiResult,
         "Unavailable",
-        "Gemini advisory was not returned. The primary Guardian assessment remains independent."
+        "Gemini advisory was not returned. The primary Guardian assessment remains independent.",
       );
       return;
     }
@@ -592,7 +564,7 @@
       elements.geminiStatus,
       elements.geminiResult,
       status,
-      `${formatValue(advisory)} Gemini is advisory-only and does not determine or override the Guardian risk score or category.`
+      `${formatValue(advisory)} Gemini is advisory-only and does not determine or override the Guardian risk score or category.`,
     );
   }
 
@@ -602,25 +574,21 @@
         elements.decoyStatus,
         elements.decoyResult,
         "Not started",
-        "Decoy simulation was not automatically started during this analysis."
+        "Decoy simulation was not automatically started during this analysis.",
       );
       return;
     }
 
-    const status =
-      decoy.status ||
-      (decoy.started ? "Active" : "Not started");
+    const status = decoy.status || (decoy.started ? "Active" : "Not started");
 
     const message =
-      decoy.message ||
-      decoy.summary ||
-      "Decoy agent status received.";
+      decoy.message || decoy.summary || "Decoy agent status received.";
 
     setAgent(
       elements.decoyStatus,
       elements.decoyResult,
       status,
-      `${formatValue(message)} Decoy activity must remain controlled and explicitly initiated.`
+      `${formatValue(message)} Decoy activity must remain controlled and explicitly initiated.`,
     );
   }
 
@@ -636,7 +604,7 @@
 
     if (!state.lastCaseId) {
       setFeedbackStatus(
-        "No case ID was returned. Feedback cannot be saved until a case is created."
+        "No case ID was returned. Feedback cannot be saved until a case is created.",
       );
       return;
     }
@@ -651,12 +619,11 @@
     state.selectedFeedback = feedback;
 
     try {
-      const endpoint =
-        `${CONFIG.feedbackEndpoint}/${encodeURIComponent(state.lastCaseId)}`;
+      const endpoint = `${CONFIG.feedbackEndpoint}/${encodeURIComponent(state.lastCaseId)}`;
 
       const response = await API.patch(endpoint, {
         feedback,
-        source: "analyze-call-page"
+        source: "analyze-call-page",
       });
 
       if (response?.success === false) {
@@ -672,7 +639,6 @@
       if (elements.feedbackReview) {
         elements.feedbackReview.disabled = true;
       }
-
     } catch (error) {
       state.selectedFeedback = null;
       console.error("Feedback submission failed:", error);
@@ -725,35 +691,35 @@
       elements.guardianStatus,
       elements.guardianResult,
       "Waiting",
-      "Guardian assessment will appear here."
+      "Guardian assessment will appear here.",
     );
 
     setAgent(
       elements.intelligenceStatus,
       elements.intelligenceResult,
       "Waiting",
-      "Intelligence findings will appear here."
+      "Intelligence findings will appear here.",
     );
 
     setAgent(
       elements.victimSafetyStatus,
       elements.victimSafetyResult,
       "Waiting",
-      "Victim safety guidance will appear here."
+      "Victim safety guidance will appear here.",
     );
 
     setAgent(
       elements.geminiStatus,
       elements.geminiResult,
       "Waiting",
-      "Optional Gemini advisory will appear here."
+      "Optional Gemini advisory will appear here.",
     );
 
     setAgent(
       elements.decoyStatus,
       elements.decoyResult,
       "Not started",
-      "Decoy simulation will not start automatically."
+      "Decoy simulation will not start automatically.",
     );
   }
 
@@ -762,14 +728,10 @@
 
     elements.analyzeButton.disabled = isLoading;
 
-    const label = elements.analyzeButton.querySelector(
-      "[data-button-label]"
-    );
+    const label = elements.analyzeButton.querySelector("[data-button-label]");
 
     if (label) {
-      label.textContent = isLoading
-        ? "Analyzing..."
-        : "Analyze Call";
+      label.textContent = isLoading ? "Analyzing..." : "Analyze Call";
     } else {
       elements.analyzeButton.textContent = isLoading
         ? "Analyzing..."
@@ -789,8 +751,7 @@
     if (!elements.status || !elements.statusMessage) return;
 
     elements.status.hidden = false;
-    elements.status.className =
-      `call-analysis-status status-${type}`;
+    elements.status.className = `call-analysis-status status-${type}`;
 
     elements.statusMessage.textContent = message;
   }
@@ -844,16 +805,14 @@
         "guidance",
         "recommendation",
         "reason",
-        "status"
+        "status",
       ];
 
       const parts = preferredKeys
         .filter((key) => value[key] !== undefined)
         .map((key) => `${key}: ${formatValue(value[key])}`);
 
-      return parts.length
-        ? parts.join(" | ")
-        : "Details received.";
+      return parts.length ? parts.join(" | ") : "Details received.";
     }
 
     return String(value);
@@ -892,8 +851,12 @@
   function getCategoryLabel(category) {
     const normalized = String(category || "unknown").toLowerCase();
 
-    return CATEGORY_LABELS[normalized] ||
-      normalized.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+    return (
+      CATEGORY_LABELS[normalized] ||
+      normalized
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase())
+    );
   }
 
   function getErrorMessage(error) {
@@ -905,8 +868,10 @@
       return "The request timed out. Please try again.";
     }
 
-    return error.message ||
-      "Unable to analyze the transcript. Check your connection and try again.";
+    return (
+      error.message ||
+      "Unable to analyze the transcript. Check your connection and try again."
+    );
   }
 
   /* =====================================================
@@ -918,5 +883,4 @@
   } else {
     init();
   }
-
 })();

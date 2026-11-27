@@ -43,16 +43,13 @@
   const nameInput = document.getElementById("name");
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
-  const confirmPasswordInput =
-    document.getElementById("confirmPassword");
+  const confirmPasswordInput = document.getElementById("confirmPassword");
 
   const termsInput = document.getElementById("terms");
 
-  const submitButton =
-    document.getElementById("registerButton");
+  const submitButton = document.getElementById("registerButton");
 
-  const messageElement =
-    document.getElementById("authMessage");
+  const messageElement = document.getElementById("authMessage");
 
   const termsLink = document.getElementById("termsLink");
   const privacyLink = document.getElementById("privacyLink");
@@ -63,8 +60,7 @@
 
   let isSubmitting = false;
 
-  const originalButtonContent =
-    submitButton?.innerHTML || "";
+  const originalButtonContent = submitButton?.innerHTML || "";
 
   /* ================================================
      MESSAGE HANDLING
@@ -77,11 +73,7 @@
 
     messageElement.textContent = message;
 
-    messageElement.classList.remove(
-      "success",
-      "error",
-      "warning"
-    );
+    messageElement.classList.remove("success", "error", "warning");
 
     messageElement.classList.add(type);
     messageElement.hidden = false;
@@ -94,11 +86,7 @@
 
     messageElement.textContent = "";
 
-    messageElement.classList.remove(
-      "success",
-      "error",
-      "warning"
-    );
+    messageElement.classList.remove("success", "error", "warning");
 
     messageElement.hidden = true;
   }
@@ -114,10 +102,7 @@
 
     submitButton.disabled = loading;
 
-    submitButton.setAttribute(
-      "aria-busy",
-      String(loading)
-    );
+    submitButton.setAttribute("aria-busy", String(loading));
 
     submitButton.innerHTML = loading
       ? `
@@ -133,14 +118,11 @@
   ================================================ */
 
   function initializePasswordToggles() {
-    const toggles = document.querySelectorAll(
-      "[data-password-target]"
-    );
+    const toggles = document.querySelectorAll("[data-password-target]");
 
     toggles.forEach((button) => {
       button.addEventListener("click", () => {
-        const targetId =
-          button.getAttribute("data-password-target");
+        const targetId = button.getAttribute("data-password-target");
 
         const input = document.getElementById(targetId);
 
@@ -148,16 +130,13 @@
           return;
         }
 
-        const isPassword =
-          input.type === "password";
+        const isPassword = input.type === "password";
 
-        input.type = isPassword
-          ? "text"
-          : "password";
+        input.type = isPassword ? "text" : "password";
 
         button.setAttribute(
           "aria-label",
-          isPassword ? "Hide password" : "Show password"
+          isPassword ? "Hide password" : "Show password",
         );
 
         const icon = button.querySelector("i");
@@ -175,11 +154,9 @@
   ================================================ */
 
   function validateForm(data) {
-    const emailPattern =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const strongPassword =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
     if (!data.name) {
       return "Please enter your full name.";
@@ -233,10 +210,7 @@
       if (link.getAttribute("href") === "#") {
         event.preventDefault();
 
-        showMessage(
-          "This document is not available yet.",
-          "warning"
-        );
+        showMessage("This document is not available yet.", "warning");
       }
     });
   });
@@ -250,7 +224,7 @@
     emailInput,
     passwordInput,
     confirmPasswordInput,
-    termsInput
+    termsInput,
   ].forEach((input) => {
     input?.addEventListener("input", clearMessage);
     input?.addEventListener("change", clearMessage);
@@ -274,7 +248,7 @@
       email: emailInput?.value.trim().toLowerCase() || "",
       password: passwordInput?.value || "",
       confirmPassword: confirmPasswordInput?.value || "",
-      termsAccepted: Boolean(termsInput?.checked)
+      termsAccepted: Boolean(termsInput?.checked),
     };
 
     const validationError = validateForm(formData);
@@ -289,12 +263,10 @@
     if (!API || typeof API.register !== "function") {
       showMessage(
         "Registration service is unavailable. Please refresh the page.",
-        "error"
+        "error",
       );
 
-      console.error(
-        "ScamShield AI: ScamShieldAPI is not initialized."
-      );
+      console.error("ScamShield AI: ScamShieldAPI is not initialized.");
 
       return;
     }
@@ -306,40 +278,29 @@
       const response = await API.register({
         name: formData.name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
 
       if (!response || response.success !== true) {
-        throw new Error(
-          response?.message || "Registration failed."
-        );
+        throw new Error(response?.message || "Registration failed.");
       }
 
       showMessage(
         response.message ||
-        "Account created successfully! Redirecting to sign in...",
-        "success"
+          "Account created successfully! Redirecting to sign in...",
+        "success",
       );
 
       form.reset();
 
-      window.setTimeout(
-        redirectToLogin,
-        REDIRECT_DELAY
-      );
-
+      window.setTimeout(redirectToLogin, REDIRECT_DELAY);
     } catch (error) {
-      console.error(
-        "ScamShield AI Registration Error:",
-        error.message
-      );
+      console.error("ScamShield AI Registration Error:", error.message);
 
       showMessage(
-        error.message ||
-        "Unable to create your account. Please try again.",
-        "error"
+        error.message || "Unable to create your account. Please try again.",
+        "error",
       );
-
     } finally {
       isSubmitting = false;
       setLoading(false);
@@ -353,8 +314,5 @@
   initializePasswordToggles();
   clearMessage();
 
-  console.info(
-    "ScamShield AI Registration Handler v3.0.0 initialized."
-  );
-
+  console.info("ScamShield AI Registration Handler v3.0.0 initialized.");
 })();

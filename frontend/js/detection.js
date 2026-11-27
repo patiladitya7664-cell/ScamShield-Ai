@@ -15,7 +15,6 @@
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-
   /* =======================================================
      1. CONFIGURATION
   ======================================================= */
@@ -102,12 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
   };
 
-  const VALID_RISK_LEVELS = [
-    "low",
-    "medium",
-    "high",
-    "critical",
-  ];
+  const VALID_RISK_LEVELS = ["low", "medium", "high", "critical"];
 
   /* =======================================================
      2. DOM ELEMENTS
@@ -130,16 +124,12 @@ document.addEventListener("DOMContentLoaded", () => {
     screenshotCount: document.getElementById("screenshotCount"),
     transactionCount: document.getElementById("transactionCount"),
 
-    fraudCategorySelect: document.getElementById(
-      "fraudCategorySelect"
-    ),
+    fraudCategorySelect: document.getElementById("fraudCategorySelect"),
 
     analyzeBtn: document.getElementById("analyzeBtn"),
     clearBtn: document.getElementById("clearBtn"),
 
-    analysisPanelStatus: document.getElementById(
-      "analysisPanelStatus"
-    ),
+    analysisPanelStatus: document.getElementById("analysisPanelStatus"),
 
     analysisMessage: document.getElementById("analysisMessage"),
 
@@ -155,42 +145,26 @@ document.addEventListener("DOMContentLoaded", () => {
     fraudCategory: document.getElementById("fraudCategory"),
     riskExplanation: document.getElementById("riskExplanation"),
 
-    guardianAgentResult: document.getElementById(
-      "guardianAgentResult"
-    ),
+    guardianAgentResult: document.getElementById("guardianAgentResult"),
 
-    intelligenceAgentResult: document.getElementById(
-      "intelligenceAgentResult"
-    ),
+    intelligenceAgentResult: document.getElementById("intelligenceAgentResult"),
 
-    victimSafetyAgentResult: document.getElementById(
-      "victimSafetyAgentResult"
-    ),
+    victimSafetyAgentResult: document.getElementById("victimSafetyAgentResult"),
 
-    decoyAgentResult: document.getElementById(
-      "decoyAgentResult"
-    ),
+    decoyAgentResult: document.getElementById("decoyAgentResult"),
 
     geminiAdvisory: document.getElementById("geminiAdvisory"),
 
     indicatorList: document.getElementById("indicatorList"),
     safetyGuidance: document.getElementById("safetyGuidance"),
 
-    feedbackPanel: document.getElementById(
-      "classificationFeedbackPanel"
-    ),
+    feedbackPanel: document.getElementById("classificationFeedbackPanel"),
 
-    feedbackSelect: document.getElementById(
-      "classificationFeedbackSelect"
-    ),
+    feedbackSelect: document.getElementById("classificationFeedbackSelect"),
 
-    feedbackBtn: document.getElementById(
-      "submitClassificationFeedback"
-    ),
+    feedbackBtn: document.getElementById("submitClassificationFeedback"),
 
-    feedbackStatus: document.getElementById(
-      "classificationFeedbackStatus"
-    ),
+    feedbackStatus: document.getElementById("classificationFeedbackStatus"),
   };
 
   /* =======================================================
@@ -227,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (requiredElements.some((element) => !element)) {
     console.error(
-      "Detection initialization failed: Required HTML elements are missing."
+      "Detection initialization failed: Required HTML elements are missing.",
     );
 
     return;
@@ -238,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showMessage(
       "API service could not be loaded. Please refresh the page.",
-      "error"
+      "error",
     );
 
     elements.analyzeBtn.disabled = true;
@@ -248,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (typeof API.patch !== "function") {
     console.warn(
-      "API.patch is unavailable. Classification feedback will not work."
+      "API.patch is unavailable. Classification feedback will not work.",
     );
   }
 
@@ -267,9 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function getToken() {
     try {
       return (
-        (typeof API.getToken === "function"
-          ? API.getToken()
-          : null) ||
+        (typeof API.getToken === "function" ? API.getToken() : null) ||
         localStorage.getItem("scamshieldToken") ||
         sessionStorage.getItem("scamshieldToken") ||
         localStorage.getItem("scamshield_token") ||
@@ -285,8 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function showMessage(message, type = "info") {
     elements.analysisMessage.textContent = String(message);
 
-    elements.analysisMessage.className =
-      `analysis-message ${type}`;
+    elements.analysisMessage.className = `analysis-message ${type}`;
 
     elements.analysisMessage.hidden = false;
   }
@@ -367,9 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return "auto";
     }
 
-    const selected = normalizeText(
-      elements.fraudCategorySelect.value
-    );
+    const selected = normalizeText(elements.fraudCategorySelect.value);
 
     return selected || "auto";
   }
@@ -393,12 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           if (item && typeof item === "object") {
-            return (
-              item.message ||
-              item.description ||
-              item.reason ||
-              ""
-            );
+            return item.message || item.description || item.reason || "";
           }
 
           return "";
@@ -456,18 +420,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     for (const candidate of candidates) {
-      if (
-        candidate !== null &&
-        candidate !== undefined &&
-        candidate !== ""
-      ) {
+      if (candidate !== null && candidate !== undefined && candidate !== "") {
         const score = Number(candidate);
 
-        if (
-          Number.isFinite(score) &&
-          score >= 0 &&
-          score <= 100
-        ) {
+        if (Number.isFinite(score) && score >= 0 && score <= 100) {
           return score;
         }
       }
@@ -490,24 +446,21 @@ document.addEventListener("DOMContentLoaded", () => {
   function getAnalysisRiskLevel(result, score) {
     return normalizeRiskLevel(
       result.riskLevel ||
-      result.risk_level ||
-      result.guardian?.riskLevel ||
-      result.guardian?.risk_level,
-      score
+        result.risk_level ||
+        result.guardian?.riskLevel ||
+        result.guardian?.risk_level,
+      score,
     );
   }
 
   function getAgentResults(result) {
-    return result.agent_results ||
-      result.agentResults ||
-      {};
+    return result.agent_results || result.agentResults || {};
   }
 
   function setAgentText(element, value, fallback) {
     if (!element) return;
 
-    element.textContent =
-      formatExplanation(value) || fallback;
+    element.textContent = formatExplanation(value) || fallback;
   }
 
   /* =======================================================
@@ -515,10 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ======================================================= */
 
   function switchEvidenceType(type) {
-    if (!Object.prototype.hasOwnProperty.call(
-      EVIDENCE_LIMITS,
-      type
-    )) {
+    if (!Object.prototype.hasOwnProperty.call(EVIDENCE_LIMITS, type)) {
       console.warn("Unsupported evidence type:", type);
       return;
     }
@@ -530,10 +480,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       button.classList.toggle("active", active);
 
-      button.setAttribute(
-        "aria-pressed",
-        String(active)
-      );
+      button.setAttribute("aria-pressed", String(active));
     });
 
     elements.evidenceForms.forEach((form) => {
@@ -584,13 +531,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const maximum = EVIDENCE_LIMITS[type];
 
-    counter.textContent =
-      `${input.value.length} / ${maximum}`;
+    counter.textContent = `${input.value.length} / ${maximum}`;
 
-    counter.classList.toggle(
-      "limit-reached",
-      input.value.length >= maximum
-    );
+    counter.classList.toggle("limit-reached", input.value.length >= maximum);
   }
 
   Object.keys(counterMap).forEach((type) => {
@@ -613,24 +556,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = inputMap[currentEvidenceType];
 
     if (!input) {
-      throw new Error(
-        "Selected evidence input is unavailable."
-      );
+      throw new Error("Selected evidence input is unavailable.");
     }
 
     const evidence = normalizeText(input.value);
 
     if (!evidence) {
-      throw new Error(
-        "Please provide evidence before analysis."
-      );
+      throw new Error("Please provide evidence before analysis.");
     }
 
     const maximum = EVIDENCE_LIMITS[currentEvidenceType];
 
     if (evidence.length > maximum) {
       throw new Error(
-        `Evidence exceeds the maximum limit of ${maximum} characters.`
+        `Evidence exceeds the maximum limit of ${maximum} characters.`,
       );
     }
 
@@ -640,24 +579,15 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         parsedURL = new URL(evidence);
       } catch {
-        throw new Error(
-          "Please enter a valid website URL."
-        );
+        throw new Error("Please enter a valid website URL.");
       }
 
       if (!["http:", "https:"].includes(parsedURL.protocol)) {
-        throw new Error(
-          "Only HTTP and HTTPS URLs are supported."
-        );
+        throw new Error("Only HTTP and HTTPS URLs are supported.");
       }
 
-      if (
-        !parsedURL.hostname ||
-        !parsedURL.hostname.includes(".")
-      ) {
-        throw new Error(
-          "Please enter a valid website hostname."
-        );
+      if (!parsedURL.hostname || !parsedURL.hostname.includes(".")) {
+        throw new Error("Please enter a valid website hostname.");
       }
     }
 
@@ -683,8 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.riskDescription.textContent =
       "Submit evidence to receive an explainable risk assessment.";
 
-    elements.fraudCategory.textContent =
-      "Not classified yet.";
+    elements.fraudCategory.textContent = "Not classified yet.";
 
     elements.riskExplanation.textContent =
       "Analysis explanation will appear here.";
@@ -696,8 +625,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const emptyIndicators = document.createElement("p");
 
-    emptyIndicators.textContent =
-      "No indicators extracted yet.";
+    emptyIndicators.textContent = "No indicators extracted yet.";
 
     elements.indicatorList.appendChild(emptyIndicators);
 
@@ -706,32 +634,28 @@ document.addEventListener("DOMContentLoaded", () => {
     setAgentText(
       elements.guardianAgentResult,
       null,
-      "Guardian analysis is pending."
+      "Guardian analysis is pending.",
     );
 
     setAgentText(
       elements.intelligenceAgentResult,
       null,
-      "Intelligence analysis is pending."
+      "Intelligence analysis is pending.",
     );
 
     setAgentText(
       elements.victimSafetyAgentResult,
       null,
-      "Victim Safety analysis is pending."
+      "Victim Safety analysis is pending.",
     );
 
     setAgentText(
       elements.decoyAgentResult,
       null,
-      "Decoy simulation has not been started."
+      "Decoy simulation has not been started.",
     );
 
-    setAgentText(
-      elements.geminiAdvisory,
-      null,
-      "Gemini advisory is pending."
-    );
+    setAgentText(elements.geminiAdvisory, null, "Gemini advisory is pending.");
 
     if (elements.feedbackPanel) {
       elements.feedbackPanel.hidden = true;
@@ -760,8 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!Array.isArray(indicators) || indicators.length === 0) {
       const empty = document.createElement("p");
 
-      empty.textContent =
-        "No suspicious indicators were extracted.";
+      empty.textContent = "No suspicious indicators were extracted.";
 
       container.appendChild(empty);
 
@@ -779,13 +702,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const type = document.createElement("strong");
 
-      type.textContent =
-        normalizeText(indicator.type) || "Indicator";
+      type.textContent = normalizeText(indicator.type) || "Indicator";
 
       const value = document.createElement("span");
 
-      value.textContent =
-        normalizeText(indicator.value) || "Not available";
+      value.textContent = normalizeText(indicator.value) || "Not available";
 
       const verification = document.createElement("span");
 
@@ -807,8 +728,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!container.children.length) {
       const empty = document.createElement("p");
 
-      empty.textContent =
-        "No valid indicators were returned.";
+      empty.textContent = "No valid indicators were returned.";
 
       container.appendChild(empty);
     }
@@ -823,8 +743,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.replaceChildren();
 
-    let guidance = SAFETY_GUIDANCE[level] ||
-      SAFETY_GUIDANCE.medium;
+    let guidance = SAFETY_GUIDANCE[level] || SAFETY_GUIDANCE.medium;
 
     if (Array.isArray(serverGuidance)) {
       guidance = serverGuidance
@@ -834,11 +753,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           if (item && typeof item === "object") {
-            return (
-              item.message ||
-              item.description ||
-              ""
-            );
+            return item.message || item.description || "";
           }
 
           return "";
@@ -863,14 +778,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const agents = getAgentResults(result);
 
     const guardian =
-      agents.guardian ||
-      result.guardian ||
-      result.guardian_result;
+      agents.guardian || result.guardian || result.guardian_result;
 
     const intelligence =
-      agents.intelligence ||
-      result.intelligence ||
-      result.intelligence_result;
+      agents.intelligence || result.intelligence || result.intelligence_result;
 
     const victimSafety =
       agents.victim_safety ||
@@ -878,44 +789,39 @@ document.addEventListener("DOMContentLoaded", () => {
       result.victim_safety ||
       result.victimSafety;
 
-    const decoy =
-      agents.decoy ||
-      result.decoy ||
-      result.decoy_result;
+    const decoy = agents.decoy || result.decoy || result.decoy_result;
 
     setAgentText(
       elements.guardianAgentResult,
       guardian?.summary ||
-      guardian?.explanation ||
-      guardian?.message ||
-      guardian,
-      "Guardian analysis completed."
+        guardian?.explanation ||
+        guardian?.message ||
+        guardian,
+      "Guardian analysis completed.",
     );
 
     setAgentText(
       elements.intelligenceAgentResult,
       intelligence?.summary ||
-      intelligence?.message ||
-      intelligence?.indicators ||
-      intelligence,
-      "No additional intelligence information was returned."
+        intelligence?.message ||
+        intelligence?.indicators ||
+        intelligence,
+      "No additional intelligence information was returned.",
     );
 
     setAgentText(
       elements.victimSafetyAgentResult,
       victimSafety?.summary ||
-      victimSafety?.message ||
-      victimSafety?.guidance ||
-      victimSafety,
-      "Victim Safety analysis completed."
+        victimSafety?.message ||
+        victimSafety?.guidance ||
+        victimSafety,
+      "Victim Safety analysis completed.",
     );
 
     setAgentText(
       elements.decoyAgentResult,
-      decoy?.summary ||
-      decoy?.message ||
-      decoy,
-      "Decoy simulation was not started during this analysis."
+      decoy?.summary || decoy?.message || decoy,
+      "Decoy simulation was not started during this analysis.",
     );
 
     const advisory =
@@ -926,11 +832,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setAgentText(
       elements.geminiAdvisory,
-      advisory?.summary ||
-      advisory?.advice ||
-      advisory?.message ||
-      advisory,
-      "No Gemini advisory was returned."
+      advisory?.summary || advisory?.advice || advisory?.message || advisory,
+      "No Gemini advisory was returned.",
     );
   }
 
@@ -940,26 +843,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderResults(result) {
     if (!result || typeof result !== "object") {
-      throw new Error(
-        "Invalid analysis response received."
-      );
+      throw new Error("Invalid analysis response received.");
     }
 
     const score = getAnalysisScore(result);
 
     if (score === null) {
-      throw new Error(
-        "Analysis response does not contain a valid risk score."
-      );
+      throw new Error("Analysis response does not contain a valid risk score.");
     }
 
     const roundedScore = Math.round(score);
 
     // Preserve Guardian's returned risk classification.
-    const riskLevel = getAnalysisRiskLevel(
-      result,
-      roundedScore
-    );
+    const riskLevel = getAnalysisRiskLevel(result, roundedScore);
 
     const riskInfo = RISK_LEVELS[riskLevel];
 
@@ -975,18 +871,13 @@ document.addEventListener("DOMContentLoaded", () => {
       result.summary ||
       riskInfo.description;
 
-    elements.fraudCategory.textContent =
-      getCategoryLabel(category);
+    elements.fraudCategory.textContent = getCategoryLabel(category);
 
-    elements.riskExplanation.textContent =
-      formatExplanation(
-        result.explanation ||
-        result.riskExplanation ||
-        result.risk_explanation
-      );
+    elements.riskExplanation.textContent = formatExplanation(
+      result.explanation || result.riskExplanation || result.risk_explanation,
+    );
 
-    elements.resultStatus.textContent =
-      "Analysis Complete";
+    elements.resultStatus.textContent = "Analysis Complete";
 
     const degrees = roundedScore * 3.6;
 
@@ -997,22 +888,15 @@ document.addEventListener("DOMContentLoaded", () => {
       )
     `;
 
-    renderIndicators(
-      result.indicators ||
-      result.extracted_indicators ||
-      []
-    );
+    renderIndicators(result.indicators || result.extracted_indicators || []);
 
-    const victimSafety =
-      result.victim_safety ||
-      result.victimSafety ||
-      {};
+    const victimSafety = result.victim_safety || result.victimSafety || {};
 
     renderSafetyGuidance(
       riskLevel,
       victimSafety.guidance ||
-      victimSafety.safety_guidance ||
-      result.safety_guidance
+        victimSafety.safety_guidance ||
+        result.safety_guidance,
     );
 
     renderAgentResults(result);
@@ -1036,31 +920,21 @@ document.addEventListener("DOMContentLoaded", () => {
   ======================================================= */
 
   async function createAnalysisCase(result, evidence) {
-    const analysisId =
-      result.id ||
-      result.analysisId ||
-      result.analysis_id;
+    const analysisId = result.id || result.analysisId || result.analysis_id;
 
     if (!analysisId) {
-      throw new Error(
-        "Analysis ID was not returned. Case cannot be created."
-      );
+      throw new Error("Analysis ID was not returned. Case cannot be created.");
     }
 
     const score = getAnalysisScore(result);
 
     if (score === null) {
-      throw new Error(
-        "Invalid risk score. Case cannot be created."
-      );
+      throw new Error("Invalid risk score. Case cannot be created.");
     }
 
     const roundedScore = Math.round(score);
 
-    const riskLevel = getAnalysisRiskLevel(
-      result,
-      roundedScore
-    );
+    const riskLevel = getAnalysisRiskLevel(result, roundedScore);
 
     const category = getAnalysisCategory(result);
 
@@ -1068,10 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? result.indicators
           .filter(
             (item) =>
-              item &&
-              typeof item === "object" &&
-              item.type &&
-              item.value
+              item && typeof item === "object" && item.type && item.value,
           )
           .slice(0, 50)
           .map((item) => ({
@@ -1100,39 +971,25 @@ document.addEventListener("DOMContentLoaded", () => {
       indicators,
     };
 
-    const response = await API.post(
-      "/cases",
-      casePayload
-    );
+    const response = await API.post("/cases", casePayload);
 
     if (!response || response.success !== true) {
       throw new Error(
-        response?.message ||
-        "Unable to save the detection case."
+        response?.message || "Unable to save the detection case.",
       );
     }
 
     const savedCase =
-      response.data?.case ||
-      response.data ||
-      response.case ||
-      null;
+      response.data?.case || response.data || response.case || null;
 
     if (!savedCase || typeof savedCase !== "object") {
-      throw new Error(
-        "Case was not returned by the server."
-      );
+      throw new Error("Case was not returned by the server.");
     }
 
-    currentCaseId =
-      savedCase._id ||
-      savedCase.id ||
-      null;
+    currentCaseId = savedCase._id || savedCase.id || null;
 
     if (!currentCaseId) {
-      throw new Error(
-        "Saved case ID was not returned by the server."
-      );
+      throw new Error("Saved case ID was not returned by the server.");
     }
 
     return savedCase;
@@ -1157,10 +1014,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (!getToken()) {
-      showMessage(
-        "Your session has expired. Please login again.",
-        "error"
-      );
+      showMessage("Your session has expired. Please login again.", "error");
 
       return;
     }
@@ -1174,17 +1028,15 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.clearBtn.disabled = true;
 
     if (elements.analysisPanelStatus) {
-      elements.analysisPanelStatus.textContent =
-        "Analyzing evidence...";
+      elements.analysisPanelStatus.textContent = "Analyzing evidence...";
     }
 
     showMessage(
       `Analyzing ${currentEvidenceType} evidence. Please wait...`,
-      "info"
+      "info",
     );
 
     try {
-
       /* STEP 1: ANALYZE EVIDENCE */
 
       const payload = {
@@ -1197,31 +1049,20 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedCategoryLabel: getSelectedCategoryLabel(),
       };
 
-      const response = await API.post(
-        "/analysis/analyze",
-        payload
-      );
+      const response = await API.post("/analysis/analyze", payload);
 
       if (!response || response.success !== true) {
-        throw new Error(
-          response?.message ||
-          "Evidence analysis failed."
-        );
+        throw new Error(response?.message || "Evidence analysis failed.");
       }
 
       const result = getResponseResult(response);
 
       if (!result) {
-        throw new Error(
-          "Analysis server returned an empty result."
-        );
+        throw new Error("Analysis server returned an empty result.");
       }
 
       currentAnalysisId =
-        result.id ||
-        result.analysisId ||
-        result.analysis_id ||
-        null;
+        result.id || result.analysisId || result.analysis_id || null;
 
       /* STEP 2: DISPLAY RESULTS */
 
@@ -1230,10 +1071,7 @@ document.addEventListener("DOMContentLoaded", () => {
       /* STEP 3: SAVE CASE */
 
       try {
-        await createAnalysisCase(
-          result,
-          evidence
-        );
+        await createAnalysisCase(result, evidence);
 
         if (elements.feedbackPanel) {
           elements.feedbackPanel.hidden = false;
@@ -1241,14 +1079,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         showMessage(
           "Analysis completed successfully. Detection case saved.",
-          "success"
+          "success",
         );
-
       } catch (caseError) {
-        console.error(
-          "Case creation error:",
-          caseError
-        );
+        console.error("Case creation error:", caseError);
 
         if (elements.feedbackPanel) {
           elements.feedbackPanel.hidden = true;
@@ -1256,42 +1090,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         showMessage(
           "Analysis completed, but the case could not be saved: " +
-          caseError.message,
-          "warning"
+            caseError.message,
+          "warning",
         );
       }
 
       if (elements.analysisPanelStatus) {
-        elements.analysisPanelStatus.textContent =
-          "Analysis completed.";
+        elements.analysisPanelStatus.textContent = "Analysis completed.";
       }
-
     } catch (error) {
-      console.error(
-        "Detection analysis error:",
-        error
-      );
+      console.error("Detection analysis error:", error);
 
-      const message =
-        error.message ||
-        "Unable to analyze evidence.";
+      const message = error.message || "Unable to analyze evidence.";
 
-      if (
-        /token|login|authentication|unauthorized|401/i.test(message)
-      ) {
-        showMessage(
-          "Authentication failed. Please login again.",
-          "error"
-        );
+      if (/token|login|authentication|unauthorized|401/i.test(message)) {
+        showMessage("Authentication failed. Please login again.", "error");
       } else {
         showMessage(message, "error");
       }
 
       if (elements.analysisPanelStatus) {
-        elements.analysisPanelStatus.textContent =
-          "Analysis failed.";
+        elements.analysisPanelStatus.textContent = "Analysis failed.";
       }
-
     } finally {
       isAnalyzing = false;
 
@@ -1309,10 +1129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isSubmittingFeedback) return;
 
     if (!currentCaseId) {
-      showMessage(
-        "No saved case is available for feedback.",
-        "error"
-      );
+      showMessage("No saved case is available for feedback.", "error");
 
       return;
     }
@@ -1322,19 +1139,13 @@ document.addEventListener("DOMContentLoaded", () => {
       !elements.feedbackBtn ||
       !elements.feedbackStatus
     ) {
-      showMessage(
-        "Classification feedback elements are unavailable.",
-        "error"
-      );
+      showMessage("Classification feedback elements are unavailable.", "error");
 
       return;
     }
 
     if (typeof API.patch !== "function") {
-      showMessage(
-        "Feedback API is unavailable.",
-        "error"
-      );
+      showMessage("Feedback API is unavailable.", "error");
 
       return;
     }
@@ -1348,8 +1159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     if (!allowedFeedback.includes(feedback)) {
-      elements.feedbackStatus.textContent =
-        "Please select valid feedback.";
+      elements.feedbackStatus.textContent = "Please select valid feedback.";
 
       elements.feedbackStatus.className = "error";
 
@@ -1374,30 +1184,23 @@ document.addEventListener("DOMContentLoaded", () => {
         `/cases/${encodeURIComponent(currentCaseId)}`,
         {
           classificationFeedback: feedback,
-        }
+        },
       );
 
       if (!response || response.success !== true) {
-        throw new Error(
-          response?.message ||
-          "Unable to save feedback."
-        );
+        throw new Error(response?.message || "Unable to save feedback.");
       }
 
-      elements.feedbackStatus.textContent =
-        "Feedback saved successfully.";
+      elements.feedbackStatus.textContent = "Feedback saved successfully.";
 
       elements.feedbackStatus.className = "success";
-
     } catch (error) {
       console.error("Feedback error:", error);
 
       elements.feedbackStatus.textContent =
-        error.message ||
-        "Failed to save feedback.";
+        error.message || "Failed to save feedback.";
 
       elements.feedbackStatus.className = "error";
-
     } finally {
       isSubmittingFeedback = false;
 
@@ -1437,8 +1240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hideMessage();
 
     if (elements.analysisPanelStatus) {
-      elements.analysisPanelStatus.textContent =
-        "Ready for analysis.";
+      elements.analysisPanelStatus.textContent = "Ready for analysis.";
     }
 
     elements.analyzeBtn.disabled = false;
@@ -1450,20 +1252,14 @@ document.addEventListener("DOMContentLoaded", () => {
      18. EVENT LISTENERS
   ======================================================= */
 
-  elements.analyzeBtn.addEventListener(
-    "click",
-    analyzeEvidence
-  );
+  elements.analyzeBtn.addEventListener("click", analyzeEvidence);
 
-  elements.clearBtn.addEventListener(
-    "click",
-    clearDetectionForm
-  );
+  elements.clearBtn.addEventListener("click", clearDetectionForm);
 
   if (elements.feedbackBtn) {
     elements.feedbackBtn.addEventListener(
       "click",
-      submitClassificationFeedback
+      submitClassificationFeedback,
     );
   }
 
@@ -1476,12 +1272,10 @@ document.addEventListener("DOMContentLoaded", () => {
   resetResults();
 
   if (elements.analysisPanelStatus) {
-    elements.analysisPanelStatus.textContent =
-      "Ready for analysis.";
+    elements.analysisPanelStatus.textContent = "Ready for analysis.";
   }
 
   console.log(
-    "ScamShield AI Detection Module v3.0.0 initialized successfully."
+    "ScamShield AI Detection Module v3.0.0 initialized successfully.",
   );
-
 });

@@ -72,9 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const API = window.ScamShieldAPI;
 
   if (!API || typeof API.post !== "function") {
-    console.error(
-      "ScamShield Intelligence: ScamShieldAPI is unavailable.",
-    );
+    console.error("ScamShield Intelligence: ScamShieldAPI is unavailable.");
 
     showMessage(
       "API service is unavailable. Please check api.js loading.",
@@ -139,10 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function checkAuthentication() {
     if (!getToken()) {
-      showMessage(
-        "Your session has expired. Please log in again.",
-        "error",
-      );
+      showMessage("Your session has expired. Please log in again.", "error");
 
       return false;
     }
@@ -279,8 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       case "upi": {
-        const upiPattern =
-          /^[a-zA-Z0-9._-]{2,256}@[a-zA-Z0-9.-]{2,64}$/;
+        const upiPattern = /^[a-zA-Z0-9._-]{2,256}@[a-zA-Z0-9.-]{2,64}$/;
 
         if (!upiPattern.test(value)) {
           return "Enter a valid UPI ID format.";
@@ -359,19 +353,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const result = response.result;
 
-    resultIndicator.textContent =
-      result.indicator || submittedValue;
+    resultIndicator.textContent = result.indicator || submittedValue;
 
     resultType.textContent =
-      result.indicatorType?.toUpperCase() ||
-      submittedType.toUpperCase();
+      result.indicatorType?.toUpperCase() || submittedType.toUpperCase();
 
-    resultStatus.textContent =
-      result.status || "Pending verification";
+    resultStatus.textContent = result.status || "Pending verification";
 
-    resultEvidence.textContent = formatRelatedEvidence(
-      result.relatedEvidence,
-    );
+    resultEvidence.textContent = formatRelatedEvidence(result.relatedEvidence);
 
     resultExplanation.textContent =
       result.explanation ||
@@ -397,9 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (!response || response.success !== true) {
-      throw new Error(
-        response?.message || "Indicator examination failed.",
-      );
+      throw new Error(response?.message || "Indicator examination failed.");
     }
 
     return response;
@@ -459,22 +446,14 @@ document.addEventListener("DOMContentLoaded", () => {
         response.result,
       );
     } catch (error) {
-      console.error(
-        "ScamShield Intelligence Error:",
-        error,
-      );
+      console.error("ScamShield Intelligence Error:", error);
 
       if (
         error.message?.toLowerCase().includes("unauthorized") ||
         error.message?.toLowerCase().includes("token")
       ) {
-        showMessage(
-          "Authentication failed. Please log in again.",
-          "error",
-        );
-      } else if (
-        error.message?.includes("Failed to fetch")
-      ) {
+        showMessage("Authentication failed. Please log in again.", "error");
+      } else if (error.message?.includes("Failed to fetch")) {
         showMessage(
           "Unable to connect to the backend. Check whether the ScamShield API server is running.",
           "error",
@@ -504,7 +483,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateIndicatorType("phone");
 
-  console.log(
-    "ScamShield Intelligence Module Initialized Successfully.",
-  );
+  console.log("ScamShield Intelligence Module Initialized Successfully.");
 });
